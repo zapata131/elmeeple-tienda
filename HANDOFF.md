@@ -53,6 +53,11 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Secured POST API route endpoint (`/api/price-alerts`) validating authorization credentials and profile links.
 *   [x] Target price check constraint database definitions updated in init migrations SQL.
 
+### Milestone 7: Merchant Services [100% COMPLETED]
+*   [x] Multi-step onboarding wizard layout (`OnboardingWizard.tsx`) validating store info, branding, default shipping flat rates, and feed links.
+*   [x] Merchant onboarding POST endpoint (`/api/merchant/onboard`) inserting store entries and upgrading user profile credentials.
+*   [x] Portal onboarding container page route (`/merchant/onboard`).
+
 ---
 
 ## 3. Test Suite Status
@@ -68,7 +73,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#4` [US-04: Catalog Search Filters and Navigation](https://github.com/zapata131/elmeeple-tienda/issues/4) [COMPLETED]
 *   `#5` [US-05: Historical Price Evolution Graph](https://github.com/zapata131/elmeeple-tienda/issues/5) [COMPLETED]
 *   `#6` [US-06: Wishlist and Price Drop Alerts](https://github.com/zapata131/elmeeple-tienda/issues/6) [COMPLETED]
-*   `#7` [US-07: Sequential Store Onboarding Funnel](https://github.com/zapata131/elmeeple-tienda/issues/7)
+*   `#7` [US-07: Sequential Store Onboarding Funnel](https://github.com/zapata131/elmeeple-tienda/issues/7) [COMPLETED]
 *   `#8` [US-08: Shipping Cost Matrix Configuration](https://github.com/zapata131/elmeeple-tienda/issues/8)
 *   `#9` [US-09: Automated Catalog Sync via XML/CSV Feeds](https://github.com/zapata131/elmeeple-tienda/issues/9)
 *   `#10` [US-10: Affiliate Click and Analytics Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/10)
@@ -90,5 +95,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-07 (Sequential Store Onboarding Funnel):**
-    *   Implement multi-step forms allowing merchants to register profiles, upload store logo assets, and configure Google Shopping XML feeds.
+1.  **TDD implementation of US-08 (Shipping Cost Matrix Configuration):**
+    *   Build shipping matrix configuration forms allowing merchants to specify distinct shipping rates for Spain, Portugal, Mexico, Brazil, Argentina, Colombia, Chile, and Peru.

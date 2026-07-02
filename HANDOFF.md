@@ -48,6 +48,11 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Pure SVG PriceChart line graphs and 30d/90d/1y time selectors (US-05).
 *   [x] PriceHistory API query route (`/api/price-history`).
 
+### Milestone 6: User Engagement & Alerts [100% COMPLETED]
+*   [x] Price alert subscription form client component (`PriceAlertForm.tsx`) with negative price input validations (US-06).
+*   [x] Secured POST API route endpoint (`/api/price-alerts`) validating authorization credentials and profile links.
+*   [x] Target price check constraint database definitions updated in init migrations SQL.
+
 ---
 
 ## 3. Test Suite Status
@@ -62,7 +67,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#3` [US-03: Global Shipping and Currency Settings (Toolbar)](https://github.com/zapata131/elmeeple-tienda/issues/3) [COMPLETED]
 *   `#4` [US-04: Catalog Search Filters and Navigation](https://github.com/zapata131/elmeeple-tienda/issues/4) [COMPLETED]
 *   `#5` [US-05: Historical Price Evolution Graph](https://github.com/zapata131/elmeeple-tienda/issues/5) [COMPLETED]
-*   `#6` [US-06: Wishlist and Price Drop Alerts](https://github.com/zapata131/elmeeple-tienda/issues/6)
+*   `#6` [US-06: Wishlist and Price Drop Alerts](https://github.com/zapata131/elmeeple-tienda/issues/6) [COMPLETED]
 *   `#7` [US-07: Sequential Store Onboarding Funnel](https://github.com/zapata131/elmeeple-tienda/issues/7)
 *   `#8` [US-08: Shipping Cost Matrix Configuration](https://github.com/zapata131/elmeeple-tienda/issues/8)
 *   `#9` [US-09: Automated Catalog Sync via XML/CSV Feeds](https://github.com/zapata131/elmeeple-tienda/issues/9)
@@ -85,5 +90,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-06 (Wishlist & Price Drop Alerts):**
-    *   Build the wishlist subscription triggers and backend user notifications for game target price alerts.
+1.  **TDD implementation of US-07 (Sequential Store Onboarding Funnel):**
+    *   Implement multi-step forms allowing merchants to register profiles, upload store logo assets, and configure Google Shopping XML feeds.

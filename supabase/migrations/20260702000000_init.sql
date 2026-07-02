@@ -167,7 +167,7 @@ create table public.price_alerts (
     id uuid default gen_random_uuid() primary key,
     user_id uuid references public.profiles(id) on delete cascade not null,
     bgg_id integer references public.bgg_games_cache(bgg_id) on delete cascade not null,
-    target_price numeric not null,
+    target_price numeric not null check (target_price > 0),
     currency text not null,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

@@ -2,6 +2,7 @@ import React from 'react';
 import { fetchGameDetails, fetchGameOffers, fetchGameEditions } from '@/lib/queries';
 import Link from 'next/link';
 import { PriceChart } from '@/components/PriceChart';
+import { PriceAlertForm } from '@/components/PriceAlertForm';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -79,6 +80,9 @@ export default async function GameDetailPage({ params }: Props) {
               <p>Duration: {game.playing_time} mins</p>
             </div>
           </div>
+
+          {/* Price Alert Config Card */}
+          <PriceAlertForm bggId={game.bgg_id} />
 
           {/* US-16 Other Versions Switcher */}
           {editions.length > 0 && (

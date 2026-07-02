@@ -71,7 +71,7 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
 *   **Framework:** Next.js (App Router) in TypeScript, serving as a monolith for UI pages, Server Actions, and API endpoints.
 *   **Database (Supabase / PostgreSQL):**
     *   `profiles`: Centralized profile relation extending Supabase Auth with a `role` enum (`player`, `partner`, `admin`).
-    *   `stores`: Merchant metadata (name, unique URL slug, base64 logo, base URL, verified status, feed URL, feed status, owner email).
+    *   `stores`: Merchant metadata (name, unique URL slug, base64 logo, base URL, verified status, Google Shopping XML feed URL, feed status, owner email).
     *   `shipping_rates`: Rates configured by merchants. Columns: `store_id`, `destination_country` (ISO-2 code), `flat_rate` (numeric), `free_shipping_threshold` (numeric, nullable).
     *   `bgg_games_cache`: Global cached catalog of board games imported from BGG. Columns: `bgg_id`, `name`, `thumbnail`, `weight` (complexity), `min_players`, `max_players`, `playing_time`, `alternate_names` (text array), `parent_bgg_id` (integer, nullable, self-referencing foreign key to link alternate language editions), `last_updated_at`.
     *   `store_games`: Intermediate table tracking product offerings. Columns: `store_id`, `bgg_id`, `store_product_url`, `price` (decimal), `stock` (integer/availability), `edition_language` (text, restricted to 'es' | 'pt' | 'en'), `last_updated_at`. Composite unique index on `(store_id, bgg_id)`.
@@ -80,7 +80,7 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
 *   **Row-Level Security (RLS):** Enabled on all tables.
     *   Public `SELECT` access to `bgg_games_cache`, `stores`, and `store_games`.
     *   `INSERT/UPDATE` restricted to verified owners for their respective relations (matching session emails).
-*   **XML Feed Processing:** Parsed on server-side functions using `fast-xml-parser`.
+*   **XML Feed Processing:** Outbound background crawlers retrieve merchant feeds, parsing them via `fast-xml-parser`. The parser extracts standard Google Shopping RSS 2.0 elements: `<g:gtin>` (resolving game IDs in `bgg_games_cache` or enqueuing them), `<g:price>` (converted to base currency and written to `store_games.price`), `<g:availability>` (written to `store_games.stock`), and `<link>` (stored as affiliate product URLs).
 *   **BGG API Integration:** Secure server actions querying BoardGameGeek XML2 API, managing 202 Accepted polling and rate limits.
 
 ### 5.1 Business Model & Referral Link Validation

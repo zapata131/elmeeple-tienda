@@ -28,7 +28,7 @@ Tabletop board gaming has experienced an exponential boom, but the market in the
 
 ### For Independent Board Game Retailers (Supply)
 *   **Targeted Organic Traffic:** Get your e-commerce shop listed in front of high-intent board gamers, driving qualified traffic directly to your checkout.
-*   **Frictionless Automated Sync:** Provide a standard XML or CSV product feed URL in your merchant dashboard, and MeeplePrecios will update your prices and stock status daily—no manual entry needed.
+*   **Frictionless Automated Sync:** Provide your standard Google Shopping XML (RSS 2.0) product feed URL in your merchant dashboard, and MeeplePrecios will update your prices and stock status daily—no manual entry needed.
 *   **Performance Metrics:** Monitor click-through rates and referral analytics directly from your merchant dashboard.
 *   **Referral Validation Suffix:** Every outbound traffic link automatically appends tracking coordinates:
     `?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`

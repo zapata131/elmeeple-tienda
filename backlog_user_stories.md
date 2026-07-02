@@ -90,11 +90,11 @@ This document details the product planning for **MeeplePrecios**, the board game
     3. If a country is not supported, it is marked as "Shipping unavailable to [Country]".
 *   **Status:** **[PLANNED]**
 
-### US-09: Automated Catalog Sync via XML/CSV Feeds
-*   **Formula:** As a **Store Owner**, I want to **provide my store's XML or CSV product feed URL in my dashboard**, so that **my product prices, inventory, and purchase links update daily without manual data entry**.
+### US-09: Automated Catalog Sync via Google Shopping XML Feeds
+*   **Formula:** As a **Store Owner**, I want to **provide my store's Google Shopping XML (RSS 2.0) product feed URL in my dashboard**, so that **my product prices, inventory, and purchase links update daily without manual data entry**.
 *   **Acceptance Criteria:**
     1. The merchant dashboard must allow saving and validating a feed URL.
-    2. The feed structure must comply with the platform's standard schema (EAN/UPC, game title, product URL, image URL, base price, numerical stock).
+    2. The feed structure must comply with the standard Google Shopping XML schema, containing required elements: `<g:gtin>` (EAN/UPC barcode mapping), `<g:title>` (board game title), `<link>` (product checkout link), `<g:image_link>` (box cover thumbnail), `<g:price>` (amount + currency suffix), and `<g:availability>` (in_stock, out_of_stock, preorder).
     3. The system validates the feed structure on save, showing a real-time status badge (Synced, Formatting Error, Offline).
 *   **Status:** **[PLANNED]**
 
@@ -138,7 +138,7 @@ This document details the product planning for **MeeplePrecios**, the board game
 ## 5. Technical & Automation Backlog (Backend Stories)
 
 ### US-14: Scheduled Store Feed Parser (Cron Job)
-*   **Formula:** As the **System**, I want to **run a scheduled background cron job daily**, so that I can **fetch, parse, and update prices from all approved merchant XML/CSV feeds**.
+*   **Formula:** As the **System**, I want to **run a scheduled background cron job daily**, so that I can **fetch, parse, and update prices from all approved merchant Google Shopping XML feeds**.
 *   **Acceptance Criteria:**
     1. Sequential iteration over valid feeds, parsing data using `fast-xml-parser`.
     2. Idempotent bulk upsert to the `store_games` relation, modifying price, stock, and links.

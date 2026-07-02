@@ -73,7 +73,7 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
     *   `profiles`: Centralized profile relation extending Supabase Auth with a `role` enum (`player`, `partner`, `admin`).
     *   `stores`: Merchant metadata (name, unique URL slug, base64 logo, base URL, verified status, Google Shopping XML feed URL, feed status, owner email).
     *   `shipping_rates`: Rates configured by merchants. Columns: `store_id`, `destination_country` (ISO-2 code), `flat_rate` (numeric), `free_shipping_threshold` (numeric, nullable).
-    *   `bgg_games_cache`: Global cached catalog of board games imported from BGG. Columns: `bgg_id`, `name`, `thumbnail`, `weight` (complexity), `min_players`, `max_players`, `playing_time`, `alternate_names` (text array), `categories` (text array), `parent_bgg_id` (integer, nullable, self-referencing foreign key to link alternate language editions), `last_updated_at`.
+    *   `bgg_games_cache`: Global cached catalog of board games imported from BGG. Columns: `bgg_id`, `name`, `thumbnail`, `weight` (complexity), `min_players`, `max_players`, `playing_time`, `alternate_names` (text array), `categories` (text array), `ean` (text, barcode), `parent_bgg_id` (integer, nullable, self-referencing foreign key to link alternate language editions), `last_updated_at`.
     *   `store_games`: Intermediate table tracking product offerings. Columns: `store_id`, `bgg_id`, `store_product_url`, `price` (decimal), `stock` (integer/availability), `edition_language` (text, restricted to 'es' | 'pt' | 'en'), `last_updated_at`. Composite unique index on `(store_id, bgg_id)`.
     *   `price_alerts`: User price notification thresholds.
     *   `exchange_rates`: Cached foreign exchange rates relative to base EUR.

@@ -106,6 +106,7 @@ create table public.bgg_games_cache (
     playing_time integer,
     alternate_names text[], -- array of alt names
     categories text[], -- array of BGG categories/mechanics
+    ean text, -- EAN/UPC barcode
     parent_bgg_id integer references public.bgg_games_cache(bgg_id) on delete set null,
     last_updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

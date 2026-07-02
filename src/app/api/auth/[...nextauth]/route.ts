@@ -1,6 +1,11 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { createClient } from '@/lib/supabaseServer';
+interface CustomUser {
+  id: string;
+  role?: string;
+  email?: string | null;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -65,15 +70,15 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as any).role || 'player';
+        token.role = (user as unknown as CustomUser).role || 'player';
         token.email = user.email;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.id as string;
-        (session.user as any).role = token.role as string;
+        (session.user as unknown as CustomUser).id = token.id as string;
+        (session.user as unknown as CustomUser).role = token.role as string;
         session.user.email = token.email as string;
       }
       return session;

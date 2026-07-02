@@ -89,6 +89,11 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
     `?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`
 *   **Merchant Integration Check:** Store owners can reconcile click tracking by auditing their web logs (Shopify Referrals, WooCommerce metrics, Google Analytics raw click logs) for these variables. MeeplePrecios records every redirect event in the database, displaying hourly clicks on the merchant dashboard.
 
+### 5.2 Settings Cookie Mappings
+*   **Cookie Syncing:** Changing the country or currency in the settings toolbar writes key-value configuration cookies directly to the client browser context (`meeple_country` and `meeple_currency`) with a 1-year max age limit.
+*   **SSR Reading:** During Server-Side Rendering (SSR) pages (like `/game/[id]`), the values are retrieved using Next.js `cookies()` headers adapter to dynamically fetch country-specific shipping flat rates and trigger currency conversions on the fly.
+
+
 
 ---
 

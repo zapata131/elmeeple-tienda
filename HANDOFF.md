@@ -36,6 +36,12 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Supabase SDK clients configured for browser/server context.
 *   [x] NextAuth configurations and credentials provider mapping established in `src/app/api/auth/[...nextauth]/route.ts`.
 
+### Milestone 4: Core Search & Comparisons (MVP) [100% COMPLETED]
+*   [x] Autocomplete Search bar component and API search route implemented (US-01).
+*   [x] Game detail page showing catalog specifications and store offers list sorted by total price with free shipping thresholds (US-02).
+*   [x] Global settings toolbar storing country and currency configurations in client cookies (US-03).
+*   [x] Self-referential BGG alternate language switcher rendering linked box versions (US-16).
+
 ---
 
 ## 3. Test Suite Status
@@ -45,9 +51,9 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 4. GitHub Issues Published (https://github.com/zapata131/elmeeple-tienda/issues)
-*   `#1` [US-01: Predictive Smart Search](https://github.com/zapata131/elmeeple-tienda/issues/1)
-*   `#2` [US-02: Deal and Price Comparison Table](https://github.com/zapata131/elmeeple-tienda/issues/2)
-*   `#3` [US-03: Global Shipping and Currency Settings (Toolbar)](https://github.com/zapata131/elmeeple-tienda/issues/3)
+*   `#1` [US-01: Predictive Smart Search](https://github.com/zapata131/elmeeple-tienda/issues/1) [COMPLETED]
+*   `#2` [US-02: Deal and Price Comparison Table](https://github.com/zapata131/elmeeple-tienda/issues/2) [COMPLETED]
+*   `#3` [US-03: Global Shipping and Currency Settings (Toolbar)](https://github.com/zapata131/elmeeple-tienda/issues/3) [COMPLETED]
 *   `#4` [US-04: Catalog Search Filters and Navigation](https://github.com/zapata131/elmeeple-tienda/issues/4)
 *   `#5` [US-05: Historical Price Evolution Graph](https://github.com/zapata131/elmeeple-tienda/issues/5)
 *   `#6` [US-06: Wishlist and Price Drop Alerts](https://github.com/zapata131/elmeeple-tienda/issues/6)
@@ -60,7 +66,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#13` [US-13: Currency and Foreign Exchange Rate Manager](https://github.com/zapata131/elmeeple-tienda/issues/13)
 *   `#14` [US-14: Scheduled Store Feed Parser (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14)
 *   `#15` [US-15: BGG API Metadata Queue and Cache Manager](https://github.com/zapata131/elmeeple-tienda/issues/15)
-*   `#16` [US-16: Language Editions Switcher (Other Versions)](https://github.com/zapata131/elmeeple-tienda/issues/16)
+*   `#16` [US-16: Language Editions Switcher (Other Versions)](https://github.com/zapata131/elmeeple-tienda/issues/16) [COMPLETED]
 *   `#17` [US-17: Consolidated Multi-Game Cart Optimizer](https://github.com/zapata131/elmeeple-tienda/issues/17)
 *   `#18` [US-18: Domestic-Only Store Toggle](https://github.com/zapata131/elmeeple-tienda/issues/18)
 *   `#19` [US-19: Unified Smart Autocomplete Dropdown](https://github.com/zapata131/elmeeple-tienda/issues/19)
@@ -73,6 +79,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-01 (Autocomplete Search):**
-    *   Create test suites asserting autocomplete matches localized terms against BGG caches in `src/__tests__/search.test.tsx`.
-    *   Build search controllers and autocomplete suggestions UI to pass the tests.
+1.  **TDD implementation of US-04 (Catalog Search Filters & Navigation):**
+    *   Create client-side filters (price slider, category chips, stock toggles) using Next.js client state to prevent page reloads.
+2.  **TDD implementation of US-05 (Historical Price Graph):**
+    *   Integrate lightweight chart libraries to map historical price movements.

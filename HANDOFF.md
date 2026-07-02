@@ -6,11 +6,13 @@ This memo summarizes the current progress of the initial planning sprint for the
 
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Active Branch:** `main` (initialization phase)
+*   **Active Branch:** `main`
 *   **Created Files:**
     *   [backlog_user_stories.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/backlog_user_stories.md): Requirements and user stories backlog for Players, Partners, and Admins.
     *   [DESIGN.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md): Technical architecture specification, Supabase schemas, and color tokens.
     *   [AGENTS.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/AGENTS.md): AI agent roles, checklist, feed sync rules, and testing standards.
+    *   [jest.config.js](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/jest.config.js): Jest test framework configuration.
+    *   [jest.setup.js](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/jest.setup.js): Polyfills and global mocks for Jest environment.
 
 ---
 
@@ -23,16 +25,17 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Set up the remote repository on GitHub and published the 15 issues (US-01 to US-15) corresponding to the backlog stories.
 *   [x] Translated all system documentation, user stories, and GitHub issues to English.
 
-### Milestone 2: Initial Setup & Environment [PENDING]
-*   [ ] Initialize the Next.js 16 project boilerplate with TypeScript and script definitions (`dev`, `build`, `test`, `verify`).
-*   [ ] Install core dependencies (`@supabase/supabase-js`, `@supabase/ssr`, `fast-xml-parser`, `tailwindcss` v4).
-*   [ ] Configure testing environment (Jest, JSDOM, Playwright, and local DB mock servers).
+### Milestone 2: Initial Setup & Environment [100% COMPLETED]
+*   [x] Initialize the Next.js 16 project boilerplate with TypeScript and script definitions (`dev`, `build`, `test`, `verify`).
+*   [x] Install core dependencies (`@supabase/supabase-js`, `@supabase/ssr`, `fast-xml-parser`, `next-auth`, `tailwindcss` v4).
+*   [x] Configure testing environment (Jest, JSDOM, and polyfills for jose/NextAuth compatibility).
+*   [x] Verify environment build and test runners via dummy testing.
 
 ---
 
 ## 3. Test Suite Status
-*   **Unit/Integration Tests (Jest):** Not started (0 tests).
-*   **E2E Walkthroughs (Playwright):** Not started.
+*   **Unit/Integration Tests (Jest):** Configured and passing (1 dummy test).
+*   **E2E Walkthroughs (Playwright):** Installed, configuring.
 
 ---
 
@@ -56,6 +59,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **Initialize Next.js App:** Run `npx create-next-app` to set up the boilerplate.
-2.  **Database Migration Setups:** Create initial schema tables for profiles, stores, shipping rates, catalog cache, and currency conversions in Supabase.
-3.  **TDD implementation of US-01:** Program test fixtures and unit verifications for the autocomplete search service.
+1.  **Database Migration Setups:** Create initial schema tables for profiles, stores, shipping rates, catalog cache, and currency conversions in Supabase.
+2.  **TDD implementation of US-01:** Program test fixtures and unit verifications for the autocomplete search service.

@@ -31,6 +31,11 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Configure testing environment (Jest, JSDOM, and polyfills for jose/NextAuth compatibility).
 *   [x] Verify environment build and test runners via dummy testing.
 
+### Milestone 3: Database & Core Authentication [66% COMPLETED]
+*   [x] Database migrations tables defined (profiles, stores, shipping rates, cached games, listings, price alerts, currency rates) in `supabase/migrations/20260702000000_init.sql`.
+*   [x] Supabase SDK clients configured for browser/server context.
+*   [ ] NextAuth configurations and Supabase adapter integrations established.
+
 ---
 
 ## 3. Test Suite Status
@@ -68,5 +73,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **Database Migration Setups:** Create initial schema tables for profiles, stores, shipping rates, catalog cache, and currency conversions in Supabase.
+1.  **NextAuth Setup:** Establish authentication configs and Supabase adapter mappings.
 2.  **TDD implementation of US-01:** Program test fixtures and unit verifications for the autocomplete search service.

@@ -10,6 +10,11 @@ jest.mock('@/lib/queries', () => ({
   fetchGameEditions: jest.fn(),
 }));
 
+// Mock PriceChart subcomponent
+jest.mock('@/components/PriceChart', () => ({
+  PriceChart: () => <div data-testid="mock-price-chart" />,
+}));
+
 // Mock next/navigation params and headers
 jest.mock('next/navigation', () => ({
   useRouter() {

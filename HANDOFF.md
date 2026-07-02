@@ -42,6 +42,12 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Global settings toolbar storing country and currency configurations in client cookies (US-03).
 *   [x] Self-referential BGG alternate language switcher rendering linked box versions (US-16).
 
+### Milestone 5: Advanced Discovery & Price History [100% COMPLETED]
+*   [x] Catalog results grid page (`/catalog`) and client filter panel (in-stock toggles, category chips, max price slider) (US-04).
+*   [x] price_history table schema definition in migration SQL logs (US-05).
+*   [x] Pure SVG PriceChart line graphs and 30d/90d/1y time selectors (US-05).
+*   [x] PriceHistory API query route (`/api/price-history`).
+
 ---
 
 ## 3. Test Suite Status
@@ -54,8 +60,8 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#1` [US-01: Predictive Smart Search](https://github.com/zapata131/elmeeple-tienda/issues/1) [COMPLETED]
 *   `#2` [US-02: Deal and Price Comparison Table](https://github.com/zapata131/elmeeple-tienda/issues/2) [COMPLETED]
 *   `#3` [US-03: Global Shipping and Currency Settings (Toolbar)](https://github.com/zapata131/elmeeple-tienda/issues/3) [COMPLETED]
-*   `#4` [US-04: Catalog Search Filters and Navigation](https://github.com/zapata131/elmeeple-tienda/issues/4)
-*   `#5` [US-05: Historical Price Evolution Graph](https://github.com/zapata131/elmeeple-tienda/issues/5)
+*   `#4` [US-04: Catalog Search Filters and Navigation](https://github.com/zapata131/elmeeple-tienda/issues/4) [COMPLETED]
+*   `#5` [US-05: Historical Price Evolution Graph](https://github.com/zapata131/elmeeple-tienda/issues/5) [COMPLETED]
 *   `#6` [US-06: Wishlist and Price Drop Alerts](https://github.com/zapata131/elmeeple-tienda/issues/6)
 *   `#7` [US-07: Sequential Store Onboarding Funnel](https://github.com/zapata131/elmeeple-tienda/issues/7)
 *   `#8` [US-08: Shipping Cost Matrix Configuration](https://github.com/zapata131/elmeeple-tienda/issues/8)
@@ -79,7 +85,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-04 (Catalog Search Filters & Navigation):**
-    *   Create client-side filters (price slider, category chips, stock toggles) using Next.js client state to prevent page reloads.
-2.  **TDD implementation of US-05 (Historical Price Graph):**
-    *   Integrate lightweight chart libraries to map historical price movements.
+1.  **TDD implementation of US-06 (Wishlist & Price Drop Alerts):**
+    *   Build the wishlist subscription triggers and backend user notifications for game target price alerts.

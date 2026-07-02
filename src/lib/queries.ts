@@ -116,3 +116,89 @@ export async function fetchGameEditions(bggId: number) {
 
   return typedEditions.filter((e) => e.bgg_id !== bggId);
 }
+
+interface CatalogGameRow {
+  bgg_id: number;
+  name: string;
+  thumbnail: string | null;
+  categories: string[] | null;
+  store_games: Array<{
+    price: number;
+    stock: number;
+  }> | null;
+}
+
+export async function fetchCatalogGames(searchQuery?: string) {
+  let queryBuilder = supabase
+    .from('bgg_games_cache')
+    .select(`
+      bgg_id,
+      name,
+      thumbnail,
+      categories,
+      store_games (
+        price,
+        stock
+      )
+    `);
+
+  if (searchQuery) {
+    const cleanSearch = searchQuery.toLowerCase().trim();
+    queryBuilder = queryBuilder.ilike('name', `%${cleanSearch}%`);
+  }
+
+  const { data, error } = await queryBuilder;
+
+  if (error || !data) {
+    console.error('[queries] fetchCatalogGames failed:', error?.message);
+    return [];
+  }
+
+  const typedData = data as unknown as CatalogGameRow[];
+
+  return typedData.map((game) => {
+    const offers = Array.isArray(game.store_games) ? game.store_games : [];
+    const inStock = offers.some((o) => o.stock > 0);
+    const prices = offers.map((o) => Number(o.price));
+    const minPrice = prices.length > 0 ? Math.min(...prices) : null;
+
+    return {
+      bgg_id: game.bgg_id,
+      name: game.name,
+      thumbnail: game.thumbnail,
+      categories: game.categories || [],
+      min_price: minPrice,
+      in_stock: inStock,
+    };
+  });
+}
+
+interface QueryPriceHistory {
+  min_price: number;
+  recorded_at: string;
+}
+
+export async function fetchPriceHistory(bggId: number, days: number) {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+  const startDateStr = startDate.toISOString().split('T')[0];
+
+  const { data, error } = await supabase
+    .from('price_history')
+    .select('min_price, recorded_at')
+    .eq('bgg_id', bggId)
+    .gte('recorded_at', startDateStr)
+    .order('recorded_at', { ascending: true });
+
+  if (error || !data) {
+    console.error(`[queries] fetchPriceHistory failed for ${bggId}:`, error?.message);
+    return [];
+  }
+
+  const typedData = data as unknown as QueryPriceHistory[];
+
+  return typedData.map((d) => ({
+    min_price: Number(d.min_price),
+    recorded_at: d.recorded_at,
+  }));
+}

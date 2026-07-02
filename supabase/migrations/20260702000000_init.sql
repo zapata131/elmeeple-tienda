@@ -105,6 +105,7 @@ create table public.bgg_games_cache (
     max_players integer,
     playing_time integer,
     alternate_names text[], -- array of alt names
+    categories text[], -- array of BGG categories/mechanics
     parent_bgg_id integer references public.bgg_games_cache(bgg_id) on delete set null,
     last_updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -202,3 +203,33 @@ create policy "Allow admin/system to manage exchange_rates"
             and role = 'admin'
         )
     );
+
+
+-- Create price_history table
+create table public.price_history (
+    bgg_id integer references public.bgg_games_cache(bgg_id) on delete cascade not null,
+    min_price numeric not null,
+    recorded_at date default current_date not null,
+    primary key (bgg_id, recorded_at)
+);
+
+-- Index for date queries
+create index price_history_bgg_id_recorded_at_idx on public.price_history(bgg_id, recorded_at);
+
+-- Enable RLS on price_history
+alter table public.price_history enable row level security;
+
+create policy "Allow public read access to price_history"
+    on public.price_history for select
+    using (true);
+
+create policy "Allow admin/system to manage price_history"
+    on public.price_history for all
+    using (
+        exists (
+            select 1 from public.profiles
+            where id = auth.uid()
+            and role = 'admin'
+        )
+    );
+

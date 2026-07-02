@@ -1,6 +1,7 @@
 import React from 'react';
 import { fetchGameDetails, fetchGameOffers, fetchGameEditions } from '@/lib/queries';
 import Link from 'next/link';
+import { PriceChart } from '@/components/PriceChart';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -109,7 +110,7 @@ export default async function GameDetailPage({ params }: Props) {
         </div>
 
         {/* Comparison Deals Table Column */}
-        <div className="md:col-span-3">
+        <div className="md:col-span-3 flex flex-col gap-6">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-bold text-gray-900">Compare Store Offers</h2>
@@ -209,6 +210,7 @@ export default async function GameDetailPage({ params }: Props) {
               </table>
             </div>
           </div>
+          <PriceChart bggId={game.bgg_id} />
         </div>
 
       </main>

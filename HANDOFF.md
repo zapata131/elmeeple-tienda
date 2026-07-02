@@ -63,7 +63,9 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Automated Sync Feeds API routing trigger (`/api/cron/sync-feeds`).
 *   [x] Secured redirect click logger endpoint (`/api/redirect`) tracking client IPs and 302 redirecting user queries to target store product pages (US-10).
 *   [x] Partner analytics dashboard page (`/merchant/dashboard`) displaying total outbound clicks counts, estimated CTR ratios, sync status badges, and clicks logs tables.
-*   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, and `/merchant/dashboard`).
+*   [x] Administration verification POST endpoint (`/api/admin/verify-store`) toggling verified boolean states (US-11).
+*   [x] Global administration dashboard page portal (`/admin/dashboard`) displaying all registered store entries and verification/suspension controls.
+*   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, `/merchant/dashboard`, and `/admin/dashboard`).
 
 ---
 
@@ -84,7 +86,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#8` [US-08: Shipping Cost Matrix Configuration](https://github.com/zapata131/elmeeple-tienda/issues/8) [COMPLETED]
 *   `#9` [US-09: Automated Catalog Sync via XML/CSV Feeds](https://github.com/zapata131/elmeeple-tienda/issues/9) [COMPLETED]
 *   `#10` [US-10: Affiliate Click and Analytics Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/10) [COMPLETED]
-*   `#11` [US-11: Merchant Auditing and Verification Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/11)
+*   `#11` [US-11: Merchant Auditing and Verification Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/11) [COMPLETED]
 *   `#12` [US-12: Feed Diagnostics and Monitoring Hub](https://github.com/zapata131/elmeeple-tienda/issues/12)
 *   `#13` [US-13: Currency and Foreign Exchange Rate Manager](https://github.com/zapata131/elmeeple-tienda/issues/13)
 *   `#14` [US-14: Scheduled Store Feed Parser (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14)
@@ -102,5 +104,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-11 (Merchant Auditing and Verification Dashboard):**
-    *   Build administration portal `/admin/dashboard` allowing system administrators to review, approve (`verified: true`), or suspend store profiles.
+1.  **TDD implementation of US-12 (Feed Diagnostics and Monitoring Hub):**
+    *   Build diagnostics hub views where merchants can check validation logs, listing matches, errors, and force a sync refresh.

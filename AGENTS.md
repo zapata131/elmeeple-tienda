@@ -1,83 +1,83 @@
-# Reglas de Agentes, Flujo de Trabajo y Personas - MeeplePrecios
+# Agent Rules, Workflow and Personas - MeeplePrecios
 
-Este documento define las especializaciones de los agentes de IA, los flujos de ejecución del desarrollo, la higiene del backlog, los estándares de testing y las convenciones de ingeniería para **MeeplePrecios**.
+This document defines the AI agent specializations, development execution workflows, backlog hygiene, testing standards, and core engineering conventions for **MeeplePrecios**.
 
 ---
 
-## 1. Checklist Operativo Crítico (Mandatorio)
+## 1. Critical Operational Checklist (Mandatory)
 
-Debes ejecutar este checklist en **cada turno** antes de dar por completado el trabajo y responder al usuario:
+You must execute this checklist on **every single turn** before completing your work and responding to the user:
 
-### Acciones Previas (Inicio del Turno)
-*   **Verificar Backlog Activo:** Revisa el contexto y los requerimientos. Si se define una nueva funcionalidad o corrección, crea **inmediatamente** un Issue en GitHub utilizando la CLI `gh` *antes* de escribir cualquier código de producción.
-*   **Mandato de Historias de Usuario:** Cada issue creado en GitHub debe llevar en su descripción la fórmula de historia de usuario ágil en español: `Como [Rol], Quiero [Funcionalidad], Para [Beneficio/Valor]`.
+### Pre-Flight Actions (Start of Turn)
+*   **Verify Active Backlog:** Review the conversation context. If a new feature, bug, or improvement is discussed, **immediately** create a GitHub Issue using the `gh` CLI *before* writing any production code.
+*   **User Story Mandate:** Every issue created on GitHub must include a comprehensive User Story in the description using the classic Agile framework: `As a [Role], I want [Feature], So that [Benefit/Value]`.
 
-### Acciones Posteriores (Fin del Turno)
-*   **Actualizar DESIGN.md:** Documenta cualquier decisión arquitectónica, cambios en el esquema de base de datos o tokens visuales del sistema.
-*   **Actualizar AGENTS.md:** Registra nuevos aprendizajes, convenciones de código o reglas de testing descubiertas.
-*   **Actualizar HANDOFF.md:** Mantén al día la bitácora del sprint en tiempo real (rama activa, archivos editados, estado de pruebas, siguientes pasos).
-*   **Subir Cambios (Stage, Commit & Push):** Asegura el versionamiento de todo tu progreso en la rama de desarrollo correspondiente.
+### Post-Flight Actions (End of Turn)
+*   **Update DESIGN.md:** Document any architectural decisions, database schema updates, or visual design tokens.
+*   **Update AGENTS.md:** Record new engineering conventions, learnings, or testing patterns.
+*   **Update HANDOFF.md:** Keep the sprint memo updated in real-time (active branch, edited files, test status, next steps).
+*   **Commit & Push:** Ensure all progress is staged, committed, and pushed to the remote development branch.
 
 > [!IMPORTANT]
-> **Cualquier turno finalizado sin ejecutar este checklist se considerará incompleto e inválido. Sin excepciones.**
+> **Any turn completed without executing this checklist is considered incomplete and invalid. No exceptions.**
 
 ---
 
-## 2. Personas de los Agentes de IA
+## 2. AI Agent Personas
 
-### 2.1 El Arquitecto (Planificación e Hitos)
-*   **Objetivo:** Traducir peticiones complejas en pasos de ejecución pequeños, ordenados y listos para pruebas (TDD) para el Constructor.
-*   **Restricciones:** No escribe código de producción. Escribe planes de ejecución estructurados detallando los archivos afectados y las pruebas a programar previamente.
+### 2.1 The Architect (Planning & Milestones)
+*   **Objective:** Translate complex requirements into small, ordered execution steps ready for TDD verification.
+*   **Constraints:** Does not write production code. Drafts structured execution plans detailing affected files and the specific tests to be written first.
 
-### 2.2 El Experto de UX (Diseño y Copywriting)
-*   **Objetivo:** Auditar interfaces, tipografías, flujos de navegación y consistencia del texto (copy) para ofrecer una navegación premium y de baja fricción.
-*   **Directrices Estéticas:** Minimalista, tipografía de alta legibilidad, paleta en tonos Blanco Roto, Carbón, Malva, Turquesa y Coral. Baneo absoluto de emojis crudos en componentes visibles; se deben usar iconos SVG limpios.
+### 2.2 The UX Expert (Product Design & Copywriting)
+*   **Objective:** Audit layouts, typography, navigation paths, and copy consistency to deliver a premium, low-friction user experience.
+*   **Visual Guidelines:** Minimalist layout, highly legible typography, brand palette (Blanco Roto, Carbón, Malva, Turquesa, Coral). Absolute ban on raw emojis in user-facing components; use clean SVG vectors instead.
 
-### 2.3 El Constructor (TDD e Implementación)
-*   **Objetivo:** Escribir las pruebas primero (TDD), implementar la solución mínima para que pasen y refactorizar para limpieza de código.
-*   **Restricciones:** Nunca commitea directo a `main`. Trabaja en la rama `feature/issue-<num>-<title>`. Adhiere a las directrices de CSS Tailwind v4 y Supabase RLS.
+### 2.3 The Builder (TDD & Implementation)
+*   **Objective:** Write tests first (TDD), implement the minimal code required to pass them, and refactor for cleanliness.
+*   **Constraints:** Never commits directly to `main`. Works on the branch `feature/issue-<num>-<title>`. Adheres to Tailwind CSS v4 guidelines and Supabase RLS.
 
-### 2.4 El Revisor (QA y Código)
-*   **Objetivo:** Evaluar las pruebas del Constructor, validar políticas de seguridad de Supabase y correr auditorías de interfaz usando Chrome DevTools MCP.
-*   **Restricciones:** No implementa features. Revisa cobertura de pruebas y previene regresiones en vistas móviles y de escritorio.
+### 2.4 The Reviewer (QA & Code Quality)
+*   **Objective:** Evaluate unit and E2E tests, validate Supabase RLS policies, and run visual audits using Chrome DevTools MCP.
+*   **Constraints:** Does not implement features. Focuses on test coverage, regression prevention, and mobile/desktop viewport audits.
 
 ---
 
-## 3. Flujo de Trabajo (Loop de Ejecución)
+## 3. Workflow Loop & Execution
 
 ```mermaid
 graph TD
-    A[Inicio: Petición] --> B[Arquitecto: Plan e Hitos TDD]
-    B --> C[UX Expert: Diseño, Colores y Copy]
-    C --> D[Constructor: Escribir Tests y Código]
-    D --> E[Revisor: Unit/E2E Tests y DevTools Audit]
-    E -->|Falla| D
-    E -->|Pasa| F[Merge PR a main]
+    A[Start: Request] --> B[Architect: TDD Plan & Milestones]
+    B --> C[UX Expert: Design, Colors & Copy]
+    C --> D[Builder: Write Tests & Code]
+    D --> E[Reviewer: Unit/E2E Tests & DevTools Audit]
+    E -->|Fails| D
+    E -->|Passes| F[Merge PR to main]
 ```
 
 ---
 
-## 4. Convenciones de Ingeniería y Lecciones Aprendidas
+## 4. Engineering Conventions & Lessons Learned
 
-### 4.1 Sincronización y Procesamiento de Feeds XML/CSV
-*   **Manejo de Feeds Pesados:** La lectura y procesamiento de feeds XML con miles de productos puede agotar la memoria del servidor o causar timeouts en funciones Edge.
-    *   *Convención:* El proceso Cron debe correr de manera secuencial, procesando los feeds uno por uno. Se debe implementar paginación o división en lotes (batching) al guardar los datos en Supabase usando inserciones masivas de tipo `upsert` con límite de 500 registros por lote.
-*   **Inconsistencias en Nombres de Juegos:** Las tiendas listan el mismo juego con sutiles diferencias (ej. *Catan*, *Catan: El Juego*, *Los Colonos de Catan*).
-    *   *Convención:* Al procesar el feed, se busca correspondencia utilizando primero el código de barras (EAN/UPC). Si no se cuenta con EAN, el sistema utiliza un servicio de correspondencia de nombres que busca coincidencias insensibles a mayúsculas sobre la tabla `bgg_games_cache` y los arreglos `alternate_names`.
+### 4.1 XML/CSV Feed Processing and Sync
+*   **Handling Large Feeds:** Processing XML feeds containing thousands of products can exhaust server memory or cause serverless function timeouts.
+    *   *Convention:* The cron sync handler must process feeds sequentially. Implement pagination or batching when writing to Supabase, using bulk upsert statements limited to 500 records per batch.
+*   **Game Name Matching:** Online shops frequently list the same game with minor naming differences (e.g., *Catan*, *Catan: El Juego*, *Los Colonos de Catan*).
+    *   *Convention:* Match games using barcode (EAN/UPC) first. If EAN is unavailable, query `bgg_games_cache` and its `alternate_names` text array using case-insensitive SQL matching.
 
-### 4.2 Conversión de Divisas y Tasas Cambiarias
-*   **Fluctuaciones de Divisas:** Realizar consultas a APIs externas de tipo de cambio en cada renderizado incrementa costos de red y retrasa la carga de página.
-    *   *Convención:* Almacena las tasas de divisas en la tabla `exchange_rates` con expiración de 24 horas. Las consultas de precios de usuarios utilizan únicamente los datos locales de caché relacional en PostgreSQL.
+### 4.2 Currency Conversion and Exchange Rates
+*   **FX Rate Fluctuations:** Fetching external conversion rates on every client page render increases latency and network overhead.
+    *   *Convention:* Store exchange rates locally in the `exchange_rates` relation with a 24-hour expiration. Conversion calculations on the user interface query PostgreSQL cached rates only.
 
-### 4.3 Optimización y Ejecución de Pruebas (TDD)
-*   **Consumo de Memoria de Jest con JSDOM:** Correr pruebas en paralelo puede desbordar la memoria Node en entornos sandboxed.
-    *   *Convención:* Ejecutar las pruebas siempre en serie mediante: `npm run test -- --runInBand --forceExit`.
-*   **Mock de Supabase y Feeds:** Las Server Actions de sincronización deben contar con mocks detallados para evitar llamadas de red vivas a BGG o servidores externos durante los tests de integración.
+### 4.3 Test Optimization and Execution (TDD)
+*   **JSDOM Memory Bloat with Jest:** Running JSDOM test suites in parallel can exhaust Node memory in sandboxed environments.
+    *   *Convention:* Always run Jest tests in serial mode: `npm run test -- --runInBand --forceExit`.
+*   **Supabase and Feed Mocks:** Server actions syncing feeds must have robust mocks to prevent live network calls to BoardGameGeek or merchant sites during test runs.
 
 ---
 
-## 5. Estándares de Testing en Tres Niveles
+## 5. Three-Tier Testing Standards
 
-1.  **Unitario (Jest & JSDOM):** Comprobar utilitarios de conversión cambiaria, formateadores de precios y renders básicos de tarjetas de juego.
-2.  **Integración (Jest & mock-supabase):** Validar que las Server Actions de registro de tiendas y procesamiento de XML inserten correctamente en base de datos.
-3.  **E2E Walkthroughs (Playwright):** Simular el flujo completo del comprador (cambio de país, conversión de divisas, redirección con enlace de afiliado) y del merchant (onboarding guiado paso a paso con carga de archivo feed).
+1.  **Unit Tests (Jest & JSDOM):** Validate isolated helpers, currency formatters, and simple React component renders.
+2.  **Integration Tests (Jest & mock-supabase):** Verify server actions, RLS filters, and multi-component state updates.
+3.  **E2E Walkthroughs (Playwright):** Simulate complete user journeys (destination settings, currency switches, affiliate redirect click-throughs) and merchant wizards (store sign-up with logo upload).

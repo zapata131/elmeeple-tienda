@@ -1,41 +1,42 @@
-# Handoff Sprint Memo: MeeplePrecios (Fase 1: Planificación e Historias de Usuario)
+# Handoff Sprint Memo: MeeplePrecios (Phase 1: Planning & User Stories)
 
-Este memorando resume el estado actual del sprint de planificación inicial para el clon de [Brettspielpreise](https://brettspielpreise.de/) adaptado para el mercado hispanohablante.
-
----
-
-## 1. Detalles del Repositorio y Rama Activa
-*   **Repositorio GitHub:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Rama de Trabajo:** `main`
-*   **Archivos Creados/Configurados:**
-    *   [backlog_user_stories.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/backlog_user_stories.md): Backlog completo de historias de usuario (Jugadores, Tiendas Asociadas y Administradores).
-    *   [DESIGN.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md): Especificación de arquitectura técnica, esquemas Supabase relacionales, y sistema de diseño premium sin emojis.
-    *   [AGENTS.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/AGENTS.md): Reglas de agentes de IA, checklist crítico, convenciones de sincronización de feeds y estándares TDD.
+This memo summarizes the current progress of the initial planning sprint for the Spanish-speaking board game price comparison platform cloning [Brettspielpreise](https://brettspielpreise.de/).
 
 ---
 
-## 2. Estado de Hitos y Tareas
-
-### Hito 1: Planificación de Producto [100% COMPLETADO]
-*   [x] Exploración profunda de Brettspielpreise.de (cabecera, selectores de entrega/moneda, tabla de precios, idioma, y feeds de tiendas).
-*   [x] Redacción del backlog de historias de usuario bajo el esquema clásico ágil en español.
-*   [x] Codificación de reglas de agentes y arquitectura técnica en `DESIGN.md` y `AGENTS.md`.
-*   [x] Creación del repositorio remoto y publicación de 15 issues (US-01 a US-15) correspondientes al backlog de historias de usuario.
-
-### Hito 2: Configuración Inicial de Entorno [PENDIENTE]
-*   [ ] Inicialización del proyecto Next.js 16 con TypeScript y configuración de scripts (`dev`, `build`, `test`, `verify`).
-*   [ ] Instalación de dependencias core (`@supabase/supabase-js`, `@supabase/ssr`, `fast-xml-parser`, `tailwindcss` v4).
-*   [ ] Configuración del entorno de testing local (Jest, JSDOM, Playwright y scripts de base de datos de simulación).
+## 1. Repository & Branch Details
+*   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
+*   **Active Branch:** `main` (initialization phase)
+*   **Created Files:**
+    *   [backlog_user_stories.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/backlog_user_stories.md): Requirements and user stories backlog for Players, Partners, and Admins.
+    *   [DESIGN.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md): Technical architecture specification, Supabase schemas, and color tokens.
+    *   [AGENTS.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/AGENTS.md): AI agent roles, checklist, feed sync rules, and testing standards.
 
 ---
 
-## 3. Estado de la Suite de Pruebas (Test Status)
-*   **Pruebas Unitarias/Integración (Jest):** Sin iniciar (0 pruebas).
-*   **Pruebas E2E (Playwright Walkthroughs):** Sin iniciar.
+## 2. Milestone and Task Progress
+
+### Milestone 1: Product Planning [100% COMPLETED]
+*   [x] In-depth analysis of Brettspielpreise.de (header, country/currency settings, price tables, language flags, and store feeds).
+*   [x] Drafted the backlog of user stories using the classic Agile framework.
+*   [x] Codified agent rules and technical system design in `DESIGN.md` and `AGENTS.md`.
+*   [x] Set up the remote repository on GitHub and published the 15 issues (US-01 to US-15) corresponding to the backlog stories.
+*   [x] Translated all system documentation and user stories to English.
+
+### Milestone 2: Initial Setup & Environment [PENDING]
+*   [ ] Initialize the Next.js 16 project boilerplate with TypeScript and script definitions (`dev`, `build`, `test`, `verify`).
+*   [ ] Install core dependencies (`@supabase/supabase-js`, `@supabase/ssr`, `fast-xml-parser`, `tailwindcss` v4).
+*   [ ] Configure testing environment (Jest, JSDOM, Playwright, and local DB mock servers).
 
 ---
 
-## 4. Listado de Issues Creados en GitHub (https://github.com/zapata131/elmeeple-tienda/issues)
+## 3. Test Suite Status
+*   **Unit/Integration Tests (Jest):** Not started (0 tests).
+*   **E2E Walkthroughs (Playwright):** Not started.
+
+---
+
+## 4. GitHub Issues Published (https://github.com/zapata131/elmeeple-tienda/issues)
 *   `#1` [US-01: Buscador Predictivo Inteligente (Smart Search)](https://github.com/zapata131/elmeeple-tienda/issues/1)
 *   `#2` [US-02: Tabla Comparativa de Ofertas y Precios](https://github.com/zapata131/elmeeple-tienda/issues/2)
 *   `#3` [US-03: Configuración Global de Ubicación y Moneda (Toolbar)](https://github.com/zapata131/elmeeple-tienda/issues/3)
@@ -54,7 +55,7 @@ Este memorando resume el estado actual del sprint de planificación inicial para
 
 ---
 
-## 5. Próximos Pasos Recomendados (Next Steps)
-1.  **Ejecutar la creación de la app Next.js:** Inicializar el boilerplate del e-commerce utilizando `npx` y las reglas definidas en la sección `web_application_development`.
-2.  **Configurar base de datos en Supabase:** Crear las migraciones SQL locales basadas en la arquitectura relacional (`profiles`, `stores`, `shipping_rates`, `bgg_games_cache`, `store_games`, `price_alerts`).
-3.  **Implementar TDD en el buscador predictivo (US-01):** Comenzar programando las pruebas de autocompletado y búsqueda de juegos.
+## 5. Next Steps
+1.  **Initialize Next.js App:** Run `npx create-next-app` to set up the boilerplate.
+2.  **Database Migration Setups:** Create initial schema tables for profiles, stores, shipping rates, catalog cache, and currency conversions in Supabase.
+3.  **TDD implementation of US-01:** Program test fixtures and unit verifications for the autocomplete search service.

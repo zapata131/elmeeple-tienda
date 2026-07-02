@@ -1,145 +1,145 @@
-# Backlog de Historias de Usuario & Validación de Requerimientos - MeeplePrecios
+# User Stories Backlog & Requirement Validation - MeeplePrecios
 
-Este documento detalla la planeación de producto para **MeeplePrecios**, la plataforma de comparación de precios de juegos de mesa para el mundo de habla hispana (España y Latinoamérica), clonando las funcionalidades core de [Brettspielpreise](https://brettspielpreise.de/) e implementándolas sobre el stack tecnológico de **El Meeple**.
-
----
-
-## 1. Definición de Personas (Target Users)
-
-*   **Jugador / Comprador (Player / Buyer):** Coleccionista o entusiasta de los juegos de mesa modernos en España o Latinoamérica que busca adquirir un título específico al menor precio posible, considerando los costos de envío a su país, la disponibilidad inmediata y la versión de idioma (español, inglés, etc.).
-*   **Socio / Tienda Aliada (Partner / Online Store):** Dueño o administrador de una tienda en línea de juegos de mesa en el ámbito hispanohablante (tiendas físicas con e-commerce o tiendas 100% online) que desea listar su catálogo y precios en la plataforma para captar tráfico calificado y aumentar sus ventas mediante enlaces de afiliación.
-*   **Administrador de la Plataforma (Platform Admin):** Moderador y gestor técnico del sistema, encargado de auditar la calidad de los feeds de datos, resolver problemas de mapeo de nombres de juegos, aprobar nuevas tiendas y actualizar los tipos de cambio de divisas.
+This document details the product planning for **MeeplePrecios**, the board game price comparison platform for the Spanish-speaking world (Spain and Latin America), cloning the core features of [Brettspielpreise](https://brettspielpreise.de/) and implementing them on top of the **El Meeple** tech stack.
 
 ---
 
-## 2. Historias de Usuario: Jugador (Descubrimiento y Comparación)
+## 1. Target User Personas
 
-### US-01: Buscador Predictivo Inteligente (Smart Search)
-*   **Fórmula:** Como **Jugador**, quiero **escribir el nombre de un juego en una barra de búsqueda predictiva**, para **autocompletar y encontrar rápidamente la ficha del juego sin importar si busco por nombre en español o el título original de BoardGameGeek (BGG)**.
-*   **Criterios de Aceptación:**
-    1. La barra de búsqueda debe autocompletar resultados a partir de 3 caracteres.
-    2. Debe realizar búsquedas insensibles a mayúsculas y acentos sobre el nombre principal y los nombres alternativos (BGG alternate names).
-    3. Al seleccionar un juego en el dropdown, redirige directamente a su ficha `/game/[slug]`.
-*   **Estado:** **[PLANIFICADO]**
-
-### US-02: Tabla Comparativa de Ofertas y Precios
-*   **Fórmula:** Como **Jugador**, quiero **ver una lista detallada de tiendas que venden el juego que busco**, para **comparar el precio base, el costo de envío y el precio total de forma transparente**.
-*   **Criterios de Aceptación:**
-    1. La tabla comparativa debe listar los resultados ordenados por precio total de menor a mayor por defecto.
-    2. Cada fila debe mostrar: Logotipo y nombre de la tienda, calificación de reputación, idioma/edición del juego (representado con banderas SVG, ej. 🇪🇸 para español, 🇬🇧 para inglés), stock (Disponible, Bajo Pedido, Agotado), precio del juego, costo de envío a la ubicación seleccionada y precio total.
-    3. Hacer clic en "Ir a la tienda" debe abrir una nueva pestaña redirigiendo al producto con un enlace de afiliado.
-*   **Estado:** **[PLANIFICADO]**
-
-### US-03: Configuración Global de Ubicación y Moneda (Toolbar)
-*   **Fórmula:** Como **Jugador**, quiero **seleccionar mi país de entrega y mi moneda preferida en la barra superior**, para **ver los costos de envío reales y los precios en mi divisa local**.
-*   **Criterios de Aceptación:**
-    1. Debe permitir seleccionar países de entrega (España, México, Argentina, Colombia, Chile, Perú, etc.).
-    2. Debe permitir seleccionar monedas (EUR, MXN, ARS, COP, CLP, USD).
-    3. Cambiar el país debe recalcular inmediatamente los costos de envío en la tabla comparativa usando la matriz de envíos de cada tienda.
-    4. Cambiar la moneda debe aplicar la tasa de conversión guardada en la base de datos y cambiar el símbolo de divisa en toda la web.
-*   **Estado:** **[PLANIFICADO]**
-
-### US-04: Filtros de Búsqueda y Navegación de Catálogo
-*   **Fórmula:** Como **Jugador**, quiero **filtrar los juegos del catálogo general por categoría, mecánicas, precio y disponibilidad**, para **descubrir nuevas ofertas que se ajusten a mis gustos y presupuesto**.
-*   **Criterios de Aceptación:**
-    1. Permite filtrar solo juegos "En Stock" en al menos una tienda.
-    2. Permite usar chips de filtro para categorías y mecánicas obtenidas de BGG (ej. *Estrategia*, *Cooperativo*, *Colocación de Trabajadores*).
-    3. Permite definir un rango de precio máximo usando un slider responsivo.
-*   **Estado:** **[PLANIFICADO]**
-
-### US-05: Historial y Gráfico de Evolución de Precios
-*   **Fórmula:** Como **Jugador**, quiero **ver un gráfico interactivo con el historial de precios mínimos del juego en los últimos meses**, para **saber si la oferta actual es realmente buena o si es mejor esperar**.
-*   **Criterios de Aceptación:**
-    1. La ficha del juego debe renderizar un gráfico de líneas limpio (usando una librería ligera e interactiva, libre de emojis).
-    2. Debe registrar el precio mínimo diario de mercado del juego y permitir filtrar la vista por 30 días, 90 días o 1 año.
-*   **Estado:** **[PLANIFICADO]**
-
-### US-06: Lista de Deseos y Alertas de Caída de Precios
-*   **Fórmula:** Como **Jugador registrado**, quiero **guardar juegos en mi lista de deseos y configurar una alerta de precio**, para **recibir un correo automático cuando el juego baje del precio que estoy dispuesto a pagar**.
-*   **Criterios de Aceptación:**
-    1. Permite agregar un juego a la lista de deseos con un botón "Añadir a Wunschliste/Lista".
-    2. Si se activa la alerta de precio, solicita el precio objetivo en la moneda seleccionada.
-    3. Un proceso programado (cron job) verifica diariamente los precios mínimos y dispara correos vía Resend a los usuarios cuya alerta haya sido superada.
-*   **Estado:** **[PLANIFICADO]**
+*   **Player / Buyer:** A modern board game enthusiast or collector in Spain or Latin America looking to purchase a specific title at the lowest possible total cost, considering shipping rates to their country, immediate stock availability, and the box language version (Spanish, English, etc.).
+*   **Partner / Online Store (Merchant):** An owner or manager of a tabletop game e-commerce store in the Spanish-speaking market (either brick-and-mortar stores with online sales or 100% online operations) looking to list their catalog and prices to capture high-intent traffic and increase sales via affiliate links.
+*   **Platform Admin:** A moderator and technical administrator of the system responsible for auditing store feeds, resolving game title mapping issues, approving new merchant registrations, and maintaining currency conversion rates.
 
 ---
 
-## 3. Historias de Usuario: Socio / Tienda Aliada (Merchant)
+## 2. User Stories: Player (Discovery & Price Comparison)
 
-### US-07: Registro y Onboarding Secuencial de Tiendas
-*   **Fórmula:** Como **Dueño de Tienda**, quiero **registrar mi comercio en un formulario secuencial paso a paso**, para **comenzar a listar mis productos en el comparador de precios**.
-*   **Criterios de Aceptación:**
-    1. El paso 1 vincula la cuenta de la tienda con la sesión activa de NextAuth (correo y nombre del administrador).
-    2. El paso 2 solicita datos de la tienda: Nombre comercial, URL del e-commerce, país de origen, y subida del logotipo comercial (que se recortará en canvas a `150x150px`).
-    3. El paso 3 solicita ingresar datos fiscales/comerciales de verificación (RFC/NIF) para auditoría de seguridad.
-*   **Estado:** **[PLANIFICADO]**
+### US-01: Predictive Smart Search
+*   **Formula:** As a **Player**, I want to **type a board game name into a predictive search bar**, so that I can **auto-complete and quickly find the game detail page whether I search by its Spanish translated title or its original BoardGameGeek (BGG) title**.
+*   **Acceptance Criteria:**
+    1. The search bar must display autocomplete suggestions starting from 3 characters.
+    2. Searches must be case-insensitive and diacritic-insensitive, matching against the primary game name and alternate BGG titles.
+    3. Selecting a game suggestion redirects the user directly to its detail page `/game/[slug]`.
+*   **Status:** **[PLANNED]**
 
-### US-08: Configuración de Matriz de Costos de Envío
-*   **Fórmula:** Como **Dueño de Tienda**, quiero **configurar mis costos y condiciones de envío por país de destino desde mi panel de control**, para **que los compradores vean cálculos de envío precisos**.
-*   **Criterios de Aceptación:**
-    1. Permite definir tarifas planas de envío para diferentes países.
-    2. Permite establecer un umbral de envío gratuito (ej. *Envío gratis a España a partir de 50 EUR* o *Gratis a México a partir de 1500 MXN*).
-    3. Si un país no está soportado por la tienda, se marca como "No disponible para envío a [País]".
-*   **Estado:** **[PLANIFICADO]**
+### US-02: Deal and Price Comparison Table
+*   **Formula:** As a **Player**, I want to **see a detailed table comparing different online stores selling the game**, so that I can **compare the base price, shipping costs, and final total price transparently**.
+*   **Acceptance Criteria:**
+    1. The comparison table must list store offers sorted by total price (base price + shipping) from lowest to highest by default.
+    2. Each row must display: Store logo/name, store rating, box language/edition (represented with SVG flags, e.g., 🇪🇸 for Spanish, 🇬🇧 for English), availability status (In Stock, Pre-order, Out of Stock), base price, shipping cost to the selected location, and total calculated price.
+    3. Clicking the "Go to store" CTA must open the product page in a new browser tab using an affiliate tracking redirect.
+*   **Status:** **[PLANNED]**
 
-### US-09: Integración de Catálogo vía Feed XML/CSV
-*   **Fórmula:** Como **Dueño de Tienda**, quiero **proporcionar la URL del feed XML o CSV de mi inventario en mi panel**, para **que mi catálogo de productos, precios y stock se actualice automáticamente sin intervención manual**.
-*   **Criterios de Aceptación:**
-    1. Permite ingresar y validar la URL del feed en el panel de la tienda.
-    2. El formato del feed debe seguir una especificación estándar de la plataforma (EAN/UPC, título del juego, URL de compra, precio base, stock numérico, e imagen).
-    3. El sistema valida la estructura del feed en tiempo real al guardarlo y muestra un badge de estado (Sincronizado, Error de Formato, Fuera de Línea).
-*   **Estado:** **[PLANIFICADO]**
+### US-03: Global Shipping and Currency Settings (Toolbar)
+*   **Formula:** As a **Player**, I want to **select my delivery country and preferred currency in the global header toolbar**, so that I can **view real shipping rates and price conversions in my local currency**.
+*   **Acceptance Criteria:**
+    1. The toolbar must allow selecting destination countries (Spain, Mexico, Argentina, Colombia, Chile, Peru, etc.).
+    2. The toolbar must support major currencies (EUR, MXN, ARS, COP, CLP, USD).
+    3. Changing the destination country must immediately recalculate shipping costs in the comparison table based on each store's shipping matrix.
+    4. Changing the currency must instantly convert all prices using the cached exchange rates in the database and update currency symbols across the site.
+*   **Status:** **[PLANNED]**
 
-### US-10: Panel de Analíticas y Clics de Afiliado
-*   **Fórmula:** Como **Dueño de Tienda**, quiero **ver estadísticas de los clics y visitas redirigidas desde MeeplePrecios hacia mi web**, para **medir el retorno de inversión y el tráfico generado**.
-*   **Criterios de Aceptación:**
-    1. El panel muestra un gráfico de barras con los clics diarios/semanales acumulados.
-    2. Muestra un listado de los juegos más visitados que llevaron tráfico a su e-commerce.
-*   **Estado:** **[PLANIFICADO]**
+### US-04: Catalog Search Filters and Navigation
+*   **Formula:** As a **Player**, I want to **filter the global game catalog by category, mechanics, price range, and availability**, so that I can **discover new deals matching my preferences and budget**.
+*   **Acceptance Criteria:**
+    1. Users can filter to only show games that are currently "In Stock" in at least one store.
+    2. Supports filtering via category and mechanics chips imported from BGG (e.g., *Strategy*, *Cooperative*, *Worker Placement*).
+    3. Includes a responsive price range slider filter.
+*   **Status:** **[PLANNED]**
 
----
+### US-05: Historical Price Evolution Graph
+*   **Formula:** As a **Player**, I want to **see an interactive chart tracking the game's minimum market price over the past months**, so that I can **decide whether the current deal is genuinely good or if I should wait**.
+*   **Acceptance Criteria:**
+    1. The game detail page must render a clean, interactive line chart (using a lightweight library, free of emojis).
+    2. The chart must plot daily minimum prices and allow filtering history by 30 days, 90 days, or 1 year.
+*   **Status:** **[PLANNED]**
 
-## 4. Historias de Usuario: Administrador de la Plataforma (Platform Admin)
-
-### US-11: Panel de Auditoría y Verificación de Tiendas
-*   **Fórmula:** Como **Administrador de la Plataforma**, quiero **revisar y aprobar las solicitudes de registro de nuevas tiendas**, para **garantizar que solo e-commerce legítimos y seguros se listen en el comparador**.
-*   **Criterios de Aceptación:**
-    1. Panel seguro en `/admin` con contadores de solicitudes pendientes.
-    2. Modal de auditoría que muestra el RFC/NIF, sitio web e historial de la tienda.
-    3. Al aprobar (`verified: true`), la tienda se activa en el comparador y su feed comienza a procesarse en el siguiente ciclo cron.
-    4. Al rechazar, requiere un motivo de rechazo que se notifica al dueño de la tienda.
-*   **Estado:** **[PLANIFICADO]**
-
-### US-12: Diagnóstico y Monitoreo de Feeds
-*   **Fórmula:** Como **Administrador de la Plataforma**, quiero **ver el estado general de todas las sincronizaciones de feeds en tiempo real**, para **detectar rápidamente qué tiendas tienen problemas con sus catálogos**.
-*   **Criterios de Aceptación:**
-    1. Muestra una tabla con el nombre de cada tienda, última sincronización, número de productos mapeados, número de errores de mapeo (ej. juegos sin EAN válido) y estado del feed.
-    2. Permite disparar una sincronización manual de emergencia para una tienda específica.
-*   **Estado:** **[PLANIFICADO]**
-
-### US-13: Panel de Gestión Cambiaria (Monedas y Divisas)
-*   **Fórmula:** Como **Administrador de la Plataforma**, quiero **configurar las tasas de cambio de las monedas principales de soporte**, para **asegurar que las conversiones cambiarias sean precisas para los usuarios**.
-*   **Criterios de Aceptación:**
-    1. Permite activar/desactivar monedas.
-    2. Muestra la tasa cambiaria actual respecto a la moneda base (EUR) y permite forzar una actualización manual o programar una actualización diaria automática con un servicio de Forex (ej. ExchangeRatesAPI).
-*   **Estado:** **[PLANIFICADO]**
+### US-06: Wishlist and Price Drop Alerts
+*   **Formula:** As a **Registered Player**, I want to **add games to my wishlist and set a target price alert**, so that I can **receive an automatic email notification when the price drops below my threshold**.
+*   **Acceptance Criteria:**
+    1. Users can add any game to their wishlist with an "Add to Wishlist" button.
+    2. When setting a price alert, the user inputs their target price in their active currency.
+    3. A scheduled cron job runs daily to check minimum prices, firing notifications via Resend to users whose target thresholds are met.
+*   **Status:** **[PLANNED]**
 
 ---
 
-## 5. Requerimientos Técnicos y de Automatización (Backlog Técnico)
+## 3. User Stories: Partner / Online Store (Merchant)
 
-### US-14: Sincronización Programada de Feeds de Tiendas (Cron Job)
-*   **Fórmula:** Como **Sistema**, quiero **ejecutar un proceso CRON diario en segundo plano**, para **analizar los feeds XML/CSV de todas las tiendas aprobadas y mantener los precios de la base de datos actualizados**.
-*   **Criterios de Aceptación:**
-    1. El proceso recorre secuencialmente los feeds válidos, utilizando `fast-xml-parser` para leer los datos.
-    2. Actualiza los precios, stock y URLs en la tabla relacional `store_games`.
-    3. Si un juego del feed no existe en la caché global de juegos de BGG, se encola para descargar sus metadatos desde la API de BGG.
-*   **Estado:** **[PLANIFICADO]**
+### US-07: Sequential Store Onboarding Funnel
+*   **Formula:** As a **Store Owner**, I want to **register my e-commerce storefront through a sequential multi-step wizard**, so that I can **easily get my store listed on the platform**.
+*   **Acceptance Criteria:**
+    1. Step 1 pre-fills the owner's name and email based on their active NextAuth session.
+    2. Step 2 collects storefront details: Store name, e-commerce URL, country of origin, and logo upload (which gets client-side canvas-cropped to `150x150px` JPEG).
+    3. Step 3 collects fiscal/verification details (e.g., RFC/NIF/tax identifier) for safety auditing.
+*   **Status:** **[PLANNED]**
 
-### US-15: Encolamiento y Caché de Metadatos de BoardGameGeek (BGG API)
-*   **Fórmula:** Como **Sistema**, quiero **consultar y cachear los metadatos y portadas de los juegos desde BoardGameGeek**, para **evitar sobrepasar el límite de tasa de la API de BGG y acelerar la carga de fichas de juegos**.
-*   **Criterios de Aceptación:**
-    1. Al mapear un nuevo juego, se verifica en la tabla `bgg_games_cache` por `bgg_id` o código de barra (EAN/UPC).
-    2. Si no existe, se hace fetch a `https://boardgamegeek.com/xmlapi2/thing?id=<id>` y se guarda el resultado (nombre original, descripción, imagen, peso, mecánicas, nombres alternativos) en la caché.
-    3. Implementa reintentos automáticos ante respuestas HTTP 202 o límites de tasa HTTP 429 de BGG.
-*   **Estado:** **[PLANIFICADO]**
+### US-08: Shipping Cost Matrix Configuration
+*   **Formula:** As a **Store Owner**, I want to **configure my shipping rates and free-shipping thresholds by destination country in my dashboard**, so that **buyers see accurate shipping rates**.
+*   **Acceptance Criteria:**
+    1. Merchants can define flat shipping rates for different destination countries.
+    2. Merchants can specify a free shipping threshold per country (e.g., *Free shipping to Spain above 50 EUR*, or *Free shipping to Mexico above 1500 MXN*).
+    3. If a country is not supported, it is marked as "Shipping unavailable to [Country]".
+*   **Status:** **[PLANNED]**
+
+### US-09: Automated Catalog Sync via XML/CSV Feeds
+*   **Formula:** As a **Store Owner**, I want to **provide my store's XML or CSV product feed URL in my dashboard**, so that **my product prices, inventory, and purchase links update daily without manual data entry**.
+*   **Acceptance Criteria:**
+    1. The merchant dashboard must allow saving and validating a feed URL.
+    2. The feed structure must comply with the platform's standard schema (EAN/UPC, game title, product URL, image URL, base price, numerical stock).
+    3. The system validates the feed structure on save, showing a real-time status badge (Synced, Formatting Error, Offline).
+*   **Status:** **[PLANNED]**
+
+### US-10: Affiliate Click and Analytics Dashboard
+*   **Formula:** As a **Store Owner**, I want to **view referral click statistics on my merchant panel**, so that I can **measure the conversion rates and high-value traffic redirected to my store**.
+*   **Acceptance Criteria:**
+    1. The dashboard displays a bar chart of weekly/daily referral clicks.
+    2. Renders a list of the top games generating referral traffic to the merchant's site.
+*   **Status:** **[PLANNED]**
+
+---
+
+## 4. User Stories: Platform Admin
+
+### US-11: Merchant Auditing and Verification Dashboard
+*   **Formula:** As a **Platform Admin**, I want to **review and approve new merchant applications**, so that I can **prevent fraudulent storefronts from listing on the site**.
+*   **Acceptance Criteria:**
+    1. Renders a secure page at `/admin` displaying pending registration cards.
+    2. An audit details modal showcases the store's registration details, tax ID, and website link.
+    3. Approving a storefront sets `verified: true`, rendering the shop active on search results and enqueuing its feed for the next synchronization cycle.
+    4. Rejecting a storefront requires entering a rationale reason, which is automatically emailed to the merchant owner.
+*   **Status:** **[PLANNED]**
+
+### US-12: Feed Diagnostics and Monitoring Hub
+*   **Formula:** As a **Platform Admin**, I want to **monitor the sync health of all active store feeds in real-time**, so that I can **quickly identify formatting errors or offline merchant servers**.
+*   **Acceptance Criteria:**
+    1. Displays a table showing store name, last successful sync timestamp, count of successfully mapped games, mapping failure counts (e.g., missing valid EAN), and feed status.
+    2. Allows triggering a manual sync process for any individual merchant feed.
+*   **Status:** **[PLANNED]**
+
+### US-13: Currency and Foreign Exchange Rate Manager
+*   **Formula:** As a **Platform Admin**, I want to **manage currency settings and update exchange rates**, so that I can **guarantee precise price conversions for regional buyers**.
+*   **Acceptance Criteria:**
+    1. Allows enabling or disabling specific target currencies.
+    2. Displays exchange rates relative to the base currency (EUR) and enables manual overrides or daily automated FX fetches from an external exchange rates API.
+*   **Status:** **[PLANNED]**
+
+---
+
+## 5. Technical & Automation Backlog (Backend Stories)
+
+### US-14: Scheduled Store Feed Parser (Cron Job)
+*   **Formula:** As the **System**, I want to **run a scheduled background cron job daily**, so that I can **fetch, parse, and update prices from all approved merchant XML/CSV feeds**.
+*   **Acceptance Criteria:**
+    1. Sequential iteration over valid feeds, parsing data using `fast-xml-parser`.
+    2. Idempotent bulk upsert to the `store_games` relation, modifying price, stock, and links.
+    3. Unmapped games (not present in the global BGG metadata cache) are queued for metadata fetching.
+*   **Status:** **[PLANNED]**
+
+### US-15: BGG API Metadata Queue and Cache Manager
+*   **Formula:** As the **System**, I want to **resolve and cache game metadata from BoardGameGeek**, so that I can **minimize redundant queries to the BGG API and boost detail page speeds**.
+*   **Acceptance Criteria:**
+    1. Checks the `bgg_games_cache` by `bgg_id` or barcode (EAN/UPC) during catalog processing.
+    2. If not found, fetches from BGG `/thing` API, mapping name, thumbnail, description, weight complexity, player counts, and alternate names to the local cache.
+    3. Handles BGG XML API2 202 Accepted queues and HTTP 429 rate limit statuses gracefully.
+*   **Status:** **[PLANNED]**

@@ -1,13 +1,13 @@
 # User Stories Backlog & Requirement Validation - MeeplePrecios
 
-This document details the product planning for **MeeplePrecios**, the board game price comparison platform for the Spanish-speaking world (Spain and Latin America), cloning the core features of [Brettspielpreise](https://brettspielpreise.de/) and implementing them on top of the **El Meeple** tech stack.
+This document details the product planning for **MeeplePrecios**, the board game price comparison platform for the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil), cloning the core features of [Brettspielpreise](https://brettspielpreise.de/) and implementing them on top of the **El Meeple** tech stack.
 
 ---
 
 ## 1. Target User Personas
 
-*   **Player / Buyer:** A modern board game enthusiast or collector in Spain or Latin America looking to purchase a specific title at the lowest possible total cost, considering shipping rates to their country, immediate stock availability, and the box language version (Spanish, English, etc.).
-*   **Partner / Online Store (Merchant):** An owner or manager of a tabletop game e-commerce store in the Spanish-speaking market (either brick-and-mortar stores with online sales or 100% online operations) looking to list their catalog and prices to capture high-intent traffic and increase sales via affiliate links.
+*   **Player / Buyer:** A modern board game enthusiast or collector in the Iberian Peninsula (Spain, Portugal) or Latin America (including Brazil) looking to purchase a specific title at the lowest possible total cost, considering shipping rates to their country, immediate stock availability, and the box language version (Spanish, Portuguese, English, etc.).
+*   **Partner / Online Store (Merchant):** An owner or manager of a tabletop game e-commerce store in the Iberian Peninsula or Latin American markets (either brick-and-mortar stores with online sales or 100% online operations) looking to list their catalog and prices to capture high-intent traffic and increase sales via affiliate links.
 *   **Platform Admin:** A moderator and technical administrator of the system responsible for auditing store feeds, resolving game title mapping issues, approving new merchant registrations, and maintaining currency conversion rates.
 
 ---
@@ -15,10 +15,10 @@ This document details the product planning for **MeeplePrecios**, the board game
 ## 2. User Stories: Player (Discovery & Price Comparison)
 
 ### US-01: Predictive Smart Search
-*   **Formula:** As a **Player**, I want to **type a board game name into a predictive search bar**, so that I can **auto-complete and quickly find the game detail page whether I search by its Spanish translated title or its original BoardGameGeek (BGG) title**.
+*   **Formula:** As a **Player**, I want to **type a board game name into a predictive search bar**, so that I can **auto-complete and quickly find the game detail page whether I search by its Spanish/Portuguese translated title or its original BoardGameGeek (BGG) title**.
 *   **Acceptance Criteria:**
     1. The search bar must display autocomplete suggestions starting from 3 characters.
-    2. Searches must be case-insensitive and diacritic-insensitive, matching against the primary game name and alternate BGG titles.
+    2. Searches must be case-insensitive and diacritic-insensitive, matching against the primary game name and alternate BGG titles (including localized names in Spanish and Portuguese).
     3. Selecting a game suggestion redirects the user directly to its detail page `/game/[slug]`.
 *   **Status:** **[PLANNED]**
 
@@ -26,17 +26,17 @@ This document details the product planning for **MeeplePrecios**, the board game
 *   **Formula:** As a **Player**, I want to **see a detailed table comparing different online stores selling the game**, so that I can **compare the base price, shipping costs, and final total price transparently**.
 *   **Acceptance Criteria:**
     1. The comparison table must list store offers sorted by total price (base price + shipping) from lowest to highest by default.
-    2. Each row must display: Store logo/name, store rating, box language/edition (represented with SVG flags, e.g., 🇪🇸 for Spanish, 🇬🇧 for English), availability status (In Stock, Pre-order, Out of Stock), base price, shipping cost to the selected location, and total calculated price.
+    2. Each row must display: Store logo/name, store rating, box language/edition (represented with SVG flags, e.g., 🇪🇸 for Spanish, 🇵🇹 for Portuguese, 🇧🇷 for Brazilian Portuguese, 🇬🇧 for English), availability status (In Stock, Pre-order, Out of Stock), base price, shipping cost to the selected location, and total calculated price.
     3. Clicking the "Go to store" CTA must open the product page in a new browser tab using an affiliate tracking redirect.
 *   **Status:** **[PLANNED]**
 
 ### US-03: Global Shipping and Currency Settings (Toolbar)
 *   **Formula:** As a **Player**, I want to **select my delivery country and preferred currency in the global header toolbar**, so that I can **view real shipping rates and price conversions in my local currency**.
 *   **Acceptance Criteria:**
-    1. The toolbar must allow selecting destination countries (Spain, Mexico, Argentina, Colombia, Chile, Peru, etc.).
-    2. The toolbar must support major currencies (EUR, MXN, ARS, COP, CLP, USD).
+    1. The toolbar must allow selecting destination countries (Spain, Portugal, Mexico, Brazil, Argentina, Colombia, Chile, Peru, etc.).
+    2. The toolbar must support major currencies (EUR, MXN, BRL, ARS, COP, CLP, PEN, USD).
     3. Changing the destination country must immediately recalculate shipping costs in the comparison table based on each store's shipping matrix.
-    4. Changing the currency must instantly convert all prices using the cached exchange rates in the database and update currency symbols across the site.
+    4. Changing the currency must instantly convert all prices using the cached exchange rates in the database and update currency symbols across the site. The toolbar must also support toggling between Spanish and Portuguese languages.
 *   **Status:** **[PLANNED]**
 
 ### US-04: Catalog Search Filters and Navigation

@@ -1,14 +1,14 @@
 # System Architecture and Design Document: MeeplePrecios
 
-This document defines the architectural guidelines, database schemas, visual design system, and technical conventions for **MeeplePrecios**, the board game price comparison engine for the Spanish-speaking market.
+This document defines the architectural guidelines, database schemas, visual design system, and technical conventions for **MeeplePrecios**, the board game price comparison engine for the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil).
 
 ---
 
 ## 1. Product Core Vision
 
 *   **Project Name:** MeeplePrecios (meepleprecios.com / preciosjuegosdemesa.es)
-*   **Concept:** The premier independent price comparison platform for board games and accessories in Spain and Latin America.
-*   **Value Proposition:** We help tabletop gamers find the best consolidated deals (including regional shipping and tax estimates) and empower independent game stores to capture high-intent referral traffic and drive sales.
+*   **Concept:** The premier independent price comparison platform for board games and accessories in the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil).
+*   **Value Proposition:** We help tabletop gamers find the best consolidated deals (including shipping and regional tax estimates) and empower independent game stores to capture high-intent referral traffic and drive sales.
 *   **Business Model:** Affiliate marketing (cost per referral click and affiliate sale commissions) and premium merchant subscriptions for featured offers.
 
 ---
@@ -33,10 +33,10 @@ This document defines the architectural guidelines, database schemas, visual des
 
 ## 3. MVP Feature Scope
 
-*   **Smart Autocomplete Search:** A header search bar that queries official BGG titles, translations, and alternate Spanish titles concurrently.
+*   **Smart Autocomplete Search:** A header search bar that queries official BGG titles, translations, and alternate localized Spanish/Portuguese titles concurrently.
 *   **Game Detail Page (`/game/[slug]`):** SEO-friendly. Renders high-res box art, BGG statistics (complexity weight, recommended players, play duration), description, and the price comparison table.
 *   **Multi-Shop Comparison Table:** Lists store offers sorted by total price (base price + shipping) in ascending order by default. Includes base price, shipping rates, language version indicator, real-time stock, and redirect affiliate links.
-*   **Global Settings Toolbar:** Persistent header component allowing users to set destination country (for shipping calculations) and display currency (for real-time conversion).
+*   **Global Settings Toolbar:** Persistent header component allowing users to set destination country (for shipping calculations), display currency (for real-time conversion), and display language (Spanish/Portuguese).
 *   **Price History Chart:** A clean line chart (without emojis) displaying minimum historical price fluctuations for each game.
 *   **Wishlist & Price Alerts:** Registered users can add games to their wishlist and configure target thresholds to trigger automatic email alerts (via Resend) when prices drop.
 *   **Merchant Dashboard:** Self-serve portal for storefronts to register, edit tax details, upload store logo (auto-cropped to `150x150px` on canvas), define shipping matrices, and configure XML/CSV feeds.

@@ -1,6 +1,6 @@
 # Handoff Sprint Memo: MeeplePrecios (Phase 1: Planning & User Stories)
 
-This memo summarizes the current progress of the initial planning sprint for the Spanish-speaking board game price comparison platform cloning [Brettspielpreise](https://brettspielpreise.de/).
+This memo summarizes the current progress of the initial planning sprint for the board game price comparison platform cloning [Brettspielpreise](https://brettspielpreise.de/) for the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil).
 
 ---
 

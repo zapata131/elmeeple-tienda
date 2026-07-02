@@ -73,8 +73,8 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
     *   `profiles`: Centralized profile relation extending Supabase Auth with a `role` enum (`player`, `partner`, `admin`).
     *   `stores`: Merchant metadata (name, unique URL slug, base64 logo, base URL, verified status, feed URL, feed status, owner email).
     *   `shipping_rates`: Rates configured by merchants. Columns: `store_id`, `destination_country` (ISO-2 code), `flat_rate` (numeric), `free_shipping_threshold` (numeric, nullable).
-    *   `bgg_games_cache`: Global cached catalog of board games imported from BGG. Columns: `bgg_id`, `name`, `thumbnail`, `weight` (complexity), `min_players`, `max_players`, `playing_time`, `alternate_names` (text array), `last_updated_at`.
-    *   `store_games`: Intermediate table tracking product offerings. Columns: `store_id`, `bgg_id`, `store_product_url`, `price` (decimal), `stock` (integer/availability), `edition_language` (text), `last_updated_at`. Composite unique index on `(store_id, bgg_id)`.
+    *   `bgg_games_cache`: Global cached catalog of board games imported from BGG. Columns: `bgg_id`, `name`, `thumbnail`, `weight` (complexity), `min_players`, `max_players`, `playing_time`, `alternate_names` (text array), `parent_bgg_id` (integer, nullable, self-referencing foreign key to link alternate language editions), `last_updated_at`.
+    *   `store_games`: Intermediate table tracking product offerings. Columns: `store_id`, `bgg_id`, `store_product_url`, `price` (decimal), `stock` (integer/availability), `edition_language` (text, restricted to 'es' | 'pt' | 'en'), `last_updated_at`. Composite unique index on `(store_id, bgg_id)`.
     *   `price_alerts`: User price notification thresholds.
     *   `exchange_rates`: Cached foreign exchange rates relative to base EUR.
 *   **Row-Level Security (RLS):** Enabled on all tables.
@@ -82,6 +82,13 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
     *   `INSERT/UPDATE` restricted to verified owners for their respective relations (matching session emails).
 *   **XML Feed Processing:** Parsed on server-side functions using `fast-xml-parser`.
 *   **BGG API Integration:** Secure server actions querying BoardGameGeek XML2 API, managing 202 Accepted polling and rate limits.
+
+### 5.1 Business Model & Referral Link Validation
+*   **Affiliate Marketing Model:** The platform operates on Cost-Per-Click (CPC) and Cost-Per-Acquisition (CPA) affiliate referral programs. Outbound referral links direct players to store checkouts.
+*   **UTM Suffix Sizing:** Every outbound redirect link appends a standard, immutable URL tracking query:
+    `?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`
+*   **Merchant Integration Check:** Store owners can reconcile click tracking by auditing their web logs (Shopify Referrals, WooCommerce metrics, Google Analytics raw click logs) for these variables. MeeplePrecios records every redirect event in the database, displaying hourly clicks on the merchant dashboard.
+
 
 ---
 

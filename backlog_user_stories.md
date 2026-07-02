@@ -36,7 +36,7 @@ This document details the product planning for **MeeplePrecios**, the board game
     1. The toolbar must allow selecting destination countries (Spain, Portugal, Mexico, Brazil, Argentina, Colombia, Chile, Peru, etc.).
     2. The toolbar must support major currencies (EUR, MXN, BRL, ARS, COP, CLP, PEN, USD).
     3. Changing the destination country must immediately recalculate shipping costs in the comparison table based on each store's shipping matrix.
-    4. Changing the currency must instantly convert all prices using the cached exchange rates in the database and update currency symbols across the site. The toolbar must also support toggling between Spanish and Portuguese languages.
+    4. Changing the currency must instantly convert all prices using the cached exchange rates in the database and update currency symbols across the site. The toolbar must allow toggling the interface language, restricting the available languages to exactly English, Spanish, and Portuguese.
 *   **Status:** **[PLANNED]**
 
 ### US-04: Catalog Search Filters and Navigation
@@ -60,6 +60,14 @@ This document details the product planning for **MeeplePrecios**, the board game
     1. Users can add any game to their wishlist with an "Add to Wishlist" button.
     2. When setting a price alert, the user inputs their target price in their active currency.
     3. A scheduled cron job runs daily to check minimum prices, firing notifications via Resend to users whose target thresholds are met.
+*   **Status:** **[PLANNED]**
+
+### US-16: Language Editions Switcher (Other Versions)
+*   **Formula:** As a **Player**, I want to **see a list of other language editions for the same game**, so that I can **easily switch to the comparison table for my preferred language version (English, Spanish, or Portuguese)**.
+*   **Acceptance Criteria:**
+    1. The game detail page must check if there are other entries in the database representing alternative language editions linked to this game.
+    2. If other versions exist, render an "Other Versions" sidebar list displaying each edition's thumbnail, title, and a language flag SVG (restricting flags to Spain, Portugal/Brazil, and UK/US).
+    3. Clicking another version redirects the user directly to the detail page for that edition.
 *   **Status:** **[PLANNED]**
 
 ---
@@ -95,6 +103,7 @@ This document details the product planning for **MeeplePrecios**, the board game
 *   **Acceptance Criteria:**
     1. The dashboard displays a bar chart of weekly/daily referral clicks.
     2. Renders a list of the top games generating referral traffic to the merchant's site.
+    3. Includes an information section detailing the merchant's unique UTM tracking suffix (`?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`) so they can verify and reconcile clicks in their Shopify, WooCommerce, or Google Analytics dashboards.
 *   **Status:** **[PLANNED]**
 
 ---

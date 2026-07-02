@@ -21,7 +21,8 @@ Tabletop board gaming has experienced an exponential boom, but the market in the
 
 ### For Board Game Players (Demand)
 *   **Transparent Total Cost Calculation:** Select your delivery country and preferred currency. MeeplePrecios automatically calculates shipping costs and displays the exact total price.
-*   **Language Verification:** Clear indicators (e.g., SVG flag badges) show whether a store's listing is in Spanish, Portuguese, English, or another language, preventing accidental wrong-language imports.
+*   **Language Edition Switcher:** Matches localized versions of the game (Spanish, Portuguese, and English) and displays links to alternative box editions (e.g., switching between Spanish and English editions of *Catan*) under a dedicated "Other Versions" menu with vector flag SVGs.
+*   **Language Verification:** Clear indicators show whether a store's listing is in Spanish (`🇪🇸`), Portuguese (`🇵🇹`/`🇧🇷`), or English (`🇬🇧`/`🇺🇸`), preventing wrong-language purchases.
 *   **Price Drop Alerts & Wishlists:** Add games to a personal wishlist and get notified via email when a game falls below your target price.
 *   **Price Tracking History:** Interactive charts display the historical price trends of any game to help you make informed purchase decisions.
 
@@ -29,6 +30,18 @@ Tabletop board gaming has experienced an exponential boom, but the market in the
 *   **Targeted Organic Traffic:** Get your e-commerce shop listed in front of high-intent board gamers, driving qualified traffic directly to your checkout.
 *   **Frictionless Automated Sync:** Provide a standard XML or CSV product feed URL in your merchant dashboard, and MeeplePrecios will update your prices and stock status daily—no manual entry needed.
 *   **Performance Metrics:** Monitor click-through rates and referral analytics directly from your merchant dashboard.
+*   **Referral Validation Suffix:** Every outbound traffic link automatically appends tracking coordinates:
+    `?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`
+    This allows merchants to easily reconcile click logs inside their Google Analytics or Shopify referrer metrics.
+
+---
+
+## 2.1 The Business Model (How it Works)
+
+MeeplePrecios operates as an independent price-comparison search engine under a hybrid affiliate and listing model:
+1.  **Cost-Per-Click (CPC) & Cost-Per-Acquisition (CPA):** When a user compares prices and clicks "Go to store" to make a purchase, MeeplePrecios redirects them with a unique tracking code. The affiliate network pays a conversion commission (typically 2% to 7% of the total cart checkout) or a flat fee per referral click.
+2.  **Merchant Premium Listing (SaaS Subscriptions):** Verified e-commerce shops can pay a monthly subscription fee to highlight their storefront or rank higher on the comparison table (e.g., showing their listings as "Featured Deals" even if they aren't the absolute lowest price).
+3.  **Sponsored Display Placements:** Placements for banner ads on search results, category indexes, or game detail pages for local stores, events, or publishers.
 
 ---
 
@@ -39,7 +52,7 @@ MeeplePrecios is built using a modern, scalable, and high-performance stack desi
 *   **Frontend & Backend Monolith:** [Next.js](https://nextjs.org/) (App Router) in TypeScript, optimized for Server-Side Rendering (SSR) and SEO.
 *   **Styling & Design System:** [Tailwind CSS (v4)](https://tailwindcss.com/) with a minimalist, premium layout based on the brand's custom color palette (Blanco Roto, Carbón, Malva, Turquesa, Coral). No raw emojis are used; icons are clean vector SVGs.
 *   **Database & Backend Services:** [Supabase](https://supabase.com/) (PostgreSQL) with strict Row-Level Security (RLS) policies.
-*   **Authentication:** [NextAuth.js](https://next-auth.js.org/) managing secure role-based access control (RBAC) for Players, Partners, and Admins. Supports toggling the interface between Spanish and Portuguese.
+*   **Authentication:** [NextAuth.js](https://next-auth.js.org/) managing secure role-based access control (RBAC) for Players, Partners, and Admins. Supports toggling the interface between the three supported languages: Spanish, Portuguese, and English.
 *   **Data Aggregation:** Background cron jobs parsing store feeds securely on the server using `fast-xml-parser` and caching board game metadata from the BoardGameGeek (BGG) XML2 API.
 *   **Emails:** Transactional notifications and price drop alerts powered by [Resend](https://resend.com/).
 *   **Testing:** [Jest](https://jestjs.io/) and React Testing Library for serial unit/integration tests, and [Playwright](https://playwright.dev/) for high-fidelity End-to-End (E2E) browser walkthroughs.

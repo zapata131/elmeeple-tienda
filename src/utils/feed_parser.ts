@@ -141,6 +141,9 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
     .from('stores')
     .update({
       feed_status: 'success',
+      feed_last_processed_count: stats.processed,
+      feed_last_matched_count: stats.matched,
+      feed_last_unmatched_count: stats.unmatched,
       last_updated_at: new Date().toISOString(),
     })
     .eq('id', storeId);

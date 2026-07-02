@@ -45,6 +45,9 @@ create table public.stores (
     base_url text not null,
     google_shopping_feed_url text,
     feed_status text default 'Offline'::text not null,
+    feed_last_processed_count integer default 0 not null,
+    feed_last_matched_count integer default 0 not null,
+    feed_last_unmatched_count integer default 0 not null,
     owner_email text not null,
     verified boolean default false not null,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null

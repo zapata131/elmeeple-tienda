@@ -21,7 +21,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Drafted the backlog of user stories using the classic Agile framework.
 *   [x] Codified agent rules and technical system design in `DESIGN.md` and `AGENTS.md`.
 *   [x] Set up the remote repository on GitHub and published the 15 issues (US-01 to US-15) corresponding to the backlog stories.
-*   [x] Translated all system documentation and user stories to English.
+*   [x] Translated all system documentation, user stories, and GitHub issues to English.
 
 ### Milestone 2: Initial Setup & Environment [PENDING]
 *   [ ] Initialize the Next.js 16 project boilerplate with TypeScript and script definitions (`dev`, `build`, `test`, `verify`).
@@ -37,21 +37,21 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 4. GitHub Issues Published (https://github.com/zapata131/elmeeple-tienda/issues)
-*   `#1` [US-01: Buscador Predictivo Inteligente (Smart Search)](https://github.com/zapata131/elmeeple-tienda/issues/1)
-*   `#2` [US-02: Tabla Comparativa de Ofertas y Precios](https://github.com/zapata131/elmeeple-tienda/issues/2)
-*   `#3` [US-03: Configuración Global de Ubicación y Moneda (Toolbar)](https://github.com/zapata131/elmeeple-tienda/issues/3)
-*   `#4` [US-04: Filtros de Búsqueda y Navegación de Catálogo](https://github.com/zapata131/elmeeple-tienda/issues/4)
-*   `#5` [US-05: Historial y Gráfico de Evolución de Precios](https://github.com/zapata131/elmeeple-tienda/issues/5)
-*   `#6` [US-06: Lista de Deseos y Alertas de Caída de Precios](https://github.com/zapata131/elmeeple-tienda/issues/6)
-*   `#7` [US-07: Registro y Onboarding Secuencial de Tiendas](https://github.com/zapata131/elmeeple-tienda/issues/7)
-*   `#8` [US-08: Configuración de Matriz de Costos de Envío](https://github.com/zapata131/elmeeple-tienda/issues/8)
-*   `#9` [US-09: Integración de Catálogo vía Feed XML/CSV](https://github.com/zapata131/elmeeple-tienda/issues/9)
-*   `#10` [US-10: Panel de Analíticas y Clics de Afiliado](https://github.com/zapata131/elmeeple-tienda/issues/10)
-*   `#11` [US-11: Panel de Auditoría y Verificación de Tiendas](https://github.com/zapata131/elmeeple-tienda/issues/11)
-*   `#12` [US-12: Diagnóstico y Monitoreo de Feeds](https://github.com/zapata131/elmeeple-tienda/issues/12)
-*   `#13` [US-13: Panel de Gestión Cambiaria (Monedas y Divisas)](https://github.com/zapata131/elmeeple-tienda/issues/13)
-*   `#14` [US-14: Sincronización Programada de Feeds de Tiendas (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14)
-*   `#15` [US-15: Encolamiento y Caché de Metadatos de BoardGameGeek (BGG API)](https://github.com/zapata131/elmeeple-tienda/issues/15)
+*   `#1` [US-01: Predictive Smart Search](https://github.com/zapata131/elmeeple-tienda/issues/1)
+*   `#2` [US-02: Deal and Price Comparison Table](https://github.com/zapata131/elmeeple-tienda/issues/2)
+*   `#3` [US-03: Global Shipping and Currency Settings (Toolbar)](https://github.com/zapata131/elmeeple-tienda/issues/3)
+*   `#4` [US-04: Catalog Search Filters and Navigation](https://github.com/zapata131/elmeeple-tienda/issues/4)
+*   `#5` [US-05: Historical Price Evolution Graph](https://github.com/zapata131/elmeeple-tienda/issues/5)
+*   `#6` [US-06: Wishlist and Price Drop Alerts](https://github.com/zapata131/elmeeple-tienda/issues/6)
+*   `#7` [US-07: Sequential Store Onboarding Funnel](https://github.com/zapata131/elmeeple-tienda/issues/7)
+*   `#8` [US-08: Shipping Cost Matrix Configuration](https://github.com/zapata131/elmeeple-tienda/issues/8)
+*   `#9` [US-09: Automated Catalog Sync via XML/CSV Feeds](https://github.com/zapata131/elmeeple-tienda/issues/9)
+*   `#10` [US-10: Affiliate Click and Analytics Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/10)
+*   `#11` [US-11: Merchant Auditing and Verification Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/11)
+*   `#12` [US-12: Feed Diagnostics and Monitoring Hub](https://github.com/zapata131/elmeeple-tienda/issues/12)
+*   `#13` [US-13: Currency and Foreign Exchange Rate Manager](https://github.com/zapata131/elmeeple-tienda/issues/13)
+*   `#14` [US-14: Scheduled Store Feed Parser (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14)
+*   `#15` [US-15: BGG API Metadata Queue and Cache Manager](https://github.com/zapata131/elmeeple-tienda/issues/15)
 
 ---
 

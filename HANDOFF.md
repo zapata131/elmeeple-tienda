@@ -22,7 +22,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] In-depth analysis of board game price comparison engines (header navigation, country/currency settings, price tables, language flags, and store feeds).
 *   [x] Drafted the backlog of user stories using the classic Agile framework.
 *   [x] Codified agent rules and technical system design in `DESIGN.md` and `AGENTS.md`.
-*   [x] Set up the remote repository on GitHub and published the 16 issues (US-01 to US-16) corresponding to the backlog stories.
+*   [x] Set up the remote repository on GitHub and published the 20 issues (US-01 to US-20) corresponding to the backlog stories.
 *   [x] Translated all system documentation, user stories, and GitHub issues to English.
 
 ### Milestone 2: Initial Setup & Environment [100% COMPLETED]
@@ -56,6 +56,10 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#14` [US-14: Scheduled Store Feed Parser (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14)
 *   `#15` [US-15: BGG API Metadata Queue and Cache Manager](https://github.com/zapata131/elmeeple-tienda/issues/15)
 *   `#16` [US-16: Language Editions Switcher (Other Versions)](https://github.com/zapata131/elmeeple-tienda/issues/16)
+*   `#17` [US-17: Consolidated Multi-Game Cart Optimizer](https://github.com/zapata131/elmeeple-tienda/issues/17)
+*   `#18` [US-18: Domestic-Only Store Toggle](https://github.com/zapata131/elmeeple-tienda/issues/18)
+*   `#19` [US-19: Unified Smart Autocomplete Dropdown](https://github.com/zapata131/elmeeple-tienda/issues/19)
+*   `#20` [US-20: Price Alerts In-App Dashboard & Header Notification](https://github.com/zapata131/elmeeple-tienda/issues/20)
 
 ---
 

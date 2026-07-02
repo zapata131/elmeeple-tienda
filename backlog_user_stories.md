@@ -70,6 +70,36 @@ This document details the product planning for **MeeplePrecios**, the board game
     3. Clicking another version redirects the user directly to the detail page for that edition.
 *   **Status:** **[PLANNED]**
 
+### US-17: Consolidated Multi-Game Cart Optimizer
+*   **Formula:** As a **Player**, I want to **add multiple games to a comparison shopping list**, so that I can **view the absolute cheapest combination of stores and consolidated shipping rates to buy my entire list**.
+*   **Acceptance Criteria:**
+    1. The wishlist page must offer a checkmark selector next to games to add them to a "Cart Comparison Sheet".
+    2. The optimizer engine must compute store splits using a greedy search algorithm (comparing purchasing all from a single store vs. split shipments).
+    3. Renders the top 3 store combination results, desegregated by Game Prices, Shipping Costs, and Delivery Times.
+*   **Status:** **[PLANNED]**
+
+### US-18: Domestic-Only Store Toggle
+*   **Formula:** As a **Player in Latin America or Iberia**, I want to **toggle a "Domestic Stores Only" filter on the deals table**, so that I can **exclude international imports and avoid customs, duties, and long delivery delays**.
+*   **Acceptance Criteria:**
+    1. A prominent toggle switch "Mostrar solo tiendas locales" must render above the comparison table.
+    2. When active, filters out any store whose origin country (`stores.origin_country`) does not match the user's selected delivery country (`destination_country`).
+*   **Status:** **[PLANNED]**
+
+### US-19: Unified Smart Autocomplete Dropdown
+*   **Formula:** As a **Player**, I want to **see categorized suggestions in real-time as I type in the search bar**, so that I can **instantly jump to a game page, a store profile, or a tag index**.
+*   **Acceptance Criteria:**
+    1. The autocomplete dropdown must render sections: "Games", "Stores", and "Categories/Tags" as the user types.
+    2. Renders small thumbnails and logos inside the suggestions list.
+    3. Keyboard-accessible (arrow keys and enter to select).
+*   **Status:** **[PLANNED]**
+
+### US-20: Price Alerts In-App Dashboard & Header Notification
+*   **Formula:** As a **Registered Player**, I want to **see my active price alerts and triggered drops in an on-site notification center**, so that I can **act on deals immediately without checking my email**.
+*   **Acceptance Criteria:**
+    1. A notification bell SVG icon in the header displays a red dot badge when new price drops are triggered.
+    2. A dashboard page `/dashboard/alerts` lists all active alerts, allowing users to delete, edit target thresholds, or view historical pricing trends.
+*   **Status:** **[PLANNED]**
+
 ---
 
 ## 3. User Stories: Partner / Online Store (Merchant)

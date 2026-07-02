@@ -1,6 +1,6 @@
 # Handoff Sprint Memo: MeeplePrecios (Phase 1: Planning & User Stories)
 
-This memo summarizes the current progress of the initial planning sprint for the board game price comparison platform cloning [Brettspielpreise](https://brettspielpreise.de/) for the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil).
+This memo summarizes the current progress of the initial planning sprint for the board game price comparison platform for the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil).
 
 ---
 
@@ -19,7 +19,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 ## 2. Milestone and Task Progress
 
 ### Milestone 1: Product Planning [100% COMPLETED]
-*   [x] In-depth analysis of Brettspielpreise.de (header, country/currency settings, price tables, language flags, and store feeds).
+*   [x] In-depth analysis of board game price comparison engines (header navigation, country/currency settings, price tables, language flags, and store feeds).
 *   [x] Drafted the backlog of user stories using the classic Agile framework.
 *   [x] Codified agent rules and technical system design in `DESIGN.md` and `AGENTS.md`.
 *   [x] Set up the remote repository on GitHub and published the 16 issues (US-01 to US-16) corresponding to the backlog stories.

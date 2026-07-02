@@ -2,7 +2,7 @@
 
 MeeplePrecios is a high-performance tabletop board game price comparison aggregator designed specifically for the Iberian Peninsula (Spain and Portugal) and Latin America (including Brazil). 
 
-Cloned from the core architectural principles of the German price portal [Brettspielpreise](https://brettspielpreise.de/), MeeplePrecios connects board game enthusiasts with independent e-commerce shops across the Iberian and Latin American markets, offering transparent calculations on total purchase costs.
+MeeplePrecios connects board game enthusiasts with independent e-commerce shops across the Iberian and Latin American markets, offering transparent calculations on total purchase costs.
 
 ---
 

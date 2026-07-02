@@ -1,6 +1,6 @@
 # User Stories Backlog & Requirement Validation - MeeplePrecios
 
-This document details the product planning for **MeeplePrecios**, the board game price comparison platform for the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil), cloning the core features of [Brettspielpreise](https://brettspielpreise.de/) and implementing them on top of the **El Meeple** tech stack.
+This document details the product planning for **MeeplePrecios**, the board game price comparison platform for the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil), implemented on top of the **El Meeple** tech stack.
 
 ---
 

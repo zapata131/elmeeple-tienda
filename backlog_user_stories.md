@@ -100,6 +100,36 @@ This document details the product planning for **MeeplePrecios**, the board game
     2. A dashboard page `/dashboard/alerts` lists all active alerts, allowing users to delete, edit target thresholds, or view historical pricing trends.
 *   **Status:** **[PLANNED]**
 
+### US-21: Player BGG Wishlist Sync
+*   **Formula:** As a **Registered Player**, I want to **sync my BoardGameGeek wishlist with my MeeplePrecios account**, so that I can **import my desired board games in a single click and automatically activate price tracking**.
+*   **Acceptance Criteria:**
+    1. A "Sync from BGG" action in the player's wishlist settings asks for their BGG username.
+    2. Securely calls BGG XML2 API `/collection` in the background, filtering by `wishlist=1` or `wanttobuy=1`.
+    3. Auto-creates price drop alert records in MeeplePrecios with the default target price set to 15% below the current market minimum.
+*   **Status:** **[PLANNED]**
+
+### US-22: Store Packaging Vibe Tags & Reviews
+*   **Formula:** As a **Player**, I want to **rate and write reviews about online shops with packaging vibe tags**, so that I can **identify stores that protect board game box corners during delivery**.
+*   **Acceptance Criteria:**
+    1. A dedicated review panel on store profiles (`/store/[slug]`) allows authenticated users to submit reviews (1-5 stars) and select store vibe tags (e.g., *Protected Corners*, *Double Boxed*, *Corner Squashed*, *Delayed Shipping*).
+    2. Displays average store ratings and horizontal tag progress bars next to each merchant listing in the game deals comparison table.
+*   **Status:** **[PLANNED]**
+
+### US-23: Free Shipping Filler Helper
+*   **Formula:** As a **Player comparing cart costs**, I want to **see recommended low-cost accessories or card games from the store I'm buying from**, so that I can **easily cross their free shipping threshold and save money**.
+*   **Acceptance Criteria:**
+    1. If the game price is within 15 EUR (or equivalent currency) of a store's free shipping threshold, display a "Threshold Helper" card below the store's deal entry.
+    2. The helper lists 3 available products from that store (e.g., card sleeves, dice, pocket games) sorted by price from lowest to highest that would push the total above the threshold.
+*   **Status:** **[PLANNED]**
+
+### US-24: Restock Alert Notification
+*   **Formula:** As a **Player**, I want to **set a restock alert on a game that is out of stock everywhere**, so that I can **be notified immediately when a store lists it back in stock**.
+*   **Acceptance Criteria:**
+    1. Out-of-stock game detail pages display a prominent button: "Avísame cuando haya stock" / "Notify me when restocked".
+    2. Daily cron jobs processing store feeds identify if any seller's inventory changes from 0 to `in_stock`.
+    3. Trigger emails via Resend and flag on-site notifications for subscribed users when inventory is found.
+*   **Status:** **[PLANNED]**
+
 ---
 
 ## 3. User Stories: Partner / Online Store (Merchant)

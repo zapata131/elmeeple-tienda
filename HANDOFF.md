@@ -22,7 +22,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] In-depth analysis of board game price comparison engines (header navigation, country/currency settings, price tables, language flags, and store feeds).
 *   [x] Drafted the backlog of user stories using the classic Agile framework.
 *   [x] Codified agent rules and technical system design in `DESIGN.md` and `AGENTS.md`.
-*   [x] Set up the remote repository on GitHub and published the 20 issues (US-01 to US-20) corresponding to the backlog stories.
+*   [x] Set up the remote repository on GitHub and published the 24 issues (US-01 to US-24) corresponding to the backlog stories.
 *   [x] Translated all system documentation, user stories, and GitHub issues to English.
 
 ### Milestone 2: Initial Setup & Environment [100% COMPLETED]
@@ -60,6 +60,10 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#18` [US-18: Domestic-Only Store Toggle](https://github.com/zapata131/elmeeple-tienda/issues/18)
 *   `#19` [US-19: Unified Smart Autocomplete Dropdown](https://github.com/zapata131/elmeeple-tienda/issues/19)
 *   `#20` [US-20: Price Alerts In-App Dashboard & Header Notification](https://github.com/zapata131/elmeeple-tienda/issues/20)
+*   `#21` [US-21: Player BGG Wishlist Sync](https://github.com/zapata131/elmeeple-tienda/issues/21)
+*   `#22` [US-22: Store Packaging Vibe Tags & Reviews](https://github.com/zapata131/elmeeple-tienda/issues/22)
+*   `#23` [US-23: Free Shipping Filler Helper](https://github.com/zapata131/elmeeple-tienda/issues/23)
+*   `#24` [US-24: Restock Alert Notification](https://github.com/zapata131/elmeeple-tienda/issues/24)
 
 ---
 

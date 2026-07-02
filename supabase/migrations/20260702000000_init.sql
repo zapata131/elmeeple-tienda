@@ -234,3 +234,34 @@ create policy "Allow admin/system to manage price_history"
         )
     );
 
+
+-- Create clicks table
+create table public.clicks (
+    id uuid default gen_random_uuid() primary key,
+    store_id uuid references public.stores(id) on delete cascade not null,
+    bgg_id integer references public.bgg_games_cache(bgg_id) on delete cascade not null,
+    ip_address text,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Index for analytics
+create index clicks_store_id_created_at_idx on public.clicks(store_id, created_at);
+
+-- Enable RLS on clicks
+alter table public.clicks enable row level security;
+
+create policy "Allow store owners to view clicks"
+    on public.clicks for select
+    using (
+        exists (
+            select 1 from public.stores
+            where id = clicks.store_id
+            and owner_email = auth.jwt() ->> 'email'
+        )
+    );
+
+create policy "Allow system/anon to insert clicks"
+    on public.clicks for insert
+    with check (true);
+
+

@@ -78,6 +78,7 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
     *   `price_alerts`: User price notification thresholds.
     *   `exchange_rates`: Cached foreign exchange rates relative to base EUR.
     *   `price_history`: Log of daily minimum prices. Columns: `bgg_id` (integer references bgg_games_cache), `min_price` (numeric), `recorded_at` (date). Composite primary key on `(bgg_id, recorded_at)`.
+    *   `clicks`: Log of affiliate redirects. Columns: `id` (uuid), `store_id` (references stores), `bgg_id` (references bgg_games_cache), `ip_address` (text, optional), `created_at` (timestamp).
 *   **Row-Level Security (RLS):** Enabled on all tables.
     *   Public `SELECT` access to `bgg_games_cache`, `stores`, and `store_games`.
     *   `INSERT/UPDATE` restricted to verified owners for their respective relations (matching session emails).

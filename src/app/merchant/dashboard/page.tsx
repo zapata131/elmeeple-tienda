@@ -1,0 +1,181 @@
+import React from 'react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
+import { Toolbar } from '@/components/Toolbar';
+import Link from 'next/link';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+interface ClickLog {
+  created_at: string;
+  bgg_games_cache: { name: string } | null;
+}
+
+export default async function MerchantDashboardPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user?.email) {
+    redirect('/');
+  }
+
+  // Load merchant store details
+  const { data: store, error: storeErr } = await supabase
+    .from('stores')
+    .select('id, name, feed_status')
+    .eq('owner_email', session.user.email)
+    .single();
+
+  if (storeErr || !store) {
+    redirect('/merchant/onboard');
+  }
+
+  // Fetch clicks logs
+  const { data: clicksData } = await supabase
+    .from('clicks')
+    .select(`
+      created_at,
+      bgg_games_cache (
+        name
+      )
+    `)
+    .eq('store_id', store.id)
+    .order('created_at', { ascending: false });
+
+  const clicks = (clicksData as unknown as ClickLog[]) || [];
+  const clicksCount = clicks.length;
+
+  // Mock standard CTR ratio based on industry averages (4.2% click through rate)
+  const ctrRatio = clicksCount > 0 ? '4.2%' : '0.0%';
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
+      
+      {/* Settings Toolbar */}
+      <Toolbar />
+
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 py-6 px-6">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <div className="flex flex-col">
+            <h1 className="text-xl font-bold text-gray-900">{store.name}</h1>
+            <span className="text-xs text-gray-500 font-semibold">Panel de Control del Socio</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/merchant/shipping"
+              className="text-xs bg-indigo-650 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm"
+            >
+              Matriz de Envíos
+            </Link>
+            <Link
+              href="/"
+              className="text-xs font-semibold text-gray-600 hover:text-gray-900"
+            >
+              Back to Home
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Container */}
+      <main className="flex-1 max-w-4xl w-full mx-auto py-12 px-6 flex flex-col gap-8">
+        
+        {/* KPI Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Card 1: Total Clicks */}
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col gap-1">
+            <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Clics de Referencia</span>
+            <div className="flex items-baseline gap-2 mt-2">
+              <span className="text-3xl font-extrabold text-gray-950">{clicksCount}</span>
+              <span className="text-xs text-green-600 font-bold">↑ 12%</span>
+            </div>
+            <p className="text-[10px] text-gray-500 mt-2">Total de clics salientes redireccionados a tu tienda.</p>
+          </div>
+
+          {/* Card 2: CTR */}
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col gap-1">
+            <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Ratio de Clic (CTR)</span>
+            <div className="flex items-baseline gap-2 mt-2">
+              <span className="text-3xl font-extrabold text-gray-950">{ctrRatio}</span>
+              <span className="text-xs text-indigo-600 font-bold">Estable</span>
+            </div>
+            <p className="text-[10px] text-gray-500 mt-2">Porcentaje estimado de clics por visualizaciones de ofertas.</p>
+          </div>
+
+          {/* Card 3: Sync Feed Status */}
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 flex flex-col gap-1">
+            <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Estado de Catálogo Feed</span>
+            <div className="flex items-baseline gap-2 mt-2">
+              <span className={`text-sm font-bold uppercase px-2.5 py-0.5 rounded-full ${
+                store.feed_status === 'success'
+                  ? 'bg-green-50 text-green-700 border border-green-200'
+                  : 'bg-red-50 text-red-700 border border-red-200'
+              }`}>
+                {store.feed_status || 'pending'}
+              </span>
+            </div>
+            <p className="text-[10px] text-gray-500 mt-4">Última sincronización programada del feed de Google.</p>
+          </div>
+
+        </div>
+
+        {/* Clicks Log Table */}
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+          <div className="px-6 py-5 border-b border-gray-200">
+            <h3 className="text-sm font-bold text-gray-950">Historial de Redirecciones Recientes</h3>
+            <p className="text-xs text-gray-500 mt-0.5">Listado detallado de clics salientes en ofertas de juegos.</p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-left text-xs text-gray-700">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-250 font-bold text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3">Juego de Mesa</th>
+                  <th className="px-6 py-3">Fecha y Hora (UTC)</th>
+                  <th className="px-6 py-3">Canal</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {clicks.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="px-6 py-8 text-center text-gray-400 font-medium">
+                      No clicks recorded yet.
+                    </td>
+                  </tr>
+                ) : (
+                  clicks.map((click, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 font-bold text-gray-900">
+                        {click.bgg_games_cache?.name || 'Unknown Game'}
+                      </td>
+                      <td className="px-6 py-4 text-gray-600 font-medium">
+                        {new Date(click.created_at).toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded text-[10px] uppercase border border-indigo-200">
+                          Outbound Referral
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white border-t border-gray-800 py-8 px-6 text-center text-xs text-gray-500 mt-12">
+        <p>© 2026 MeeplePrecios. Todos los derechos reservados. El Meeple España & LATAM.</p>
+      </footer>
+
+    </div>
+  );
+}

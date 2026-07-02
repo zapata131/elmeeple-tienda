@@ -199,10 +199,10 @@ export default async function GameDetailPage({ params }: Props) {
                         {/* CTA */}
                         <td className="px-6 py-4 text-right">
                           <a
-                            href={`${offer.store_product_url}?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`}
+                            href={`/api/redirect?offer_id=${offer.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
+                            className="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-indigo-650 hover:bg-indigo-700 rounded-lg transition-colors"
                           >
                             Go to store
                           </a>

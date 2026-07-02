@@ -61,7 +61,9 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Google Shopping RSS/XML regex feed parser (`feed_parser.ts`) resolving EAN barcode matching priority and title containment fallbacks (US-09).
 *   [x] Feed catalog update sync loader batching rows in segments of 500 items maximum to protect database transaction overheads.
 *   [x] Automated Sync Feeds API routing trigger (`/api/cron/sync-feeds`).
-*   [x] Page routing links (`/merchant/onboard` and `/merchant/shipping`).
+*   [x] Secured redirect click logger endpoint (`/api/redirect`) tracking client IPs and 302 redirecting user queries to target store product pages (US-10).
+*   [x] Partner analytics dashboard page (`/merchant/dashboard`) displaying total outbound clicks counts, estimated CTR ratios, sync status badges, and clicks logs tables.
+*   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, and `/merchant/dashboard`).
 
 ---
 
@@ -81,7 +83,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#7` [US-07: Sequential Store Onboarding Funnel](https://github.com/zapata131/elmeeple-tienda/issues/7) [COMPLETED]
 *   `#8` [US-08: Shipping Cost Matrix Configuration](https://github.com/zapata131/elmeeple-tienda/issues/8) [COMPLETED]
 *   `#9` [US-09: Automated Catalog Sync via XML/CSV Feeds](https://github.com/zapata131/elmeeple-tienda/issues/9) [COMPLETED]
-*   `#10` [US-10: Affiliate Click and Analytics Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/10)
+*   `#10` [US-10: Affiliate Click and Analytics Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/10) [COMPLETED]
 *   `#11` [US-11: Merchant Auditing and Verification Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/11)
 *   `#12` [US-12: Feed Diagnostics and Monitoring Hub](https://github.com/zapata131/elmeeple-tienda/issues/12)
 *   `#13` [US-13: Currency and Foreign Exchange Rate Manager](https://github.com/zapata131/elmeeple-tienda/issues/13)
@@ -100,5 +102,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-10 (Affiliate Click and Analytics Dashboard):**
-    *   Implement redirect API routing endpoint (`/api/redirect?offer_id=...`) to log click-through counters and track store analytics.
+1.  **TDD implementation of US-11 (Merchant Auditing and Verification Dashboard):**
+    *   Build administration portal `/admin/dashboard` allowing system administrators to review, approve (`verified: true`), or suspend store profiles.

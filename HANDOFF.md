@@ -54,9 +54,11 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Target price check constraint database definitions updated in init migrations SQL.
 
 ### Milestone 7: Merchant Services [100% COMPLETED]
-*   [x] Multi-step onboarding wizard layout (`OnboardingWizard.tsx`) validating store info, branding, default shipping flat rates, and feed links.
+*   [x] Multi-step onboarding wizard layout (`OnboardingWizard.tsx`) validating store info, branding, default shipping flat rates, and feed links (US-07).
 *   [x] Merchant onboarding POST endpoint (`/api/merchant/onboard`) inserting store entries and upgrading user profile credentials.
-*   [x] Portal onboarding container page route (`/merchant/onboard`).
+*   [x] Shipping matrix rates configuration dashboard grid (`ShippingMatrix.tsx`) pre-loaded with defaults for Spain, Portugal, Mexico, Brazil, Argentina, Colombia, Chile, and Peru (US-08).
+*   [x] Shipping matrix POST API route handler (`/api/merchant/shipping`) verifying ownership credentials and executing bulk upserts.
+*   [x] Page routing links (`/merchant/onboard` and `/merchant/shipping`).
 
 ---
 
@@ -74,7 +76,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#5` [US-05: Historical Price Evolution Graph](https://github.com/zapata131/elmeeple-tienda/issues/5) [COMPLETED]
 *   `#6` [US-06: Wishlist and Price Drop Alerts](https://github.com/zapata131/elmeeple-tienda/issues/6) [COMPLETED]
 *   `#7` [US-07: Sequential Store Onboarding Funnel](https://github.com/zapata131/elmeeple-tienda/issues/7) [COMPLETED]
-*   `#8` [US-08: Shipping Cost Matrix Configuration](https://github.com/zapata131/elmeeple-tienda/issues/8)
+*   `#8` [US-08: Shipping Cost Matrix Configuration](https://github.com/zapata131/elmeeple-tienda/issues/8) [COMPLETED]
 *   `#9` [US-09: Automated Catalog Sync via XML/CSV Feeds](https://github.com/zapata131/elmeeple-tienda/issues/9)
 *   `#10` [US-10: Affiliate Click and Analytics Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/10)
 *   `#11` [US-11: Merchant Auditing and Verification Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/11)
@@ -95,5 +97,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-08 (Shipping Cost Matrix Configuration):**
-    *   Build shipping matrix configuration forms allowing merchants to specify distinct shipping rates for Spain, Portugal, Mexico, Brazil, Argentina, Colombia, Chile, and Peru.
+1.  **TDD implementation of US-09 (Automated Catalog Sync via XML/CSV Feeds):**
+    *   Build feed parser loaders to parse Google Shopping XML formats, match items to BGG records using barcodes/cache names, and run sequential inserts.

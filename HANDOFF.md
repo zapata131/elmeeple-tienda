@@ -67,7 +67,10 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Global administration dashboard page portal (`/admin/dashboard`) displaying all registered store entries and verification/suspension controls.
 *   [x] Feed diagnostics statistics widgets (`FeedDiagnosticsPanel.tsx`) counting parsed catalog lines, database matched targets, and unmatched warning items (US-12).
 *   [x] Force sync triggers POST API endpoint (`/api/merchant/sync-feed`) allowing partners to manually refresh catalog listings.
-*   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, `/merchant/dashboard`, `/merchant/diagnostics`, and `/admin/dashboard`).
+*   [x] Currency conversion helper (`convertPrice`) and 24-hour expiration rule check (`isRatesCacheStale`) in `currency.ts` (US-13).
+*   [x] Automated cron FX synchronizer (`/api/cron/sync-fx`) batch upserting live exchange rates relative to EUR base.
+*   [x] Admin currency manager endpoint (`/api/admin/fx-rates`) and interactive management panel (`CurrencyManager.tsx`) at `/admin/currency`.
+*   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, `/merchant/dashboard`, `/merchant/diagnostics`, `/admin/dashboard`, and `/admin/currency`).
 
 ---
 
@@ -90,7 +93,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#10` [US-10: Affiliate Click and Analytics Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/10) [COMPLETED]
 *   `#11` [US-11: Merchant Auditing and Verification Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/11) [COMPLETED]
 *   `#12` [US-12: Feed Diagnostics and Monitoring Hub](https://github.com/zapata131/elmeeple-tienda/issues/12) [COMPLETED]
-*   `#13` [US-13: Currency and Foreign Exchange Rate Manager](https://github.com/zapata131/elmeeple-tienda/issues/13)
+*   `#13` [US-13: Currency and Foreign Exchange Rate Manager](https://github.com/zapata131/elmeeple-tienda/issues/13) [COMPLETED]
 *   `#14` [US-14: Scheduled Store Feed Parser (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14)
 *   `#15` [US-15: BGG API Metadata Queue and Cache Manager](https://github.com/zapata131/elmeeple-tienda/issues/15)
 *   `#16` [US-16: Language Editions Switcher (Other Versions)](https://github.com/zapata131/elmeeple-tienda/issues/16) [COMPLETED]
@@ -106,5 +109,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-13 (Currency and Foreign Exchange Rate Manager):**
-    *   Build exchange rates caching scheduler and conversion helpers to support multiple Latin American currencies dynamically.
+1.  **TDD implementation of US-14 (Scheduled Store Feed Parser - Cron Job):**
+    *   Implement background crawler scheduler to iterate verified stores and sync inventory feeds hourly while adhering to batch limits.

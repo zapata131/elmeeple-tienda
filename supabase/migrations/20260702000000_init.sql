@@ -188,8 +188,21 @@ create policy "Allow users to manage their own price alerts"
 create table public.exchange_rates (
     currency text primary key, -- ISO-3 currency code (e.g. 'MXN', 'BRL')
     rate numeric not null, -- relative to EUR
+    enabled boolean default true not null,
     updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- Seed default initial exchange rates relative to EUR (Base 1.0)
+insert into public.exchange_rates (currency, rate, enabled) values
+    ('EUR', 1.0, true),
+    ('USD', 1.08, true),
+    ('MXN', 21.50, true),
+    ('BRL', 6.05, true),
+    ('ARS', 1050.0, true),
+    ('COP', 4400.0, true),
+    ('CLP', 1020.0, true),
+    ('PEN', 4.05, true)
+on conflict (currency) do nothing;
 
 -- Enable RLS on exchange_rates
 alter table public.exchange_rates enable row level security;

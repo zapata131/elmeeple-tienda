@@ -2,7 +2,7 @@ import React from 'react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { createClient } from '@supabase/supabase-js';
-import { AdminStoreList } from '@/components/AdminStoreList';
+import { CurrencyManager } from '@/components/CurrencyManager';
 import { Toolbar } from '@/components/Toolbar';
 import Link from 'next/link';
 
@@ -10,7 +10,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export default async function AdminDashboardPage() {
+export default async function AdminCurrencyPage() {
   const session = await getServerSession(authOptions);
 
   let isAdmin = false;
@@ -36,7 +36,7 @@ export default async function AdminDashboardPage() {
             <span className="text-3xl">🔒</span>
             <h2 className="text-lg font-bold text-gray-900">Acceso Restringido</h2>
             <p className="text-sm text-gray-600">
-              Only system administrators are authorized to access this auditing portal.
+              Only system administrators are authorized to manage global currency exchange rates.
             </p>
             <Link
               href="/"
@@ -50,13 +50,13 @@ export default async function AdminDashboardPage() {
     );
   }
 
-  // Load all store profiles
-  const { data: storesData } = await supabase
-    .from('stores')
-    .select('id, name, verified, owner_email')
-    .order('name');
+  // Load exchange rates
+  const { data: ratesData } = await supabase
+    .from('exchange_rates')
+    .select('currency, rate, enabled, updated_at')
+    .order('currency');
 
-  const stores = storesData || [];
+  const initialRates = ratesData || [];
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
@@ -68,19 +68,19 @@ export default async function AdminDashboardPage() {
       <header className="bg-white border-b border-gray-200 py-6 px-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-gray-900">Panel de Auditoría de Socios</h1>
+            <h1 className="text-xl font-bold text-gray-900">Gestor de Monedas y Tasas FX</h1>
             <span className="text-xs text-gray-500 font-semibold">Administración Global del Sistema</span>
           </div>
           <div className="flex items-center gap-4">
             <Link
-              href="/admin/currency"
-              className="text-xs bg-indigo-650 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm"
+              href="/admin/dashboard"
+              className="text-xs font-semibold text-gray-600 hover:text-gray-900"
             >
-              Gestor de Monedas FX
+              ← Panel Admin
             </Link>
             <Link
               href="/"
-              className="text-sm font-semibold text-gray-600 hover:text-gray-900"
+              className="text-xs font-semibold text-gray-600 hover:text-gray-900"
             >
               Back to Home
             </Link>
@@ -90,7 +90,7 @@ export default async function AdminDashboardPage() {
 
       {/* Main Panel Content */}
       <main className="flex-1 max-w-4xl w-full mx-auto py-12 px-6">
-        <AdminStoreList initialStores={stores} />
+        <CurrencyManager initialRates={initialRates} />
       </main>
 
       {/* Footer */}

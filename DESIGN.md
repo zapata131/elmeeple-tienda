@@ -76,7 +76,7 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
     *   `bgg_games_cache`: Global cached catalog of board games imported from BGG. Columns: `bgg_id`, `name`, `thumbnail`, `weight` (complexity), `min_players`, `max_players`, `playing_time`, `alternate_names` (text array), `categories` (text array), `ean` (text, barcode), `parent_bgg_id` (integer, nullable, self-referencing foreign key to link alternate language editions), `last_updated_at`.
     *   `store_games`: Intermediate table tracking product offerings. Columns: `store_id`, `bgg_id`, `store_product_url`, `price` (decimal), `stock` (integer/availability), `edition_language` (text, restricted to 'es' | 'pt' | 'en'), `last_updated_at`. Composite unique index on `(store_id, bgg_id)`.
     *   `price_alerts`: User price notification thresholds.
-    *   `exchange_rates`: Cached foreign exchange rates relative to base EUR.
+    *   `exchange_rates`: Cached foreign exchange rates relative to base EUR with 24-hour expiration. Columns: `currency` (primary key), `rate` (numeric), `enabled` (boolean), `updated_at` (timestamp). Supports EUR, USD, MXN, BRL, ARS, COP, CLP, PEN.
     *   `price_history`: Log of daily minimum prices. Columns: `bgg_id` (integer references bgg_games_cache), `min_price` (numeric), `recorded_at` (date). Composite primary key on `(bgg_id, recorded_at)`.
     *   `clicks`: Log of affiliate redirects. Columns: `id` (uuid), `store_id` (references stores), `bgg_id` (references bgg_games_cache), `ip_address` (text, optional), `created_at` (timestamp).
 *   **Row-Level Security (RLS):** Enabled on all tables.

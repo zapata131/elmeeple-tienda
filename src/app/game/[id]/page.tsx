@@ -3,23 +3,11 @@ import { fetchGameDetails, fetchGameOffers, fetchGameEditions } from '@/lib/quer
 import Link from 'next/link';
 import { PriceChart } from '@/components/PriceChart';
 import { PriceAlertForm } from '@/components/PriceAlertForm';
-import { RestockAlertButton } from '@/components/RestockAlertButton';
+import StoreOffersComparisonTable from '@/components/StoreOffersComparisonTable';
 
 interface Props {
   params: Promise<{ id: string }>;
 }
-
-const getLanguageFlag = (lang: string) => {
-  switch (lang) {
-    case 'es':
-      return '🇪🇸';
-    case 'pt':
-      return '🇵🇹';
-    case 'en':
-    default:
-      return '🇬🇧';
-  }
-};
 
 export default async function GameDetailPage({ params }: Props) {
   const resolvedParams = await params;
@@ -116,135 +104,12 @@ export default async function GameDetailPage({ params }: Props) {
 
         {/* Comparison Deals Table Column */}
         <div className="md:col-span-3 flex flex-col gap-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900">Compare Store Offers</h2>
-              <span className="text-xs text-gray-500 font-medium">Desglose 3 partes al estilo Brettspielpreise</span>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    <th className="px-6 py-3">Tienda</th>
-                    <th className="px-6 py-3">Edición</th>
-                    <th className="px-6 py-3">Disponibilidad</th>
-                    <th className="px-6 py-3">Precio Artículo</th>
-                    <th className="px-6 py-3">Envío</th>
-                    <th className="px-6 py-3">Coste Total</th>
-                    <th className="px-6 py-3">Acción</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 text-sm">
-                  {offers.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center text-gray-500 font-medium">
-                        No store offers available for this game yet.
-                      </td>
-                    </tr>
-                  ) : (
-                    offers.map((offer) => {
-                      const originFlag =
-                        offer.store_country === 'DE' ? '🇩🇪' :
-                        offer.store_country === 'US' ? '🇺🇸' :
-                        offer.store_country === 'MX' ? '🇲🇽' :
-                        offer.store_country === 'PT' ? '🇵🇹' : '🇪🇸';
-
-                      return (
-                        <tr key={offer.id} className="hover:bg-gray-50 transition-colors">
-                          {/* Store info */}
-                          <td className="px-6 py-4 flex items-center gap-3">
-                            {offer.store_logo && (
-                              <img
-                                src={offer.store_logo}
-                                alt={offer.store_name}
-                                className="w-8 h-8 rounded-full border border-gray-100 object-cover flex-shrink-0"
-                              />
-                            )}
-                            <div className="flex flex-col">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-base" title={`Origen: ${offer.store_country || 'ES'}`}>{originFlag}</span>
-                                <Link
-                                  href={`/store/${offer.store_id}`}
-                                  className="font-bold text-gray-900 hover:text-indigo-650 transition-colors"
-                                >
-                                  {offer.store_name}
-                                </Link>
-                              </div>
-                              <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-150 rounded px-1.5 py-0.5 font-extrabold w-max mt-0.5">
-                                ★ {offer.rating || 4.9} ({offer.review_count || 120}) · 📦 Esquinas Protegidas
-                              </span>
-                            </div>
-                          </td>
-                          
-                          {/* Language */}
-                          <td className="px-6 py-4 text-lg">
-                            {getLanguageFlag(offer.edition_language)}
-                          </td>
-                          
-                          {/* Availability */}
-                          <td className="px-6 py-4">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                              offer.stock > 0
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}>
-                              {offer.stock > 0 ? 'En stock' : 'Agotado'}
-                            </span>
-                          </td>
-                          
-                          {/* Base Price */}
-                          <td className="px-6 py-4 font-medium text-gray-900">
-                            €{offer.price.toFixed(2)}
-                          </td>
-                          
-                          {/* Shipping */}
-                          <td className="px-6 py-4 text-gray-600">
-                            {offer.shippingCost === null ? (
-                              <span className="text-red-500 font-medium">No disponible</span>
-                            ) : offer.shippingCost === 0 ? (
-                              <span className="text-green-600 font-semibold">Free (¡Envío GRATIS!)</span>
-                            ) : (
-                              `€${offer.shippingCost.toFixed(2)}`
-                            )}
-                          </td>
-                          
-                          {/* Total Cost */}
-                          <td className="px-6 py-4 font-bold text-indigo-950 text-base">
-                            {offer.totalCost === null ? (
-                              '--'
-                            ) : (
-                              `€${offer.totalCost.toFixed(2)}`
-                            )}
-                          </td>
-                          
-                          {/* CTA / Restock Alert */}
-                          <td className="px-6 py-4 text-right">
-                            {offer.stock > 0 ? (
-                              <a
-                                href={`/api/redirect?offer_id=${offer.id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-indigo-650 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
-                              >
-                                Ir a la tienda
-                              </a>
-                            ) : (
-                              <RestockAlertButton
-                                bggId={game.bgg_id}
-                                gameName={game.name}
-                                storeId={offer.store_id}
-                              />
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <StoreOffersComparisonTable
+            offers={offers}
+            bggId={game.bgg_id}
+            gameName={game.name}
+            selectedCountry="ES"
+          />
           <PriceChart bggId={game.bgg_id} />
         </div>
 

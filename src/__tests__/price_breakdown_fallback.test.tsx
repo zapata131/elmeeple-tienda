@@ -1,9 +1,7 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { fetchGameOffers } from '@/lib/queries';
 import GameDetailPage from '@/app/game/[id]/page';
-import { createClient } from '@supabase/supabase-js';
 
 jest.mock('@supabase/supabase-js', () => {
   const mockClientInstance = {
@@ -49,9 +47,9 @@ describe('US-28: Brettspielpreise-Style 3-Part Price Breakdown & Offline Fallbac
       render(jsx);
 
       expect(screen.getByText(/Compare Store Offers/i)).toBeInTheDocument();
-      expect(screen.getByText(/Precio Artículo/i)).toBeInTheDocument();
-      expect(screen.getByText(/Envío/i)).toBeInTheDocument();
-      expect(screen.getByText(/Coste Total/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Precio Artículo/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/Envío/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/Coste Total/i).length).toBeGreaterThanOrEqual(1);
 
       // Check fallback stores appear
       expect(screen.getByText(/Zygomatic España/i)).toBeInTheDocument();

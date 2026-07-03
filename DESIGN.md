@@ -12,6 +12,7 @@ This document defines the architectural guidelines, database schemas, visual des
 *   **Business Model:** Affiliate marketing (cost per referral click and affiliate sale commissions) and premium merchant subscriptions for featured offers.
 *   **Automated Skills Governance:** All UI designs, copywriting, and schema updates are governed autonomously by our `.agents/skills/ux_expert` and `.agents/skills/document_sync` protocols.
 *   **Offline Fallback Guarantee (US-28):** When Supabase returns empty data or is disconnected, `queries.ts` injects 6 rich fallback store offers (`FALLBACK_STORE_OFFERS`) with explicit 3-part breakdowns (`Artículo` + `Envío` = `Summe`) to guarantee seamless local user testing and QA.
+*   **Regional Domestic Toggle (US-27):** By default, game comparison tables activate `Solo tiendas de mi país` (`onlyDomestic = true`) to protect players from foreign customs taxes and expensive shipping, allowing opt-out toggling for international offers.
 
 ---
 

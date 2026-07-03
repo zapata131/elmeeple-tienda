@@ -9,6 +9,7 @@ This document defines the AI agent specializations, development execution workfl
 You must execute this checklist on **every single turn** before completing your work and responding to the user:
 
 ### Pre-Flight Actions (Start of Turn)
+*   **Backlog & Persona Gate (Pre-Flight):** When receiving a feature request, bug report, or sprint planning prompt, you **MUST** immediately audit the request against the Three-Point Compliance Filter (Persona Atomicity, Scope Atomicity, Agile Syntax). Never begin coding or create a compound backlog item. If multiple personas or features are detected, proactively divide them or launch the `backlog_auditor` skill before proceeding.
 *   **Verify Active Backlog:** Review the conversation context. If a new feature, bug, or improvement is discussed, **immediately** create a GitHub Issue using the `gh` CLI *before* writing any production code.
 *   **User Story Mandate:** Every issue created on GitHub must include a comprehensive User Story in the description using the classic Agile framework: `As a [Role], I want [Feature], So that [Benefit/Value]`.
 *   **Feature Branch Mandate (`AGENTS.md 2.3`):** Never commit work directly to `main`. Immediately checkout a dedicated feature branch matching the active issue: `git checkout -b feature/issue-<num>-<title>`.
@@ -43,6 +44,19 @@ When receiving user feedback, feature ideas, or multiple requirements in a singl
 ### 2.3 Backlog Traceability & Documentation Sync
 *   **1-to-1 Mapping:** Every feature or fix branch must map 1-to-1 to an existing issue (e.g., `feature/issue-<number>-<slug>` or `fix/issue-<number>-<slug>`).
 *   **Living Documentation:** Keep any project tracking files (like `backlog.md`, `DESIGN.md`, or `HANDOFF.md`) updated in real-time so that completed stories, active sprints, and pending tasks never drift out of sync with the codebase.
+
+### 2.4 Four-Phase Backlog Auditing Pipeline & Compliance Matrix
+When auditing existing backlogs or onboarding new sprint requirements, execute this four-phase pipeline:
+1.  **Phase 1: Automated Inventory & Parsing:** Query all active/open backlog items via `gh issue list --state open --json number,title,body,labels` or parse local backlog documents to build a complete inventory.
+2.  **Phase 2: Three-Point Compliance Filter:** Evaluate every backlog item against three strict criteria:
+    *   *Persona Atomicity:* Does the story serve exactly one user persona/role (Player vs. Partner vs. Admin)?
+    *   *Scope Atomicity:* Can this item be implemented and verified independently without bundling unrelated refactors or systems?
+    *   *Agile Syntax Compliance:* Does the description strictly match `As a [Role], I want [Action], so that [Benefit]`?
+3.  **Phase 3: Actionable Remediation Workflows:** For any item failing Phase 2:
+    *   *Compound Issues:* Split into multiple atomic user stories, each assigned to a single persona and numbered independently.
+    *   *Omnibus Features:* Deconstruct large multi-component epics into modular, test-first slices.
+    *   *Engineering Chores:* Transform internal chores or technical tasks into developer user stories (e.g., `As a Developer, I want [Technical Refactor], so that [System Quality/Performance Benefit]`).
+4.  **Phase 4: Prevention Guardrails:** Ensure no branch is created and no code is written until every active backlog issue passes 100% of the Three-Point Compliance Filter.
 
 ---
 

@@ -119,6 +119,12 @@ graph TD
     *   *Convention:* Always run Jest tests in serial mode: `npm run test -- --runInBand --forceExit`.
 *   **Supabase and Feed Mocks:** Server actions syncing feeds must have robust mocks to prevent live network calls to BoardGameGeek or merchant sites during test runs.
 
+### 5.4 Supabase Empty Array Return Detection & Edition Relationship Filtering
+*   **Empty Array Responses from `.single()` or Mock Clients:** Certain mock query clients or edge cases return `{ data: [], error: null }` when calling `.single()` or queries. A simple check `if (error || !data)` fails because `[]` is truthy in JavaScript.
+    *   *Convention:* Always guard query returns with `if (error || !data || (Array.isArray(data) && data.length === 0))` before consuming query data or triggering offline fallbacks.
+*   **Preventing Unrelated Edition Leaks:** When fetching game editions or siblings from `bgg_games_cache`, loose queries or mock returns can leak unrelated games into version lists.
+    *   *Convention:* Always filter returned edition arrays explicitly against the target game ID and its parent/sibling relationships (`e.bgg_id === currentGame.parent_bgg_id || e.parent_bgg_id === currentGame.parent_bgg_id` or `e.parent_bgg_id === bggId`).
+
 ---
 
 ## 6. Four-Tier Testing Standards & Browser Automation

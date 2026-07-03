@@ -6,8 +6,9 @@ This memo summarizes the current progress of the initial planning sprint for the
 
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Active Branch:** `feature/issue-31-iberoamerican-mock-data`
+*   **Active Branch:** `fix/issue-38-offline-fallback-detection`
 *   **Created Files:**
+    *   [src/__tests__/queries_offline_fallback.test.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/queries_offline_fallback.test.ts): TDD verification for Issue #38 offline fallback empty array detection and edition filtering.
     *   [backlog_user_stories.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/backlog_user_stories.md): Requirements and user stories backlog for Players, Partners, and Admins.
     *   [DESIGN.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md): Technical architecture specification, Supabase schemas, and color tokens.
     *   [AGENTS.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/AGENTS.md): AI agent roles, checklist, feed sync rules, and testing standards.
@@ -99,7 +100,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 3. Four-Tier Test Suite Status
-*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% configured and passing (26 test suites, 83 total tests via `npm run test`).
+*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% configured and passing (30 test suites, 96 total tests via `npm run test`).
 *   **Tier 3 Live Browser Audits (DevTools for Agents):** Visual layouts and interactive user flows validated on live server using Chrome DevTools MCP tools (`click`, `fill`, `navigate_page`, `take_screenshot`).
 *   **Tier 4 Automated Replay Scripts (DevTools / Playwright CLI):** Standalone browser automation scripts built in `e2e/home_and_optimizer.spec.ts` and `e2e/merchant_and_admin.spec.ts` (`playwright.config.ts`), runnable deterministically from the terminal via `npm run test:e2e` without going through an agent.
 

@@ -36,7 +36,7 @@ export async function fetchGameDetails(bggId: number) {
     .eq('bgg_id', bggId)
     .single();
 
-  if (error || !data) {
+  if (error || !data || (Array.isArray(data) && data.length === 0)) {
     console.warn(`[queries] fetchGameDetails offline fallback for ${bggId}`);
     const mock = MOCK_GAMES.find((g) => g.bgg_id === bggId) || MOCK_GAMES[0];
     return {
@@ -112,7 +112,7 @@ export async function fetchGameEditions(bggId: number) {
     .eq('bgg_id', bggId)
     .single();
 
-  if (errCurrent || !currentGame) return [];
+  if (errCurrent || !currentGame || (Array.isArray(currentGame) && currentGame.length === 0)) return [];
 
   let query = supabase.from('bgg_games_cache').select('bgg_id, name, thumbnail, parent_bgg_id');
 
@@ -126,13 +126,19 @@ export async function fetchGameEditions(bggId: number) {
 
   const { data: editions, error } = await query;
 
-  if (error || !editions) {
+  if (error || !editions || (Array.isArray(editions) && editions.length === 0)) {
     return [];
   }
 
   const typedEditions = editions as unknown as QueryEdition[];
 
-  return typedEditions.filter((e) => e.bgg_id !== bggId);
+  return typedEditions.filter((e) => {
+    if (e.bgg_id === bggId) return false;
+    if (currentGame.parent_bgg_id) {
+      return e.bgg_id === currentGame.parent_bgg_id || e.parent_bgg_id === currentGame.parent_bgg_id;
+    }
+    return e.parent_bgg_id === bggId;
+  });
 }
 
 interface CatalogGameRow {

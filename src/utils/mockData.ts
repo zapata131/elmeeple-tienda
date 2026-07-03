@@ -289,7 +289,7 @@ export const MOCK_GAMES: MockGame[] = [
     weight: 2.3,
     min_players: 3,
     max_players: 4,
-    playing_time: 75,
+    playing_time: 120,
     base_price_eur: 37.50,
   },
   {

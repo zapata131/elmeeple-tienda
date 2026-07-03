@@ -72,6 +72,8 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Admin currency manager endpoint (`/api/admin/fx-rates`) and interactive management panel (`CurrencyManager.tsx`) at `/admin/currency`.
 *   [x] Unmapped feed items queue table (`bgg_metadata_queue`) and batch queueing in `syncStoreCatalog` with 500-record batch protection (`AGENTS.md 4.1`) (US-14).
 *   [x] Admin feed queue inspection and purging endpoint (`/api/admin/feed-queue`) and interactive monitoring panel (`AdminQueueMonitor.tsx`) at `/admin/queue`.
+*   [x] BGG XML API2 worker utility (`bgg_worker.ts`) parsing `/thing` metadata and handling HTTP 202/429 status retries (`AGENTS.md 4.3`) (US-15).
+*   [x] Automated BGG queue resolution route (`/api/cron/process-bgg-queue`) and manual trigger button in `AdminQueueMonitor.tsx`.
 *   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, `/merchant/dashboard`, `/merchant/diagnostics`, `/admin/dashboard`, `/admin/currency`, and `/admin/queue`).
 
 ---
@@ -97,7 +99,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#12` [US-12: Feed Diagnostics and Monitoring Hub](https://github.com/zapata131/elmeeple-tienda/issues/12) [COMPLETED]
 *   `#13` [US-13: Currency and Foreign Exchange Rate Manager](https://github.com/zapata131/elmeeple-tienda/issues/13) [COMPLETED]
 *   `#14` [US-14: Scheduled Store Feed Parser (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14) [COMPLETED]
-*   `#15` [US-15: BGG API Metadata Queue and Cache Manager](https://github.com/zapata131/elmeeple-tienda/issues/15)
+*   `#15` [US-15: BGG API Metadata Queue and Cache Manager](https://github.com/zapata131/elmeeple-tienda/issues/15) [COMPLETED]
 *   `#16` [US-16: Language Editions Switcher (Other Versions)](https://github.com/zapata131/elmeeple-tienda/issues/16) [COMPLETED]
 *   `#17` [US-17: Consolidated Multi-Game Cart Optimizer](https://github.com/zapata131/elmeeple-tienda/issues/17)
 *   `#18` [US-18: Domestic-Only Store Toggle](https://github.com/zapata131/elmeeple-tienda/issues/18)
@@ -111,5 +113,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-15 (BGG API Metadata Queue and Cache Manager):**
-    *   Build worker route to process items from `bgg_metadata_queue`, query the BGG `/thing` API, map board game details to `bgg_games_cache`, and handle 202 Accepted polling and 429 rate limits gracefully.
+1.  **TDD implementation of US-17 (Consolidated Multi-Game Cart Optimizer):**
+    *   Build shopping list multi-game optimizer allowing users to input a wishlist of games and compute optimal bundle purchases across stores minimizing total price plus shipping matrix costs.

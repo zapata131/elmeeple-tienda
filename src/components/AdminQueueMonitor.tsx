@@ -48,6 +48,36 @@ export function AdminQueueMonitor({ initialItems }: Props) {
     }
   };
 
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleProcessQueue = async () => {
+    setIsProcessing(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      const res = await fetch('/api/cron/process-bgg-queue', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccessMsg(`Lote procesado: ${data.processed || 0} ítems. Resueltos: ${data.resolved || 0}, Reintentos: ${data.retried || 0}`);
+        // Refresh items list
+        const refreshRes = await fetch('/api/admin/feed-queue');
+        if (refreshRes.ok) {
+          const body = await refreshRes.json();
+          if (body.items) {
+            setItems(body.items);
+          }
+        }
+      } else {
+        setErrorMsg(data.error || 'Error al procesar la cola de metadatos BGG.');
+      }
+    } catch {
+      setErrorMsg('Error de red al conectar con el worker BGG.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -57,8 +87,17 @@ export function AdminQueueMonitor({ initialItems }: Props) {
             Juegos de mesa no catalogados detectados en feeds de tiendas. Esperando resolución BGG API (US-15).
           </p>
         </div>
-        <div className="bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-extrabold px-4 py-2 rounded-lg shadow-sm">
-          En Cola: {items.length}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleProcessQueue}
+            disabled={isProcessing || items.length === 0}
+            className="bg-indigo-650 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow-sm transition-colors disabled:opacity-50"
+          >
+            {isProcessing ? 'Procesando BGG API...' : 'Procesar Cola BGG Ahora'}
+          </button>
+          <div className="bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-extrabold px-4 py-2 rounded-lg shadow-sm">
+            En Cola: {items.length}
+          </div>
         </div>
       </div>
 

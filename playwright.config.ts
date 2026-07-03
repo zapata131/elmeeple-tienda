@@ -19,9 +19,13 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run build && npm run start',
+    command: 'NEXTAUTH_SECRET=test-secret-e2e NEXTAUTH_URL=http://localhost:3001 npm run build && NEXTAUTH_SECRET=test-secret-e2e NEXTAUTH_URL=http://localhost:3001 npm run start',
     url: 'http://localhost:3001',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
+    env: {
+      NEXTAUTH_SECRET: 'test-secret-e2e',
+      NEXTAUTH_URL: 'http://localhost:3001',
+    },
   },
 });

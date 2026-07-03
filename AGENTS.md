@@ -125,6 +125,14 @@ graph TD
 *   **Preventing Unrelated Edition Leaks:** When fetching game editions or siblings from `bgg_games_cache`, loose queries or mock returns can leak unrelated games into version lists.
     *   *Convention:* Always filter returned edition arrays explicitly against the target game ID and its parent/sibling relationships (`e.bgg_id === currentGame.parent_bgg_id || e.parent_bgg_id === currentGame.parent_bgg_id` or `e.parent_bgg_id === bggId`).
 
+### 5.5 E2E Automated Replay & Component Interactivity Conventions
+*   **NextAuth Secrets in Production Builds during Playwright E2E:** When Playwright starts `next start -p 3001` inside `webServer`, NextAuth throws a `MissingSecretError` if `NEXTAUTH_SECRET` is missing in the production environment.
+    *   *Convention:* Always provide a fallback string in `route.ts` (`secret: process.env.NEXTAUTH_SECRET || 'fallback-secret'`) and explicitly pass `NEXTAUTH_SECRET` and `NEXTAUTH_URL` inside `playwright.config.ts` (`webServer.command` and `webServer.env`).
+*   **React Checkbox Controlled Events vs Outer Container Clicks:** Putting empty `onChange={() => {}}` on controlled `<input type="checkbox">` elements causes automated `.check()` calls in Playwright (and keyboard/screen reader actions) to fail silently.
+    *   *Convention:* Always attach the state toggle handler directly to `onChange` on the checkbox input and stop click propagation (`onClick={(e) => e.stopPropagation()}`) when nested inside clickable container elements.
+*   **Playwright Strict Mode Violations on Multiple Heading Matches:** Combining locators like `resultsSection.or(warningSection)` when both elements render simultaneously causes strict mode errors.
+    *   *Convention:* Target unambiguous, singular container elements or use precise `.first()` / scoped locators when validating conditional rendering states.
+
 ---
 
 ## 6. Four-Tier Testing Standards & Browser Automation

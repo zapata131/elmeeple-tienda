@@ -30,16 +30,14 @@ test.describe('E2E Walkthrough: Home, Predictive Search, and Multi-Game Cart Opt
     await expect(optimizeTrigger).toBeVisible();
 
     // If initial games are present, click on one or more items
-    const gameCheckboxes = page.locator('input[type="checkbox"]');
+    const gameCheckboxes = page.locator('.grid input[type="checkbox"]');
     const count = await gameCheckboxes.count();
     if (count > 0) {
       await gameCheckboxes.first().check();
       await optimizeTrigger.click();
 
-      // Verify either top 3 results section or out of stock warning displays
       const resultsSection = page.locator('h2', { hasText: /Top 3 Combinaciones Óptimas/i });
-      const warningSection = page.locator('h3', { hasText: /Sin combinación disponible/i });
-      await expect(resultsSection.or(warningSection)).toBeVisible();
+      await expect(resultsSection).toBeVisible();
     }
   });
 });

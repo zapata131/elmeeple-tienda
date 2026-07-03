@@ -124,8 +124,9 @@ export function CartOptimizerPanel({ initialGames }: Props) {
                 <input
                   type="checkbox"
                   checked={isSelected}
-                  onChange={() => {}} // handled by div click
-                  className="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                  onChange={() => toggleGame(game.bgg_id)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
                 />
                 <div className="flex-1 min-w-0">
                   <h3 className="text-xs font-bold text-gray-900 truncate">{game.name}</h3>

@@ -15,7 +15,26 @@ export default async function MerchantShippingPage() {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user?.email) {
-    redirect('/');
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
+        <Toolbar />
+        <main className="flex-1 flex items-center justify-center py-24 px-4">
+          <div className="max-w-md w-full bg-white border border-gray-250 p-8 rounded-xl shadow-sm text-center flex flex-col gap-4">
+            <span className="text-3xl">🔒</span>
+            <h2 className="text-lg font-bold text-gray-900">Acceso Restringido</h2>
+            <p className="text-sm text-gray-600">
+              Please sign in as a partner to view your shipping configuration matrix.
+            </p>
+            <Link
+              href="/"
+              className="text-xs bg-indigo-650 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg mt-2 block shadow-sm"
+            >
+              Back to Home
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   // Fetch the store owned by the user
@@ -26,7 +45,6 @@ export default async function MerchantShippingPage() {
     .single();
 
   if (storeErr || !store) {
-    // If no store onboarding completed, redirect to onboard
     redirect('/merchant/onboard');
   }
 

@@ -174,6 +174,7 @@ export function Toolbar() {
           {/* Country Selector */}
           <div className="flex items-center gap-1.5">
             <select
+              id="country-select"
               aria-label="país de envío"
               value={country}
               onChange={handleCountryChange}

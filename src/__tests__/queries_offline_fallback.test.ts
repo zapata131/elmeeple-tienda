@@ -4,12 +4,12 @@ const mockSingle = jest.fn();
 const mockThen = jest.fn();
 
 jest.mock('@supabase/supabase-js', () => {
-  const queryBuilder: any = {
+  const queryBuilder: Record<string, unknown> = {
     select: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
     or: jest.fn().mockReturnThis(),
-    single: (...args: any[]) => mockSingle(...args),
-    then: (resolve: any, reject?: any) => mockThen(resolve, reject),
+    single: (...args: unknown[]) => mockSingle(...args),
+    then: (resolve: (val: unknown) => void, reject?: (reason: unknown) => void) => mockThen(resolve, reject),
   };
   return {
     createClient: jest.fn(() => ({
@@ -22,7 +22,7 @@ describe('Issue #38: Offline Fallback Detection in queries.ts', () => {
   beforeEach(() => {
     mockSingle.mockReset();
     mockThen.mockReset();
-    mockThen.mockImplementation((resolve: any) => resolve({ data: [], error: null }));
+    mockThen.mockImplementation((resolve: (val: unknown) => void) => resolve({ data: [], error: null }));
   });
 
   describe('fetchGameDetails', () => {
@@ -47,7 +47,7 @@ describe('Issue #38: Offline Fallback Detection in queries.ts', () => {
     it('returns empty array when currentGame from Supabase returns { data: [], error: null }', async () => {
       mockSingle.mockResolvedValueOnce({ data: [], error: null });
       // If the code erroneously proceeds to query editions, mockThen would resolve with some items:
-      mockThen.mockImplementationOnce((resolve: any) =>
+      mockThen.mockImplementationOnce((resolve: (val: unknown) => void) =>
         resolve({ data: [{ bgg_id: 999, name: 'Unrelated Game', parent_bgg_id: null }], error: null })
       );
 
@@ -58,7 +58,7 @@ describe('Issue #38: Offline Fallback Detection in queries.ts', () => {
 
     it('returns empty array when query returns { data: [], error: null }', async () => {
       mockSingle.mockResolvedValueOnce({ data: { parent_bgg_id: null }, error: null });
-      mockThen.mockImplementationOnce((resolve: any) => resolve({ data: [], error: null }));
+      mockThen.mockImplementationOnce((resolve: (val: unknown) => void) => resolve({ data: [], error: null }));
 
       const editions = await fetchGameEditions(23);
 
@@ -67,7 +67,7 @@ describe('Issue #38: Offline Fallback Detection in queries.ts', () => {
 
     it('filters out unlinked/unrelated games when querying editions for a child game (parent_bgg_id is null)', async () => {
       mockSingle.mockResolvedValueOnce({ data: { parent_bgg_id: null }, error: null });
-      mockThen.mockImplementationOnce((resolve: any) =>
+      mockThen.mockImplementationOnce((resolve: (val: unknown) => void) =>
         resolve({
           data: [
             { bgg_id: 50, name: 'Child Edition 1', parent_bgg_id: 23 },
@@ -87,7 +87,7 @@ describe('Issue #38: Offline Fallback Detection in queries.ts', () => {
 
     it('filters out unlinked/unrelated games when querying editions for a sibling game (parent_bgg_id exists)', async () => {
       mockSingle.mockResolvedValueOnce({ data: { parent_bgg_id: 100 }, error: null });
-      mockThen.mockImplementationOnce((resolve: any) =>
+      mockThen.mockImplementationOnce((resolve: (val: unknown) => void) =>
         resolve({
           data: [
             { bgg_id: 100, name: 'Parent Game', parent_bgg_id: null },

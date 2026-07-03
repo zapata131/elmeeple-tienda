@@ -7,19 +7,15 @@ This memo summarizes the current progress of the initial planning sprint for the
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
 *   **Active Branch:** `fix/issue-38-offline-fallback-detection`
-*   **Created Files:**
-    *   [src/__tests__/queries_offline_fallback.test.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/queries_offline_fallback.test.ts): TDD verification for Issue #38 offline fallback empty array detection and edition filtering.
-    *   [backlog_user_stories.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/backlog_user_stories.md): Requirements and user stories backlog for Players, Partners, and Admins.
-    *   [DESIGN.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md): Technical architecture specification, Supabase schemas, and color tokens.
-    *   [AGENTS.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/AGENTS.md): AI agent roles, checklist, feed sync rules, and testing standards.
-    *   [src/utils/mockData.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/utils/mockData.ts): Centralized Iberoamerican & Iberian mock dataset containing 22 regional stores and 12 board games.
-    *   [src/__tests__/iberoamerican_mock_data.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/iberoamerican_mock_data.test.tsx): TDD verification ensuring >=20 regional stores, >=10 games, and 0 non-Iberoamerican shops.
-    *   [src/components/StoreOffersComparisonTable.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/StoreOffersComparisonTable.tsx): Interactive comparison table with regional domestic store toggle (activated by default).
-    *   [src/components/StoreOffersComparisonTable.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/StoreOffersComparisonTable.tsx): Interactive comparison table with regional domestic store toggle (activated by default).
-    *   [src/__tests__/regional_store_toggle.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/regional_store_toggle.test.tsx): TDD verification for US-27 regional store filter toggle.
-    *   [src/__tests__/price_breakdown_fallback.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/price_breakdown_fallback.test.tsx): TDD verification for US-28 3-part price breakdown and offline fallback offers.
-    *   [jest.config.js](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/jest.config.js): Jest test framework configuration.
-    *   [jest.setup.js](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/jest.setup.js): Polyfills and global mocks for Jest environment.
+*   **Modified / Verified Files:**
+    *   [src/__tests__/queries_offline_fallback.test.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/queries_offline_fallback.test.ts): TDD verification for Issue #38 offline fallback empty array detection and edition filtering (fixed TypeScript any types).
+    *   [src/app/layout.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/layout.tsx): Updated page metadata title and description to `MeeplePrecios - Comparador de Juegos de Mesa`.
+    *   [src/components/Toolbar.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/Toolbar.tsx): Added `id="country-select"` for deterministic E2E selector targeting.
+    *   [src/components/CartOptimizerPanel.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/CartOptimizerPanel.tsx): Fixed checkbox input `onChange` React controlled state and stopped click event propagation.
+    *   [src/app/merchant/shipping/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/merchant/shipping/page.tsx): Replaced server redirect with standard `Acceso Restringido` fallback card for unauthenticated visitors.
+    *   [src/app/api/auth/[...nextauth]/route.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/api/auth/%5B...nextauth%5D/route.ts): Added fallback `secret` option to prevent production build/start errors during automated E2E replay.
+    *   [playwright.config.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/playwright.config.ts): Added `NEXTAUTH_SECRET` and `NEXTAUTH_URL` to webServer environment variables and startup command.
+    *   [e2e/home_and_optimizer.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/home_and_optimizer.spec.ts) & [e2e/merchant_and_admin.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/merchant_and_admin.spec.ts): Refined selectors for grid checkboxes, heading alternatives, and strict mode compliance.
 
 ---
 

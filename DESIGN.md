@@ -10,6 +10,7 @@ This document defines the architectural guidelines, database schemas, visual des
 *   **Concept:** The premier independent price comparison platform for board games and accessories in the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil).
 *   **Value Proposition:** We help tabletop gamers find the best consolidated deals (including shipping and regional tax estimates) and empower independent game stores to capture high-intent referral traffic and drive sales.
 *   **Business Model:** Affiliate marketing (cost per referral click and affiliate sale commissions) and premium merchant subscriptions for featured offers.
+*   **Automated Skills Governance:** All UI designs, copywriting, and schema updates are governed autonomously by our `.agents/skills/ux_expert` and `.agents/skills/document_sync` protocols.
 
 ---
 

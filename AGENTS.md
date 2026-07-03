@@ -58,6 +58,14 @@ When auditing existing backlogs or onboarding new sprint requirements, execute t
     *   *Engineering Chores:* Transform internal chores or technical tasks into developer user stories (e.g., `As a Developer, I want [Technical Refactor], so that [System Quality/Performance Benefit]`).
 4.  **Phase 4: Prevention Guardrails:** Ensure no branch is created and no code is written until every active backlog issue passes 100% of the Three-Point Compliance Filter.
 
+### 2.5 Automated Workspace Skills & Tools
+All AI agents working within this workspace **must** utilize our modular skills located in `.agents/skills/` at their designated triggers:
+*   **[`backlog_auditor`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/backlog_auditor/SKILL.md):** Automatically intercept and audit user requirements or GitHub issues for single-persona compliance.
+*   **[`github_issue_solve`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/github_issue_solve/SKILL.md):** Automate issue assignment, branch setup, and TDD planning.
+*   **[`ux_expert`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/ux_expert/SKILL.md):** Enforce UX audit principles, cognitive laws, sentence case, and visual design tokens.
+*   **[`document_sync`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/document_sync/SKILL.md):** Audit and synchronize `HANDOFF.md`, `DESIGN.md`, and `AGENTS.md` before closing a turn.
+*   **[`github_issue_complete`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/github_issue_complete/SKILL.md):** Automate full verification (`npm run verify`), commit messaging, PR opening, and merging.
+
 ---
 
 ## 3. AI Agent Personas

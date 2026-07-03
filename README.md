@@ -93,3 +93,15 @@ MeeplePrecios is built using a modern, scalable, and high-performance stack desi
     ```bash
     npm run verify
     ```
+
+---
+
+## 5. Autonomous AI Agent Skills & Workflow
+
+MeeplePrecios equips autonomous AI agents (such as Antigravity / Cursor / Claude) with modular workspace skills located in `.agents/skills/` to enforce agile development, UX excellence, and zero-regression deployments:
+
+*   **[`backlog_auditor`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/backlog_auditor/SKILL.md):** Pre-flight gatekeeper that audits GitHub issues against the Three-Point Compliance Filter (Persona Atomicity, Scope Atomicity, Agile Syntax) and automatically decomposes multi-persona epics.
+*   **[`github_issue_solve`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/github_issue_solve/SKILL.md):** Guides the **Architect** and **Builder** through issue assignment, dedicated feature branching (`feature/issue-<num>-<slug>`), codebase research, and publishing TDD execution plans on GitHub.
+*   **[`ux_expert`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/ux_expert/SKILL.md):** Enforces cognitive psychology laws (Fitts's, Hick's, Jakob's, Miller's), strict WCAG accessibility, conversational copywriting (Google style), and premium visual design tokens (Blanco Roto, Carbón, Malva, Coral, Turquesa, no emojis).
+*   **[`document_sync`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/document_sync/SKILL.md):** Post-flight quality gate ensuring `HANDOFF.md`, `DESIGN.md`, and `AGENTS.md` remain in real-time synchronization with active code and database schemas.
+*   **[`github_issue_complete`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.agents/skills/github_issue_complete/SKILL.md):** Enforces our four-tier verification gate (`npm run verify`, E2E tests), stages changes, formats conventional commits, and automates PR creation and merging into `main`.

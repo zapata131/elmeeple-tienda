@@ -3,6 +3,7 @@ import { fetchGameDetails, fetchGameOffers, fetchGameEditions } from '@/lib/quer
 import Link from 'next/link';
 import { PriceChart } from '@/components/PriceChart';
 import { PriceAlertForm } from '@/components/PriceAlertForm';
+import { RestockAlertButton } from '@/components/RestockAlertButton';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -206,16 +207,24 @@ export default async function GameDetailPage({ params }: Props) {
                           )}
                         </td>
                         
-                        {/* CTA */}
+                        {/* CTA / Restock Alert */}
                         <td className="px-6 py-4 text-right">
-                          <a
-                            href={`/api/redirect?offer_id=${offer.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-indigo-650 hover:bg-indigo-700 rounded-lg transition-colors"
-                          >
-                            Go to store
-                          </a>
+                          {offer.stock > 0 ? (
+                            <a
+                              href={`/api/redirect?offer_id=${offer.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-indigo-650 hover:bg-indigo-700 rounded-lg transition-colors"
+                            >
+                              Go to store
+                            </a>
+                          ) : (
+                            <RestockAlertButton
+                              bggId={bggId}
+                              gameName={game.name}
+                              userEmail="player@meeple.com"
+                            />
+                          )}
                         </td>
                       </tr>
                     ))

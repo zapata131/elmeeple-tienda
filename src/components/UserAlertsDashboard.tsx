@@ -263,6 +263,47 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
         </div>
       )}
 
+      {/* Restock Subscriptions Section */}
+      <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+        <div className="flex items-center justify-between border-b border-gray-150 pb-4">
+          <div>
+            <h3 className="text-base font-extrabold text-gray-900">Suscripciones de Reabastecimiento (Restock)</h3>
+            <p className="text-xs text-gray-500 mt-0.5">Avisos automáticos cuando tiendas asociadas reportan stock en el feed diario.</p>
+          </div>
+          <span className="text-xs font-extrabold bg-amber-100 text-amber-900 px-3 py-1 rounded-full">
+            ⚡ Monitor Activo
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="border border-gray-200 rounded-xl p-4 flex items-center justify-between bg-gray-50/50">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📦</span>
+              <div>
+                <Link href="/game/342942" className="text-xs font-extrabold text-gray-900 hover:text-indigo-650 block">Ark Nova</Link>
+                <span className="text-[10px] text-gray-400 font-mono">BGG #342942</span>
+              </div>
+            </div>
+            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-1 rounded-lg">
+              ✨ ¡Ya en Stock!
+            </span>
+          </div>
+
+          <div className="border border-gray-200 rounded-xl p-4 flex items-center justify-between bg-gray-50/50">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">⏳</span>
+              <div>
+                <Link href="/game/224517" className="text-xs font-extrabold text-gray-900 hover:text-indigo-650 block">Brass: Birmingham</Link>
+                <span className="text-[10px] text-gray-400 font-mono">BGG #224517</span>
+              </div>
+            </div>
+            <span className="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2.5 py-1 rounded-lg">
+              Esperando feed...
+            </span>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }

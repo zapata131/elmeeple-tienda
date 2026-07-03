@@ -160,14 +160,20 @@ export function Toolbar() {
         {/* Filters and Settings */}
         <div className="flex flex-wrap items-center gap-3 ml-auto">
           
-          {/* Domestic Only Checkbox */}
-          <label className="flex items-center gap-2 text-xs font-medium text-gray-300 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 cursor-pointer hover:border-gray-600">
-            <input
-              type="checkbox"
-              checked={domesticOnly}
-              onChange={(e) => toggleDomestic(e.target.checked)}
-              className="rounded text-indigo-600 focus:ring-0 w-3.5 h-3.5 bg-gray-900 border-gray-600"
-            />
+          {/* Domestic Only Tactile Switch */}
+          <label className="flex items-center gap-2.5 text-xs font-medium text-gray-300 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 cursor-pointer hover:border-gray-600 select-none">
+            <div className="relative inline-flex items-center">
+              <input
+                type="checkbox"
+                role="switch"
+                aria-checked={domesticOnly}
+                checked={domesticOnly}
+                onChange={(e) => toggleDomestic(e.target.checked)}
+                onClick={(e) => e.stopPropagation()}
+                className="sr-only peer"
+              />
+              <div className="w-9 h-5 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 cursor-pointer"></div>
+            </div>
             <span>Solo Tiendas Nacionales ({country})</span>
           </label>
 
@@ -214,7 +220,7 @@ export function Toolbar() {
             >
               {languages.map((l) => (
                 <option key={l.code} value={l.code}>
-                  🌐 {l.label}
+                  {l.label}
                 </option>
               ))}
             </select>
@@ -261,7 +267,12 @@ export function Toolbar() {
 
           {role === 'partner' && (
             <>
-              <Link href="/merchant/dashboard" className="text-indigo-400 hover:text-indigo-300 font-bold transition-colors">🏪 Panel Tienda</Link>
+              <Link href="/merchant/dashboard" className="text-[#73D8D4] hover:text-[#73D8D4]/80 font-bold transition-colors inline-flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                <span>Panel Tienda</span>
+              </Link>
               <Link href="/merchant/onboard" className="hover:text-white transition-colors">Dar de Alta Tienda</Link>
               <Link href="/merchant/shipping" className="hover:text-white transition-colors">Tarifas de Envío</Link>
               <Link href="/merchant/diagnostics" className="hover:text-white transition-colors">Diagnóstico de Feeds</Link>
@@ -270,17 +281,25 @@ export function Toolbar() {
 
           {role === 'admin' && (
             <>
-              <Link href="/admin/dashboard" className="text-purple-400 hover:text-purple-300 font-bold transition-colors">🛡️ Panel Administración</Link>
+              <Link href="/admin/dashboard" className="text-[#8367C7] hover:text-[#8367C7]/80 font-bold transition-colors inline-flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <span>Panel Administración</span>
+              </Link>
               <Link href="/admin/currency" className="hover:text-white transition-colors">Tipos de Cambio FX</Link>
               <Link href="/admin/queue" className="hover:text-white transition-colors">Cola Metadatos BGG</Link>
               <button
                 onClick={triggerSeed}
                 disabled={isSeeding}
-                className="text-emerald-400 hover:text-emerald-300 font-bold underline ml-4 disabled:opacity-50"
+                className="text-[#73D8D4] hover:text-[#73D8D4]/80 font-bold underline ml-4 disabled:opacity-50 inline-flex items-center gap-1"
               >
-                {isSeeding ? 'Poblando...' : '🌱 Poblar Catálogo Mock (22 Juegos & Portadas)'}
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span>{isSeeding ? 'Poblando...' : 'Poblar Catálogo Mock (22 Juegos & Portadas)'}</span>
               </button>
-              {seedMsg && <span className="text-emerald-300 font-extrabold ml-2">{seedMsg}</span>}
+              {seedMsg && <span className="text-[#73D8D4] font-extrabold ml-2">{seedMsg}</span>}
             </>
           )}
         </div>

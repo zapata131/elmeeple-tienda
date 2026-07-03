@@ -60,7 +60,7 @@ describe('US-27: Regional Store Filter Toggle (Default Activated)', () => {
     );
 
     // Toggle should be checked/active by default
-    const checkbox = screen.getByRole('checkbox', { name: /Solo tiendas de mi país/i });
+    const checkbox = screen.getByRole('switch', { name: /Solo tiendas de mi país/i });
     expect(checkbox).toBeChecked();
 
     // Only ES store should be displayed
@@ -79,7 +79,7 @@ describe('US-27: Regional Store Filter Toggle (Default Activated)', () => {
       />
     );
 
-    const checkbox = screen.getByRole('checkbox', { name: /Solo tiendas de mi país/i });
+    const checkbox = screen.getByRole('switch', { name: /Solo tiendas de mi país/i });
     fireEvent.click(checkbox);
     expect(checkbox).not.toBeChecked();
 

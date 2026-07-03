@@ -134,8 +134,10 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
       {/* BGG Wishlist Importer Card */}
       <div className="bg-gradient-to-r from-indigo-900 to-indigo-950 text-white rounded-2xl p-6 shadow-md border border-indigo-800 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-800/80 border border-indigo-700 flex items-center justify-center text-2xl shrink-0 shadow-inner">
-            🎲
+          <div className="w-12 h-12 rounded-xl bg-indigo-800/80 border border-indigo-700 flex items-center justify-center text-[#8367C7] shrink-0 shadow-inner">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
           </div>
           <div>
             <h3 className="text-base font-extrabold text-white">Sincronizar Wishlist desde BoardGameGeek</h3>
@@ -164,21 +166,31 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
       </div>
 
       {syncSuccessMsg && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-extrabold px-4 py-3 rounded-xl shadow-sm">
-          ✨ {syncSuccessMsg}
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-extrabold px-4 py-3 rounded-xl shadow-sm flex items-center gap-2">
+          <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{syncSuccessMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="bg-red-50 border border-red-150 text-red-700 text-xs font-semibold px-4 py-2.5 rounded-xl">
-          ⚠️ {errorMsg}
+        <div className="bg-red-50 border border-red-150 text-red-700 text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2">
+          <svg className="w-4 h-4 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span>{errorMsg}</span>
         </div>
       )}
 
       {/* Alerts Grid */}
       {alerts.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3">
-          <span className="text-4xl">🔔</span>
+          <div className="w-14 h-14 rounded-2xl bg-[#8367C7]/15 border border-[#8367C7]/30 flex items-center justify-center text-[#8367C7]">
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </div>
           <h3 className="font-extrabold text-gray-900 text-base">No tienes alertas de bajada de precio activas</h3>
           <p className="text-xs text-gray-500 max-w-md">
             Navega por nuestro catálogo de juegos, entra en la ficha del juego que desees y activa una alerta para recibir avisos instantáneos cuando alcance tu precio objetivo.
@@ -200,8 +212,11 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
               }`}
             >
               {alert.isTriggered && (
-                <span className="absolute -top-3 right-5 bg-emerald-600 text-white text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full shadow-sm">
-                  🔥 ¡Precio Alcanzado!
+                <span className="absolute -top-3 right-5 bg-emerald-600 text-white text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full shadow-sm inline-flex items-center gap-1">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                  <span>¡Precio Alcanzado!</span>
                 </span>
               )}
 
@@ -213,8 +228,10 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
                     className="w-16 h-16 object-cover rounded-xl border border-gray-200 shrink-0 bg-gray-50"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-xl shrink-0">
-                    🎲
+                  <div className="w-16 h-16 rounded-xl bg-[#8367C7]/15 border border-[#8367C7]/30 flex items-center justify-center text-[#8367C7] shrink-0">
+                    <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
                   </div>
                 )}
 
@@ -270,28 +287,42 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
             <h3 className="text-base font-extrabold text-gray-900">Suscripciones de Reabastecimiento (Restock)</h3>
             <p className="text-xs text-gray-500 mt-0.5">Avisos automáticos cuando tiendas asociadas reportan stock en el feed diario.</p>
           </div>
-          <span className="text-xs font-extrabold bg-amber-100 text-amber-900 px-3 py-1 rounded-full">
-            ⚡ Monitor Activo
+          <span className="text-xs font-extrabold bg-[#73D8D4]/20 text-teal-900 border border-[#73D8D4]/40 px-3 py-1 rounded-full inline-flex items-center gap-1">
+            <svg className="w-3.5 h-3.5 text-[#73D8D4]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>Monitor Activo</span>
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="border border-gray-200 rounded-xl p-4 flex items-center justify-between bg-gray-50/50">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">📦</span>
+              <div className="w-9 h-9 rounded-lg bg-[#73D8D4]/20 border border-[#73D8D4]/40 flex items-center justify-center text-teal-800 shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+              </div>
               <div>
                 <Link href="/game/342942" className="text-xs font-extrabold text-gray-900 hover:text-indigo-650 block">Ark Nova</Link>
                 <span className="text-[10px] text-gray-400 font-mono">BGG #342942</span>
               </div>
             </div>
-            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-1 rounded-lg">
-              ✨ ¡Ya en Stock!
+            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-1 rounded-lg inline-flex items-center gap-1">
+              <svg className="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>¡Ya en Stock!</span>
             </span>
           </div>
 
           <div className="border border-gray-200 rounded-xl p-4 flex items-center justify-between bg-gray-50/50">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">⏳</span>
+              <div className="w-9 h-9 rounded-lg bg-[#FF9E8A]/20 border border-[#FF9E8A]/40 flex items-center justify-center text-rose-800 shrink-0">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
               <div>
                 <Link href="/game/224517" className="text-xs font-extrabold text-gray-900 hover:text-indigo-650 block">Brass: Birmingham</Link>
                 <span className="text-[10px] text-gray-400 font-mono">BGG #224517</span>

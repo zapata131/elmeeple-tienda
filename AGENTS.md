@@ -125,13 +125,20 @@ graph TD
 *   **Preventing Unrelated Edition Leaks:** When fetching game editions or siblings from `bgg_games_cache`, loose queries or mock returns can leak unrelated games into version lists.
     *   *Convention:* Always filter returned edition arrays explicitly against the target game ID and its parent/sibling relationships (`e.bgg_id === currentGame.parent_bgg_id || e.parent_bgg_id === currentGame.parent_bgg_id` or `e.parent_bgg_id === bggId`).
 
-### 5.5 E2E Automated Replay & Component Interactivity Conventions
+### 5.5 E2E Automated Replay & Component Interactivity Conventions (Tactile Toggles)
 *   **NextAuth Secrets in Production Builds during Playwright E2E:** When Playwright starts `next start -p 3001` inside `webServer`, NextAuth throws a `MissingSecretError` if `NEXTAUTH_SECRET` is missing in the production environment.
     *   *Convention:* Always provide a fallback string in `route.ts` (`secret: process.env.NEXTAUTH_SECRET || 'fallback-secret'`) and explicitly pass `NEXTAUTH_SECRET` and `NEXTAUTH_URL` inside `playwright.config.ts` (`webServer.command` and `webServer.env`).
-*   **React Checkbox Controlled Events vs Outer Container Clicks:** Putting empty `onChange={() => {}}` on controlled `<input type="checkbox">` elements causes automated `.check()` calls in Playwright (and keyboard/screen reader actions) to fail silently.
-    *   *Convention:* Always attach the state toggle handler directly to `onChange` on the checkbox input and stop click propagation (`onClick={(e) => e.stopPropagation()}`) when nested inside clickable container elements.
+*   **Tactile Toggles (`role="switch"`) vs Outer Container Clicks:** Putting empty `onChange={() => {}}` on controlled `<input type="checkbox">` elements or standard checkboxes causes automated `.check()` calls in Playwright (and screen reader interactions) to fail or behave unpredictably when nested inside clickable container cards.
+    *   *Convention:* For all boolean toggle controls (like Regional Store Toggles `onlyDomestic` / `domesticOnly`), implement accessible tactile switches using `<input type="checkbox" role="switch" aria-checked={val} />` with styled toggle pills. Always attach state handlers directly to `onChange` and stop click propagation (`onClick={(e) => e.stopPropagation()}`) on inner controls when embedded in clickable wrappers.
 *   **Playwright Strict Mode Violations on Multiple Heading Matches:** Combining locators like `resultsSection.or(warningSection)` when both elements render simultaneously causes strict mode errors.
     *   *Convention:* Target unambiguous, singular container elements or use precise `.first()` / scoped locators when validating conditional rendering states.
+
+### 5.6 Server Component Testing, Layout SEO Targeting & Emoji Eradication Conventions
+*   **Async Server Components in Jest JSDOM & Layout SEO Targeting:** Testing async Server Components like `Home` (`page.tsx`) or dynamic metadata generators (`src/app/layout.tsx`, `src/app/game/[id]/page.tsx`) that query Supabase without mocks can cause 5000ms test timeouts or unhandled rejection warnings during rendering.
+    *   *Convention:* Always mock `@supabase/supabase-js` or provide deterministic instant return fallbacks inside Jest suites when rendering async Server Components. For SEO verification (`seo_metadata.test.tsx`), explicitly test exported `metadata` or `generateMetadata` return structures ensuring proper page title templates (`%s | MeeplePrecios`), descriptions, and OpenGraph/Twitter card tags targeting Latin American and Iberian marketplaces.
+*   **System-Wide Emoji Eradication & Vector SVG Edition Badges:** When validating zero raw unicode emoji leakage across DOM containers, string searching against a single character can miss subtle unicode symbols (like `⚡` or flags).
+    *   *Convention:* Maintain a comprehensive `BANNED_EMOJIS` array in unit tests (`src/__tests__/emoji_eradication.test.tsx`) and loop over `container.textContent` asserting `expect(textContent).not.toContain(emoji)`. Replace all status icons, flags, and decorative elements with clean inline SVG vector paths or standardized typographic edition badges (`renderEditionBadge` in `StoreOffersComparisonTable.tsx`) styled with official color tokens (`#8367C7`, `#73D8D4`, `#FF9E8A`).
+
 
 ---
 

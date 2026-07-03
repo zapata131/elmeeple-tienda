@@ -43,3 +43,9 @@ next-env.d.ts
 # playwright
 /test-results/
 /playwright-report/
+
+# subagent execution logs and temporary drafts
+.agents/teamwork_preview_*
+.agents/sentinel/
+.agents/ORIGINAL_REQUEST.md
+ORIGINAL_REQUEST.md

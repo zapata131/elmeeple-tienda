@@ -6,16 +6,13 @@ This memo summarizes the current progress of the initial planning sprint for the
 
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Active Branch:** `fix/issue-38-offline-fallback-detection`
+*   **Active Branch:** `feature/ux-ui-sprint-bundle`
 *   **Modified / Verified Files:**
-    *   [src/__tests__/queries_offline_fallback.test.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/queries_offline_fallback.test.ts): TDD verification for Issue #38 offline fallback empty array detection and edition filtering (fixed TypeScript any types).
-    *   [src/app/layout.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/layout.tsx): Updated page metadata title and description to `MeeplePrecios - Comparador de Juegos de Mesa`.
-    *   [src/components/Toolbar.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/Toolbar.tsx): Added `id="country-select"` for deterministic E2E selector targeting.
-    *   [src/components/CartOptimizerPanel.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/CartOptimizerPanel.tsx): Fixed checkbox input `onChange` React controlled state and stopped click event propagation.
-    *   [src/app/merchant/shipping/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/merchant/shipping/page.tsx): Replaced server redirect with standard `Acceso Restringido` fallback card for unauthenticated visitors.
-    *   [src/app/api/auth/[...nextauth]/route.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/api/auth/%5B...nextauth%5D/route.ts): Added fallback `secret` option to prevent production build/start errors during automated E2E replay.
-    *   [playwright.config.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/playwright.config.ts): Added `NEXTAUTH_SECRET` and `NEXTAUTH_URL` to webServer environment variables and startup command.
-    *   [e2e/home_and_optimizer.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/home_and_optimizer.spec.ts) & [e2e/merchant_and_admin.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/merchant_and_admin.spec.ts): Refined selectors for grid checkboxes, heading alternatives, and strict mode compliance.
+    *   [src/__tests__/edition_badges.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/edition_badges.test.tsx) & [src/__tests__/emoji_eradication.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/emoji_eradication.test.tsx): New TDD verification suites asserting vector badge rendering (`ES`, `PT`, `EN`, `DE`, `MULTI`) and 100% eradication of banned raw unicode emojis.
+    *   [src/components/StoreOffersComparisonTable.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/StoreOffersComparisonTable.tsx): Replaced raw flag text/emojis with `renderEditionBadge`, replaced country origin flags with country code pills, and replaced info/star/package emojis with vector SVGs.
+    *   [src/components/Toolbar.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/Toolbar.tsx): Eradicated globe emoji in language dropdown and replaced store/shield/seed emojis with clean vector SVG icons in brand colors.
+    *   [src/app/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/page.tsx): Replaced dice, flame, globe, money, box, and flag emojis with crisp vector icons styled in `#8367C7` Malva, `#73D8D4` Turquesa, and `#FF9E8A` Coral.
+    *   [src/components/UserAlertsDashboard.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/UserAlertsDashboard.tsx): Replaced dice, sparkles, warning, bell, fire, package, hourglass, and lightning emojis with vector SVGs and styled status badges.
 
 ---
 

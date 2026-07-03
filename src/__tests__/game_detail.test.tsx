@@ -138,4 +138,16 @@ describe('US-02 & US-16: Game Detail Page & Comparison Table', () => {
     expect(rows[2]).toHaveTextContent('Store B');
     expect(rows[3]).toHaveTextContent('Store C');
   });
+
+  it('renders the global Toolbar navigation header on GameDetailPage (US-31)', async () => {
+    (queries.fetchGameDetails as jest.Mock).mockResolvedValue(mockGame);
+    (queries.fetchGameOffers as jest.Mock).mockResolvedValue([]);
+    (queries.fetchGameEditions as jest.Mock).mockResolvedValue([]);
+
+    const PageResolved = await GameDetailPage({ params: Promise.resolve({ id: '23' }) });
+    render(PageResolved);
+
+    const countrySelect = screen.getByLabelText(/shipping country|país de envío/i);
+    expect(countrySelect).toBeInTheDocument();
+  });
 });

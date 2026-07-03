@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { PriceChart } from '@/components/PriceChart';
 import { PriceAlertForm } from '@/components/PriceAlertForm';
 import StoreOffersComparisonTable from '@/components/StoreOffersComparisonTable';
+import { Toolbar } from '@/components/Toolbar';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -16,8 +17,11 @@ export default async function GameDetailPage({ params }: Props) {
   const game = await fetchGameDetails(bggId);
   if (!game) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <h1 className="text-xl font-semibold text-gray-900">Game not found in cache</h1>
+      <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
+        <Toolbar />
+        <div className="flex-1 flex items-center justify-center">
+          <h1 className="text-xl font-semibold text-gray-900">Game not found in cache</h1>
+        </div>
       </div>
     );
   }
@@ -48,8 +52,9 @@ export default async function GameDetailPage({ params }: Props) {
     });
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      <main className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
+      <Toolbar />
+      <main className="flex-1 max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8 w-full">
         
         {/* Game Meta & Alternative Editions Column */}
         <div className="md:col-span-1 flex flex-col gap-6">

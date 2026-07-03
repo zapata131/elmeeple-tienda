@@ -18,6 +18,7 @@ jest.mock('next/navigation', () => ({
       refresh: jest.fn(),
     };
   },
+  usePathname: () => '/catalog',
 }));
 
 describe('US-04: Catalog Search Filters and Navigation', () => {

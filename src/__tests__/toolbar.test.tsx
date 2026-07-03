@@ -11,6 +11,8 @@ jest.mock('next/navigation', () => ({
       refresh: mockRefresh,
     };
   },
+  usePathname: () => '/',
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe('US-03: Global Shipping and Currency Settings (Toolbar)', () => {
@@ -28,17 +30,17 @@ describe('US-03: Global Shipping and Currency Settings (Toolbar)', () => {
     render(<Toolbar />);
     
     // Default country: Spain (ES)
-    const countrySelect = screen.getByLabelText(/shipping country/i) as HTMLSelectElement;
+    const countrySelect = screen.getByLabelText(/shipping country|país de envío/i) as HTMLSelectElement;
     expect(countrySelect.value).toBe('ES');
 
     // Default currency: EUR
-    const currencySelect = screen.getByLabelText(/currency/i) as HTMLSelectElement;
+    const currencySelect = screen.getByLabelText(/currency|moneda/i) as HTMLSelectElement;
     expect(currencySelect.value).toBe('EUR');
   });
 
   it('stores selected country in cookies and refreshes the page on change', () => {
     render(<Toolbar />);
-    const countrySelect = screen.getByLabelText(/shipping country/i) as HTMLSelectElement;
+    const countrySelect = screen.getByLabelText(/shipping country|país de envío/i) as HTMLSelectElement;
 
     fireEvent.change(countrySelect, { target: { value: 'MX' } });
 
@@ -48,7 +50,7 @@ describe('US-03: Global Shipping and Currency Settings (Toolbar)', () => {
 
   it('stores selected currency in cookies and refreshes the page on change', () => {
     render(<Toolbar />);
-    const currencySelect = screen.getByLabelText(/currency/i) as HTMLSelectElement;
+    const currencySelect = screen.getByLabelText(/currency|moneda/i) as HTMLSelectElement;
 
     fireEvent.change(currencySelect, { target: { value: 'BRL' } });
 

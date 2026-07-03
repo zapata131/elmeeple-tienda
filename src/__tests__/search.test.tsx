@@ -25,14 +25,14 @@ describe('US-01: Predictive Smart Search Bar', () => {
     expect(screen.getByPlaceholderText(/search board games/i)).toBeInTheDocument();
   });
 
-  it('does not trigger search or show suggestions if query is less than 3 characters', async () => {
+  it('does not trigger search or show suggestions if query is empty', async () => {
     const fetchMock = jest.fn();
     global.fetch = fetchMock;
 
     render(<SearchBar />);
     const input = screen.getByPlaceholderText(/search board games/i);
 
-    fireEvent.change(input, { target: { value: 'Ca' } });
+    fireEvent.change(input, { target: { value: ' ' } });
 
     await new Promise((resolve) => setTimeout(resolve, 500)); // wait debounce
 
@@ -40,7 +40,7 @@ describe('US-01: Predictive Smart Search Bar', () => {
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
 
-  it('triggers search API and displays suggestions when 3 or more characters are typed', async () => {
+  it('triggers search API and displays suggestions when 1 or more characters are typed', async () => {
     const mockSuggestions = [
       { bgg_id: 23, name: 'Catan', thumbnail: 'https://example.com/catan.png' },
       { bgg_id: 46, name: 'Carcassonne', thumbnail: 'https://example.com/carc.png' },

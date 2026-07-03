@@ -11,15 +11,16 @@ You must execute this checklist on **every single turn** before completing your 
 ### Pre-Flight Actions (Start of Turn)
 *   **Verify Active Backlog:** Review the conversation context. If a new feature, bug, or improvement is discussed, **immediately** create a GitHub Issue using the `gh` CLI *before* writing any production code.
 *   **User Story Mandate:** Every issue created on GitHub must include a comprehensive User Story in the description using the classic Agile framework: `As a [Role], I want [Feature], So that [Benefit/Value]`.
+*   **Feature Branch Mandate (`AGENTS.md 2.3`):** Never commit work directly to `main`. Immediately checkout a dedicated feature branch matching the active issue: `git checkout -b feature/issue-<num>-<title>`.
 
 ### Post-Flight Actions (End of Turn)
 *   **Update DESIGN.md:** Document any architectural decisions, database schema updates, or visual design tokens.
 *   **Update AGENTS.md:** Record new engineering conventions, learnings, or testing patterns.
 *   **Update HANDOFF.md:** Keep the sprint memo updated in real-time (active branch, edited files, test status, next steps).
-*   **Commit & Push:** Ensure all progress is staged, committed, and pushed to the remote development branch.
+*   **Commit & Push Feature Branch:** Stage all changes, commit with conventional commit message, and push the active feature branch to remote (`git push -u origin feature/issue-<num>-<title>`). Do not push directly to `main`.
 
 > [!IMPORTANT]
-> **Any turn completed without executing this checklist is considered incomplete and invalid. No exceptions.**
+> **Any turn completed without executing this checklist and feature branch workflow is considered incomplete and invalid. No exceptions.**
 
 ---
 

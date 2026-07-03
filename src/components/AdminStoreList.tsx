@@ -48,6 +48,27 @@ export function AdminStoreList({ initialStores }: Props) {
     }
   };
 
+  const [isSeeding, setIsSeeding] = useState(false);
+  const [seedMsg, setSeedMsg] = useState('');
+
+  const handleSeed = async () => {
+    setIsSeeding(true);
+    setSeedMsg('');
+    try {
+      const res = await fetch('/api/admin/seed-data', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSeedMsg('¡Catálogo de prueba poblado con éxito! (22 juegos con portadas BGG y 12 tiendas regionales)');
+      } else {
+        setErrorMsg('Error al poblar datos de prueba.');
+      }
+    } catch {
+      setErrorMsg('Error de red al poblar datos.');
+    } finally {
+      setIsSeeding(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {errorMsg && (
@@ -55,6 +76,26 @@ export function AdminStoreList({ initialStores }: Props) {
           ⚠️ {errorMsg}
         </div>
       )}
+
+      {/* Seed Mock Data Card */}
+      <div className="bg-indigo-950 text-white p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-md border border-indigo-800">
+        <div>
+          <h3 className="font-extrabold text-sm text-indigo-100 flex items-center gap-2">
+            <span>🌱 Generador de Datos de Prueba (Mock Engine & BGG Covers)</span>
+          </h3>
+          <p className="text-xs text-indigo-300 mt-1 max-w-xl">
+            Puebla la base de datos local con 22 juegos top (Catan, Scythe, Wingspan, Ark Nova...) con portadas auténticas de BGG y 12 tiendas en España, Portugal y Latinoamérica.
+          </p>
+          {seedMsg && <p className="text-xs font-extrabold text-emerald-300 mt-2">✨ {seedMsg}</p>}
+        </div>
+        <button
+          onClick={handleSeed}
+          disabled={isSeeding}
+          className="bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs transition-colors shadow-sm disabled:opacity-50 shrink-0"
+        >
+          {isSeeding ? 'Generando Datos...' : 'Poblar Catálogo Mock Ahora'}
+        </button>
+      </div>
 
       <div className="overflow-x-auto border border-gray-200 rounded-xl bg-white shadow-sm">
         <table className="w-full border-collapse text-left text-sm text-gray-700">

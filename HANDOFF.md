@@ -78,11 +78,16 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Cart optimizer POST API route (`/api/cart/optimize`) returning top 3 lowest-cost bundle combinations.
 *   [x] Interactive shopping list optimizer interface (`CartOptimizerPanel.tsx`) and page `/optimizer` linked from header and toolbar.
 *   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, `/merchant/dashboard`, `/merchant/diagnostics`, `/admin/dashboard`, `/admin/currency`, `/admin/queue`, and `/optimizer`).
+*   [x] Dedicated port 3001 configuration (`package.json`, `playwright.config.ts`, `README.md`) preventing local port clashes.
+*   [x] Default Spanish language selector (`es`, `pt`, `en`) and Role Switcher (`Comprador`, `Tienda`, `Admin`) in `Toolbar.tsx` with role-based navigation links (`US-25`).
+*   [x] Domestic-Only Store checkbox toggle restricting offers to matching shipping country (`US-18`).
+*   [x] Rich Mock Data Engine (`seed_mock_data.ts` and `/api/admin/seed-data`) populating 22 board games with BGG cover images and 12 regional stores (`US-26`).
+*   [x] Clean SVG vector icons for navbar buttons and brand identity (`MeeplePrecios`) across subpages.
 
 ---
 
 ## 3. Four-Tier Test Suite Status
-*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% configured and passing (19 test suites, 59 total tests via `npm run test`).
+*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% configured and passing (20 test suites, 63 total tests via `npm run test`).
 *   **Tier 3 Live Browser Audits (DevTools for Agents):** Visual layouts and interactive user flows validated on live server using Chrome DevTools MCP tools (`click`, `fill`, `navigate_page`, `take_screenshot`).
 *   **Tier 4 Automated Replay Scripts (DevTools / Playwright CLI):** Standalone browser automation scripts built in `e2e/home_and_optimizer.spec.ts` and `e2e/merchant_and_admin.spec.ts` (`playwright.config.ts`), runnable deterministically from the terminal via `npm run test:e2e` without going through an agent.
 
@@ -106,16 +111,18 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#15` [US-15: BGG API Metadata Queue and Cache Manager](https://github.com/zapata131/elmeeple-tienda/issues/15) [COMPLETED]
 *   `#16` [US-16: Language Editions Switcher (Other Versions)](https://github.com/zapata131/elmeeple-tienda/issues/16) [COMPLETED]
 *   `#17` [US-17: Consolidated Multi-Game Cart Optimizer](https://github.com/zapata131/elmeeple-tienda/issues/17) [COMPLETED]
-*   `#18` [US-18: Domestic-Only Store Toggle](https://github.com/zapata131/elmeeple-tienda/issues/18)
+*   `#18` [US-18: Domestic-Only Store Toggle](https://github.com/zapata131/elmeeple-tienda/issues/18) [COMPLETED]
 *   `#19` [US-19: Unified Smart Autocomplete Dropdown](https://github.com/zapata131/elmeeple-tienda/issues/19)
 *   `#20` [US-20: Price Alerts In-App Dashboard & Header Notification](https://github.com/zapata131/elmeeple-tienda/issues/20)
 *   `#21` [US-21: Player BGG Wishlist Sync](https://github.com/zapata131/elmeeple-tienda/issues/21)
 *   `#22` [US-22: Store Packaging Vibe Tags & Reviews](https://github.com/zapata131/elmeeple-tienda/issues/22)
 *   `#23` [US-23: Free Shipping Filler Helper](https://github.com/zapata131/elmeeple-tienda/issues/23)
 *   `#24` [US-24: Restock Alert Notification](https://github.com/zapata131/elmeeple-tienda/issues/24)
+*   `#25` [US-25: Interface & Catalog Language Selector & Role-Based Navigation](https://github.com/zapata131/elmeeple-tienda/issues/25) [COMPLETED]
+*   `#26` [US-26: Rich Multi-Region Mock Data Seed & Automated BGG Cover Image Resolver](https://github.com/zapata131/elmeeple-tienda/issues/26) [COMPLETED]
 
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-18 (Domestic-Only Store Toggle):**
-    *   Build interactive filter toggle allowing buyers to restrict comparison results strictly to stores headquartered within their domestic country of origin.
+1.  **TDD implementation of US-19 (Unified Smart Autocomplete Dropdown):**
+    *   Build unified autocomplete dropdown in global header combining immediate game matches, category tags, and merchant links in a responsive overlay.

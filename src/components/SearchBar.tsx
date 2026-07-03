@@ -19,7 +19,7 @@ export function SearchBar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (query.trim().length < 3) {
+    if (query.trim().length < 1) {
       return;
     }
 
@@ -56,7 +56,7 @@ export function SearchBar() {
 
   const handleQueryChange = (val: string) => {
     setQuery(val);
-    if (val.trim().length < 3) {
+    if (val.trim().length < 1) {
       setSuggestions([]);
       setIsOpen(false);
     }

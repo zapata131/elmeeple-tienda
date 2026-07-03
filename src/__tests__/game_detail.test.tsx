@@ -23,6 +23,7 @@ jest.mock('next/navigation', () => ({
   useSearchParams() {
     return new URLSearchParams();
   },
+  usePathname: () => '/game/13',
 }));
 
 describe('US-02 & US-16: Game Detail Page & Comparison Table', () => {

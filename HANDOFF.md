@@ -6,11 +6,14 @@ This memo summarizes the current progress of the initial planning sprint for the
 
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Active Branch:** `feature/issue-27-regional-store-toggle`
+*   **Active Branch:** `feature/issue-31-iberoamerican-mock-data`
 *   **Created Files:**
     *   [backlog_user_stories.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/backlog_user_stories.md): Requirements and user stories backlog for Players, Partners, and Admins.
     *   [DESIGN.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md): Technical architecture specification, Supabase schemas, and color tokens.
     *   [AGENTS.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/AGENTS.md): AI agent roles, checklist, feed sync rules, and testing standards.
+    *   [src/utils/mockData.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/utils/mockData.ts): Centralized Iberoamerican & Iberian mock dataset containing 22 regional stores and 12 board games.
+    *   [src/__tests__/iberoamerican_mock_data.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/iberoamerican_mock_data.test.tsx): TDD verification ensuring >=20 regional stores, >=10 games, and 0 non-Iberoamerican shops.
+    *   [src/components/StoreOffersComparisonTable.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/StoreOffersComparisonTable.tsx): Interactive comparison table with regional domestic store toggle (activated by default).
     *   [src/components/StoreOffersComparisonTable.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/StoreOffersComparisonTable.tsx): Interactive comparison table with regional domestic store toggle (activated by default).
     *   [src/__tests__/regional_store_toggle.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/regional_store_toggle.test.tsx): TDD verification for US-27 regional store filter toggle.
     *   [src/__tests__/price_breakdown_fallback.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/price_breakdown_fallback.test.tsx): TDD verification for US-28 3-part price breakdown and offline fallback offers.

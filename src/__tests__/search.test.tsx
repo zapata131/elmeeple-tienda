@@ -41,10 +41,14 @@ describe('US-01: Predictive Smart Search Bar', () => {
   });
 
   it('triggers search API and displays suggestions when 1 or more characters are typed', async () => {
-    const mockSuggestions = [
-      { bgg_id: 23, name: 'Catan', thumbnail: 'https://example.com/catan.png' },
-      { bgg_id: 46, name: 'Carcassonne', thumbnail: 'https://example.com/carc.png' },
-    ];
+    const mockSuggestions = {
+      games: [
+        { bgg_id: 23, name: 'Catan', thumbnail: 'https://example.com/catan.png' },
+        { bgg_id: 46, name: 'Carcassonne', thumbnail: 'https://example.com/carc.png' },
+      ],
+      stores: [],
+      categories: [],
+    };
 
     global.fetch = jest.fn().mockImplementation(() =>
       Promise.resolve({
@@ -68,9 +72,13 @@ describe('US-01: Predictive Smart Search Bar', () => {
   });
 
   it('redirects to the game details page when a suggestion is clicked', async () => {
-    const mockSuggestions = [
-      { bgg_id: 23, name: 'Catan', thumbnail: 'https://example.com/catan.png' },
-    ];
+    const mockSuggestions = {
+      games: [
+        { bgg_id: 23, name: 'Catan', thumbnail: 'https://example.com/catan.png' },
+      ],
+      stores: [],
+      categories: [],
+    };
 
     global.fetch = jest.fn().mockImplementation(() =>
       Promise.resolve({

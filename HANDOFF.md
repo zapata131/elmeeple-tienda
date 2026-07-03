@@ -83,11 +83,12 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Domestic-Only Store checkbox toggle restricting offers to matching shipping country (`US-18`).
 *   [x] Rich Mock Data Engine (`seed_mock_data.ts` and `/api/admin/seed-data`) populating 22 board games with BGG cover images and 12 regional stores (`US-26`).
 *   [x] Clean SVG vector icons for navbar buttons and brand identity (`MeeplePrecios`) across subpages.
+*   [x] Unified Smart Autocomplete Dropdown overlay (`SearchBar.tsx` and `/api/search`) surfacing games, verified stores, and category tags simultaneously with keyboard arrow navigation (`US-19`).
 
 ---
 
 ## 3. Four-Tier Test Suite Status
-*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% configured and passing (20 test suites, 63 total tests via `npm run test`).
+*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% configured and passing (21 test suites, 65 total tests via `npm run test`).
 *   **Tier 3 Live Browser Audits (DevTools for Agents):** Visual layouts and interactive user flows validated on live server using Chrome DevTools MCP tools (`click`, `fill`, `navigate_page`, `take_screenshot`).
 *   **Tier 4 Automated Replay Scripts (DevTools / Playwright CLI):** Standalone browser automation scripts built in `e2e/home_and_optimizer.spec.ts` and `e2e/merchant_and_admin.spec.ts` (`playwright.config.ts`), runnable deterministically from the terminal via `npm run test:e2e` without going through an agent.
 
@@ -112,7 +113,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#16` [US-16: Language Editions Switcher (Other Versions)](https://github.com/zapata131/elmeeple-tienda/issues/16) [COMPLETED]
 *   `#17` [US-17: Consolidated Multi-Game Cart Optimizer](https://github.com/zapata131/elmeeple-tienda/issues/17) [COMPLETED]
 *   `#18` [US-18: Domestic-Only Store Toggle](https://github.com/zapata131/elmeeple-tienda/issues/18) [COMPLETED]
-*   `#19` [US-19: Unified Smart Autocomplete Dropdown](https://github.com/zapata131/elmeeple-tienda/issues/19)
+*   `#19` [US-19: Unified Smart Autocomplete Dropdown](https://github.com/zapata131/elmeeple-tienda/issues/19) [COMPLETED]
 *   `#20` [US-20: Price Alerts In-App Dashboard & Header Notification](https://github.com/zapata131/elmeeple-tienda/issues/20)
 *   `#21` [US-21: Player BGG Wishlist Sync](https://github.com/zapata131/elmeeple-tienda/issues/21)
 *   `#22` [US-22: Store Packaging Vibe Tags & Reviews](https://github.com/zapata131/elmeeple-tienda/issues/22)
@@ -124,5 +125,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-19 (Unified Smart Autocomplete Dropdown):**
-    *   Build unified autocomplete dropdown in global header combining immediate game matches, category tags, and merchant links in a responsive overlay.
+1.  **TDD implementation of US-20 (Price Alerts In-App Dashboard & Header Notification):**
+    *   Build unified player alerts manager displaying active wishlist price targets, historical trigger status, and unread badge alerts in the top navigation bar.

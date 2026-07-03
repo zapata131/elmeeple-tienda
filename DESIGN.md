@@ -33,7 +33,7 @@ This document defines the architectural guidelines, database schemas, visual des
 
 ## 3. MVP Feature Scope
 
-*   **Smart Autocomplete Search:** A header search bar that queries official BGG titles, translations, and alternate localized Spanish/Portuguese titles concurrently.
+*   **Unified Smart Autocomplete Search (`US-19`):** A multi-domain header search bar that returns structured results across three categories in real-time (`/api/search`): `games` (with BGG thumbnails), `stores` (with verification badges), and `categories` (tag pills). Features a flattened keyboard indexer enabling seamless Up/Down arrow traversal across section boundaries and instant navigation on Enter.
 *   **Game Detail Page (`/game/[slug]`):** SEO-friendly. Renders high-res box art, BGG statistics (complexity weight, recommended players, play duration), description, and the price comparison table.
 *   **Multi-Shop Comparison Table:** Lists store offers sorted by total price (base price + shipping) in ascending order by default. Includes base price, shipping rates, language version indicator, real-time stock, and redirect affiliate links.
 *   **Global Settings Toolbar:** Persistent header component allowing users to set destination country (for shipping calculations), display currency (for real-time conversion), and display language (Spanish/Portuguese).

@@ -23,6 +23,36 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
   const [alerts, setAlerts] = useState<AlertItem[]>(initialAlerts);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const [bggUsername, setBggUsername] = useState('');
+  const [syncingBgg, setSyncingBgg] = useState(false);
+  const [syncSuccessMsg, setSyncSuccessMsg] = useState('');
+
+  const handleSyncBgg = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bggUsername.trim()) return;
+    setSyncingBgg(true);
+    setErrorMsg('');
+    setSyncSuccessMsg('');
+    try {
+      const res = await fetch('/api/user/sync-bgg', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: bggUsername.trim(), email: userEmail }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSyncSuccessMsg(data.message || `¡Sincronización exitosa (${data.importedCount} juegos)!`);
+        setBggUsername('');
+        setTimeout(() => window.location.reload(), 1200);
+      } else {
+        setErrorMsg(data.error || 'Error al importar wishlist desde BGG.');
+      }
+    } catch {
+      setErrorMsg('Error de conexión de red.');
+    } finally {
+      setSyncingBgg(false);
+    }
+  };
 
   const handleDelete = async (alertId: string) => {
     setLoadingId(alertId);
@@ -100,6 +130,44 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
           <span className="text-sm font-extrabold text-indigo-650 truncate mt-2">{userEmail}</span>
         </div>
       </div>
+
+      {/* BGG Wishlist Importer Card */}
+      <div className="bg-gradient-to-r from-indigo-900 to-indigo-950 text-white rounded-2xl p-6 shadow-md border border-indigo-800 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-indigo-800/80 border border-indigo-700 flex items-center justify-center text-2xl shrink-0 shadow-inner">
+            🎲
+          </div>
+          <div>
+            <h3 className="text-base font-extrabold text-white">Sincronizar Wishlist desde BoardGameGeek</h3>
+            <p className="text-xs text-indigo-200 mt-0.5">
+              Importa automáticamente tus juegos deseados (wishlist/want to buy) y crea alertas de descuento con -15%.
+            </p>
+          </div>
+        </div>
+        <form onSubmit={handleSyncBgg} className="flex items-center gap-2 w-full md:w-auto shrink-0">
+          <input
+            type="text"
+            placeholder="Tu usuario de BGG..."
+            value={bggUsername}
+            onChange={(e) => setBggUsername(e.target.value)}
+            disabled={syncingBgg}
+            className="px-4 py-2 text-xs bg-indigo-950/90 text-white border border-indigo-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-indigo-400 min-w-[180px]"
+          />
+          <button
+            type="submit"
+            disabled={syncingBgg || !bggUsername.trim()}
+            className="bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 text-white font-extrabold text-xs px-4 py-2 rounded-xl transition-colors shadow-sm whitespace-nowrap"
+          >
+            {syncingBgg ? 'Importando...' : 'Importar Wishlist BGG'}
+          </button>
+        </form>
+      </div>
+
+      {syncSuccessMsg && (
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-extrabold px-4 py-3 rounded-xl shadow-sm">
+          ✨ {syncSuccessMsg}
+        </div>
+      )}
 
       {errorMsg && (
         <div className="bg-red-50 border border-red-150 text-red-700 text-xs font-semibold px-4 py-2.5 rounded-xl">

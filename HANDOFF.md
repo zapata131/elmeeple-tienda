@@ -74,7 +74,10 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Admin feed queue inspection and purging endpoint (`/api/admin/feed-queue`) and interactive monitoring panel (`AdminQueueMonitor.tsx`) at `/admin/queue`.
 *   [x] BGG XML API2 worker utility (`bgg_worker.ts`) parsing `/thing` metadata and handling HTTP 202/429 status retries (`AGENTS.md 4.3`) (US-15).
 *   [x] Automated BGG queue resolution route (`/api/cron/process-bgg-queue`) and manual trigger button in `AdminQueueMonitor.tsx`.
-*   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, `/merchant/dashboard`, `/merchant/diagnostics`, `/admin/dashboard`, `/admin/currency`, and `/admin/queue`).
+*   [x] Multi-game wishlist cart optimizer algorithm (`cart_optimizer.ts`) computing bundle splits and applying free shipping thresholds (US-17).
+*   [x] Cart optimizer POST API route (`/api/cart/optimize`) returning top 3 lowest-cost bundle combinations.
+*   [x] Interactive shopping list optimizer interface (`CartOptimizerPanel.tsx`) and page `/optimizer` linked from header and toolbar.
+*   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, `/merchant/dashboard`, `/merchant/diagnostics`, `/admin/dashboard`, `/admin/currency`, `/admin/queue`, and `/optimizer`).
 
 ---
 
@@ -101,7 +104,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#14` [US-14: Scheduled Store Feed Parser (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14) [COMPLETED]
 *   `#15` [US-15: BGG API Metadata Queue and Cache Manager](https://github.com/zapata131/elmeeple-tienda/issues/15) [COMPLETED]
 *   `#16` [US-16: Language Editions Switcher (Other Versions)](https://github.com/zapata131/elmeeple-tienda/issues/16) [COMPLETED]
-*   `#17` [US-17: Consolidated Multi-Game Cart Optimizer](https://github.com/zapata131/elmeeple-tienda/issues/17)
+*   `#17` [US-17: Consolidated Multi-Game Cart Optimizer](https://github.com/zapata131/elmeeple-tienda/issues/17) [COMPLETED]
 *   `#18` [US-18: Domestic-Only Store Toggle](https://github.com/zapata131/elmeeple-tienda/issues/18)
 *   `#19` [US-19: Unified Smart Autocomplete Dropdown](https://github.com/zapata131/elmeeple-tienda/issues/19)
 *   `#20` [US-20: Price Alerts In-App Dashboard & Header Notification](https://github.com/zapata131/elmeeple-tienda/issues/20)
@@ -113,5 +116,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-17 (Consolidated Multi-Game Cart Optimizer):**
-    *   Build shopping list multi-game optimizer allowing users to input a wishlist of games and compute optimal bundle purchases across stores minimizing total price plus shipping matrix costs.
+1.  **TDD implementation of US-18 (Domestic-Only Store Toggle):**
+    *   Build interactive filter toggle allowing buyers to restrict comparison results strictly to stores headquartered within their domestic country of origin.

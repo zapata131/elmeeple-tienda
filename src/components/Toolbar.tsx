@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const countries = [
   { code: 'ES', name: 'España' },
@@ -98,6 +99,15 @@ export function Toolbar() {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="ml-auto flex items-center gap-3">
+        <Link
+          href="/optimizer"
+          className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold px-3 py-1.5 rounded-lg transition-colors shadow-sm flex items-center gap-1.5"
+        >
+          <span>✨ Comparador Multi-Juego</span>
+        </Link>
       </div>
     </div>
   );

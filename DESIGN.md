@@ -38,7 +38,7 @@ This document defines the architectural guidelines, database schemas, visual des
 *   **Multi-Shop Comparison Table:** Lists store offers sorted by total price (base price + shipping) in ascending order by default. Includes base price, shipping rates, language version indicator, real-time stock, and redirect affiliate links.
 *   **Global Settings Toolbar:** Persistent header component allowing users to set destination country (for shipping calculations), display currency (for real-time conversion), and display language (Spanish/Portuguese).
 *   **Price History Chart:** A clean line chart (without emojis) displaying minimum historical price fluctuations for each game.
-*   **Wishlist & Price Alerts:** Registered users can add games to their wishlist and configure target thresholds to trigger automatic email alerts (via Resend) when prices drop.
+*   **Wishlist & Price Alerts Portal (`US-20`):** Registered players can add games to their wishlist and configure target price thresholds. Features an on-site notification bell in the header toolbar (`Toolbar.tsx`) and an interactive management center (`/dashboard/alerts`) comparing target rates against live lowest market prices with instant edit/delete controls.
 *   **Merchant Dashboard:** Self-serve portal for storefronts to register, edit tax details, upload store logo (auto-cropped to `150x150px` on canvas), define shipping matrices, and configure XML/CSV feeds.
 *   **Background Sync Job:** Scheduled daily cron job that fetches, parses, and upserts product feeds from verified merchants.
 

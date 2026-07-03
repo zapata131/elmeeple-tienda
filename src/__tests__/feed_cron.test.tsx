@@ -122,8 +122,7 @@ describe('US-14: Scheduled Store Feed Parser & Metadata Queueing', () => {
         error: null,
       });
 
-      const req = new NextRequest('http://localhost/api/admin/feed-queue');
-      const res = await AdminQueueGet(req);
+      const res = await AdminQueueGet();
       expect(res.status).toBe(403);
     });
 
@@ -144,8 +143,7 @@ describe('US-14: Scheduled Store Feed Parser & Metadata Queueing', () => {
         error: null,
       });
 
-      const req = new NextRequest('http://localhost/api/admin/feed-queue');
-      const res = await AdminQueueGet(req);
+      const res = await AdminQueueGet();
       expect(res.status).toBe(200);
       const body = await res.json();
       expect(body.items).toHaveLength(1);

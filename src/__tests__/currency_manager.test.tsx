@@ -137,8 +137,7 @@ describe('US-13: Currency and Foreign Exchange Rate Manager', () => {
 
       mockClient.upsert.mockResolvedValueOnce({ error: null });
 
-      const req = new NextRequest('http://localhost/api/cron/sync-fx', { method: 'POST' });
-      const res = await CronFxPost(req);
+      const res = await CronFxPost();
 
       expect(res.status).toBe(200);
       expect(mockClient.from).toHaveBeenCalledWith('exchange_rates');

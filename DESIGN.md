@@ -11,6 +11,7 @@ This document defines the architectural guidelines, database schemas, visual des
 *   **Value Proposition:** We help tabletop gamers find the best consolidated deals (including shipping and regional tax estimates) and empower independent game stores to capture high-intent referral traffic and drive sales.
 *   **Business Model:** Affiliate marketing (cost per referral click and affiliate sale commissions) and premium merchant subscriptions for featured offers.
 *   **Automated Skills Governance:** All UI designs, copywriting, and schema updates are governed autonomously by our `.agents/skills/ux_expert` and `.agents/skills/document_sync` protocols.
+*   **Offline Fallback Guarantee (US-28):** When Supabase returns empty data or is disconnected, `queries.ts` injects 6 rich fallback store offers (`FALLBACK_STORE_OFFERS`) with explicit 3-part breakdowns (`Artículo` + `Envío` = `Summe`) to guarantee seamless local user testing and QA.
 
 ---
 

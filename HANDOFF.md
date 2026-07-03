@@ -6,11 +6,12 @@ This memo summarizes the current progress of the initial planning sprint for the
 
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Active Branch:** `main`
+*   **Active Branch:** `feature/issue-28-price-breakdown-table`
 *   **Created Files:**
     *   [backlog_user_stories.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/backlog_user_stories.md): Requirements and user stories backlog for Players, Partners, and Admins.
     *   [DESIGN.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md): Technical architecture specification, Supabase schemas, and color tokens.
     *   [AGENTS.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/AGENTS.md): AI agent roles, checklist, feed sync rules, and testing standards.
+    *   [src/__tests__/price_breakdown_fallback.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/price_breakdown_fallback.test.tsx): TDD verification for US-28 3-part price breakdown and offline fallback offers.
     *   [jest.config.js](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/jest.config.js): Jest test framework configuration.
     *   [jest.setup.js](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/jest.setup.js): Polyfills and global mocks for Jest environment.
 

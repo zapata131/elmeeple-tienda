@@ -82,7 +82,7 @@ MeeplePrecios is built using a modern, scalable, and high-performance stack desi
     ```bash
     npm run dev
     ```
-    Open [http://localhost:3000](http://localhost:3000) to view the application.
+    Open [http://localhost:3001](http://localhost:3001) to view the application.
 
 *   Run the test suite (unit and integration tests in serial mode):
     ```bash

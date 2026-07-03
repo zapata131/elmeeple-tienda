@@ -59,37 +59,64 @@ MeeplePrecios is built using a modern, scalable, and high-performance stack desi
 
 ---
 
-## 4. Getting Started
+## 4. Getting started and local testing
 
 ### Prerequisites
 *   Node.js (v20 or higher)
 *   NPM (v10 or higher)
 
 ### Installation
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/zapata131/elmeeple-tienda.git
-    cd elmeeple-tienda
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Configure your environment variables (copy `.env.local.example` to `.env.local` and fill in your Supabase, NextAuth, and Resend credentials).
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/zapata131/elmeeple-tienda.git
+   cd elmeeple-tienda
+   ```
+2. Install project dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure your environment variables by copying `file:.env.local.example` to `file:.env.local` and filling in your Supabase, NextAuth, and Resend credentials:
+   ```bash
+   cp .env.local.example .env.local
+   ```
 
-### Running Locally
-*   Start the development server:
-    ```bash
-    npm run dev
-    ```
-    Open [http://localhost:3001](http://localhost:3001) to view the application.
+### Running the servers and testing manually
 
-*   Run the test suite (unit and integration tests in serial mode):
+To test MeeplePrecios locally in your browser, run the application server and seed the test database using the following steps:
+
+1. **Start the local development server:** Launch the Next.js development server on port 3001:
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:3001` in your web browser to access the live application.
+
+2. **Seed the local test database:** Populate the local database or memory cache with our Iberian and Latin American test catalog (22 verified online stores across Spain, Portugal, Mexico, Brazil, Argentina, Colombia, Chile, and Peru, along with 12 acclaimed board games). Run the seed endpoint in your terminal:
+   ```bash
+   curl -X POST http://localhost:3001/api/admin/seed-data
+   ```
+   Alternatively, navigate to the global **Navbar** in the browser and click the **Cargar Datos** action when logged in under the **Admin** role profile.
+
+3. **Perform manual browser walkthroughs:** Once the development server and seed catalog are active, manually verify the core regional workflows:
+   *   **Regional domestic filtering:** On any game comparison page (such as `http://localhost:3001/game/23`), verify that the **Solo tiendas de mi país** toggle switch is activated by default. Toggle the switch off to include foreign store listings.
+   *   **Destination and currency synchronization:** In the top **Navbar**, change your delivery country (for example, from `ES - España` to `MX - México`) and currency (to `MXN ($)`). Verify that store listings immediately filter to domestic Mexican merchants and prices convert dynamically.
+   *   **Box edition language badges:** Inspect the store offers table to verify that localized box editions display vector badges (`ES`, `PT`, `EN`, `DE`, `MULTI`).
+   *   **Multi-game cart optimization:** Click **Comparador Multi-Juego** in the header, select multiple games, and verify that the optimizer computes split shipments and free shipping thresholds.
+
+### Running automated verification suites
+
+Before submitting code changes, run the automated test pipelines:
+
+*   **Serial unit and integration tests:** Run Jest test suites in serial execution mode to prevent JSDOM memory limits:
     ```bash
     npm run test -- --runInBand --forceExit
     ```
 
-*   Run linting checks and build validation:
+*   **Automated browser replay (E2E):** Execute standalone Playwright browser walkthroughs across desktop (`1280x800`) and mobile (`390x844`) viewports:
+    ```bash
+    npm run test:e2e
+    ```
+
+*   **Full verification quality gate:** Execute lint checks, TypeScript compiler builds, and serial unit suites:
     ```bash
     npm run verify
     ```

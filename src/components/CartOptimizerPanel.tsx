@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { CartCombinationResult } from '@/utils/cart_optimizer';
+import { FreeShippingFillerWidget } from '@/components/FreeShippingFillerWidget';
 
 interface AvailableGame {
   bgg_id: number;
@@ -219,6 +220,15 @@ export function CartOptimizerPanel({ initialGames }: Props) {
                               </li>
                             ))}
                           </ul>
+
+                          {!store.qualifiesForFreeShipping && (
+                            <FreeShippingFillerWidget
+                              storeId={store.storeId}
+                              storeName={store.storeName}
+                              currentSubtotal={store.subtotal}
+                              freeShippingThreshold={store.subtotal + 10.0}
+                            />
+                          )}
                         </div>
                       ))}
                     </div>

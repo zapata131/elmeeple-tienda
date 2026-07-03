@@ -87,11 +87,12 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Price Alerts In-App Management Portal (`/dashboard/alerts` and `/api/user/alerts`) comparing active targets against live best prices, with header notification bell badge (`US-20`).
 *   [x] Automated BGG Wishlist Sync (`/api/user/sync-bgg` and `UserAlertsDashboard.tsx`) querying Geekdo XML collections and creating price drop alerts at -15% target thresholds (`US-21`).
 *   [x] Store Profiles & Packaging Vibe Tags (`/store/[id]` and `/api/store/reviews`) allowing community evaluations of box corner protection and delivery speed (`US-22`).
+*   [x] Free Shipping Threshold Filler Helper (`FreeShippingFillerWidget.tsx` and `/api/cart/fillers`) surfacing optimal low-cost add-ons inside cart optimizer splits (`US-23`).
 
 ---
 
 ## 3. Four-Tier Test Suite Status
-*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% configured and passing (24 test suites, 76 total tests via `npm run test`).
+*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% configured and passing (25 test suites, 79 total tests via `npm run test`).
 *   **Tier 3 Live Browser Audits (DevTools for Agents):** Visual layouts and interactive user flows validated on live server using Chrome DevTools MCP tools (`click`, `fill`, `navigate_page`, `take_screenshot`).
 *   **Tier 4 Automated Replay Scripts (DevTools / Playwright CLI):** Standalone browser automation scripts built in `e2e/home_and_optimizer.spec.ts` and `e2e/merchant_and_admin.spec.ts` (`playwright.config.ts`), runnable deterministically from the terminal via `npm run test:e2e` without going through an agent.
 
@@ -120,7 +121,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#20` [US-20: Price Alerts In-App Dashboard & Header Notification](https://github.com/zapata131/elmeeple-tienda/issues/20) [COMPLETED]
 *   `#21` [US-21: Player BGG Wishlist Sync](https://github.com/zapata131/elmeeple-tienda/issues/21) [COMPLETED]
 *   `#22` [US-22: Store Packaging Vibe Tags & Reviews](https://github.com/zapata131/elmeeple-tienda/issues/22) [COMPLETED]
-*   `#23` [US-23: Free Shipping Filler Helper](https://github.com/zapata131/elmeeple-tienda/issues/23)
+*   `#23` [US-23: Free Shipping Filler Helper](https://github.com/zapata131/elmeeple-tienda/issues/23) [COMPLETED]
 *   `#24` [US-24: Restock Alert Notification](https://github.com/zapata131/elmeeple-tienda/issues/24)
 *   `#25` [US-25: Interface & Catalog Language Selector & Role-Based Navigation](https://github.com/zapata131/elmeeple-tienda/issues/25) [COMPLETED]
 *   `#26` [US-26: Rich Multi-Region Mock Data Seed & Automated BGG Cover Image Resolver](https://github.com/zapata131/elmeeple-tienda/issues/26) [COMPLETED]
@@ -128,5 +129,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-23 (Free Shipping Filler Helper):**
-    *   Build smart filler recommendation widget inside the cart optimizer suggesting small inexpensive game accessories or expansions to bridge the gap to a store's free shipping threshold.
+1.  **TDD implementation of US-24 (Restock Alert Notification):**
+    *   Build automated out-of-stock restock subscription button inside game deal tables notifying players immediately when inventory is restocked.

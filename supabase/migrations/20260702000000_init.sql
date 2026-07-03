@@ -281,3 +281,23 @@ create policy "Allow system/anon to insert clicks"
     with check (true);
 
 
+-- Create bgg_metadata_queue table for unmapped merchant items awaiting BGG API resolution
+create table public.bgg_metadata_queue (
+    id uuid default gen_random_uuid() primary key,
+    store_id uuid references public.stores(id) on delete cascade not null,
+    ean text,
+    title text not null,
+    store_product_url text not null,
+    status text default 'pending'::text not null,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    unique (store_id, store_product_url)
+);
+
+create index bgg_metadata_queue_status_idx on public.bgg_metadata_queue(status);
+
+-- Enable RLS on bgg_metadata_queue
+alter table public.bgg_metadata_queue enable row level security;
+
+create policy "Allow admin/system to manage bgg_metadata_queue"
+    on public.bgg_metadata_queue for all
+    using (true);

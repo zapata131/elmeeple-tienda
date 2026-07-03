@@ -59,10 +59,20 @@ function detectLanguage(title: string): string {
   return 'es'; // default locale matching Iberian/LATAM
 }
 
+interface QueueInsertRow {
+  store_id: string;
+  ean: string | null;
+  title: string;
+  store_product_url: string;
+  status: string;
+  created_at: string;
+}
+
 export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[]) {
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
-  const stats = { processed: 0, matched: 0, unmatched: 0 };
+  const stats = { processed: 0, matched: 0, unmatched: 0, queued: 0 };
   const buffer: StoreGameInsertRow[] = [];
+  const queueBuffer: QueueInsertRow[] = [];
   const BATCH_LIMIT = 500;
 
   for (const item of items) {
@@ -110,29 +120,61 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
       });
     } else {
       stats.unmatched++;
+      stats.queued++;
+      queueBuffer.push({
+        store_id: storeId,
+        ean: item.ean || null,
+        title: item.title || 'Unknown Title',
+        store_product_url: item.link || '',
+        status: 'pending',
+        created_at: new Date().toISOString(),
+      });
     }
 
-    // Upsert batch if threshold reached
+    // Upsert matched batch if threshold reached
     if (buffer.length >= BATCH_LIMIT) {
       const { error } = await supabase
         .from('store_games')
-        .upsert(buffer, { onConflict: 'store_id,bgg_id' });
+        .upsert([...buffer], { onConflict: 'store_id,bgg_id' });
       
       if (error) {
         console.error('[syncStoreCatalog] Batch upsert failed:', error.message);
       }
       buffer.length = 0; // Clear buffer
     }
+
+    // Upsert unmapped queue batch if threshold reached
+    if (queueBuffer.length >= BATCH_LIMIT) {
+      const { error } = await supabase
+        .from('bgg_metadata_queue')
+        .upsert([...queueBuffer], { onConflict: 'store_id,store_product_url' });
+      
+      if (error) {
+        console.error('[syncStoreCatalog] Queue batch upsert failed:', error.message);
+      }
+      queueBuffer.length = 0;
+    }
   }
 
-  // Upsert remaining buffer items
+  // Upsert remaining matched buffer items
   if (buffer.length > 0) {
     const { error } = await supabase
       .from('store_games')
-      .upsert(buffer, { onConflict: 'store_id,bgg_id' });
+      .upsert([...buffer], { onConflict: 'store_id,bgg_id' });
     
     if (error) {
       console.error('[syncStoreCatalog] Final buffer upsert failed:', error.message);
+    }
+  }
+
+  // Upsert remaining unmapped queue buffer items
+  if (queueBuffer.length > 0) {
+    const { error } = await supabase
+      .from('bgg_metadata_queue')
+      .upsert([...queueBuffer], { onConflict: 'store_id,store_product_url' });
+    
+    if (error) {
+      console.error('[syncStoreCatalog] Final queue buffer upsert failed:', error.message);
     }
   }
 

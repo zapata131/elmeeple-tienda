@@ -70,7 +70,9 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   [x] Currency conversion helper (`convertPrice`) and 24-hour expiration rule check (`isRatesCacheStale`) in `currency.ts` (US-13).
 *   [x] Automated cron FX synchronizer (`/api/cron/sync-fx`) batch upserting live exchange rates relative to EUR base.
 *   [x] Admin currency manager endpoint (`/api/admin/fx-rates`) and interactive management panel (`CurrencyManager.tsx`) at `/admin/currency`.
-*   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, `/merchant/dashboard`, `/merchant/diagnostics`, `/admin/dashboard`, and `/admin/currency`).
+*   [x] Unmapped feed items queue table (`bgg_metadata_queue`) and batch queueing in `syncStoreCatalog` with 500-record batch protection (`AGENTS.md 4.1`) (US-14).
+*   [x] Admin feed queue inspection and purging endpoint (`/api/admin/feed-queue`) and interactive monitoring panel (`AdminQueueMonitor.tsx`) at `/admin/queue`.
+*   [x] Page routing links (`/merchant/onboard`, `/merchant/shipping`, `/merchant/dashboard`, `/merchant/diagnostics`, `/admin/dashboard`, `/admin/currency`, and `/admin/queue`).
 
 ---
 
@@ -94,7 +96,7 @@ This memo summarizes the current progress of the initial planning sprint for the
 *   `#11` [US-11: Merchant Auditing and Verification Dashboard](https://github.com/zapata131/elmeeple-tienda/issues/11) [COMPLETED]
 *   `#12` [US-12: Feed Diagnostics and Monitoring Hub](https://github.com/zapata131/elmeeple-tienda/issues/12) [COMPLETED]
 *   `#13` [US-13: Currency and Foreign Exchange Rate Manager](https://github.com/zapata131/elmeeple-tienda/issues/13) [COMPLETED]
-*   `#14` [US-14: Scheduled Store Feed Parser (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14)
+*   `#14` [US-14: Scheduled Store Feed Parser (Cron Job)](https://github.com/zapata131/elmeeple-tienda/issues/14) [COMPLETED]
 *   `#15` [US-15: BGG API Metadata Queue and Cache Manager](https://github.com/zapata131/elmeeple-tienda/issues/15)
 *   `#16` [US-16: Language Editions Switcher (Other Versions)](https://github.com/zapata131/elmeeple-tienda/issues/16) [COMPLETED]
 *   `#17` [US-17: Consolidated Multi-Game Cart Optimizer](https://github.com/zapata131/elmeeple-tienda/issues/17)
@@ -109,5 +111,5 @@ This memo summarizes the current progress of the initial planning sprint for the
 ---
 
 ## 5. Next Steps
-1.  **TDD implementation of US-14 (Scheduled Store Feed Parser - Cron Job):**
-    *   Implement background crawler scheduler to iterate verified stores and sync inventory feeds hourly while adhering to batch limits.
+1.  **TDD implementation of US-15 (BGG API Metadata Queue and Cache Manager):**
+    *   Build worker route to process items from `bgg_metadata_queue`, query the BGG `/thing` API, map board game details to `bgg_games_cache`, and handle 202 Accepted polling and 429 rate limits gracefully.

@@ -54,7 +54,6 @@ export function Toolbar() {
   const [currency, setCurrency] = useState('EUR');
   const [language, setLanguage] = useState('es'); // Default Spanish
   const [role, setRole] = useState('player');
-  const [domesticOnly, setDomesticOnly] = useState(false);
   const [isSeeding, setIsSeeding] = useState(false);
   const [seedMsg, setSeedMsg] = useState('');
 
@@ -63,13 +62,11 @@ export function Toolbar() {
     const savedCurrency = getCookie('meeple_currency');
     const savedLang = getCookie('meeple_language');
     const savedRole = getCookie('meeple_role');
-    const savedDomestic = getCookie('meeple_domestic_only');
 
     if (savedCountry) setCountry(savedCountry);
     if (savedCurrency) setCurrency(savedCurrency);
     if (savedLang) setLanguage(savedLang);
     if (savedRole) setRole(savedRole);
-    if (savedDomestic === 'true') setDomesticOnly(true);
   }, []);
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -93,11 +90,6 @@ export function Toolbar() {
     router.refresh();
   };
 
-  const toggleDomestic = (checked: boolean) => {
-    setDomesticOnly(checked);
-    document.cookie = `meeple_domestic_only=${checked}; path=/; max-age=31536000; SameSite=Lax`;
-    router.refresh();
-  };
 
   const triggerSeed = async () => {
     setIsSeeding(true);
@@ -160,22 +152,6 @@ export function Toolbar() {
         {/* Filters and Settings */}
         <div className="flex flex-wrap items-center gap-3 ml-auto">
           
-          {/* Domestic Only Tactile Switch */}
-          <label className="flex items-center gap-2.5 text-xs font-medium text-gray-300 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 cursor-pointer hover:border-gray-600 select-none">
-            <div className="relative inline-flex items-center">
-              <input
-                type="checkbox"
-                role="switch"
-                aria-checked={domesticOnly}
-                checked={domesticOnly}
-                onChange={(e) => toggleDomestic(e.target.checked)}
-                onClick={(e) => e.stopPropagation()}
-                className="sr-only peer"
-              />
-              <div className="w-9 h-5 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 cursor-pointer"></div>
-            </div>
-            <span>Solo Tiendas Nacionales ({country})</span>
-          </label>
 
           {/* Country Selector */}
           <div className="flex items-center gap-1.5">

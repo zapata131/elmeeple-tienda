@@ -1,5 +1,6 @@
 import React from 'react';
 import { SearchBar } from '@/components/SearchBar';
+import { RegionalStoreToggle } from '@/components/RegionalStoreToggle';
 import { Toolbar } from '@/components/Toolbar';
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
@@ -75,9 +76,10 @@ export default async function Home() {
             El buscador y comparador de precios de juegos de mesa más rápido para España y Latinoamérica. Encuentra la edición exacta en tu moneda local.
           </p>
           
-          {/* Autocomplete Search Bar */}
-          <div className="w-full flex justify-center">
+          {/* Autocomplete Search Bar and Consolidated Regional Store Toggle */}
+          <div className="w-full flex flex-col items-center gap-3">
             <SearchBar />
+            <RegionalStoreToggle />
           </div>
         </div>
       </header>

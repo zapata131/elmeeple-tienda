@@ -84,22 +84,10 @@ describe('US-03: Global Shipping and Currency Settings (Toolbar)', () => {
     expect(languageSelect.value).toBe('en');
   });
 
-  it('renders tactile domestic switch with role="switch" and updates cookie on change without propagating click', () => {
-    const parentClick = jest.fn();
-    render(
-      <div onClick={parentClick}>
-        <Toolbar />
-      </div>
-    );
-
-    const domesticSwitch = screen.getByRole('switch', { name: /Solo Tiendas Nacionales/i });
-    expect(domesticSwitch).toBeInTheDocument();
-    expect(domesticSwitch).not.toBeChecked();
-
-    fireEvent.click(domesticSwitch);
-    expect(parentClick).not.toHaveBeenCalled();
-    expect(document.cookie).toContain('meeple_domestic_only=true');
-    expect(mockRefresh).toHaveBeenCalled();
+  it('does NOT render domestic store switch in toolbar (relocated directly into page/comparison UI per US-36)', () => {
+    render(<Toolbar />);
+    expect(screen.queryByRole('switch', { name: /Solo Tiendas Nacionales/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('switch', { name: /Solo tiendas/i })).not.toBeInTheDocument();
   });
 });
 

@@ -5,6 +5,7 @@ import Home from '@/app/page';
 import { Toolbar } from '@/components/Toolbar';
 import StoreOffersComparisonTable, { ComparisonOffer } from '@/components/StoreOffersComparisonTable';
 import { UserAlertsDashboard, AlertItem } from '@/components/UserAlertsDashboard';
+import { RegionalStoreToggle } from '@/components/RegionalStoreToggle';
 
 // Mock Supabase so Home server component does not wait on network connection
 jest.mock('@supabase/supabase-js', () => {
@@ -117,6 +118,14 @@ describe('US-34 (Issue #37): System-Wide Vector SVGs & Emoji Eradication', () =>
       <UserAlertsDashboard initialAlerts={mockAlerts} userEmail="player@meeple.com" />
     );
 
+    const textContent = container.textContent || '';
+    BANNED_EMOJIS.forEach((emoji) => {
+      expect(textContent).not.toContain(emoji);
+    });
+  });
+
+  it('eradicates raw unicode emojis from RegionalStoreToggle (src/components/RegionalStoreToggle.tsx)', () => {
+    const { container } = render(<RegionalStoreToggle />);
     const textContent = container.textContent || '';
     BANNED_EMOJIS.forEach((emoji) => {
       expect(textContent).not.toContain(emoji);

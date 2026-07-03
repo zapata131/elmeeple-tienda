@@ -16,6 +16,10 @@ test.describe('E2E Walkthrough: Home, Predictive Search, and Multi-Game Cart Opt
     await countrySelect.selectOption('PT');
     await expect(countrySelect).toHaveValue('PT');
 
+    // Verify consolidated Regional Domestic Store toggle switch exists in Home search UI
+    const domesticSwitch = page.locator('header input[role="switch"]');
+    await expect(domesticSwitch).toBeAttached();
+
     // 2. Navigate to Multi-Game Cart Optimizer sheet
     const optimizerBtn = page.locator('a[href="/optimizer"]', { hasText: /Comparador Multi-Juego/i });
     await expect(optimizerBtn).toBeVisible();

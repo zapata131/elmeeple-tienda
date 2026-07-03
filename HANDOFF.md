@@ -1,18 +1,20 @@
-# Handoff Sprint Memo: MeeplePrecios (UX & UI Sprint Bundle Completed)
+# Handoff Sprint Memo: MeeplePrecios (Milestone 5: Consolidate Regional Domestic Store Toggles Completed)
 
-This memo summarizes the current progress and verified completion of the **MeeplePrecios UX & UI Sprint Bundle** for the board game price comparison platform across the Iberian Peninsula (Spain, Portugal) and Latin America (including Brazil).
+This memo summarizes the verified completion of **Milestone 5 / US-36 (Issue #44): Consolidate Regional Domestic Store Toggles in Catalog and Comparison UI** for the board game price comparison platform across the Iberian Peninsula (Spain, Portugal) and Latin America.
 
 ---
 
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Active Branch:** `feature/ux-ui-sprint-bundle`
+*   **Active Branch:** `feature/consolidate-regional-toggles`
+*   **Active Issue:** Issue #44 (`[US-36] Consolidate Regional Domestic Store Toggles in Catalog and Comparison UI`)
 *   **Modified / Verified Files:**
-    *   [src/app/layout.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/layout.tsx), [src/app/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/page.tsx), [src/app/game/[id]/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/game/[id]/page.tsx): Implemented dynamic SEO metadata targeting Iberian & LATAM markets, responsive layouts, and complete eradication of raw unicode emojis in favor of crisp SVG vector paths.
-    *   [src/components/Toolbar.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/Toolbar.tsx): Refactored navigation header with clean SVG icons, role switcher pills (`Comprador`, `Tienda`, `Admin`), and tactile domestic-only toggle switch (`role="switch"`).
-    *   [src/components/StoreOffersComparisonTable.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/StoreOffersComparisonTable.tsx): Implemented tactile switch for regional domestic filter (`onlyDomestic`), replaced raw language text/emojis with high-contrast typographic edition badges (`renderEditionBadge`), and replaced star/package emojis with vector icons.
-    *   [src/components/UserAlertsDashboard.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/UserAlertsDashboard.tsx): Eradicated dice, sparkles, warning, bell, fire, package, and lightning emojis, replacing them with clean vector SVGs and styled status tags.
-    *   [src/__tests__/edition_badges.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/edition_badges.test.tsx), [src/__tests__/emoji_eradication.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/emoji_eradication.test.tsx), [src/__tests__/seo_metadata.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/seo_metadata.test.tsx), [src/__tests__/regional_store_toggle.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/regional_store_toggle.test.tsx): Comprehensive TDD verification suites guaranteeing 100% vector badge rendering, zero emoji leakage, tactile switch accessibility, and SEO metadata compliance.
+    *   [src/components/RegionalStoreToggle.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/RegionalStoreToggle.tsx): Created standalone client component rendering an accessible tactile switch (`role="switch"`, `aria-checked`, click propagation stopping) with zero raw unicode emojis.
+    *   [src/components/Toolbar.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/Toolbar.tsx): Removed duplicate/redundant domestic store toggle switch (`Solo Tiendas Nacionales`) from the global navigation header.
+    *   [src/app/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/page.tsx): Embedded `RegionalStoreToggle` directly below the search bar in the main hero search section for contextual filtering.
+    *   [src/components/CatalogView.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/CatalogView.tsx): Added `RegionalStoreToggle` to the sidebar filters panel and upgraded the existing in-stock filter to an accessible tactile switch (`role="switch"`).
+    *   [src/__tests__/page.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/page.test.tsx), [src/__tests__/toolbar.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/toolbar.test.tsx), [src/__tests__/emoji_eradication.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/emoji_eradication.test.tsx): Serial unit and integration test suites validating relocation of the domestic switch and 100% emoji eradication.
+    *   [e2e/regional_toggles.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/regional_toggles.spec.ts), [e2e/home_and_optimizer.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/home_and_optimizer.spec.ts): Playwright E2E walkthrough suites verifying consolidated toggle behavior across desktop (`1280x800`) and mobile (`375x667`) viewports.
 
 ---
 
@@ -21,33 +23,20 @@ This memo summarizes the current progress and verified completion of the **Meepl
 ### Milestone 1 to Milestone 7: MVP Core Platform [100% COMPLETED]
 *   [x] Predictive smart autocomplete search (`US-01`, `US-19`), game catalog filters (`US-04`), multi-game cart optimizer (`US-17`, `US-23`), regional shipping matrices (`US-03`, `US-08`), background XML feed sync & diagnostics (`US-09`, `US-12`, `US-14`), BGG metadata resolution (`US-15`, `US-16`), price drop & restock alerts (`US-06`, `US-20`, `US-21`, `US-24`), store reviews & vibe badges (`US-22`), foreign exchange rate caching (`US-13`), and multi-region mock data seeding (`US-26`).
 
-### Milestone 8: MeeplePrecios UX & UI Sprint Bundle [100% COMPLETED]
-*   [x] **US-30 (Issue #33) Navbar Navigation & Brand Identity:** Responsive navigation bar (`Toolbar.tsx`) with vector logo iconography, role switcher pills, and persistent brand identity.
-*   [x] **US-31 (Issue #34) Layout SEO Metadata & Mobile Responsiveness:** Root and page layouts (`layout.tsx`, `page.tsx`, `game/[id]/page.tsx`) equipped with dynamic SEO metadata, OpenGraph tags, and mobile viewport adaptability.
-*   [x] **US-32 (Issue #35) Regional Store Toggle & Tactile Switches:** Accessible tactile switches (`role="switch"`, `aria-checked`) with click propagation stopping in `Toolbar.tsx` and `StoreOffersComparisonTable.tsx`.
-*   [x] **US-33 (Issue #36) Edition Language Badges & Vector Pill Tags:** High-contrast typographic edition markers (`ES`, `PT`, `EN`, `DE`, `MULTI`) rendering clean SVG info icons and official brand colors.
-*   [x] **US-34 (Issue #37) System-Wide Emoji Eradication:** 100% removal of raw unicode emojis across all user-facing interfaces, verified by automated unit and E2E test suites.
+### Milestone 8 & Ongoing Refinement [100% COMPLETED]
+*   [x] **US-30 to US-34 (Issues #33 to #37):** Navbar Navigation, SEO Metadata, Edition Language Badges, and System-Wide Emoji Eradication.
+*   [x] **US-35 (Issue #42):** BGG Wishlist Synchronization & Discount Alerts Removal (PR #43).
+*   [x] **US-36 (Issue #44): Consolidate Regional Domestic Store Toggles:** Relocated domestic store toggle switch from the global navbar (`Toolbar.tsx`) directly into the main search page UI (`page.tsx`), catalog filter panel (`CatalogView.tsx`), and price comparison table (`StoreOffersComparisonTable.tsx`).
 
 ---
 
 ## 3. Four-Tier Test Suite Status
-*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% green and passing in serial mode (`npm run test -- --runInBand --forceExit`: 34 suites, 111 tests passed).
-*   **Tier 3 Live Browser Audits (DevTools for Agents):** Visual layouts, tactile switches, and vector badges validated on running browser instances.
-*   **Tier 4 Automated Replay Scripts (Playwright CLI):** E2E walkthrough suites (`npm run test:e2e`) passing cleanly across desktop and mobile viewports (2 tests, 100% pass rate).
+*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% green in serial mode (`npm run test -- --runInBand --forceExit`: 35 suites, 115 tests passed).
+*   **Tier 3 Live Browser Audits:** Visual layouts and tactile switches validated.
+*   **Tier 4 Automated Replay Scripts (Playwright CLI):** E2E suites (`npm run test:e2e`) passing cleanly across desktop and mobile viewports (3 tests passed).
 *   **Full Verification Gate (`npm run verify`):** 100% clean build, zero TypeScript errors, and zero linting violations.
 
 ---
 
-## 4. GitHub Issues Published (https://github.com/zapata131/elmeeple-tienda/issues)
-*   `#1` to `#26` [US-01 to US-26: MVP Core Platform & Services] [COMPLETED]
-*   `#33` [US-30: Navbar Navigation & Brand Identity](https://github.com/zapata131/elmeeple-tienda/issues/33) [COMPLETED]
-*   `#34` [US-31: Layout SEO Metadata & Mobile Responsiveness](https://github.com/zapata131/elmeeple-tienda/issues/34) [COMPLETED]
-*   `#35` [US-32: Regional Store Toggle & Tactile Switches](https://github.com/zapata131/elmeeple-tienda/issues/35) [COMPLETED]
-*   `#36` [US-33: Edition Language Badges & Vector Pill Tags](https://github.com/zapata131/elmeeple-tienda/issues/36) [COMPLETED]
-*   `#37` [US-34: System-Wide Emoji Eradication](https://github.com/zapata131/elmeeple-tienda/issues/37) [COMPLETED]
-
----
-
-## 5. Next Steps
-1.  **Pull Request Submission:** Open PR against `main` on branch `feature/ux-ui-sprint-bundle` referencing `Closes #33, Closes #34, Closes #35, Closes #36, Closes #37`.
-2.  **Reviewer Approval:** PR awaits reviewer verification and final merge into `main`.
+## 4. Architectural Decisions
+*   **Contextual UI vs Global Header Toggles:** Removed `Solo Tiendas Nacionales` from the global `Toolbar.tsx` to prevent UI clutter and user confusion when switching pages. Domestic store filtering is now contextually positioned directly within the search hero (`page.tsx`), catalog filter panel (`CatalogView.tsx`), and comparison tables (`StoreOffersComparisonTable.tsx`).

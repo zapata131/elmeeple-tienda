@@ -140,6 +140,11 @@ graph TD
     *   *Convention:* Maintain a comprehensive `BANNED_EMOJIS` array in unit tests (`src/__tests__/emoji_eradication.test.tsx`) and loop over `container.textContent` asserting `expect(textContent).not.toContain(emoji)`. Replace all status icons, flags, and decorative elements with clean inline SVG vector paths or standardized typographic edition badges (`renderEditionBadge` in `StoreOffersComparisonTable.tsx`) styled with official color tokens (`#8367C7`, `#73D8D4`, `#FF9E8A`).
 
 
+### 5.7 Contextual Filter Placement vs Global Header Navigation (US-36)
+*   **Redundant Global Toggles vs Contextual UI Filtering:** Placing regional filtering switches (like domestic store toggles `Solo tiendas en mi país`) inside global headers (`Toolbar.tsx`) alongside destination country/currency selectors creates duplicate controls and clutters global navigation when pages also provide localized filtering tables.
+    *   *Convention:* Maintain global user preferences (shipping destination country, display currency, active persona role, language) in `Toolbar.tsx`. Place granular content and listing filters (regional domestic store toggles, in-stock availability switches, price sliders) directly within contextual search, catalog, and comparison UI components (`page.tsx`, `CatalogView.tsx`, `StoreOffersComparisonTable.tsx`) using standalone accessible tactile switch components (`RegionalStoreToggle.tsx`).
+
+
 ---
 
 ## 6. Four-Tier Testing Standards & Browser Automation

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { RegionalStoreToggle } from './RegionalStoreToggle';
 
 interface CatalogGame {
   bgg_id: number;
@@ -50,15 +51,26 @@ export function CatalogView({ initialGames }: Props) {
       <aside className="w-full md:w-64 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-6 h-fit">
         <h3 className="font-bold text-gray-900 text-lg border-b border-gray-150 pb-2">Filters</h3>
 
-        {/* In Stock Toggler */}
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="in-stock-checkbox"
-            checked={inStockOnly}
-            onChange={(e) => setInStockOnly(e.target.checked)}
-            className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 cursor-pointer"
-          />
+        {/* Regional Domestic Store Filter */}
+        <div className="flex flex-col gap-2">
+          <RegionalStoreToggle className="!justify-start [&>label]:!bg-gray-50 [&>label]:!text-gray-800 [&>label]:!border-gray-200 [&>label]:w-full" />
+        </div>
+
+        {/* In Stock Tactile Switch */}
+        <div className="flex items-center gap-2.5">
+          <div className="relative inline-flex items-center">
+            <input
+              type="checkbox"
+              id="in-stock-checkbox"
+              role="switch"
+              aria-checked={inStockOnly}
+              checked={inStockOnly}
+              onChange={(e) => setInStockOnly(e.target.checked)}
+              onClick={(e) => e.stopPropagation()}
+              className="sr-only peer"
+            />
+            <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 cursor-pointer"></div>
+          </div>
           <label htmlFor="in-stock-checkbox" className="text-sm text-gray-700 font-medium select-none cursor-pointer">
             Only show in stock
           </label>

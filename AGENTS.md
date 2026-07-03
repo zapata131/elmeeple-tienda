@@ -24,27 +24,49 @@ You must execute this checklist on **every single turn** before completing your 
 
 ---
 
-## 2. AI Agent Personas
+## 2. Backlog Hygiene & Branching Conventions
 
-### 2.1 The Architect (Planning & Milestones)
+### 2.1 The Atomic User Story Mandate (One Persona per Issue)
+*   **Single-Persona Focus:** Never combine multiple user personas (e.g., Admin vs. End User, Buyer vs. Seller, Store Owner vs. Player) into a single GitHub Issue, User Story, or Pull Request.
+*   **Single-Feature Scope:** Never lump unrelated feature requests, global UI refactors, and backend architectural changes into one omnibus task. Every issue must represent a single, testable chunk of value delivered to exactly one persona.
+*   **Classic Agile Formula:** Every issue or task created in the backlog must define its objective using the classic Agile syntax:
+    > `As a [Target Persona / Role], I want [Specific Feature / Action], so that [Measurable Benefit / Value].`
+
+### 2.2 Proactive Request Division Protocol
+When receiving user feedback, feature ideas, or multiple requirements in a single prompt:
+1.  **Audit & Deconstruct:** Immediately analyze the prompt to identify how many distinct user personas and discrete features are involved.
+2.  **Divide or Consult:**
+    *   If ideas clearly span different personas or unrelated systems, do **not** write implementation code right away. Instead, proactively break them down into separate, individual issues in the backlog/issue tracker.
+    *   If there is ambiguity about whether two items belong together, stop and explicitly ask the user: *"These ideas touch different user personas/systems. Should I split them into separate atomic issues before proceeding?"*
+3.  **Execute One at a Time:** Work sequentially. Focus on one issue, branch from `main`, write tests first (TDD), implement the code, pass verification, open a single-focused Pull Request linking the issue (`Closes #<num>`), merge, and only then proceed to the next atomic issue.
+
+### 2.3 Backlog Traceability & Documentation Sync
+*   **1-to-1 Mapping:** Every feature or fix branch must map 1-to-1 to an existing issue (e.g., `feature/issue-<number>-<slug>` or `fix/issue-<number>-<slug>`).
+*   **Living Documentation:** Keep any project tracking files (like `backlog.md`, `DESIGN.md`, or `HANDOFF.md`) updated in real-time so that completed stories, active sprints, and pending tasks never drift out of sync with the codebase.
+
+---
+
+## 3. AI Agent Personas
+
+### 3.1 The Architect (Planning & Milestones)
 *   **Objective:** Translate complex requirements into small, ordered execution steps ready for TDD verification.
 *   **Constraints:** Does not write production code. Drafts structured execution plans detailing affected files and the specific tests to be written first.
 
-### 2.2 The UX Expert (Product Design & Copywriting)
+### 3.2 The UX Expert (Product Design & Copywriting)
 *   **Objective:** Audit layouts, typography, navigation paths, and copy consistency to deliver a premium, low-friction user experience.
 *   **Visual Guidelines:** Minimalist layout, highly legible typography, brand palette (Blanco Roto, Carbón, Malva, Turquesa, Coral). Absolute ban on raw emojis in user-facing components; use clean SVG vectors instead.
 
-### 2.3 The Builder (TDD & Implementation)
+### 3.3 The Builder (TDD & Implementation)
 *   **Objective:** Write tests first (TDD), implement the minimal code required to pass them, and refactor for cleanliness.
 *   **Constraints:** Never commits directly to `main`. Works on the branch `feature/issue-<num>-<title>`. Adheres to Tailwind CSS v4 guidelines and Supabase RLS.
 
-### 2.4 The Reviewer (QA & Code Quality)
+### 3.4 The Reviewer (QA & Code Quality)
 *   **Objective:** Evaluate unit and E2E tests, validate Supabase RLS policies, and run visual audits using Chrome DevTools MCP.
 *   **Constraints:** Does not implement features. Focuses on test coverage, regression prevention, and mobile/desktop viewport audits.
 
 ---
 
-## 3. Workflow Loop & Execution
+## 4. Workflow Loop & Execution
 
 ```mermaid
 graph TD
@@ -58,26 +80,26 @@ graph TD
 
 ---
 
-## 4. Engineering Conventions & Lessons Learned
+## 5. Engineering Conventions & Lessons Learned
 
-### 4.1 XML/CSV Feed Processing and Sync
+### 5.1 XML/CSV Feed Processing and Sync
 *   **Handling Large Feeds:** Processing XML feeds containing thousands of products can exhaust server memory or cause serverless function timeouts.
     *   *Convention:* The cron sync handler must process feeds sequentially. Implement pagination or batching when writing to Supabase, using bulk upsert statements limited to 500 records per batch.
 *   **Game Name Matching:** Online shops frequently list the same game with minor naming differences (e.g., *Catan*, *Catan: El Juego*, *Los Colonos de Catan*).
     *   *Convention:* Match games using barcode (EAN/UPC) first. If EAN is unavailable, query `bgg_games_cache` and its `alternate_names` text array using case-insensitive SQL matching.
 
-### 4.2 Currency Conversion and Exchange Rates
+### 5.2 Currency Conversion and Exchange Rates
 *   **FX Rate Fluctuations:** Fetching external conversion rates on every client page render increases latency and network overhead.
     *   *Convention:* Store exchange rates locally in the `exchange_rates` relation with a 24-hour expiration. Conversion calculations on the user interface query PostgreSQL cached rates only.
 
-### 4.3 Test Optimization and Execution (TDD)
+### 5.3 Test Optimization and Execution (TDD)
 *   **JSDOM Memory Bloat with Jest:** Running JSDOM test suites in parallel can exhaust Node memory in sandboxed environments.
     *   *Convention:* Always run Jest tests in serial mode: `npm run test -- --runInBand --forceExit`.
 *   **Supabase and Feed Mocks:** Server actions syncing feeds must have robust mocks to prevent live network calls to BoardGameGeek or merchant sites during test runs.
 
 ---
 
-## 5. Four-Tier Testing Standards & Browser Automation
+## 6. Four-Tier Testing Standards & Browser Automation
 
 1.  **Unit Tests (Jest & JSDOM):** Validate isolated helpers, currency formatters, and simple React component renders (`npm run test`).
 2.  **Integration Tests (Jest & mock-supabase):** Verify server actions, RLS filters, and multi-component state updates.

@@ -139,6 +139,10 @@ graph TD
 *   **System-Wide Emoji Eradication & Vector SVG Edition Badges:** When validating zero raw unicode emoji leakage across DOM containers, string searching against a single character can miss subtle unicode symbols (like `⚡` or flags).
     *   *Convention:* Maintain a comprehensive `BANNED_EMOJIS` array in unit tests (`src/__tests__/emoji_eradication.test.tsx`) and loop over `container.textContent` asserting `expect(textContent).not.toContain(emoji)`. Replace all status icons, flags, and decorative elements with clean inline SVG vector paths or standardized typographic edition badges (`renderEditionBadge` in `StoreOffersComparisonTable.tsx`) styled with official color tokens (`#8367C7`, `#73D8D4`, `#FF9E8A`).
 
+### 5.7 BGG Wishlist Dual-Endpoint Collection Sync & Discount Alert Deprecation
+*   **Dual-Endpoint XML Fetching & Null Target Prices:** When importing user wishlists from BoardGameGeek API v2 (`/xmlapi2/collection`), items in user profiles are frequently split across `wishlist=1` (priority items) and `wanttobuy=1` (immediate purchase intents). Furthermore, coupling wishlist sync with arbitrary target discount thresholds creates UI friction and redundant user inputs.
+    *   *Convention:* Always iterate over both endpoints (`wishlist=1` and `wanttobuy=1`) in sequential order during collection sync (`POST /api/user/sync-bgg`) to capture the full union of desired games. Store all synchronized items in `price_alerts` with `target_price: null`. When querying or rendering user alert records, guard against empty array returns (`if (error || !data || (Array.isArray(data) && data.length === 0))`) before falling back to local fallback wishlists (`FALLBACK_WISHLIST`), and display direct Best Price CTAs (`Ver Ofertas`) without discount target comparison grids.
+
 
 ---
 

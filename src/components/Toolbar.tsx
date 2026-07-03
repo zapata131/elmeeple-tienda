@@ -229,7 +229,7 @@ export function Toolbar() {
           {/* Notification Bell Badge */}
           <Link
             href="/dashboard/alerts"
-            title="Mis Alertas de Bajada de Precio"
+            title="Lista de Deseos / BGG Wishlist"
             className="relative bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-lg transition-colors border border-gray-700 flex items-center justify-center"
           >
             <svg className="w-4 h-4 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>

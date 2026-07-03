@@ -152,7 +152,17 @@ export default async function GameDetailPage({ params }: Props) {
                               className="w-8 h-8 rounded-full border border-gray-100 object-cover flex-shrink-0"
                             />
                           )}
-                          <span className="font-semibold text-gray-900">{offer.store_name}</span>
+                          <div className="flex flex-col">
+                            <Link
+                              href={`/store/${offer.store_id}`}
+                              className="font-bold text-gray-900 hover:text-indigo-650 transition-colors"
+                            >
+                              {offer.store_name}
+                            </Link>
+                            <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-150 rounded px-1.5 py-0.5 font-extrabold w-max mt-0.5">
+                              ⭐ 4.9 · 📦 Esquinas Protegidas
+                            </span>
+                          </div>
                         </td>
                         
                         {/* Language */}

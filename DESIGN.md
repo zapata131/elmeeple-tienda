@@ -39,7 +39,7 @@ This document defines the architectural guidelines, database schemas, visual des
 *   **Global Settings Toolbar:** Persistent header component allowing users to set destination country (for shipping calculations), display currency (for real-time conversion), and display language (Spanish/Portuguese).
 *   **Price History Chart:** A clean line chart (without emojis) displaying minimum historical price fluctuations for each game.
 *   **Wishlist & Price Alerts Portal (`US-20` & `US-21`):** Registered players can add games to their wishlist and configure target price thresholds. Features an on-site notification bell in the header toolbar (`Toolbar.tsx`), an interactive management center (`/dashboard/alerts`), and a 1-click BGG Wishlist Importer (`POST /api/user/sync-bgg`) that queries official BGG XML collection records and automatically generates price tracking alerts at -15% below market minimums.
-*   **Merchant Dashboard:** Self-serve portal for storefronts to register, edit tax details, upload store logo (auto-cropped to `150x150px` on canvas), define shipping matrices, and configure XML/CSV feeds.
+*   **Merchant Dashboard & Store Profiles (`US-22`):** Self-serve portal for storefronts to register, upload logos, and define shipping matrices. Includes community-driven store profiles (`/store/[id]`) and review panels (`StoreReviewPanel.tsx`) where buyers evaluate shipping box corner protection using 1-5 star ratings and interactive vibe tag badges (*Esquinas Protegidas*, *Caja Doble*, *Envío Rápido*).
 *   **Background Sync Job:** Scheduled daily cron job that fetches, parses, and upserts product feeds from verified merchants.
 
 ---

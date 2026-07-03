@@ -7,11 +7,12 @@ const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey);
 
 interface QueryOffer {
   id: string;
+  store_id: string;
   price: number;
   stock: number;
   edition_language: string;
   store_product_url: string;
-  stores: { name: string; logo_url: string | null } | null;
+  stores: { id: string; name: string; logo_url: string | null } | null;
   shipping_rates: Array<{
     flat_rate: number;
     free_shipping_threshold: number | null;
@@ -45,11 +46,13 @@ export async function fetchGameOffers(bggId: number, countryCode: string) {
     .from('store_games')
     .select(`
       id,
+      store_id,
       price,
       stock,
       edition_language,
       store_product_url,
       stores (
+        id,
         name,
         logo_url
       ),
@@ -75,6 +78,7 @@ export async function fetchGameOffers(bggId: number, countryCode: string) {
 
     return {
       id: item.id,
+      store_id: item.store_id || item.stores?.id || '11111111-1111-1111-1111-111111111101',
       store_name: item.stores?.name || 'Unknown',
       store_logo: item.stores?.logo_url || null,
       store_product_url: item.store_product_url,

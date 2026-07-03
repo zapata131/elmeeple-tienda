@@ -81,9 +81,10 @@ This memo summarizes the current progress of the initial planning sprint for the
 
 ---
 
-## 3. Test Suite Status
-*   **Unit/Integration Tests (Jest):** Configured and passing (1 dummy test).
-*   **E2E Walkthroughs (Playwright):** Installed, configuring.
+## 3. Four-Tier Test Suite Status
+*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% configured and passing (19 test suites, 59 total tests via `npm run test`).
+*   **Tier 3 Live Browser Audits (DevTools for Agents):** Visual layouts and interactive user flows validated on live server using Chrome DevTools MCP tools (`click`, `fill`, `navigate_page`, `take_screenshot`).
+*   **Tier 4 Automated Replay Scripts (DevTools / Playwright CLI):** Standalone browser automation scripts built in `e2e/home_and_optimizer.spec.ts` and `e2e/merchant_and_admin.spec.ts` (`playwright.config.ts`), runnable deterministically from the terminal via `npm run test:e2e` without going through an agent.
 
 ---
 

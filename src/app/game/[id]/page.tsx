@@ -1,5 +1,5 @@
 import React from 'react';
-import { fetchGameDetails, fetchGameOffers, fetchGameEditions } from '@/lib/queries';
+import { fetchGameDetails, fetchGameOffers, fetchGameEditions, fetchPriceHistory } from '@/lib/queries';
 import Link from 'next/link';
 import { PriceChart } from '@/components/PriceChart';
 import StoreOffersComparisonTable from '@/components/StoreOffersComparisonTable';
@@ -25,9 +25,10 @@ export default async function GameDetailPage({ params }: Props) {
     );
   }
 
-  // Fetch offers for default country ES (Spain) for now
   const offersRaw = await fetchGameOffers(bggId, 'ES');
   const editions = await fetchGameEditions(bggId);
+  const history = await fetchPriceHistory(bggId, 365);
+  const historicalMinPrice = history.length > 0 ? Math.min(...history.map((h) => h.min_price)) : null;
 
   // Map and calculate total prices
   const offers = offersRaw
@@ -111,6 +112,7 @@ export default async function GameDetailPage({ params }: Props) {
             bggId={game.bgg_id}
             gameName={game.name}
             selectedCountry="ES"
+            historicalMinPrice={historicalMinPrice}
           />
           <PriceChart bggId={game.bgg_id} />
         </div>

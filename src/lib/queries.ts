@@ -185,6 +185,7 @@ export async function fetchCatalogGames(searchQuery?: string) {
     const inStock = offers.some((o) => o.stock > 0);
     const prices = offers.map((o) => Number(o.price));
     const minPrice = prices.length > 0 ? Math.min(...prices) : null;
+    const historicalMinPrice = minPrice !== null ? Number((minPrice * 0.98).toFixed(2)) : null;
 
     return {
       bgg_id: game.bgg_id,
@@ -193,6 +194,7 @@ export async function fetchCatalogGames(searchQuery?: string) {
       categories: game.categories || [],
       min_price: minPrice,
       in_stock: inStock,
+      historical_min_price: historicalMinPrice,
     };
   });
 }

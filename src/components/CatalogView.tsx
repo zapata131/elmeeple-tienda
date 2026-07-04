@@ -11,6 +11,7 @@ interface CatalogGame {
   categories: string[];
   min_price: number | null;
   in_stock: boolean;
+  historical_min_price?: number | null;
 }
 
 interface Props {
@@ -168,9 +169,21 @@ export function CatalogView({ initialGames }: Props) {
                 <div className="p-4 border-t border-gray-100 flex items-center justify-between text-sm">
                   <div className="flex flex-col">
                     <span className="text-xs text-gray-500 font-medium">Min Price</span>
-                    <span className="font-extrabold text-gray-900">
-                      {game.min_price !== null ? `€${game.min_price.toFixed(2)}` : '--'}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-extrabold text-gray-900">
+                        {game.min_price !== null ? `€${game.min_price.toFixed(2)}` : '--'}
+                      </span>
+                      {game.min_price !== null &&
+                        game.historical_min_price != null &&
+                        game.min_price <= game.historical_min_price * 1.03 && (
+                          <span
+                            data-testid="catalog-best-price-badge"
+                            className="inline-flex items-center gap-1 text-[10px] text-rose-950 bg-[#FF9E8A]/25 border border-[#FF9E8A]/50 rounded px-1.5 py-0.5 font-extrabold"
+                          >
+                            ★ Mínimo Histórico
+                          </span>
+                        )}
+                    </div>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
                     game.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

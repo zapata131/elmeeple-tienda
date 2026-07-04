@@ -24,6 +24,7 @@ interface StoreOffersComparisonTableProps {
   bggId: number;
   gameName: string;
   selectedCountry?: string;
+  historicalMinPrice?: number | null;
 }
 
 function renderEditionBadge(langCode: string) {
@@ -79,6 +80,7 @@ export default function StoreOffersComparisonTable({
   bggId,
   gameName,
   selectedCountry = 'ES',
+  historicalMinPrice,
 }: StoreOffersComparisonTableProps) {
   // Activated by default as requested by user
   const [onlyDomestic, setOnlyDomestic] = useState(true);
@@ -86,6 +88,11 @@ export default function StoreOffersComparisonTable({
   const filteredOffers = onlyDomestic
     ? offers.filter((offer) => (offer.store_country || 'ES').toUpperCase() === selectedCountry.toUpperCase())
     : offers;
+
+  const availableCosts = filteredOffers
+    .filter((o) => o.stock > 0 && o.totalCost !== null)
+    .map((o) => o.totalCost as number);
+  const minCurrentCost = availableCosts.length > 0 ? Math.min(...availableCosts) : null;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
@@ -170,6 +177,8 @@ export default function StoreOffersComparisonTable({
               filteredOffers.map((offer) => {
                 const originCountryCode = (offer.store_country || 'ES').toUpperCase();
                 const isInternational = originCountryCode !== selectedCountry.toUpperCase();
+                const isBestCurrentOffer = minCurrentCost !== null && offer.stock > 0 && offer.totalCost === minCurrentCost;
+                const isHistoricalRecord = historicalMinPrice != null && offer.totalCost !== null && offer.totalCost <= historicalMinPrice * 1.03;
 
                 return (
                   <tr key={offer.id} className="hover:bg-gray-50 transition-colors">
@@ -250,12 +259,38 @@ export default function StoreOffersComparisonTable({
                     </td>
 
                     {/* Total Cost */}
-                    <td className="px-6 py-4 font-bold text-indigo-950 text-base">
-                      {offer.totalCost === null ? (
-                        '--'
-                      ) : (
-                        `€${offer.totalCost.toFixed(2)}`
-                      )}
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col items-start gap-1">
+                        <span className="font-bold text-indigo-950 text-base">
+                          {offer.totalCost === null ? (
+                            '--'
+                          ) : (
+                            `€${offer.totalCost.toFixed(2)}`
+                          )}
+                        </span>
+                        {isBestCurrentOffer && (
+                          <span
+                            data-testid="best-price-badge-current"
+                            className="inline-flex items-center gap-1 text-[11px] text-teal-950 bg-[#73D8D4]/25 border border-[#73D8D4]/60 rounded-md px-2 py-0.5 font-extrabold shadow-2xs"
+                          >
+                            <svg className="w-3 h-3 text-teal-800 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>★ Mejor Precio Actual</span>
+                          </span>
+                        )}
+                        {isHistoricalRecord && (
+                          <span
+                            data-testid="best-price-badge-historical"
+                            className="inline-flex items-center gap-1 text-[11px] text-rose-950 bg-[#FF9E8A]/25 border border-[#FF9E8A]/60 rounded-md px-2 py-0.5 font-extrabold shadow-2xs"
+                          >
+                            <svg className="w-3 h-3 text-rose-900 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                            <span>★ Récord Mínimo Histórico</span>
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     {/* CTA / Restock Alert */}

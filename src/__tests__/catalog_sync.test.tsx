@@ -40,7 +40,7 @@ describe('US-09: Automated Catalog Sync via XML/CSV Feeds', () => {
     supabaseMock = {
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockImplementation(function (this: any, key: string, val: any) {
+      eq: jest.fn().mockImplementation(function (this: any, key: string) {
         if (key === 'id') {
           return Promise.resolve({ error: null });
         }

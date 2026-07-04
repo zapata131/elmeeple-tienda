@@ -48,7 +48,7 @@ if (typeof global.Request === 'undefined') {
 // Mock next/dynamic globally to render dynamic components synchronously in Jest
 jest.mock('next/dynamic', () => ({
   __esModule: true,
-  default: (loader) => {
+  default: () => {
     // Return a dummy component rendering synchronously
     const DynamicComponent = (props) => {
       return React.createElement('div', { 'data-testid': 'mock-dynamic-component', ...props })

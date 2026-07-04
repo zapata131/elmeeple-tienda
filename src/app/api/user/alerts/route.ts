@@ -109,6 +109,6 @@ export async function DELETE(request: NextRequest) {
   }
 }
 
-export async function PATCH(request: NextRequest) {
+export async function PATCH() {
   return NextResponse.json({ success: true, message: 'Target price editing removed.' });
 }

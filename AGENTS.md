@@ -144,6 +144,11 @@ graph TD
     *   *Convention:* Always iterate over both endpoints (`wishlist=1` and `wanttobuy=1`) in sequential order during collection sync (`POST /api/user/sync-bgg`) to capture the full union of desired games. Store all synchronized items in `price_alerts` with `target_price: null`. When querying or rendering user alert records, guard against empty array returns (`if (error || !data || (Array.isArray(data) && data.length === 0))`) before falling back to local fallback wishlists (`FALLBACK_WISHLIST`), and display direct Best Price CTAs (`Ver Ofertas`) without discount target comparison grids.
 
 
+### 5.7 Contextual Filter Placement vs Global Header Navigation (US-36)
+*   **Redundant Global Toggles vs Contextual UI Filtering:** Placing regional filtering switches (like domestic store toggles `Solo tiendas en mi país`) inside global headers (`Toolbar.tsx`) alongside destination country/currency selectors creates duplicate controls and clutters global navigation when pages also provide localized filtering tables.
+    *   *Convention:* Maintain global user preferences (shipping destination country, display currency, active persona role, language) in `Toolbar.tsx`. Place granular content and listing filters (regional domestic store toggles, in-stock availability switches, price sliders) directly within contextual search, catalog, and comparison UI components (`page.tsx`, `CatalogView.tsx`, `StoreOffersComparisonTable.tsx`) using standalone accessible tactile switch components (`RegionalStoreToggle.tsx`).
+
+
 ---
 
 ## 6. Four-Tier Testing Standards & Browser Automation

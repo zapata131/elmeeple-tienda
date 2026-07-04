@@ -5,6 +5,7 @@ import Home from '@/app/page';
 import { Toolbar } from '@/components/Toolbar';
 import StoreOffersComparisonTable, { ComparisonOffer } from '@/components/StoreOffersComparisonTable';
 import { UserAlertsDashboard, AlertItem } from '@/components/UserAlertsDashboard';
+import { RegionalStoreToggle } from '@/components/RegionalStoreToggle';
 import { RestockAlertButton } from '@/components/RestockAlertButton';
 
 // Mock Supabase so Home server component does not wait on network connection
@@ -122,12 +123,22 @@ describe('US-34 (Issue #37): System-Wide Vector SVGs & Emoji Eradication', () =>
     });
   });
 
+  it('eradicates raw unicode emojis from RegionalStoreToggle (src/components/RegionalStoreToggle.tsx)', () => {
+    const { container } = render(<RegionalStoreToggle />);
+    const textContent = container.textContent || '';
+    BANNED_EMOJIS.forEach((emoji) => {
+      expect(textContent).not.toContain(emoji);
+    });
+  });
+
   it('eradicates raw unicode emojis from RestockAlertButton (src/components/RestockAlertButton.tsx)', () => {
     const { container: containerUnsub } = render(
       <RestockAlertButton bggId={13} gameName="Catan" userEmail="player@meeple.com" />
     );
     BANNED_EMOJIS.forEach((emoji) => {
       expect(containerUnsub.textContent || '').not.toContain(emoji);
+    });
+  });
     });
   });
 });

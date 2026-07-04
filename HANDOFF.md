@@ -10,10 +10,12 @@ This memo summarizes the architectural planning and active execution of **Milest
 *   **Active Issue:** Issue #46 (`[US-10] Affiliate Click and Analytics Dashboard for Store Partners`)
 *   **Queued Issue:** Issue #47 (`[US-37] Complete System-Wide Emoji Eradication across Admin, Merchant, and Catalog UI`)
 *   **Planned Files for Modification:**
+    *   [src/app/api/redirect/route.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/api/redirect/route.ts): Update handler to automatically inject `ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate` into any target `store_product_url` before executing the 302 redirect.
+    *   [src/components/CartOptimizerPanel.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/CartOptimizerPanel.tsx): Upgrade store breakdown items to include direct purchase/redirect links (`Ir a comprar`) appending affiliate parameters.
     *   [src/app/merchant/dashboard/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/merchant/dashboard/page.tsx): Server component updates to aggregate referral clicks by date and by game (`bgg_id`), computing top referred board games and CTR metrics.
     *   `src/components/MerchantAnalyticsCharts.tsx`: New client component rendering responsive daily/weekly click charts and UTM link reconciliation instructions (`?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`) with zero raw unicode emojis.
-    *   `src/__tests__/merchant_analytics_dashboard.test.tsx`: Comprehensive TDD unit and integration test suite validating charts, top game tables, UTM guides, and zero emoji leakage.
-    *   `e2e/merchant_analytics.spec.ts`: Playwright E2E walkthrough suite verifying merchant dashboard analytics across desktop (`1280x800`) and mobile (`375x667`) viewports.
+    *   [src/__tests__/clicks.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/clicks.test.tsx), `src/__tests__/merchant_analytics_dashboard.test.tsx`: Comprehensive TDD unit and integration test suites validating automated UTM injection, charts, top game tables, UTM guides, and zero emoji leakage.
+    *   `e2e/merchant_analytics.spec.ts`: Playwright E2E walkthrough suite verifying merchant dashboard analytics and redirect tracking across desktop (`1280x800`) and mobile (`375x667`) viewports.
 
 ---
 
@@ -23,8 +25,9 @@ This memo summarizes the architectural planning and active execution of **Milest
 *   [x] Predictive autocomplete search (`US-01`, `US-19`), game catalog filters (`US-04`), multi-game cart optimizer (`US-17`, `US-23`), regional shipping matrices (`US-03`, `US-08`), background XML feed sync & diagnostics (`US-09`, `US-12`, `US-14`), BGG metadata resolution (`US-15`, `US-16`), restock alerts (`US-24`), store reviews & vibe badges (`US-22`), foreign exchange rate caching (`US-13`), multi-region mock data seeding (`US-26`), navbar identity (`US-30`), layout SEO targeting (`US-31`), regional domestic tactile switches (`US-32`), edition language badges (`US-33`), system-wide emoji eradication (`US-34`), BGG wishlist sync (`US-35`), and consolidated regional toggles (`US-36`).
 
 ### Milestone 10: Merchant Affiliate Analytics & System-Wide Emoji Eradication [IN PROGRESS]
-*   [ ] **US-10 (Issue #46) Affiliate Click and Analytics Dashboard for Store Partners:**
-    *   [ ] Write TDD suite `src/__tests__/merchant_analytics_dashboard.test.tsx` asserting daily click bars, top game rankings, and UTM tracking documentation.
+*   [ ] **US-10 (Issue #46) Affiliate Click and Analytics Dashboard & UTM Injection:**
+    *   [ ] Update TDD suite `src/__tests__/clicks.test.tsx` and create `src/__tests__/merchant_analytics_dashboard.test.tsx` asserting automated injection of `ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate` on 302 redirects and buy buttons.
+    *   [ ] Implement dynamic UTM parameter injection in `/api/redirect/route.ts` and buy links in `CartOptimizerPanel.tsx`.
     *   [ ] Implement `MerchantAnalyticsCharts.tsx` and integrate into `/merchant/dashboard`.
     *   [ ] Verify across serial Jest suites and Playwright E2E tests.
 *   [ ] **US-37 (Issue #47) Complete System-Wide Emoji Eradication:** Queued sequentially after Issue #46 completion.

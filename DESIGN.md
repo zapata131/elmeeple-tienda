@@ -97,8 +97,9 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
 
 ### 5.1 Business Model, Referral Link Validation & Merchant Analytics (US-10)
 *   **Affiliate Marketing Model:** The platform operates on Cost-Per-Click (CPC) and Cost-Per-Acquisition (CPA) affiliate referral programs. Outbound referral links direct players to store checkouts.
-*   **UTM Suffix Sizing:** Every outbound redirect link appends a standard, immutable URL tracking query:
+*   **UTM Suffix Injection & Sizing:** Every outbound redirect link (whether triggered via `/api/redirect?offer_id=...` in comparison tables or direct buy buttons in `CartOptimizerPanel.tsx`) must automatically append the standard, immutable URL tracking parameters before redirecting the player:
     `?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`
+    Specifically, `/api/redirect/route.ts` intercepts the raw `store_product_url`, appends these parameters via `URLSearchParams`, logs the click event in `clicks`, and issues a 302 redirect.
 *   **Merchant Integration Check & Analytics Panel (`US-10`, Issue #46):** Store owners can reconcile click tracking by auditing their web logs (Shopify Referrals, WooCommerce metrics, Google Analytics raw click logs) for these variables. The self-serve merchant panel (`/merchant/dashboard`) aggregates click events from `clicks` grouped by date (daily/weekly charts) and by `bgg_id` (ranking top board games driving outbound traffic), displaying interactive SVG vector visualizations and copyable UTM tracking guides without raw unicode emojis.
 
 ### 5.2 Settings Cookie Mappings

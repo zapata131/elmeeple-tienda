@@ -6,6 +6,7 @@ import { Toolbar } from '@/components/Toolbar';
 import StoreOffersComparisonTable, { ComparisonOffer } from '@/components/StoreOffersComparisonTable';
 import { UserAlertsDashboard, AlertItem } from '@/components/UserAlertsDashboard';
 import { RegionalStoreToggle } from '@/components/RegionalStoreToggle';
+import { RestockAlertButton } from '@/components/RestockAlertButton';
 
 // Mock Supabase so Home server component does not wait on network connection
 jest.mock('@supabase/supabase-js', () => {
@@ -107,9 +108,7 @@ describe('US-34 (Issue #37): System-Wide Vector SVGs & Emoji Eradication', () =>
         bggId: 23,
         gameName: 'Catan',
         thumbnail: '',
-        targetPrice: 30,
         currentLowestPrice: 28,
-        isTriggered: true,
         createdAt: '2026-07-01',
       }
     ];
@@ -129,6 +128,17 @@ describe('US-34 (Issue #37): System-Wide Vector SVGs & Emoji Eradication', () =>
     const textContent = container.textContent || '';
     BANNED_EMOJIS.forEach((emoji) => {
       expect(textContent).not.toContain(emoji);
+    });
+  });
+
+  it('eradicates raw unicode emojis from RestockAlertButton (src/components/RestockAlertButton.tsx)', () => {
+    const { container: containerUnsub } = render(
+      <RestockAlertButton bggId={13} gameName="Catan" userEmail="player@meeple.com" />
+    );
+    BANNED_EMOJIS.forEach((emoji) => {
+      expect(containerUnsub.textContent || '').not.toContain(emoji);
+    });
+  });
     });
   });
 });

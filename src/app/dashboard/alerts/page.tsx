@@ -84,8 +84,8 @@ export default async function AlertsDashboardPage() {
       <header className="bg-white border-b border-gray-200 py-6 px-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-gray-900">Mis Alertas de Bajada de Precio</h1>
-            <span className="text-xs text-gray-500 font-semibold">Monitor de Descuentos & Avisos Instantáneos</span>
+            <h1 className="text-xl font-bold text-gray-900">Lista de Deseos / BGG Wishlist</h1>
+            <span className="text-xs text-gray-500 font-semibold">Sincronización con BGG y Monitor de Stock</span>
           </div>
           <div className="flex items-center gap-4">
             <Link

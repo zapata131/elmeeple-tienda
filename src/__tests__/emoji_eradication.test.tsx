@@ -139,6 +139,4 @@ describe('US-34 (Issue #37): System-Wide Vector SVGs & Emoji Eradication', () =>
       expect(containerUnsub.textContent || '').not.toContain(emoji);
     });
   });
-    });
-  });
 });

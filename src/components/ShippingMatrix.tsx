@@ -64,7 +64,11 @@ export function ShippingMatrix({ storeId, initialRates }: Props) {
   if (status === 'unauthenticated' || !session) {
     return (
       <div className="max-w-md mx-auto bg-white border border-gray-250 p-8 rounded-xl shadow-sm text-center my-12 flex flex-col gap-4">
-        <span className="text-3xl">🔒</span>
+        <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-2">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
         <h2 className="text-lg font-bold text-gray-900">Acceso Restringido</h2>
         <p className="text-sm text-gray-600">
           Please sign in as a partner to configure shipping rates.
@@ -138,14 +142,20 @@ export function ShippingMatrix({ storeId, initialRates }: Props) {
       </div>
 
       {errorMsg && (
-        <div className="bg-red-50 border border-red-150 text-red-700 text-xs font-semibold px-4 py-2.5 rounded-lg">
-          ⚠️ {errorMsg}
+        <div className="bg-red-50 border border-red-150 text-red-700 text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center gap-2">
+          <svg className="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span>{errorMsg}</span>
         </div>
       )}
 
       {successMsg && (
-        <div className="bg-green-50 border border-green-150 text-green-800 text-xs font-semibold px-4 py-2.5 rounded-lg">
-          ✅ {successMsg}
+        <div className="bg-green-50 border border-green-150 text-green-800 text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center gap-2">
+          <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span>{successMsg}</span>
         </div>
       )}
 

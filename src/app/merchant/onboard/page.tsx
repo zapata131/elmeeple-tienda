@@ -14,7 +14,10 @@ export default function MerchantOnboardPage() {
       <header className="bg-white border-b border-gray-200 py-6 px-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link href="/" className="text-xl font-extrabold text-gray-900 flex items-center gap-2 select-none">
-            <span>🎲</span> Meeple<span className="text-indigo-500">Precios</span>
+            <svg className="w-6 h-6 text-[#8367C7]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 4c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm-4 8c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm8 0c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm-4-4c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm-4-4c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1zm8 0c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"/>
+            </svg>
+            <span>Meeple<span className="text-indigo-500">Precios</span></span>
           </Link>
           <span className="text-sm font-semibold text-gray-500">Portal de Socios</span>
         </div>

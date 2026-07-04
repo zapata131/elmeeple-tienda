@@ -212,3 +212,11 @@ This document details the product planning for **MeeplePrecios**, the board game
     2. If not found, fetches from BGG `/thing` API, mapping name, thumbnail, description, weight complexity, player counts, and alternate names to the local cache.
     3. Handles BGG XML API2 202 Accepted queues and HTTP 429 rate limit statuses gracefully.
 *   **Status:** **[PLANNED]**
+
+### US-38: Historical Best-Price Deal Badge and Market Bargain Indicator
+*   **Formula:** As a **Player**, I want to **see a Best-Price Deal Badge when a store offer matches or approaches the game's all-time historical minimum price**, so that I can **instantly identify genuine market bargains and purchase with confidence**.
+*   **Acceptance Criteria:**
+    1. In `StoreOffersComparisonTable.tsx` and `CatalogView.tsx`, calculate if an offer price is equal to or within 3% of the historical minimum price (`price_history` / `min_price`).
+    2. Render a high-contrast, brand-styled badge (`★ Mejor Precio Actual` / `★ Récord Mínimo Histórico` / `★ Mínimo Histórico`) using crisp SVG vectors and typography without raw unicode emojis.
+    3. Ensure full responsiveness, accessibility (sentence case, contrast), and 100% test coverage via Jest and Playwright E2E.
+*   **Status:** **[COMPLETED - Issue #52]**

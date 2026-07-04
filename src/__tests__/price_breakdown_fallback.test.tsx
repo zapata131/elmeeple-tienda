@@ -8,6 +8,8 @@ jest.mock('@supabase/supabase-js', () => {
     from: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
+    gte: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnThis(),
     single: jest.fn().mockImplementation(() => ({
       data: {
         bgg_id: 13,

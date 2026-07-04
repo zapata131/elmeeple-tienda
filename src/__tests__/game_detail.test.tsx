@@ -8,6 +8,7 @@ jest.mock('@/lib/queries', () => ({
   fetchGameDetails: jest.fn(),
   fetchGameOffers: jest.fn(),
   fetchGameEditions: jest.fn(),
+  fetchPriceHistory: jest.fn().mockResolvedValue([{ min_price: 39.0, recorded_at: '2026-06-01' }]),
 }));
 
 // Mock PriceChart subcomponent

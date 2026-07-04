@@ -120,7 +120,12 @@ export function StoreReviewPanel({
           </p>
         </div>
         <div className="flex items-center gap-4 bg-indigo-50 border border-indigo-150 px-5 py-3 rounded-2xl shrink-0">
-          <span className="text-3xl font-black text-indigo-950">⭐ {avgRating}</span>
+          <div className="flex items-center gap-1.5 text-3xl font-black text-indigo-950">
+            <svg className="w-7 h-7 text-amber-500 fill-amber-500" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <span>{avgRating}</span>
+          </div>
           <div className="flex flex-col text-[11px] font-bold text-indigo-800">
             <span>Puntuación Media</span>
             <span className="text-gray-500 font-normal">{reviews.length} valoraciones</span>
@@ -139,7 +144,12 @@ export function StoreReviewPanel({
               key={tag}
               className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-extrabold px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-sm"
             >
-              <span>📦 {tag}</span>
+              <span className="inline-flex items-center gap-1">
+                <svg className="w-3.5 h-3.5 text-[#8367C7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <span>{tag}</span>
+              </span>
               <span className="bg-emerald-200/80 text-emerald-950 px-2 py-0.5 rounded-full text-[10px] font-mono">
                 {count}
               </span>
@@ -174,11 +184,11 @@ export function StoreReviewPanel({
               onChange={(e) => setRating(Number(e.target.value))}
               className="w-full px-3.5 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-600 bg-white"
             >
-              <option value={5}>⭐⭐⭐⭐⭐ (5 - Excelente protección)</option>
-              <option value={4}>⭐⭐⭐⭐ (4 - Muy bueno)</option>
-              <option value={3}>⭐⭐⭐ (3 - Regular)</option>
-              <option value={2}>⭐⭐ (2 - Mejorable)</option>
-              <option value={1}>⭐ (1 - Esquinas dañadas)</option>
+              <option value={5}>★★★★★ (5 - Excelente protección)</option>
+              <option value={4}>★★★★ (4 - Muy bueno)</option>
+              <option value={3}>★★★ (3 - Regular)</option>
+              <option value={2}>★★ (2 - Mejorable)</option>
+              <option value={1}>★ (1 - Esquinas dañadas)</option>
             </select>
           </div>
         </div>
@@ -226,7 +236,14 @@ export function StoreReviewPanel({
           >
             {submitting ? 'Publicando...' : 'Publicar Valoración'}
           </button>
-          {msg && <span className="text-xs font-extrabold text-emerald-600">✨ {msg}</span>}
+          {msg && (
+            <span className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-600">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span>{msg}</span>
+            </span>
+          )}
         </div>
       </form>
 
@@ -251,15 +268,18 @@ export function StoreReviewPanel({
                   </div>
                 </div>
                 <span className="text-sm font-bold text-amber-500">
-                  {'⭐'.repeat(rev.rating)}
+                  {'★'.repeat(rev.rating)}
                 </span>
               </div>
 
               {rev.tags && rev.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {rev.tags.map((t) => (
-                    <span key={t} className="bg-gray-100 text-gray-700 font-bold text-[10px] px-2.5 py-0.5 rounded-full">
-                      📦 {t}
+                    <span key={t} className="bg-gray-100 text-gray-700 font-bold text-[10px] px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                      <svg className="w-3 h-3 text-[#8367C7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                      </svg>
+                      <span>{t}</span>
                     </span>
                   ))}
                 </div>

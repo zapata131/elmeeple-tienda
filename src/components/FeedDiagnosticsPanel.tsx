@@ -68,14 +68,20 @@ export function FeedDiagnosticsPanel({ store }: Props) {
       </div>
 
       {errorMsg && (
-        <div className="bg-red-50 border border-red-150 text-red-700 text-xs font-semibold px-4 py-2.5 rounded-lg">
-          ⚠️ {errorMsg}
+        <div className="bg-red-50 border border-red-150 text-red-700 text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center gap-2">
+          <svg className="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span>{errorMsg}</span>
         </div>
       )}
 
       {successMsg && (
-        <div className="bg-green-50 border border-green-150 text-green-800 text-xs font-semibold px-4 py-2.5 rounded-lg">
-          ✅ {successMsg}
+        <div className="bg-green-50 border border-green-150 text-green-800 text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center gap-2">
+          <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span>{successMsg}</span>
         </div>
       )}
 
@@ -98,7 +104,12 @@ export function FeedDiagnosticsPanel({ store }: Props) {
       {/* Info Warning */}
       {stats.unmatched > 0 && (
         <div className="bg-amber-50 border border-amber-150 text-amber-800 text-xs px-4 py-3 rounded-lg flex flex-col gap-1">
-          <span className="font-bold">⚠️ Juegos de mesa no catalogados ({stats.unmatched})</span>
+          <span className="font-bold flex items-center gap-1.5 text-amber-900">
+            <svg className="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>Juegos de mesa no catalogados ({stats.unmatched})</span>
+          </span>
           <span className="text-[10px] text-amber-700">
             Algunos productos en tu feed no coinciden con nuestro catálogo global. Asegúrate de incluir códigos EAN (GTIN) correctos en tu feed XML.
           </span>

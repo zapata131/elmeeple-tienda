@@ -1,33 +1,29 @@
-# Handoff Sprint Memo: MeeplePrecios (Code Quality Audit & Style Enforcement Active)
+# Handoff Sprint Memo: MeeplePrecios (Milestone 10: Affiliate Click & Analytics Dashboard Active)
 
-This memo summarizes the architectural planning, verification, and completed execution of **Issue #48: Complete Codebase Code Quality Audit and Style Guide Enforcement** on the board game price comparison platform across the Iberian Peninsula (Spain, Portugal) and Latin America.
+This memo summarizes the architectural planning, verification, and completed execution of **Milestone 10 / US-10 (Issue #46): Affiliate Click and Analytics Dashboard for Store Partners** on the board game price comparison platform across the Iberian Peninsula (Spain, Portugal) and Latin America.
 
 ---
 
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Active Branch:** `feature/code-quality-and-style-harmonization`
-*   **Active Issue:** Issue #48 (`Complete codebase code quality audit and style guide enforcement`)
-*   **Completed Modifications:**
-    *   `eslint.config.mjs`: Configured standard TypeScript unused variable ignore rules (`argsIgnorePattern: "^_"`, `varsIgnorePattern: "^_"`) and configured `@next/next/no-img-element: off` to support dynamic multi-domain merchant XML feed images without crashing optimization pipelines.
-    *   `jest.setup.js`, `src/__tests__/catalog_sync.test.tsx`, `src/__tests__/emoji_eradication.test.tsx`: Fixed syntax formatting and prefixed unused mock callback parameters (`_loader`, `_val`).
-    *   `src/app/api/price-alerts/route.ts`, `src/app/api/user/alerts/route.ts`: Removed unused imports and parameters (`_request`).
-    *   `src/components/PriceAlertForm.tsx`: Cleaned up unused interfaces and React imports.
-    *   **Verification Gate:** 100% clean ESLint report (**0 errors, 0 warnings**), 100% green test suite (**35 suites, 116 tests passed** sequentially with `--runInBand --forceExit`), and optimized production build (`npm run build`).
+*   **Active Branch:** `feature/issue-46-affiliate-analytics-dashboard`
+*   **Completed Issue:** Issue #46 (`[US-10] Affiliate Click and Analytics Dashboard for Store Partners`)
+*   **Queued Issue:** Issue #47 (`[US-37] Complete System-Wide Emoji Eradication across Admin, Merchant, and Catalog UI`)
+*   **Completed Deliverables:**
+    *   [src/app/api/redirect/route.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/api/redirect/route.ts): Updated handler to automatically inject `ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate` into any target URL (`offer_id` or direct `url`) and record referral clicks asynchronously.
+    *   [src/components/CartOptimizerPanel.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/CartOptimizerPanel.tsx): Upgraded store breakdown items with direct affiliate redirect buttons (`Ir a comprar` and `Comprar en tienda`).
+    *   [src/app/merchant/dashboard/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/merchant/dashboard/page.tsx) & [src/components/MerchantAnalyticsCharts.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/MerchantAnalyticsCharts.tsx): Built responsive daily/weekly click charts, top referred board games ranking table, and UTM reconciliation guide with zero unicode emojis.
+    *   **Verification Gate:** 100% clean ESLint (**0 errors, 0 warnings**), 100% green test suite (**36 suites, 121 tests passed** in serial mode), and clean production build.
 
 ---
 
 ## 2. Milestone and Task Progress
 
 ### Milestone 1 to Milestone 9: MVP Core Platform & UX/UI Refinements [100% COMPLETED]
-*   [x] Predictive autocomplete search (`US-01`, `US-19`), game catalog filters (`US-04`), multi-game cart optimizer (`US-17`, `US-23`), regional shipping matrices (`US-03`, `US-08`), background XML feed sync & diagnostics (`US-09`, `US-12`, `US-14`), BGG metadata resolution (`US-15`, `US-16`), restock alerts (`US-24`), store reviews & vibe badges (`US-22`), foreign exchange rate caching (`US-13`), multi-region mock data seeding (`US-26`), navbar identity (`US-30`), layout SEO targeting (`US-31`), regional domestic tactile switches (`US-32`), edition language badges (`US-33`), system-wide emoji eradication (`US-34`), BGG wishlist sync (`US-35`), and consolidated regional toggles (`US-36`).
+*   [x] Predictive autocomplete search (`US-01`, `US-19`), game catalog filters (`US-04`), multi-game cart optimizer (`US-17`, `US-23`), regional shipping matrices (`US-03`, `US-08`), background XML feed sync & diagnostics (`US-09`, `US-12`, `US-14`), BGG metadata resolution (`US-15`, `US-16`), restock alerts (`US-24`), store reviews & vibe badges (`US-22`), foreign exchange rate caching (`US-13`), multi-region mock data seeding (`US-26`), navbar identity (`US-30`), layout SEO targeting (`US-31`), regional domestic tactile switches (`US-32`), edition language badges (`US-33`), system-wide emoji eradication (`US-34`), BGG wishlist sync (`US-35`), consolidated regional toggles (`US-36`), and code quality audit (`Issue #48`).
 
 ### Milestone 10: Merchant Affiliate Analytics & System-Wide Emoji Eradication [IN PROGRESS]
-*   [ ] **US-10 (Issue #46) Affiliate Click and Analytics Dashboard & UTM Injection:**
-    *   [ ] Update TDD suite `src/__tests__/clicks.test.tsx` and create `src/__tests__/merchant_analytics_dashboard.test.tsx` asserting automated injection of `ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate` on 302 redirects and buy buttons.
-    *   [ ] Implement dynamic UTM parameter injection in `/api/redirect/route.ts` and buy links in `CartOptimizerPanel.tsx`.
-    *   [ ] Implement `MerchantAnalyticsCharts.tsx` and integrate into `/merchant/dashboard`.
-    *   [ ] Verify across serial Jest suites and Playwright E2E tests.
+*   [x] **US-10 (Issue #46) Affiliate Click and Analytics Dashboard & UTM Injection:** Completed and verified (PR pending merge).
 *   [ ] **US-37 (Issue #47) Complete System-Wide Emoji Eradication:** Queued sequentially after Issue #46 completion.
 
 ---

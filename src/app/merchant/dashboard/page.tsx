@@ -4,16 +4,12 @@ import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { Toolbar } from '@/components/Toolbar';
+import { MerchantAnalyticsCharts, ClickLogItem } from '@/components/MerchantAnalyticsCharts';
 import Link from 'next/link';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-interface ClickLog {
-  created_at: string;
-  bgg_games_cache: { name: string } | null;
-}
 
 export default async function MerchantDashboardPage() {
   const session = await getServerSession(authOptions);
@@ -25,7 +21,7 @@ export default async function MerchantDashboardPage() {
   // Load merchant store details
   const { data: store, error: storeErr } = await supabase
     .from('stores')
-    .select('id, name, feed_status')
+    .select('id, name, feed_status, base_url')
     .eq('owner_email', session.user.email)
     .single();
 
@@ -38,6 +34,7 @@ export default async function MerchantDashboardPage() {
     .from('clicks')
     .select(`
       created_at,
+      bgg_id,
       bgg_games_cache (
         name
       )
@@ -45,7 +42,7 @@ export default async function MerchantDashboardPage() {
     .eq('store_id', store.id)
     .order('created_at', { ascending: false });
 
-  const clicks = (clicksData as unknown as ClickLog[]) || [];
+  const clicks = (clicksData as unknown as ClickLogItem[]) || [];
   const clicksCount = clicks.length;
 
   // Mock standard CTR ratio based on industry averages (4.2% click through rate)
@@ -123,6 +120,9 @@ export default async function MerchantDashboardPage() {
           </div>
 
         </div>
+
+        {/* Interactive Analytics Charts, Top Games, and UTM Guide */}
+        <MerchantAnalyticsCharts clicks={clicks} storeUrl={store.base_url || 'https://tutienda.es'} />
 
         {/* Clicks Log Table */}
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">

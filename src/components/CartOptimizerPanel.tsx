@@ -215,9 +215,19 @@ export function CartOptimizerPanel({ initialGames }: Props) {
 
                           <ul className="divide-y divide-gray-200/60 text-xs text-gray-700">
                             {store.items.map((item) => (
-                              <li key={item.bggId} className="py-1.5 flex items-center justify-between">
-                                <span className="truncate pr-2 font-medium">{item.gameName}</span>
-                                <span className="font-bold text-gray-950 shrink-0">€{item.price.toFixed(2)}</span>
+                              <li key={item.bggId} className="py-2 flex items-center justify-between gap-3">
+                                <span className="truncate font-medium flex-1">{item.gameName}</span>
+                                <div className="flex items-center gap-2.5 shrink-0">
+                                  <span className="font-bold text-gray-950">€{item.price.toFixed(2)}</span>
+                                  <a
+                                    href={`/api/redirect?url=${encodeURIComponent(item.productUrl || store.storeUrl)}&store_id=${encodeURIComponent(store.storeId)}&bgg_id=${item.bggId}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-lg text-[11px] transition-colors border border-indigo-200/60 shadow-2xs"
+                                  >
+                                    Ir a comprar
+                                  </a>
+                                </div>
                               </li>
                             ))}
                           </ul>
@@ -230,6 +240,17 @@ export function CartOptimizerPanel({ initialGames }: Props) {
                               freeShippingThreshold={store.subtotal + 10.0}
                             />
                           )}
+
+                          <div className="pt-2">
+                            <a
+                              href={`/api/redirect?url=${encodeURIComponent(store.storeUrl)}&store_id=${encodeURIComponent(store.storeId)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center transition-colors shadow-sm"
+                            >
+                              Comprar en {store.storeName}
+                            </a>
+                          </div>
                         </div>
                       ))}
                     </div>

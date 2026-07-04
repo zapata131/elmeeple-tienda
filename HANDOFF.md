@@ -1,22 +1,33 @@
-# Handoff Sprint Memo: MeeplePrecios (US-35 BGG Wishlist Sync & US-36 Consolidate Regional Domestic Store Toggles Completed)
+# Handoff Sprint Memo: MeeplePrecios (Milestone 10: Affiliate Click & Analytics Dashboard Active)
 
-This memo summarizes the verified completion of both **US-35 (Issue #42): BGG Wishlist Synchronization & Discount Alerts Removal** and **US-36 (Issue #44): Consolidate Regional Domestic Store Toggles in Catalog and Comparison UI** for the board game price comparison platform across the Iberian Peninsula (Spain, Portugal) and Latin America.
+This memo summarizes the architectural planning and active execution of **Milestone 10 / US-10 (Issue #46): Affiliate Click and Analytics Dashboard for Store Partners** on the board game price comparison platform across the Iberian Peninsula (Spain, Portugal) and Latin America.
 
 ---
 
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Active Branch:** `main`
-*   **Completed Issues:** Issue #42 (`[US-35] BGG Wishlist Synchronization & Discount Alerts Removal`) & Issue #44 (`[US-36] Consolidate Regional Domestic Store Toggles in Catalog and Comparison UI`)
-*   **Modified / Verified Files:**
-    *   [src/components/RegionalStoreToggle.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/RegionalStoreToggle.tsx): Created standalone client component rendering an accessible tactile switch (`role="switch"`, `aria-checked`, click propagation stopping) with zero raw unicode emojis.
-    *   [src/components/Toolbar.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/Toolbar.tsx): Removed duplicate/redundant domestic store toggle switch (`Solo Tiendas Nacionales`) from the global navigation header.
-    *   [src/app/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/page.tsx): Embedded `RegionalStoreToggle` directly below the search bar in the main hero search section for contextual filtering.
-    *   [src/components/CatalogView.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/CatalogView.tsx): Added `RegionalStoreToggle` to the sidebar filters panel and upgraded the existing in-stock filter to an accessible tactile switch (`role="switch"`).
-    *   [src/app/api/user/sync-bgg/route.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/api/user/sync-bgg/route.ts): Implemented dual-endpoint BGG API v2 XML collection retrieval (`wishlist=1` & `wanttobuy=1`), Section 5.1 catalog resolution, and saving records with `target_price: null`.
-    *   [src/components/UserAlertsDashboard.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/UserAlertsDashboard.tsx), [src/app/dashboard/alerts/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/dashboard/alerts/page.tsx): Removed discount alert comparison grids and target price editing forms. Replaced with clean Best Price display (`€xx.xx`) and direct "Ver Ofertas" CTAs linking to game deals. Maintained 100% zero raw emojis.
-    *   [src/__tests__/page.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/page.test.tsx), [src/__tests__/toolbar.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/toolbar.test.tsx), [src/__tests__/bgg_wishlist_sync.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/bgg_wishlist_sync.test.tsx), [src/__tests__/emoji_eradication.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/emoji_eradication.test.tsx): Serial unit and integration test suites validating dual BGG sync, relocation of the domestic switch, and 100% emoji eradication.
-    *   [e2e/regional_toggles.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/regional_toggles.spec.ts), [e2e/home_and_optimizer.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/home_and_optimizer.spec.ts), [e2e/bgg_wishlist_and_alerts.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/bgg_wishlist_and_alerts.spec.ts): Playwright E2E walkthrough suites verifying consolidated toggle behavior and BGG wishlist sync across desktop (`1280x800`) and mobile (`375x667`) viewports.
+*   **Active Branch:** `feature/issue-46-affiliate-analytics-dashboard`
+*   **Active Issue:** Issue #46 (`[US-10] Affiliate Click and Analytics Dashboard for Store Partners`)
+*   **Queued Issue:** Issue #47 (`[US-37] Complete System-Wide Emoji Eradication across Admin, Merchant, and Catalog UI`)
+*   **Planned Files for Modification:**
+    *   [src/app/merchant/dashboard/page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/merchant/dashboard/page.tsx): Server component updates to aggregate referral clicks by date and by game (`bgg_id`), computing top referred board games and CTR metrics.
+    *   `src/components/MerchantAnalyticsCharts.tsx`: New client component rendering responsive daily/weekly click charts and UTM link reconciliation instructions (`?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`) with zero raw unicode emojis.
+    *   `src/__tests__/merchant_analytics_dashboard.test.tsx`: Comprehensive TDD unit and integration test suite validating charts, top game tables, UTM guides, and zero emoji leakage.
+    *   `e2e/merchant_analytics.spec.ts`: Playwright E2E walkthrough suite verifying merchant dashboard analytics across desktop (`1280x800`) and mobile (`375x667`) viewports.
+
+---
+
+## 2. Milestone and Task Progress
+
+### Milestone 1 to Milestone 9: MVP Core Platform & UX/UI Refinements [100% COMPLETED]
+*   [x] Predictive autocomplete search (`US-01`, `US-19`), game catalog filters (`US-04`), multi-game cart optimizer (`US-17`, `US-23`), regional shipping matrices (`US-03`, `US-08`), background XML feed sync & diagnostics (`US-09`, `US-12`, `US-14`), BGG metadata resolution (`US-15`, `US-16`), restock alerts (`US-24`), store reviews & vibe badges (`US-22`), foreign exchange rate caching (`US-13`), multi-region mock data seeding (`US-26`), navbar identity (`US-30`), layout SEO targeting (`US-31`), regional domestic tactile switches (`US-32`), edition language badges (`US-33`), system-wide emoji eradication (`US-34`), BGG wishlist sync (`US-35`), and consolidated regional toggles (`US-36`).
+
+### Milestone 10: Merchant Affiliate Analytics & System-Wide Emoji Eradication [IN PROGRESS]
+*   [ ] **US-10 (Issue #46) Affiliate Click and Analytics Dashboard for Store Partners:**
+    *   [ ] Write TDD suite `src/__tests__/merchant_analytics_dashboard.test.tsx` asserting daily click bars, top game rankings, and UTM tracking documentation.
+    *   [ ] Implement `MerchantAnalyticsCharts.tsx` and integrate into `/merchant/dashboard`.
+    *   [ ] Verify across serial Jest suites and Playwright E2E tests.
+*   [ ] **US-37 (Issue #47) Complete System-Wide Emoji Eradication:** Queued sequentially after Issue #46 completion.
 
 ---
 
@@ -42,8 +53,11 @@ This memo summarizes the verified completion of both **US-35 (Issue #42): BGG Wi
 *   `#33` to `#37` [US-30 to US-34: UX & UI Sprint Bundle] [COMPLETED]
 *   `#42` [US-35: BGG Wishlist Synchronization & Discount Alerts Removal](https://github.com/zapata131/elmeeple-tienda/issues/42) [COMPLETED]
 *   `#44` [US-36: Consolidate Regional Domestic Store Toggles in Catalog and Comparison UI](https://github.com/zapata131/elmeeple-tienda/issues/44) [COMPLETED]
+*   `#46` [US-10: Affiliate Click and Analytics Dashboard for Store Partners](https://github.com/zapata131/elmeeple-tienda/issues/46) [IN PROGRESS]
+*   `#47` [US-37: Complete System-Wide Emoji Eradication across Admin, Merchant, and Catalog UI](https://github.com/zapata131/elmeeple-tienda/issues/47) [QUEUED]
 
 ---
 
 ## 5. Next Steps
-1.  **Architect Gate:** Plan and initiate the next sprint backlog items in `backlog_user_stories.md` / GitHub Issues.
+1.  **UX Expert Gate:** Review copy, typography, and SVG vector layout for `MerchantAnalyticsCharts.tsx` on `/merchant/dashboard`.
+2.  **Builder Gate:** Write `src/__tests__/merchant_analytics_dashboard.test.tsx` first (TDD), implement component and query aggregations, verify with `npm run test -- --runInBand --forceExit` and `npm run verify`.

@@ -95,11 +95,11 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
 *   **XML Feed Processing:** Outbound background crawlers retrieve merchant feeds, parsing them via `fast-xml-parser`. The parser extracts standard Google Shopping RSS 2.0 elements: `<g:gtin>` (resolving game IDs in `bgg_games_cache` or enqueuing them), `<g:price>` (converted to base currency and written to `store_games.price`), `<g:availability>` (written to `store_games.stock`), and `<link>` (stored as affiliate product URLs).
 *   **BGG API Integration:** Secure server actions querying BoardGameGeek XML2 API (`/xmlapi2/collection`), fetching both `wishlist=1` and `wanttobuy=1` endpoints in sequential loops, managing 202 Accepted polling and rate limits.tion:** Secure server actions querying BoardGameGeek XML2 API, managing 202 Accepted polling and rate limits.
 
-### 5.1 Business Model & Referral Link Validation
+### 5.1 Business Model, Referral Link Validation & Merchant Analytics (US-10)
 *   **Affiliate Marketing Model:** The platform operates on Cost-Per-Click (CPC) and Cost-Per-Acquisition (CPA) affiliate referral programs. Outbound referral links direct players to store checkouts.
 *   **UTM Suffix Sizing:** Every outbound redirect link appends a standard, immutable URL tracking query:
     `?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`
-*   **Merchant Integration Check:** Store owners can reconcile click tracking by auditing their web logs (Shopify Referrals, WooCommerce metrics, Google Analytics raw click logs) for these variables. MeeplePrecios records every redirect event in the database, displaying hourly clicks on the merchant dashboard.
+*   **Merchant Integration Check & Analytics Panel (`US-10`, Issue #46):** Store owners can reconcile click tracking by auditing their web logs (Shopify Referrals, WooCommerce metrics, Google Analytics raw click logs) for these variables. The self-serve merchant panel (`/merchant/dashboard`) aggregates click events from `clicks` grouped by date (daily/weekly charts) and by `bgg_id` (ranking top board games driving outbound traffic), displaying interactive SVG vector visualizations and copyable UTM tracking guides without raw unicode emojis.
 
 ### 5.2 Settings Cookie Mappings
 *   **Cookie Syncing:** Changing the country or currency in the settings toolbar writes key-value configuration cookies directly to the client browser context (`meeple_country` and `meeple_currency`) with a 1-year max age limit.

@@ -19,6 +19,7 @@ You must execute this checklist on **every single turn** before completing your 
 *   **Update AGENTS.md:** Record new engineering conventions, learnings, or testing patterns.
 *   **Update HANDOFF.md:** Keep the sprint memo updated in real-time (active branch, edited files, test status, next steps).
 *   **Commit & Push Feature Branch:** Stage all changes, commit with conventional commit message, and push the active feature branch to remote (`git push -u origin feature/issue-<num>-<title>`). Do not push directly to `main`.
+*   **Open PR & Merge Sprint Deliverables:** Open a Pull Request linking the completed issue (`gh pr create --title "..." --body "Closes #<num>"`). Once verification passes 100% cleanly (`npm run verify`), **merge the Pull Request and feature branch directly into `main`** using `gh pr merge <num> --merge --delete-branch` (or `git checkout main && git pull origin main && git merge <branch> && git push origin main && git branch -d <branch>`) to conclude the sprint without leaving stale open PRs or dangling branches.
 
 > [!IMPORTANT]
 > **Any turn completed without executing this checklist and feature branch workflow is considered incomplete and invalid. No exceptions.**
@@ -147,6 +148,10 @@ graph TD
 ### 5.7 Contextual Filter Placement vs Global Header Navigation (US-36)
 *   **Redundant Global Toggles vs Contextual UI Filtering:** Placing regional filtering switches (like domestic store toggles `Solo tiendas en mi país`) inside global headers (`Toolbar.tsx`) alongside destination country/currency selectors creates duplicate controls and clutters global navigation when pages also provide localized filtering tables.
     *   *Convention:* Maintain global user preferences (shipping destination country, display currency, active persona role, language) in `Toolbar.tsx`. Place granular content and listing filters (regional domestic store toggles, in-stock availability switches, price sliders) directly within contextual search, catalog, and comparison UI components (`page.tsx`, `CatalogView.tsx`, `StoreOffersComparisonTable.tsx`) using standalone accessible tactile switch components (`RegionalStoreToggle.tsx`).
+
+### 5.8 Sprint Completion & Automated Branch Merging Mandate
+*   **Stale Branches vs Continuous Integration:** Leaving completed feature branches unmerged after verification (`npm run verify`) causes branch divergence, documentation drift, and delay in delivering verified value to `main`.
+    *   *Convention:* As soon as a sprint issue's deliverables pass 100% of our four-tier verification gate and a Pull Request is opened linking `Closes #<num>`, the Reviewer agent must complete the lifecycle by merging the PR into `main` (`gh pr merge <num> --merge --delete-branch`) and switching the local workspace back to updated `main`.
 
 
 ---

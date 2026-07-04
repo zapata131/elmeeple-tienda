@@ -65,17 +65,16 @@ export async function GET(request: NextRequest) {
 
     const formattedAlerts = alerts.map((a: AlertRow) => {
       const g = gamesMap[a.bgg_id] || { name: `Juego #${a.bgg_id}`, thumbnail: '' };
-      const currentLowest = lowestPriceMap[a.bgg_id] || Number(a.target_price);
-      const isTriggered = currentLowest <= Number(a.target_price);
+      const currentLowest = lowestPriceMap[a.bgg_id] || Number(a.target_price || 0);
 
       return {
         id: a.id,
         bggId: a.bgg_id,
         gameName: g.name,
         thumbnail: g.thumbnail,
-        targetPrice: Number(a.target_price),
+        targetPrice: null,
         currentLowestPrice: currentLowest,
-        isTriggered,
+        isTriggered: false,
         createdAt: a.created_at,
       };
     });
@@ -111,24 +110,5 @@ export async function DELETE(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  try {
-    const { alertId, targetPrice } = await request.json();
-    if (!alertId || !targetPrice) {
-      return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
-    }
-
-    const { error } = await supabase
-      .from('price_alerts')
-      .update({ target_price: Number(targetPrice) })
-      .eq('id', alertId);
-
-    if (error) {
-      return NextResponse.json({ error: 'Failed to update target price' }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error('[User Alerts API PATCH]', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-  }
+  return NextResponse.json({ success: true, message: 'Target price editing removed.' });
 }

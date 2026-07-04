@@ -8,9 +8,9 @@ export interface AlertItem {
   bggId: number;
   gameName: string;
   thumbnail: string;
-  targetPrice: number;
-  currentLowestPrice: number;
-  isTriggered: boolean;
+  targetPrice?: number | null;
+  currentLowestPrice?: number;
+  isTriggered?: boolean;
   createdAt: string;
 }
 
@@ -66,7 +66,7 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
       if (res.ok) {
         setAlerts((prev) => prev.filter((a) => a.id !== alertId));
       } else {
-        setErrorMsg('Error al eliminar la alerta.');
+        setErrorMsg('Error al eliminar el juego de la lista.');
       }
     } catch {
       setErrorMsg('Error de conexión de red.');
@@ -74,43 +74,6 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
       setLoadingId(null);
     }
   };
-
-  const handleUpdatePrice = async (alertId: string, currentTarget: number) => {
-    const input = prompt('Introduce el nuevo precio objetivo (€):', currentTarget.toString());
-    if (!input) return;
-    const val = Number(input);
-    if (isNaN(val) || val <= 0) {
-      alert('Precio inválido');
-      return;
-    }
-
-    setLoadingId(alertId);
-    setErrorMsg('');
-    try {
-      const res = await fetch('/api/user/alerts', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ alertId, targetPrice: val }),
-      });
-      if (res.ok) {
-        setAlerts((prev) =>
-          prev.map((a) =>
-            a.id === alertId
-              ? { ...a, targetPrice: val, isTriggered: a.currentLowestPrice <= val }
-              : a
-          )
-        );
-      } else {
-        setErrorMsg('Error al actualizar el precio.');
-      }
-    } catch {
-      setErrorMsg('Error de conexión de red.');
-    } finally {
-      setLoadingId(null);
-    }
-  };
-
-  const triggeredCount = alerts.filter((a) => a.isTriggered).length;
 
   return (
     <div className="flex flex-col gap-8">
@@ -118,12 +81,12 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
       {/* Stats Header Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Alertas Activas</span>
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total en Lista de Deseos</span>
           <span className="text-3xl font-extrabold text-gray-950 mt-2">{alerts.length}</span>
         </div>
         <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">¡Precios Alcanzados!</span>
-          <span className="text-3xl font-extrabold text-emerald-600 mt-2">{triggeredCount}</span>
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Sincronizados BGG</span>
+          <span className="text-3xl font-extrabold text-indigo-600 mt-2">{alerts.length}</span>
         </div>
         <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Cuenta Asociada</span>
@@ -142,7 +105,7 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
           <div>
             <h3 className="text-base font-extrabold text-white">Sincronizar Wishlist desde BoardGameGeek</h3>
             <p className="text-xs text-indigo-200 mt-0.5">
-              Importa automáticamente tus juegos deseados (wishlist/want to buy) y crea alertas de descuento con -15%.
+              Importa automáticamente tus juegos deseados (wishlist/want to buy) desde tu colección de BGG.
             </p>
           </div>
         </div>
@@ -183,17 +146,17 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
         </div>
       )}
 
-      {/* Alerts Grid */}
+      {/* Wishlist Items Grid */}
       {alerts.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3">
           <div className="w-14 h-14 rounded-2xl bg-[#8367C7]/15 border border-[#8367C7]/30 flex items-center justify-center text-[#8367C7]">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </div>
-          <h3 className="font-extrabold text-gray-900 text-base">No tienes alertas de bajada de precio activas</h3>
+          <h3 className="font-extrabold text-gray-900 text-base">Tu lista de deseos de BGG está vacía</h3>
           <p className="text-xs text-gray-500 max-w-md">
-            Navega por nuestro catálogo de juegos, entra en la ficha del juego que desees y activa una alerta para recibir avisos instantáneos cuando alcance tu precio objetivo.
+            Importa tu wishlist desde BoardGameGeek usando el formulario superior o explora nuestro catálogo para descubrir juegos de mesa al mejor precio en tiendas.
           </p>
           <Link
             href="/catalog"
@@ -207,19 +170,8 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
           {alerts.map((alert) => (
             <div
               key={alert.id}
-              className={`bg-white border rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-5 relative transition-all ${
-                alert.isTriggered ? 'border-emerald-500 ring-2 ring-emerald-500/10' : 'border-gray-200'
-              }`}
+              className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-5 transition-all"
             >
-              {alert.isTriggered && (
-                <span className="absolute -top-3 right-5 bg-emerald-600 text-white text-[10px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full shadow-sm inline-flex items-center gap-1">
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                  <span>¡Precio Alcanzado!</span>
-                </span>
-              )}
-
               <div className="flex items-start gap-4">
                 {alert.thumbnail ? (
                   <img
@@ -244,29 +196,46 @@ export function UserAlertsDashboard({ initialAlerts, userEmail }: Props) {
                   </Link>
                   <span className="text-[10px] text-gray-400 font-mono">BGG #{alert.bggId}</span>
 
-                  <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-150">
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block">Tu Objetivo</span>
-                      <span className="text-base font-extrabold text-indigo-650">€{alert.targetPrice.toFixed(2)}</span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase font-bold text-gray-400 block">Mejor Precio Actual</span>
-                      <span className={`text-base font-extrabold ${alert.isTriggered ? 'text-emerald-600' : 'text-gray-900'}`}>
-                        €{alert.currentLowestPrice.toFixed(2)}
-                      </span>
-                    </div>
+                  <div className="mt-3 pt-3 border-t border-gray-150 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    {alert.currentLowestPrice !== undefined && alert.currentLowestPrice > 0 ? (
+                      <div className="flex items-center justify-between sm:justify-start gap-3 w-full">
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-gray-400 block">Mejor Precio</span>
+                          <span className="text-base font-extrabold text-gray-900">
+                            €{alert.currentLowestPrice.toFixed(2)}
+                          </span>
+                        </div>
+                        <Link
+                          href={`/game/${alert.bggId}`}
+                          className="ml-auto inline-flex items-center gap-1.5 bg-[#73D8D4]/15 hover:bg-[#73D8D4]/25 text-teal-900 border border-[#73D8D4]/40 text-xs font-extrabold px-3 py-1.5 rounded-xl transition-colors shadow-2xs"
+                        >
+                          <span>Ver Ofertas</span>
+                          <svg className="w-3.5 h-3.5 text-[#73D8D4]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-xs font-semibold text-gray-500 inline-flex items-center gap-1.5">
+                          <svg className="w-4 h-4 text-[#FF9E8A] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                          <span>Consultando ofertas en tiendas...</span>
+                        </span>
+                        <Link
+                          href={`/game/${alert.bggId}`}
+                          className="inline-flex items-center gap-1 bg-[#8367C7]/10 hover:bg-[#8367C7]/20 text-indigo-900 border border-[#8367C7]/30 text-xs font-extrabold px-3 py-1.5 rounded-xl transition-colors shrink-0"
+                        >
+                          <span>Ver Ofertas</span>
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
-                <button
-                  onClick={() => handleUpdatePrice(alert.id, alert.targetPrice)}
-                  disabled={loadingId === alert.id}
-                  className="text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3.5 py-1.5 rounded-lg transition-colors disabled:opacity-50"
-                >
-                  Editar Objetivo
-                </button>
                 <button
                   onClick={() => handleDelete(alert.id)}
                   disabled={loadingId === alert.id}

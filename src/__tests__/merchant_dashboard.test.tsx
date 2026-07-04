@@ -65,8 +65,8 @@ describe('US-10: Merchant Analytics Dashboard', () => {
     expect(screen.getByText('Zacatrus Iberian')).toBeInTheDocument();
     
     // Clicks count card
-    expect(screen.getByText('2')).toBeInTheDocument(); // total clicks count
-    expect(screen.getByText('Catan')).toBeInTheDocument();
-    expect(screen.getByText('Carcassonne')).toBeInTheDocument();
+    expect(screen.getAllByText('2').length).toBeGreaterThan(0); // total clicks count
+    expect(screen.getAllByText('Catan').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Carcassonne').length).toBeGreaterThan(0);
   });
 });

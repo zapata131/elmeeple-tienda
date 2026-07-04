@@ -5,45 +5,82 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+function appendAffiliateParams(rawUrl: string): string {
+  try {
+    const urlObj = new URL(rawUrl);
+    urlObj.searchParams.set('ref', 'meepleprecios');
+    urlObj.searchParams.set('utm_source', 'meepleprecios');
+    urlObj.searchParams.set('utm_medium', 'affiliate');
+    return urlObj.toString();
+  } catch {
+    const separator = rawUrl.includes('?') ? '&' : '?';
+    return `${rawUrl}${separator}ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const offerId = searchParams.get('offer_id');
+  const directUrl = searchParams.get('url');
 
-  if (!offerId) {
-    return NextResponse.json({ error: 'Missing offer_id parameter.' }, { status: 400 });
+  if (!offerId && !directUrl) {
+    return NextResponse.json({ error: 'Missing offer_id or url parameter.' }, { status: 400 });
   }
 
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || null;
+
   try {
-    // Lookup target store game listing
-    const { data: offer, error: offerErr } = await supabase
-      .from('store_games')
-      .select('store_id, bgg_id, store_product_url')
-      .eq('id', offerId)
-      .single();
+    if (offerId) {
+      // Lookup target store game listing
+      const { data: offer, error: offerErr } = await supabase
+        .from('store_games')
+        .select('store_id, bgg_id, store_product_url')
+        .eq('id', offerId)
+        .single();
 
-    if (offerErr || !offer) {
-      console.error(`[Redirect API] Offer lookup failed for ${offerId}:`, offerErr?.message);
-      return NextResponse.json({ error: 'Offer not found.' }, { status: 404 });
+      if (offerErr || !offer) {
+        console.error(`[Redirect API] Offer lookup failed for ${offerId}:`, offerErr?.message);
+        return NextResponse.json({ error: 'Offer not found.' }, { status: 404 });
+      }
+
+      // Log redirect click asynchronously
+      const { error: clickErr } = await supabase
+        .from('clicks')
+        .insert({
+          store_id: offer.store_id,
+          bgg_id: offer.bgg_id,
+          ip_address: ip,
+        });
+
+      if (clickErr) {
+        console.error('[Redirect API] Failed to log click event:', clickErr.message);
+      }
+
+      const targetUrl = appendAffiliateParams(offer.store_product_url);
+      return NextResponse.redirect(targetUrl, 302);
     }
 
-    // Resolve client IP Address safely
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || null;
+    // Fallback: direct URL redirection
+    const storeId = searchParams.get('store_id');
+    const bggIdParam = searchParams.get('bgg_id');
+    const bggId = bggIdParam ? parseInt(bggIdParam, 10) : null;
 
-    // Log redirect click asynchronously to avoid blocking the user redirection!
-    const { error: clickErr } = await supabase
-      .from('clicks')
-      .insert({
-        store_id: offer.store_id,
-        bgg_id: offer.bgg_id,
-        ip_address: ip,
-      });
+    if (storeId) {
+      const { error: clickErr } = await supabase
+        .from('clicks')
+        .insert({
+          store_id: storeId,
+          bgg_id: !isNaN(bggId as number) ? bggId : null,
+          ip_address: ip,
+        });
 
-    if (clickErr) {
-      console.error('[Redirect API] Failed to log click event:', clickErr.message);
+      if (clickErr) {
+        console.error('[Redirect API] Failed to log direct url click event:', clickErr.message);
+      }
     }
 
-    // Perform redirect (302 found)
-    return NextResponse.redirect(offer.store_product_url, 302);
+    const targetUrl = appendAffiliateParams(directUrl!);
+    return NextResponse.redirect(targetUrl, 302);
   } catch (err) {
     console.error('[Redirect API] Handler crashed:', err);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });

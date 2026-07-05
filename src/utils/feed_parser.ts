@@ -195,7 +195,8 @@ interface QueueInsertRow {
 }
 
 export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[]) {
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  const adminKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
+  const supabase = createClient(supabaseUrl, adminKey);
   const stats = { processed: 0, matched: 0, unmatched: 0, queued: 0 };
   const buffer: StoreGameInsertRow[] = [];
   const queueBuffer: QueueInsertRow[] = [];
@@ -299,9 +300,10 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
 
     // Upsert matched batch if threshold reached
     if (buffer.length >= BATCH_LIMIT) {
+      const dedupedBuffer = Array.from(new Map(buffer.map((item) => [`${item.store_id}_${item.bgg_id}`, item])).values());
       const { error } = await supabase
         .from('store_games')
-        .upsert([...buffer], { onConflict: 'store_id,bgg_id' });
+        .upsert(dedupedBuffer, { onConflict: 'store_id,bgg_id' });
       
       if (error) {
         console.error('[syncStoreCatalog] Batch upsert failed:', error.message);
@@ -311,9 +313,10 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
 
     // Upsert unmapped queue batch if threshold reached
     if (queueBuffer.length >= BATCH_LIMIT) {
+      const dedupedQueue = Array.from(new Map(queueBuffer.map((item) => [`${item.store_id}_${item.store_product_url}`, item])).values());
       const { error } = await supabase
         .from('bgg_metadata_queue')
-        .upsert([...queueBuffer], { onConflict: 'store_id,store_product_url' });
+        .upsert(dedupedQueue, { onConflict: 'store_id,store_product_url' });
       
       if (error) {
         console.error('[syncStoreCatalog] Queue batch upsert failed:', error.message);
@@ -324,9 +327,10 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
 
   // Upsert remaining matched buffer items
   if (buffer.length > 0) {
+    const dedupedBuffer = Array.from(new Map(buffer.map((item) => [`${item.store_id}_${item.bgg_id}`, item])).values());
     const { error } = await supabase
       .from('store_games')
-      .upsert([...buffer], { onConflict: 'store_id,bgg_id' });
+      .upsert(dedupedBuffer, { onConflict: 'store_id,bgg_id' });
     
     if (error) {
       console.error('[syncStoreCatalog] Final buffer upsert failed:', error.message);
@@ -335,9 +339,10 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
 
   // Upsert remaining unmapped queue buffer items
   if (queueBuffer.length > 0) {
+    const dedupedQueue = Array.from(new Map(queueBuffer.map((item) => [`${item.store_id}_${item.store_product_url}`, item])).values());
     const { error } = await supabase
       .from('bgg_metadata_queue')
-      .upsert([...queueBuffer], { onConflict: 'store_id,store_product_url' });
+      .upsert(dedupedQueue, { onConflict: 'store_id,store_product_url' });
     
     if (error) {
       console.error('[syncStoreCatalog] Final queue buffer upsert failed:', error.message);

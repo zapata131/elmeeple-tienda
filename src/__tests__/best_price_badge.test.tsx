@@ -43,7 +43,11 @@ describe('Best Price Deal Badges and Market Bargain Indicator (US-38)', () => {
 
     const currentBestBadge = screen.getByTestId('best-price-badge-current');
     expect(currentBestBadge).toBeInTheDocument();
-    expect(currentBestBadge).toHaveTextContent('★ Mejor precio actual');
+    expect(currentBestBadge).toHaveTextContent('★ Mejor coste total');
+
+    const baseBestBadge = screen.getByTestId('best-price-badge-base');
+    expect(baseBestBadge).toBeInTheDocument();
+    expect(baseBestBadge).toHaveTextContent('★ Mejor precio sin envío');
   });
 
   test('renders historical record badge when offer totalCost matches historicalMinPrice within threshold', () => {

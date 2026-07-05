@@ -68,6 +68,26 @@ describe('US-18 Domestic Toggle, US-25 Language & Role Switcher, US-26 Rich Mock
   });
 
   describe('Admin Seed Endpoint (/api/admin/seed-data)', () => {
+    beforeEach(() => {
+      global.fetch = jest.fn().mockImplementation(() =>
+        Promise.resolve({
+          ok: true,
+          text: () =>
+            Promise.resolve(`
+            <feed xmlns="http://www.w3.org/2005/Atom">
+              <entry>
+                <title>Catan</title>
+                <link rel="alternate" type="text/html" href="https://store.mx/products/catan"/>
+                <s:variant xmlns:s="http://jadedpixel.com/-/spec/shopify">
+                  <s:price currency="MXN">890.00</s:price>
+                </s:variant>
+              </entry>
+            </feed>
+          `),
+        })
+      ) as jest.Mock;
+    });
+
     it('returns success and seed counts', async () => {
       const res = await SeedPost();
       expect(res.status).toBe(200);

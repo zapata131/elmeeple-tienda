@@ -1,4 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
+import { fetch as undiciFetch } from 'undici';
+
+function getFetch(): typeof fetch {
+  if (typeof globalThis.fetch !== 'undefined') {
+    return globalThis.fetch;
+  }
+  if (typeof clearImmediate !== 'undefined') {
+    return undiciFetch as unknown as typeof fetch;
+  }
+  return ((url: string) => Promise.resolve({ ok: false, status: 500, text: () => Promise.resolve('') })) as unknown as typeof fetch;
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
@@ -135,7 +146,7 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
     while (page <= MAX_SAFETY_PAGES) {
       try {
         const pageUrl = `${baseUrl}?page=${page}`;
-        const res = await fetch(pageUrl, { headers: BROWSER_HEADERS });
+        const res = await getFetch()(pageUrl, { headers: BROWSER_HEADERS });
         if (!res.ok) break;
         const xml = await res.text();
         const items = parseGoogleFeed(xml);
@@ -156,7 +167,7 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
         }
 
         page++;
-        const delayMs = process.env.NODE_ENV === 'test' ? 0 : 1500;
+        const delayMs = (process.env.NODE_ENV === 'test' || process.env.FAST_SEED === 'true') ? 0 : 500;
         await new Promise((resolve) => setTimeout(resolve, delayMs));
       } catch (err) {
         console.warn(`[Feed Fetcher] Page ${page} failed for ${baseUrl}:`, err);
@@ -166,7 +177,7 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
     return allItems;
   }
 
-  const res = await fetch(feedUrl, { headers: BROWSER_HEADERS });
+  const res = await getFetch()(feedUrl, { headers: BROWSER_HEADERS });
   if (res.ok) {
     const xml = await res.text();
     return parseGoogleFeed(xml);

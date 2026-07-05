@@ -12,6 +12,26 @@ jest.mock('@supabase/supabase-js', () => {
 });
 
 describe('US-71: Real Feed Database Ingestion & Mock Data Deprecation', () => {
+  beforeEach(() => {
+    global.fetch = jest.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        text: () =>
+          Promise.resolve(`
+          <feed xmlns="http://www.w3.org/2005/Atom">
+            <entry>
+              <title>Catan</title>
+              <link rel="alternate" type="text/html" href="https://store.mx/products/catan"/>
+              <s:variant xmlns:s="http://jadedpixel.com/-/spec/shopify">
+                <s:price currency="MXN">890.00</s:price>
+              </s:variant>
+            </entry>
+          </feed>
+        `),
+      })
+    ) as jest.Mock;
+  });
+
   it('seeds genuine real feed items into Supabase store_games without synthetic randomized prices', async () => {
     const stats = await seedActualFeedsIntoDatabase();
     expect(stats.success).toBe(true);

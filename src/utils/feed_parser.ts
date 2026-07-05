@@ -114,7 +114,11 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
 
   if (feedUrl.includes('.atom')) {
     const baseUrl = feedUrl.split('?')[0];
-    for (let page = 1; page <= 15; page++) {
+    let page = 1;
+    const seenLinks = new Set<string>();
+    const MAX_SAFETY_PAGES = 500; // Covers 25,000+ items per store without infinite loop risks
+
+    while (page <= MAX_SAFETY_PAGES) {
       try {
         const pageUrl = `${baseUrl}?page=${page}`;
         const res = await fetch(pageUrl, { headers: { 'User-Agent': 'MeeplePreciosBot/1.0' } });
@@ -122,8 +126,24 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
         const xml = await res.text();
         const items = parseGoogleFeed(xml);
         if (items.length === 0) break;
-        allItems.push(...items);
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        let newCount = 0;
+        for (const item of items) {
+          if (!seenLinks.has(item.link)) {
+            seenLinks.add(item.link);
+            allItems.push(item);
+            newCount++;
+          }
+        }
+
+        if (newCount === 0) {
+          // No new items discovered on this page; store has finished its paginated catalog
+          break;
+        }
+
+        page++;
+        const delayMs = process.env.NODE_ENV === 'test' ? 0 : 1500;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
       } catch (err) {
         console.warn(`[Feed Fetcher] Page ${page} failed for ${baseUrl}:`, err);
         break;

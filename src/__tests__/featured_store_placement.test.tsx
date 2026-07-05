@@ -53,7 +53,7 @@ const mockMerchantDeals: MerchantDealItem[] = [
 ];
 
 describe('US-41: Sponsored Featured Store Placement in Comparison Table and Merchant Dashboard', () => {
-  it('highlights featured offers at the top of the comparison table even if price is slightly higher', () => {
+  it('sorts offers strictly by lowest total price without sponsored priority ordering', () => {
     render(
       <StoreOffersComparisonTable
         offers={mockOffers}
@@ -67,12 +67,12 @@ describe('US-41: Sponsored Featured Store Placement in Comparison Table and Merc
     const rows = screen.getAllByTestId(/^store-offer-row-/);
     expect(rows).toHaveLength(2);
 
-    // First row should be the featured store (Ludoteca Madrid VIP) despite higher totalCost (38.0 vs 35.0)
-    expect(rows[0]).toHaveTextContent('Ludoteca Madrid VIP');
-    expect(rows[1]).toHaveTextContent('Tienda Estándar');
+    // First row should be the cheapest store (Tienda Estándar at 35.0 vs 38.0)
+    expect(rows[0]).toHaveTextContent('Tienda Estándar');
+    expect(rows[1]).toHaveTextContent('Ludoteca Madrid VIP');
   });
 
-  it('renders distinct sentence-case badge ★ Tienda recomendada on featured offers', () => {
+  it('does NOT render Tienda recomendada badges per user removal mandate', () => {
     render(
       <StoreOffersComparisonTable
         offers={mockOffers}
@@ -82,12 +82,9 @@ describe('US-41: Sponsored Featured Store Placement in Comparison Table and Merc
       />
     );
 
-    const badge = screen.getByTestId('featured-store-badge-offer-premium-featured');
-    expect(badge).toBeInTheDocument();
-    expect(badge).toHaveTextContent('★ Tienda recomendada');
-
-    // Should not render featured badge on non-featured offer
-    expect(screen.queryByTestId('featured-store-badge-offer-cheaper-standard')).not.toBeInTheDocument();
+    const badge = screen.queryByTestId('featured-store-badge-offer-premium-featured');
+    expect(badge).not.toBeInTheDocument();
+    expect(screen.queryByText(/Tienda recomendada/i)).not.toBeInTheDocument();
   });
 
   it('renders self-serve featured deal toggles in MerchantFeaturedDealsPanel with accessible switches', () => {

@@ -28,7 +28,7 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     id: 'store-mx-01',
     name: 'Ficha y Dado',
     country: 'MX',
-    logo_url: 'https://fichaydado.com/cdn/shop/files/logo_fyd_transparent_180x.png',
+    logo_url: null,
     rating: 4.9,
     review_count: 840,
     website: 'https://fichaydado.com',

@@ -92,8 +92,8 @@ export function FeedDiagnosticsPanel({ store }: Props) {
           <span className="text-2xl font-extrabold text-gray-950 mt-1">{stats.processed}</span>
         </div>
         <div className="flex flex-col text-center border-x border-gray-200">
-          <span className="text-[10px] text-gray-500 font-bold uppercase text-indigo-650">Coincidentes</span>
-          <span className="text-2xl font-extrabold text-indigo-650 mt-1">{stats.matched}</span>
+          <span className="text-[10px] text-gray-500 font-bold uppercase text-indigo-600">Coincidentes</span>
+          <span className="text-2xl font-extrabold text-indigo-600 mt-1">{stats.matched}</span>
         </div>
         <div className="flex flex-col text-center">
           <span className="text-[10px] text-gray-500 font-bold uppercase text-red-650">No Coincidentes</span>
@@ -119,7 +119,7 @@ export function FeedDiagnosticsPanel({ store }: Props) {
       <button
         onClick={triggerSync}
         disabled={isLoading || !store.google_shopping_feed_url}
-        className="w-full bg-indigo-650 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg text-sm transition-colors shadow-sm disabled:opacity-50"
+        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg text-sm transition-colors shadow-sm disabled:opacity-50"
       >
         {isLoading ? 'Sincronizando Catálogo...' : 'Sincronizar Feed Ahora'}
       </button>

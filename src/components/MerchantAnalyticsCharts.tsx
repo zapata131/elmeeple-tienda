@@ -131,7 +131,7 @@ export function MerchantAnalyticsCharts({ clicks, storeUrl = 'https://tutienda.e
               <div className="w-full max-w-[36px] bg-gray-100 rounded-t-lg h-32 flex items-end overflow-hidden">
                 <div
                   style={{ height: `${bar.percentage}%` }}
-                  className="w-full bg-indigo-650 rounded-t-lg transition-all duration-300 group-hover:bg-indigo-700"
+                  className="w-full bg-indigo-600 rounded-t-lg transition-all duration-300 group-hover:bg-indigo-700"
                 />
               </div>
               <span className="text-[10px] font-semibold text-gray-500 truncate max-w-full">
@@ -167,7 +167,7 @@ export function MerchantAnalyticsCharts({ clicks, storeUrl = 'https://tutienda.e
                 </div>
                 <div className="flex items-center gap-4 shrink-0">
                   <div className="w-24 bg-gray-200 rounded-full h-2 overflow-hidden hidden sm:block">
-                    <div style={{ width: `${game.share}%` }} className="bg-indigo-650 h-full rounded-full" />
+                    <div style={{ width: `${game.share}%` }} className="bg-indigo-600 h-full rounded-full" />
                   </div>
                   <span className="text-xs font-extrabold text-gray-950 w-12 text-right">{game.count} clics</span>
                   <span className="text-[10px] font-semibold text-gray-500 w-10 text-right">({game.share}%)</span>

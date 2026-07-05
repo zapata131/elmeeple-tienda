@@ -38,7 +38,7 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ id
           </div>
           <Link
             href="/"
-            className="text-xs font-bold text-indigo-650 hover:text-indigo-700 bg-indigo-50 px-4 py-2 rounded-xl transition-colors"
+            className="text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-4 py-2 rounded-xl transition-colors"
           >
             ← Volver a Inicio
           </Link>

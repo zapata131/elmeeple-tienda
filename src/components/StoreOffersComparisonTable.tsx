@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export interface ComparisonOffer {
   id: string;
@@ -154,7 +155,12 @@ export default function StoreOffersComparisonTable({
                           >
                             {originCountryCode}
                           </span>
-                          <span className="font-extrabold text-gray-900 text-sm">{offer.store_name}</span>
+                          <Link
+                            href={`/store/${offer.store_id}`}
+                            className="font-extrabold text-gray-900 text-sm hover:text-indigo-600 hover:underline transition-colors"
+                          >
+                            {offer.store_name}
+                          </Link>
                         </div>
                         <span className="inline-flex items-center gap-1 text-[11px] text-gray-500 mt-0.5">
                           <span>Envío verificado en México 🇲🇽</span>
@@ -248,7 +254,7 @@ export default function StoreOffersComparisonTable({
                           href={`/api/redirect?offer_id=${offer.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-indigo-650 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                          className="inline-flex items-center px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
                         >
                           Ir a la tienda
                         </a>

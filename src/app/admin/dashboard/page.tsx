@@ -44,7 +44,7 @@ export default async function AdminDashboardPage() {
             </p>
             <Link
               href="/"
-              className="text-xs bg-indigo-650 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg mt-2 block shadow-sm"
+              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg mt-2 block shadow-sm"
             >
               Back to Home
             </Link>
@@ -84,7 +84,7 @@ export default async function AdminDashboardPage() {
             </Link>
             <Link
               href="/admin/currency"
-              className="text-xs bg-indigo-650 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm"
+              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm"
             >
               Gestor FX
             </Link>

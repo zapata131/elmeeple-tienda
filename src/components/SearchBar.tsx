@@ -136,7 +136,9 @@ export function SearchBar() {
         router.push(`/game/${numericId}`);
       } else {
         const match = MOCK_GAMES.find((g) => g.name.toLowerCase().includes(query.trim().toLowerCase()));
-        router.push(`/game/${match ? match.bgg_id : 13}`);
+        if (match) {
+          router.push(`/game/${match.bgg_id}`);
+        }
       }
     }
   };
@@ -278,7 +280,7 @@ export function SearchBar() {
                       onMouseEnter={() => setActiveIndex(idx)}
                       className={`text-xs px-3 py-1 rounded-full cursor-pointer transition-all inline-flex items-center gap-1.5 ${
                         idx === activeIndex
-                          ? 'bg-indigo-650 text-white font-bold shadow-sm'
+                          ? 'bg-indigo-600 text-white font-bold shadow-sm'
                           : 'bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium'
                       }`}
                     >

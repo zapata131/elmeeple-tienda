@@ -99,7 +99,7 @@ export default async function MerchantDashboardPage() {
           <div className="flex items-center gap-4">
             <Link
               href="/merchant/shipping"
-              className="text-xs bg-indigo-650 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm"
+              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm"
             >
               Matriz de Envíos
             </Link>

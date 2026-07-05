@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import StoreOffersComparisonTable, { ComparisonOffer } from '../components/StoreOffersComparisonTable';
 import { CatalogView } from '../components/CatalogView';
@@ -44,7 +44,7 @@ describe('Best Price Deal Badges and Market Bargain Indicator (US-38)', () => {
 
     const currentBestBadge = screen.getByTestId('best-price-badge-current');
     expect(currentBestBadge).toBeInTheDocument();
-    expect(currentBestBadge).toHaveTextContent('★ Mejor Precio Actual');
+    expect(currentBestBadge).toHaveTextContent('★ Mejor precio actual');
   });
 
   test('renders historical record badge when offer totalCost matches historicalMinPrice within threshold', () => {
@@ -60,7 +60,7 @@ describe('Best Price Deal Badges and Market Bargain Indicator (US-38)', () => {
 
     const historicalBadge = screen.getByTestId('best-price-badge-historical');
     expect(historicalBadge).toBeInTheDocument();
-    expect(historicalBadge).toHaveTextContent('★ Récord Mínimo Histórico');
+    expect(historicalBadge).toHaveTextContent('★ Récord mínimo histórico');
   });
 
   test('renders catalog best price badge when min_price meets historical_min_price in CatalogView', () => {
@@ -89,7 +89,7 @@ describe('Best Price Deal Badges and Market Bargain Indicator (US-38)', () => {
 
     const badges = screen.getAllByTestId('catalog-best-price-badge');
     expect(badges).toHaveLength(1);
-    expect(badges[0]).toHaveTextContent('★ Mínimo Histórico');
+    expect(badges[0]).toHaveTextContent('★ Mínimo histórico');
   });
 
   test('ensures zero unicode emoji leakage in badge components', () => {

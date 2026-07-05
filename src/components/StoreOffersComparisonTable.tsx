@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { RestockAlertButton } from './RestockAlertButton';
 
 export interface ComparisonOffer {
@@ -99,9 +98,9 @@ export default function StoreOffersComparisonTable({
       {/* Header bar with Domestic Toggle */}
       <div className="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/50 rounded-t-xl">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Compare Store Offers</h2>
+          <h2 className="text-lg font-bold text-gray-900">Comparativa de ofertas por tienda</h2>
           <p className="text-xs text-gray-500 font-medium mt-0.5">
-            Desglose 3 partes: Precio Artículo + Envío = Coste Total
+            Desglose 3 partes: Precio artículo + Envío = Coste total
           </p>
         </div>
 
@@ -148,9 +147,9 @@ export default function StoreOffersComparisonTable({
               <th className="px-6 py-3">Tienda</th>
               <th className="px-6 py-3">Edición</th>
               <th className="px-6 py-3">Disponibilidad</th>
-              <th className="px-6 py-3">Precio Artículo</th>
+              <th className="px-6 py-3">Precio artículo</th>
               <th className="px-6 py-3">Envío</th>
-              <th className="px-6 py-3">Coste Total</th>
+              <th className="px-6 py-3">Coste total</th>
               <th className="px-6 py-3">Acción</th>
             </tr>
           </thead>
@@ -169,7 +168,7 @@ export default function StoreOffersComparisonTable({
                       </button>
                     </div>
                   ) : (
-                    'No store offers available for this game yet.'
+                    'No hay ofertas disponibles para este juego todavía.'
                   )}
                 </td>
               </tr>
@@ -199,14 +198,9 @@ export default function StoreOffersComparisonTable({
                           >
                             {originCountryCode}
                           </span>
-                          <Link
-                            href={`/store/${offer.store_id}`}
-                            className="font-bold text-gray-900 hover:text-indigo-650 transition-colors"
-                          >
-                            {offer.store_name}
-                          </Link>
+                          <span className="font-extrabold text-gray-900 text-sm">{offer.store_name}</span>
                         </div>
-                        <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-150 rounded px-1.5 py-0.5 font-extrabold w-max mt-0.5">
+                        <span className="inline-flex items-center gap-1 text-[11px] text-gray-500 mt-0.5">
                           <svg className="w-3 h-3 text-emerald-600 fill-emerald-600" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 0 00.951-.69l1.07-3.292z" />
                           </svg>
@@ -214,7 +208,7 @@ export default function StoreOffersComparisonTable({
                           <svg className="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                           </svg>
-                          <span>Esquinas Protegidas</span>
+                          <span>Esquinas protegidas</span>
                         </span>
                       </div>
                     </td>
@@ -246,7 +240,7 @@ export default function StoreOffersComparisonTable({
                         {offer.shippingCost === null ? (
                           <span className="text-red-500 font-medium">No disponible</span>
                         ) : offer.shippingCost === 0 ? (
-                          <span className="text-green-600 font-semibold">Free (¡Envío GRATIS!)</span>
+                          <span className="text-green-600 font-semibold">Gratis (¡Envío gratis!)</span>
                         ) : (
                           `€${offer.shippingCost.toFixed(2)}`
                         )}
@@ -276,7 +270,7 @@ export default function StoreOffersComparisonTable({
                             <svg className="w-3 h-3 text-teal-800 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>★ Mejor Precio Actual</span>
+                            <span>★ Mejor precio actual</span>
                           </span>
                         )}
                         {isHistoricalRecord && (
@@ -287,7 +281,7 @@ export default function StoreOffersComparisonTable({
                             <svg className="w-3 h-3 text-rose-900 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                             </svg>
-                            <span>★ Récord Mínimo Histórico</span>
+                            <span>★ Récord mínimo histórico</span>
                           </span>
                         )}
                       </div>

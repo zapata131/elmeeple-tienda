@@ -70,7 +70,7 @@ describe('US-04: Catalog Search Filters and Navigation', () => {
     const PageResolved = await CatalogPage({ searchParams: Promise.resolve({ q: 'catan' }) });
     render(PageResolved);
 
-    const checkbox = screen.getByLabelText(/only show in stock/i);
+    const checkbox = screen.getByLabelText(/Mostrar solo en stock/i);
     expect(screen.getByText('Catan Expansion')).toBeInTheDocument();
 
     // Check "Only Show In Stock"

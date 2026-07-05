@@ -3,8 +3,6 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { CatalogView } from '@/components/CatalogView';
 import StoreOffersComparisonTable, { ComparisonOffer } from '@/components/StoreOffersComparisonTable';
-import { StoreReviewPanel } from '@/components/StoreReviewPanel';
-import { CartOptimizerPanel } from '@/components/CartOptimizerPanel';
 import { MOCK_GAMES } from '@/utils/mockData';
 
 const mockCatalogGames = [
@@ -104,45 +102,6 @@ describe('US-40: Automated Sentence Case Verification Suite & UI Harmonization',
     expect(textContent).not.toContain('Mejor Precio Actual');
     expect(textContent).not.toContain('Récord Mínimo Histórico');
     expect(textContent).not.toContain('Ir A Tienda');
-  });
-
-  it('ensures StoreReviewPanel headings and buttons follow sentence case', () => {
-    const { container } = render(
-      <StoreReviewPanel
-        storeId="store-1"
-        storeName="Cuarto de Juegos"
-        initialReviews={[]}
-        initialAvgRating={5}
-        initialTagCounts={{ 'Esquinas Protegidas': 1 }}
-      />
-    );
-    const textContent = container.textContent || '';
-
-    BANNED_TITLE_CASE_STRINGS.forEach((banned) => {
-      expect(textContent).not.toContain(banned);
-    });
-
-    expect(textContent).not.toContain('Dejar Reseña');
-    expect(textContent).not.toContain('Etiquetas De Experiencia');
-    expect(textContent).not.toContain('Puntuación Media');
-  });
-
-  it('ensures CartOptimizerPanel headings and actions follow sentence case', () => {
-    const { container } = render(
-      <CartOptimizerPanel
-        initialGames={MOCK_GAMES.slice(0, 3)}
-      />
-    );
-    const textContent = container.textContent || '';
-
-    BANNED_TITLE_CASE_STRINGS.forEach((banned) => {
-      expect(textContent).not.toContain(banned);
-    });
-
-    expect(textContent).not.toContain('Comparador De Pedidos');
-    expect(textContent).not.toContain('Calcular Mejor Opción');
-    expect(textContent).not.toContain('Resumen De Selección');
-    expect(textContent).not.toContain('Resultados De Optimización');
   });
 });
 

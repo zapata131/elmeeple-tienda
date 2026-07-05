@@ -31,6 +31,28 @@ export function Toolbar() {
           )}
         </div>
 
+        {/* Account and Navigation Links */}
+        <div className="flex items-center gap-3 text-xs font-bold">
+          <Link
+            href="/admin/dashboard"
+            className="text-gray-300 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            🛡️ Panel Admin
+          </Link>
+          <Link
+            href="/merchant/dashboard"
+            className="text-gray-300 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-gray-800 transition-colors hidden sm:inline-flex"
+          >
+            🏪 Tienda
+          </Link>
+          <Link
+            href="/login"
+            className="bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white px-3.5 py-1.5 rounded-xl shadow-xs transition-all flex items-center gap-1"
+          >
+            <span>Iniciar sesión</span>
+          </Link>
+        </div>
+
       </div>
     </header>
   );

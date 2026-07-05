@@ -7,6 +7,10 @@ interface StoreItem {
   name: string;
   verified: boolean;
   owner_email: string;
+  description?: string;
+  city?: string;
+  address?: string;
+  specialties?: string[];
 }
 
 interface Props {
@@ -17,6 +21,13 @@ export function AdminStoreList({ initialStores }: Props) {
   const [stores, setStores] = useState<StoreItem[]>(initialStores);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const [editingStoreId, setEditingStoreId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<{ description: string; city: string; address: string; specialties: string }>({
+    description: '',
+    city: '',
+    address: '',
+    specialties: '',
+  });
 
   const toggleVerification = async (storeId: string, currentVerified: boolean) => {
     setLoadingId(storeId);
@@ -48,6 +59,34 @@ export function AdminStoreList({ initialStores }: Props) {
     }
   };
 
+  const startEditing = (store: StoreItem) => {
+    setEditingStoreId(store.id);
+    setEditForm({
+      description: store.description || 'Tienda especializada en juegos de mesa modernos en México.',
+      city: store.city || 'Ciudad de México, CDMX',
+      address: store.address || 'Envíos verificados a toda la República Mexicana',
+      specialties: store.specialties ? store.specialties.join(', ') : 'Juegos modernos, Novedades, Accesorios',
+    });
+  };
+
+  const handleSaveProfile = (storeId: string) => {
+    const specs = editForm.specialties.split(',').map((s) => s.trim()).filter(Boolean);
+    setStores((prev) =>
+      prev.map((s) =>
+        s.id === storeId
+          ? {
+              ...s,
+              description: editForm.description,
+              city: editForm.city,
+              address: editForm.address,
+              specialties: specs,
+            }
+          : s
+      )
+    );
+    setEditingStoreId(null);
+  };
+
   const [isSeeding, setIsSeeding] = useState(false);
   const [seedMsg, setSeedMsg] = useState('');
 
@@ -58,7 +97,7 @@ export function AdminStoreList({ initialStores }: Props) {
       const res = await fetch('/api/admin/seed-data', { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
-        setSeedMsg('¡Catálogo de prueba poblado con éxito! (22 juegos con portadas BGG y 12 tiendas regionales)');
+        setSeedMsg('¡Catálogo poblado con éxito! (35 juegos top con portadas BGG y 8 tiendas oficiales mexicanas en $ MXN)');
       } else {
         setErrorMsg('Error al poblar datos de prueba.');
       }
@@ -90,7 +129,7 @@ export function AdminStoreList({ initialStores }: Props) {
             <span>Generador de Datos de Prueba (Mock Engine & BGG Covers)</span>
           </h3>
           <p className="text-xs text-indigo-300 mt-1 max-w-xl">
-            Puebla la base de datos local con 22 juegos top (Catan, Scythe, Wingspan, Ark Nova...) con portadas auténticas de BGG y 12 tiendas en España, Portugal y Latinoamérica.
+            Puebla la base de datos local con 35 juegos top (Catan, Arcs, Wingspan, Faraway...) con portadas auténticas de BGG y las 8 tiendas oficiales en México ($ MXN).
           </p>
           {seedMsg && (
             <p className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-300 mt-2">
@@ -106,7 +145,7 @@ export function AdminStoreList({ initialStores }: Props) {
           disabled={isSeeding}
           className="bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs transition-colors shadow-sm disabled:opacity-50 shrink-0"
         >
-          {isSeeding ? 'Generando Datos...' : 'Poblar Catálogo Mock Ahora'}
+          {isSeeding ? 'Generando datos...' : 'Poblar catálogo mock ahora'}
         </button>
       </div>
 
@@ -114,8 +153,8 @@ export function AdminStoreList({ initialStores }: Props) {
         <table className="w-full border-collapse text-left text-sm text-gray-700">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-250 text-xs font-bold text-gray-500 uppercase tracking-wider">
-              <th className="px-6 py-3">Nombre de la Tienda</th>
-              <th className="px-6 py-3">Propietario (Email)</th>
+              <th className="px-6 py-3">Nombre de la tienda</th>
+              <th className="px-6 py-3">Propietario (email)</th>
               <th className="px-6 py-3">Estado</th>
               <th className="px-6 py-3 text-right">Acciones</th>
             </tr>
@@ -129,38 +168,110 @@ export function AdminStoreList({ initialStores }: Props) {
               </tr>
             ) : (
               stores.map((s) => (
-                <tr key={s.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-bold text-gray-950">{s.name}</td>
-                  <td className="px-6 py-4 font-medium text-gray-600">{s.owner_email}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${
-                        s.verified
-                          ? 'bg-green-50 text-green-700 border-green-200'
-                          : 'bg-red-50 text-red-700 border-red-200'
-                      }`}
-                    >
-                      {s.verified ? 'Verificada' : 'Suspendida'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3 text-right">
-                    <button
-                      onClick={() => toggleVerification(s.id, s.verified)}
-                      disabled={loadingId === s.id}
-                      className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors border shadow-sm disabled:opacity-50 ${
-                        s.verified
-                          ? 'bg-white hover:bg-gray-50 text-red-600 border-gray-300'
-                          : 'bg-indigo-600 hover:bg-indigo-700 text-white border-transparent'
-                      }`}
-                    >
-                      {loadingId === s.id
-                        ? 'Actualizando...'
-                        : s.verified
-                        ? 'Suspender'
-                        : 'Verificar'}
-                    </button>
-                  </td>
-                </tr>
+                <React.Fragment key={s.id}>
+                  <tr className="hover:bg-gray-50">
+                    <td className="px-6 py-4 font-bold text-gray-950">
+                      <div>{s.name}</div>
+                      {s.city && <div className="text-xs font-normal text-gray-500 mt-0.5">📍 {s.city}</div>}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-gray-600">{s.owner_email}</td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${
+                          s.verified
+                            ? 'bg-green-50 text-green-700 border-green-200'
+                            : 'bg-red-50 text-red-700 border-red-200'
+                        }`}
+                      >
+                        {s.verified ? 'Verificada' : 'Suspendida'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-3 text-right space-x-2">
+                      <button
+                        onClick={() => startEditing(s)}
+                        className="text-xs font-bold px-3 py-1.5 rounded-lg transition-colors border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 shadow-sm"
+                      >
+                        Editar perfil
+                      </button>
+                      <button
+                        onClick={() => toggleVerification(s.id, s.verified)}
+                        disabled={loadingId === s.id}
+                        className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors border shadow-sm disabled:opacity-50 ${
+                          s.verified
+                            ? 'bg-white hover:bg-gray-50 text-red-600 border-gray-300'
+                            : 'bg-indigo-600 hover:bg-indigo-700 text-white border-transparent'
+                        }`}
+                      >
+                        {loadingId === s.id
+                          ? 'Actualizando...'
+                          : s.verified
+                          ? 'Suspender'
+                          : 'Verificar'}
+                      </button>
+                    </td>
+                  </tr>
+                  {editingStoreId === s.id && (
+                    <tr className="bg-gray-50/80">
+                      <td colSpan={4} className="px-6 py-6 border-t border-gray-200">
+                        <div className="max-w-2xl bg-white p-6 rounded-xl border border-gray-200 shadow-xs space-y-4">
+                          <h4 className="text-sm font-bold text-gray-900">Editar perfil de tienda: {s.name}</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-xs font-bold text-gray-600 mb-1">Ciudad / Estado</label>
+                              <input
+                                type="text"
+                                value={editForm.city}
+                                onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-bold text-gray-600 mb-1">Especialidades (separadas por coma)</label>
+                              <input
+                                type="text"
+                                value={editForm.specialties}
+                                onChange={(e) => setEditForm({ ...editForm, specialties: e.target.value })}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-gray-600 mb-1">Dirección / Logística</label>
+                            <input
+                              type="text"
+                              value={editForm.address}
+                              onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-gray-600 mb-1">Biografía / Descripción</label>
+                            <textarea
+                              rows={2}
+                              value={editForm.description}
+                              onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs"
+                            />
+                          </div>
+                          <div className="flex justify-end gap-2 pt-2">
+                            <button
+                              onClick={() => setEditingStoreId(null)}
+                              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-lg"
+                            >
+                              Cancelar
+                            </button>
+                            <button
+                              onClick={() => handleSaveProfile(s.id)}
+                              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm"
+                            >
+                              Guardar cambios
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))
             )}
           </tbody>

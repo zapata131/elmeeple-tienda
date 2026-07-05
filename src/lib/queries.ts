@@ -347,8 +347,12 @@ export async function fetchPriceHistory(bggId: number, days: number) {
     .gte('recorded_at', startDateStr)
     .order('recorded_at', { ascending: true });
 
-  if (error || !data) {
-    console.error(`[queries] fetchPriceHistory failed for ${bggId}:`, error?.message);
+  if (error) {
+    console.warn(`[queries] fetchPriceHistory error for ${bggId}:`, error.message);
+    return [];
+  }
+
+  if (!data || data.length === 0) {
     return [];
   }
 

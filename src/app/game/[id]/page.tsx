@@ -25,7 +25,7 @@ export default async function GameDetailPage({ params }: Props) {
     );
   }
 
-  const offersRaw = await fetchGameOffers(bggId, 'ES');
+  const offersRaw = await fetchGameOffers(bggId, 'MX');
   const editions = await fetchGameEditions(bggId);
   const history = await fetchPriceHistory(bggId, 365);
   const historicalMinPrice = history.length > 0 ? Math.min(...history.map((h) => h.min_price)) : null;
@@ -111,7 +111,7 @@ export default async function GameDetailPage({ params }: Props) {
             offers={offers}
             bggId={game.bgg_id}
             gameName={game.name}
-            selectedCountry="ES"
+            selectedCountry="MX"
             historicalMinPrice={historicalMinPrice}
           />
           <PriceChart bggId={game.bgg_id} />

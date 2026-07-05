@@ -161,6 +161,10 @@ graph TD
 *   **Monetization Visibility vs Pure Price Sorting:** Sorting store offers strictly by ascending total cost buries merchant deals that have opted into sponsored placements when their base price is even slightly higher than the lowest market competitor.
     *   *Convention:* In `StoreOffersComparisonTable.tsx`, always partition and sort comparison offers by `is_featured` descending first, and subsequently by ascending `totalCost`. Featured offers must render a distinct sentence-case badge (`★ Tienda recomendada`) styled with official brand tokens (`#8367C7`/15) and clean inline SVG vectors without raw unicode emojis. Self-serve merchant featuring toggles in `/merchant/dashboard` must use accessible tactile switches (`role="switch"`) and guard against unauthenticated page redirects during E2E walkthroughs.
 
+### 5.12 Single-Market Commercial MVP Scope & Pricing Standardization (US-44)
+*   **Multi-Currency Complexity vs Commercial Speed:** Exposing multi-currency dropdowns and live foreign exchange conversion engines (`EUR`, `USD`, `BRL`, `ARS`) during initial commercial launch adds visual clutter and cognitive overhead for local players.
+    *   *Convention:* For our primary commercial launch, the platform locks target market scope to Mexico (`MX`) and standardizes all price displays strictly to Mexican Pesos (`MXN $`). The global navigation header (`Toolbar.tsx`) displays a static sentence-case market lock badge (`México · $ MXN`) with clean SVG vector iconography instead of country and currency select dropdowns. All queries and fallback data pools (`queries.ts`, `mockData.ts`) scale prices and shipping rates to realistic MXN figures when querying or returning fallback offers for Mexico.
+
 
 ---
 

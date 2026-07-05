@@ -404,19 +404,21 @@ export const MOCK_GAMES: MockGame[] = [
   }
 ];
 
-export function getMockOffersForGame(bggId: number, countryCode: string) {
+export function getMockOffersForGame(bggId: number, countryCode: string = 'MX') {
   const game = MOCK_GAMES.find((g) => g.bgg_id === bggId) || MOCK_GAMES[0];
 
-  // Pick 6 to 8 regional stores based on game ID to ensure rich variety
-  return MOCK_IBEROAMERICAN_STORES.slice(0, 12).map((store, idx) => {
-    // Generate slight price variance (+/- 15%) around base_price_eur
-    const priceVariance = ((idx % 5) - 2) * 1.5;
-    const basePrice = Math.max(15.0, Number((game.base_price_eur + priceVariance).toFixed(2)));
+  return MOCK_IBEROAMERICAN_STORES.map((store, idx) => {
+    const isMxn = countryCode === 'MX' || store.country === 'MX';
+    const multiplier = isMxn ? 20 : 1;
+
+    // Generate slight price variance (+/- 15%) around base_price_eur * multiplier
+    const priceVariance = ((idx % 5) - 2) * 1.5 * multiplier;
+    const basePrice = Math.max(15.0 * multiplier, Number(((game.base_price_eur * multiplier) + priceVariance).toFixed(2)));
 
     const isDomestic = store.country.toUpperCase() === countryCode.toUpperCase();
     // Domestic shipping flat rate or regional flat rate
-    const shipping_flat = isDomestic ? store.default_shipping_flat : store.default_shipping_flat + 8.00;
-    const shipping_free_threshold = isDomestic ? store.free_shipping_threshold : null;
+    const shipping_flat = Number((isDomestic ? store.default_shipping_flat * multiplier : (store.default_shipping_flat + 8.00) * multiplier).toFixed(2));
+    const shipping_free_threshold = isDomestic && store.free_shipping_threshold ? Number((store.free_shipping_threshold * multiplier).toFixed(2)) : null;
 
     // Language edition based on store country
     const edition_language = store.country === 'BR' || store.country === 'PT' ? 'pt' : 'es';

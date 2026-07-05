@@ -53,7 +53,7 @@ export async function fetchGameDetails(bggId: number) {
   return data;
 }
 
-export async function fetchGameOffers(bggId: number, countryCode: string) {
+export async function fetchGameOffers(bggId: number, countryCode: string = 'MX') {
   const { data, error } = await supabase
     .from('store_games')
     .select(`
@@ -94,7 +94,7 @@ export async function fetchGameOffers(bggId: number, countryCode: string) {
       store_id: item.store_id || item.stores?.id || '11111111-1111-1111-1111-111111111101',
       store_name: item.stores?.name || 'Unknown',
       store_logo: item.stores?.logo_url || null,
-      store_country: item.stores?.country || 'ES',
+      store_country: item.stores?.country || 'MX',
       rating: 4.8,
       review_count: 50,
       store_product_url: item.store_product_url,

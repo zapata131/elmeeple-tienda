@@ -20,7 +20,7 @@ interface RegionalStoreToggleProps {
 
 export function RegionalStoreToggle({ className = '', onToggle, initialChecked }: RegionalStoreToggleProps) {
   const router = useRouter();
-  const [country, setCountry] = useState('ES');
+  const [country, setCountry] = useState('MX');
   const [domesticOnly, setDomesticOnly] = useState(initialChecked ?? true);
 
   useEffect(() => {

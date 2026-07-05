@@ -79,14 +79,14 @@ export default function StoreOffersComparisonTable({
   offers,
   bggId,
   gameName,
-  selectedCountry = 'ES',
+  selectedCountry = 'MX',
   historicalMinPrice,
 }: StoreOffersComparisonTableProps) {
   // Activated by default as requested by user
   const [onlyDomestic, setOnlyDomestic] = useState(true);
 
   const filteredOffers = (onlyDomestic
-    ? offers.filter((offer) => (offer.store_country || 'ES').toUpperCase() === selectedCountry.toUpperCase())
+    ? offers.filter((offer) => (offer.store_country || 'MX').toUpperCase() === selectedCountry.toUpperCase())
     : offers).slice().sort((a, b) => {
       if (a.is_featured && !b.is_featured) return -1;
       if (!a.is_featured && b.is_featured) return 1;
@@ -251,7 +251,7 @@ export default function StoreOffersComparisonTable({
 
                     {/* Base Price */}
                     <td className="px-6 py-4 font-medium text-gray-900">
-                      €{offer.price.toFixed(2)}
+                      ${offer.price.toFixed(2)}
                     </td>
 
                     {/* Shipping */}
@@ -262,7 +262,7 @@ export default function StoreOffersComparisonTable({
                         ) : offer.shippingCost === 0 ? (
                           <span className="text-green-600 font-semibold">Gratis (¡Envío gratis!)</span>
                         ) : (
-                          `€${offer.shippingCost.toFixed(2)}`
+                          `$${offer.shippingCost.toFixed(2)}`
                         )}
                         {isInternational && (
                           <span className="text-[10px] text-amber-700 font-medium mt-0.5">
@@ -279,7 +279,7 @@ export default function StoreOffersComparisonTable({
                           {offer.totalCost === null ? (
                             '--'
                           ) : (
-                            `€${offer.totalCost.toFixed(2)}`
+                            `$${offer.totalCost.toFixed(2)}`
                           )}
                         </span>
                         {isBestCurrentOffer && (

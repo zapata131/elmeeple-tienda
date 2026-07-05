@@ -61,6 +61,25 @@ describe('US-63: Paginated Shopify Atom Feed Roll & Strict Board Game Filtering'
       expect(parsed[1].title).toBe('Sky Team');
       expect(parsed[1].price).toBe(680);
     });
+
+    it('extracts exact currency prices from Shopify Atom s:variant entries', () => {
+      const variantXml = `
+      <feed xmlns="http://www.w3.org/2005/Atom" xmlns:s="http://jadedpixel.com/-/spec/shopify">
+        <entry>
+          <title>Brass Birmingham Deluxe</title>
+          <link rel="alternate" type="text/html" href="https://store.mx/products/brass"/>
+          <s:variant>
+            <s:price currency="MXN">1850.00</s:price>
+          </s:variant>
+        </entry>
+      </feed>
+      `;
+
+      const parsed = parseGoogleFeed(variantXml);
+      expect(parsed).toHaveLength(1);
+      expect(parsed[0].title).toBe('Brass Birmingham Deluxe');
+      expect(parsed[0].price).toBe(1850.00);
+    });
   });
 
   describe('Unbounded paginated feed traversal', () => {

@@ -93,6 +93,10 @@ export default function StoreOffersComparisonTable({
   historicalMinPrice,
 }: StoreOffersComparisonTableProps) {
   const filteredOffers = offers.slice().sort((a, b) => {
+    const aInStock = a.stock > 0;
+    const bInStock = b.stock > 0;
+    if (aInStock && !bInStock) return -1;
+    if (!aInStock && bInStock) return 1;
     if (a.totalCost === null) return 1;
     if (b.totalCost === null) return -1;
     return a.totalCost - b.totalCost;

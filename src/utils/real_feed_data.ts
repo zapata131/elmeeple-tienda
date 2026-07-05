@@ -134,7 +134,9 @@ export async function seedActualFeedsIntoDatabase() {
       const feedItems = await fetchFullStoreFeed(store.google_shopping_feed_url);
       if (feedItems.length > 0) {
         const stats = await syncStoreCatalog(store.id, feedItems);
-        liveXmlItemsIngested += (stats.matched || 0);
+        const storeIngestedCount = stats.processed || feedItems.length || 0;
+        liveXmlItemsIngested += storeIngestedCount;
+        console.log(`[Real Feed Seeder] Store ${store.name} (${store.id}): successfully processed ${storeIngestedCount} live XML items.`);
       }
     } catch (err) {
       console.warn(`[Real Feed Seeder] Live paginated XML crawl failed for store ${store.id}:`, err);
@@ -148,7 +150,7 @@ export async function seedActualFeedsIntoDatabase() {
       totalIngested: liveXmlItemsIngested,
       storesProcessed: 8,
       storesCount: 8,
-      gamesCount: MOCK_GAMES.length,
+      gamesCount: liveXmlItemsIngested,
       offersCount: liveXmlItemsIngested,
     };
   }

@@ -78,18 +78,28 @@ export async function fetchBggHotness() {
         const name = nameMatch ? nameMatch[1] : `Hot Game #${bgg_id}`;
         const thumbMatch = /<thumbnail[^>]*?value=["']([^"']+)["']/i.exec(block);
         const thumbnail = thumbMatch ? thumbMatch[1] : null;
-        results.push({ bgg_id, name, thumbnail, weight: 2.8 });
+
+        const bggGameMatch = MOCK_GAMES.find((g) => g.bgg_id === bgg_id);
+        const highResThumb = thumbnail
+          ? thumbnail
+              .replace(/__thumb\/img\/[^/]+\//, '__original/img/original/')
+              .replace(/\/fit-in\/[0-9]+x[0-9]+\/filters:[^/]+\//, '/')
+          : null;
+        const image = bggGameMatch?.image || highResThumb || thumbnail;
+
+        results.push({ bgg_id, name, thumbnail, image, weight: bggGameMatch?.weight || 2.8 });
       }
       if (results.length > 0) return results;
     }
   } catch (err) {
     console.warn('[queries] fetchBggHotness API fallback triggered:', err);
   }
-  // Fallback to top Mexican catalog games
-  return MOCK_GAMES.slice(0, 6).map((g) => ({
+  // Fallback to top Mexican catalog games with high-res cover art
+  return MOCK_GAMES.slice(0, 8).map((g) => ({
     bgg_id: g.bgg_id,
     name: g.name,
     thumbnail: g.thumbnail,
+    image: g.image || g.thumbnail,
     weight: g.weight,
   }));
 }

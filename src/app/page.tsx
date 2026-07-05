@@ -61,10 +61,10 @@ export default async function Home() {
                 href={`/game/${game.bgg_id}`}
                 className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5 group flex flex-col justify-between"
               >
-                <div className="h-44 bg-gray-100 flex items-center justify-center overflow-hidden relative border-b border-gray-100">
+                <div className="h-56 sm:h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative border-b border-gray-100">
                   {game.thumbnail && (
                     <img
-                      src={game.thumbnail}
+                      src={(game as { image?: string }).image || game.thumbnail}
                       alt={game.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />

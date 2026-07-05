@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { fetchFullStoreFeed, syncStoreCatalog } from '@/utils/feed_parser';
 import { MOCK_IBEROAMERICAN_STORES, MOCK_GAMES } from '@/utils/mockData';
+import { saveLocalCatalogCache, CachedGame, CachedOffer } from '@/utils/local_file_cache';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
@@ -129,6 +130,20 @@ export async function seedActualFeedsIntoDatabase() {
 
   // 3. Crawl live paginated XML feeds across all 8 verified Mexican stores
   let liveXmlItemsIngested = 0;
+  const fileGamesMap = new Map<number, CachedGame>();
+  const fileOffersList: CachedOffer[] = [];
+  const now = new Date().toISOString();
+
+  // Initialize file games map with baseline MOCK_GAMES
+  for (const mg of MOCK_GAMES) {
+    fileGamesMap.set(mg.bgg_id, {
+      bgg_id: mg.bgg_id,
+      name: mg.name,
+      thumbnail: mg.thumbnail,
+      last_updated_at: now,
+    });
+  }
+
   for (const store of storesToUpsert) {
     try {
       const feedItems = await fetchFullStoreFeed(store.google_shopping_feed_url);
@@ -137,27 +152,69 @@ export async function seedActualFeedsIntoDatabase() {
         const storeIngestedCount = stats.processed || feedItems.length || 0;
         liveXmlItemsIngested += storeIngestedCount;
         console.log(`[Real Feed Seeder] Store ${store.name} (${store.id}): successfully processed ${storeIngestedCount} live XML items.`);
+
+        for (const item of feedItems) {
+          const cleanTitle = item.title.replace(/\s*\([^)]*\)/g, '').split(' - ')[0].trim();
+          if (cleanTitle.length >= 2) {
+            const normalizedForHash = cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
+            let hash = 0;
+            for (let i = 0; i < normalizedForHash.length; i++) {
+              hash = (hash << 5) - hash + normalizedForHash.charCodeAt(i);
+              hash |= 0;
+            }
+            const generatedId = 8000000 + Math.abs(hash) % 1999999;
+            const matchedMock = MOCK_GAMES.find((g) => g.name.toLowerCase() === cleanTitle.toLowerCase());
+            const bggId = matchedMock ? matchedMock.bgg_id : generatedId;
+
+            if (!fileGamesMap.has(bggId)) {
+              fileGamesMap.set(bggId, {
+                bgg_id: bggId,
+                name: cleanTitle,
+                thumbnail: '',
+                last_updated_at: now,
+              });
+            }
+
+            fileOffersList.push({
+              id: `offer-${store.id}-${bggId}`,
+              store_id: store.id,
+              store_name: store.name,
+              store_logo: null,
+              store_country: 'MX',
+              rating: 4.9,
+              review_count: 500,
+              store_product_url: item.link,
+              price: item.price,
+              stock: item.stock,
+              edition_language: item.language || 'es',
+              shipping_flat: 99.0,
+              shipping_free_threshold: 1200.0,
+              is_featured: false,
+              bgg_id: bggId,
+            });
+          }
+        }
       }
     } catch (err) {
       console.warn(`[Real Feed Seeder] Live paginated XML crawl failed for store ${store.id}:`, err);
     }
   }
 
-  // If live network crawling returned items, report live XML ingestion stats
+  // If live network crawling returned items, save to zero-Docker filesystem cache and report stats
   if (liveXmlItemsIngested > 0) {
+    saveLocalCatalogCache(Array.from(fileGamesMap.values()), fileOffersList);
     return {
       success: true,
       totalIngested: liveXmlItemsIngested,
       storesProcessed: 8,
       storesCount: 8,
-      gamesCount: liveXmlItemsIngested,
-      offersCount: liveXmlItemsIngested,
+      gamesCount: fileGamesMap.size,
+      offersCount: fileOffersList.length,
     };
   }
 
   // Offline / CI fallback: seed pre-extracted genuine XML snapshot items without synthetic additions
   const rowsToInsert: Array<{ store_id: string; bgg_id: number; price: number; stock: number; store_product_url: string; edition_language: string; last_updated_at: string }> = [];
-  const now = new Date().toISOString();
 
   for (const [bggIdStr, offers] of Object.entries(REAL_FEED_ITEMS_SNAPSHOT)) {
     const bggId = parseInt(bggIdStr, 10);
@@ -171,10 +228,28 @@ export async function seedActualFeedsIntoDatabase() {
         edition_language: offer.edition_language,
         last_updated_at: now,
       });
+      fileOffersList.push({
+        id: `offer-${offer.store_id}-${bggId}`,
+        store_id: offer.store_id,
+        store_name: offer.store_name,
+        store_logo: null,
+        store_country: 'MX',
+        rating: 4.9,
+        review_count: 500,
+        store_product_url: offer.store_product_url,
+        price: offer.price,
+        stock: offer.stock,
+        edition_language: offer.edition_language,
+        shipping_flat: 99.0,
+        shipping_free_threshold: 1200.0,
+        is_featured: false,
+        bgg_id: bggId,
+      });
       totalIngested++;
     }
   }
 
+  saveLocalCatalogCache(Array.from(fileGamesMap.values()), fileOffersList);
   await supabase.from('store_games').upsert(rowsToInsert, { onConflict: 'store_id,bgg_id' });
 
   return {
@@ -182,7 +257,7 @@ export async function seedActualFeedsIntoDatabase() {
     totalIngested,
     storesProcessed: 8,
     storesCount: 8,
-    gamesCount: MOCK_GAMES.length,
-    offersCount: totalIngested,
+    gamesCount: fileGamesMap.size,
+    offersCount: fileOffersList.length,
   };
 }

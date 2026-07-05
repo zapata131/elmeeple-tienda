@@ -40,10 +40,15 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (offerErr || !offer) {
-        if (offerId.startsWith('offer-')) {
-          const parts = offerId.split('-');
-          const bggId = parseInt(parts[1], 10);
-          const storeId = parts.slice(2).join('-');
+        if (directUrl) {
+          const targetUrl = appendAffiliateParams(directUrl);
+          return NextResponse.redirect(targetUrl, 302);
+        }
+        if (offerId.startsWith('offer-') || offerId.startsWith('real-feed-')) {
+          const prefixRemoved = offerId.replace(/^(offer-|real-feed-)/, '');
+          const parts = prefixRemoved.split('-');
+          const bggId = parseInt(parts[0], 10);
+          const storeId = parts.slice(1).join('-');
           const storeMatch = MOCK_IBEROAMERICAN_STORES.find((s) => s.id === storeId);
           const gameMatch = MOCK_GAMES.find((g) => g.bgg_id === bggId);
           if (storeMatch) {

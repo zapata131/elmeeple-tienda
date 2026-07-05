@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { fetchFullStoreFeed, ParsedFeedItem, detectLanguage } from '@/utils/feed_parser';
 import { MOCK_IBEROAMERICAN_STORES, MOCK_GAMES } from '@/utils/mockData';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';

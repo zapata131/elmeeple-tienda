@@ -101,7 +101,7 @@ describe('US-22: Store Packaging Vibe Tags & Reviews', () => {
         />
       );
 
-      expect(screen.getByText('Zygomatic España - Valoraciones & Vibe Tags')).toBeInTheDocument();
+      expect(screen.getByText('Zygomatic España - Valoraciones y vibe tags')).toBeInTheDocument();
       expect(screen.getAllByText(/Esquinas Protegidas/i).length).toBeGreaterThan(0);
 
       // Submit new review

@@ -48,10 +48,10 @@ describe('US-28: Brettspielpreise-Style 3-Part Price Breakdown & Offline Fallbac
       const jsx = await GameDetailPage({ params: paramsPromise });
       render(jsx);
 
-      expect(screen.getByText(/Compare Store Offers/i)).toBeInTheDocument();
-      expect(screen.getAllByText(/Precio Artículo/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText(/Comparativa de ofertas/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Precio artículo/i).length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText(/Envío/i).length).toBeGreaterThanOrEqual(1);
-      expect(screen.getAllByText(/Coste Total/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/Coste total/i).length).toBeGreaterThanOrEqual(1);
 
       // Check fallback stores appear
       expect(screen.getByText(/Zygomatic España/i)).toBeInTheDocument();

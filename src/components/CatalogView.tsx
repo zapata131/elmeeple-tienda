@@ -73,14 +73,14 @@ export function CatalogView({ initialGames }: Props) {
             <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600 cursor-pointer"></div>
           </div>
           <label htmlFor="in-stock-checkbox" className="text-sm text-gray-700 font-medium select-none cursor-pointer">
-            Only show in stock
+            Mostrar solo en stock
           </label>
         </div>
 
         {/* Price Slider */}
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center text-sm font-medium">
-            <label htmlFor="price-slider" className="text-gray-700">Max Price</label>
+            <label htmlFor="price-slider" className="text-gray-700">Precio máximo</label>
             <span className="text-indigo-600 font-bold">€{maxPrice}</span>
           </div>
           <input
@@ -98,7 +98,7 @@ export function CatalogView({ initialGames }: Props) {
         {/* Categories Section */}
         {allCategories.length > 0 && (
           <div className="flex flex-col gap-3">
-            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Categories</span>
+            <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Categorías</span>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedCategory(null)}
@@ -108,7 +108,7 @@ export function CatalogView({ initialGames }: Props) {
                     : 'bg-white border-gray-300 text-gray-700 hover:border-gray-400'
                 }`}
               >
-                All
+                Todas
               </button>
               {allCategories.map((cat) => (
                 <button
@@ -129,13 +129,13 @@ export function CatalogView({ initialGames }: Props) {
       </aside>
 
       {/* Catalog Grid Column */}
-      <div className="flex-1">
+      <div className="md:col-span-3 flex-1">
         {filteredGames.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-500 font-medium shadow-sm">
-            No games match your selected filters. Try broadening your criteria!
+            No se encontraron juegos que coincidan con los filtros seleccionados.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredGames.map((game) => (
               <Link
                 key={game.bgg_id}
@@ -157,7 +157,7 @@ export function CatalogView({ initialGames }: Props) {
                       {game.name}
                     </h3>
                     <div className="flex flex-wrap gap-1 mt-2">
-                      {game.categories.slice(0, 2).map((cat) => (
+                      {(game.categories || []).slice(0, 2).map((cat) => (
                         <span key={cat} className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] font-medium">
                           {cat}
                         </span>
@@ -168,7 +168,7 @@ export function CatalogView({ initialGames }: Props) {
 
                 <div className="p-4 border-t border-gray-100 flex items-center justify-between text-sm">
                   <div className="flex flex-col">
-                    <span className="text-xs text-gray-500 font-medium">Min Price</span>
+                    <span className="text-xs text-gray-500 font-medium">Precio mínimo</span>
                     <div className="flex items-center gap-1.5">
                       <span className="font-extrabold text-gray-900">
                         {game.min_price !== null ? `€${game.min_price.toFixed(2)}` : '--'}
@@ -180,7 +180,7 @@ export function CatalogView({ initialGames }: Props) {
                             data-testid="catalog-best-price-badge"
                             className="inline-flex items-center gap-1 text-[10px] text-rose-950 bg-[#FF9E8A]/25 border border-[#FF9E8A]/50 rounded px-1.5 py-0.5 font-extrabold"
                           >
-                            ★ Mínimo Histórico
+                            ★ Mínimo histórico
                           </span>
                         )}
                     </div>
@@ -188,7 +188,7 @@ export function CatalogView({ initialGames }: Props) {
                   <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
                     game.in_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }`}>
-                    {game.in_stock ? 'In Stock' : 'Out of Stock'}
+                    {game.in_stock ? 'En stock' : 'Agotado'}
                   </span>
                 </div>
               </Link>

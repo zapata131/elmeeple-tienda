@@ -114,7 +114,7 @@ export function StoreReviewPanel({
       {/* Store Header & Vibe Tags Overview */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-xl font-extrabold text-gray-900">{storeName} - Valoraciones & Vibe Tags</h2>
+          <h2 className="text-xl font-extrabold text-gray-900">{storeName} - Valoraciones y vibe tags</h2>
           <p className="text-xs text-gray-500 mt-1">
             Reputación lúdica comunitaria y control de calidad en protección del embalaje en ruta.
           </p>
@@ -127,7 +127,7 @@ export function StoreReviewPanel({
             <span>{avgRating}</span>
           </div>
           <div className="flex flex-col text-[11px] font-bold text-indigo-800">
-            <span>Puntuación Media</span>
+            <span>Puntuación media</span>
             <span className="text-gray-500 font-normal">{reviews.length} valoraciones</span>
           </div>
         </div>
@@ -136,7 +136,7 @@ export function StoreReviewPanel({
       {/* Vibe Tag Cloud */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
         <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">
-          Etiquetas de Embalaje Destacadas por la Comunidad
+          Etiquetas de embalaje destacadas por la comunidad
         </h3>
         <div className="flex flex-wrap gap-2.5">
           {Object.entries(tagCounts).map(([tag, count]) => (
@@ -163,11 +163,11 @@ export function StoreReviewPanel({
 
       {/* New Review Form */}
       <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
-        <h3 className="text-sm font-extrabold text-gray-900">Escribir una Valoración sobre {storeName}</h3>
+        <h3 className="text-sm font-extrabold text-gray-900">Escribir una valoración sobre {storeName}</h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1">Tu Nombre / Nick</label>
+            <label className="block text-xs font-bold text-gray-700 mb-1">Tu nombre / nick</label>
             <input
               type="text"
               required
@@ -178,7 +178,7 @@ export function StoreReviewPanel({
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1">Puntuación (Estrellas)</label>
+            <label className="block text-xs font-bold text-gray-700 mb-1">Puntuación (estrellas)</label>
             <select
               value={rating}
               onChange={(e) => setRating(Number(e.target.value))}
@@ -194,7 +194,7 @@ export function StoreReviewPanel({
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-700 mb-2">Vibe Tags (Selecciona los aplicables)</label>
+          <label className="block text-xs font-bold text-gray-700 mb-2">Vibe tags (selecciona los aplicables)</label>
           <div className="flex flex-wrap gap-2">
             {AVAILABLE_VIBE_TAGS.map((tag) => {
               const isSel = selectedTags.includes(tag);
@@ -217,7 +217,7 @@ export function StoreReviewPanel({
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-700 mb-1">Comentario sobre el Embalaje y Envío</label>
+          <label className="block text-xs font-bold text-gray-700 mb-1">Comentario sobre el embalaje y envío</label>
           <textarea
             required
             rows={3}
@@ -234,7 +234,7 @@ export function StoreReviewPanel({
             disabled={submitting}
             className="bg-indigo-650 hover:bg-indigo-700 text-white font-extrabold text-xs px-6 py-2.5 rounded-xl transition-colors shadow-sm disabled:opacity-50"
           >
-            {submitting ? 'Publicando...' : 'Publicar Valoración'}
+            {submitting ? 'Publicando...' : 'Publicar valoración'}
           </button>
           {msg && (
             <span className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-600">
@@ -249,7 +249,7 @@ export function StoreReviewPanel({
 
       {/* Reviews List */}
       <div className="flex flex-col gap-4">
-        <h3 className="text-sm font-extrabold text-gray-900">Opiniones de la Comunidad ({reviews.length})</h3>
+        <h3 className="text-sm font-extrabold text-gray-900">Opiniones de la comunidad ({reviews.length})</h3>
         {reviews.length === 0 ? (
           <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center text-xs text-gray-400 font-medium">
             Sé el primer meeple en valorar la calidad de embalaje de esta tienda.

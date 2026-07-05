@@ -235,5 +235,5 @@ This document details the product planning for **MeeplePrecios**, the board game
     1. Create a dedicated Jest verification suite (`src/__tests__/sentence_case_style.test.tsx`) or linter script verifying that UI headings, buttons, and labels follow Google sentence case rules (e.g. `Compare store offers` instead of `Compare Store Offers`).
     2. Harmonize UI strings across components to strictly follow sentence case.
     3. Ensure 100% verification passing with `npm run verify`.
-*   **Status:** **[PLANNED - Issue #55]**
+*   **Status:** **[COMPLETED - Issue #55]**
 

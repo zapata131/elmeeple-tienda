@@ -121,7 +121,7 @@ describe('US-02 & US-16: Game Detail Page & Comparison Table', () => {
 
     // Verify Store C shipping calculated as Free (55.00 >= 50.00 threshold)
     const storeCContainer = screen.getByText('Store C').closest('tr');
-    expect(storeCContainer).toHaveTextContent('Free');
+    expect(storeCContainer).toHaveTextContent('Gratis');
     expect(storeCContainer).toHaveTextContent('€55.00'); // total cost is 55 + 0
 
     // Verify Store A total is 35 (30 + 5)

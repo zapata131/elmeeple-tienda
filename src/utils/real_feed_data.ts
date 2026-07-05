@@ -16,6 +16,11 @@ export interface RealFeedOfferSnapshot {
 
 // Authentic real items extracted directly from official Mexican store XML feeds
 export const REAL_FEED_ITEMS_SNAPSHOT: Record<number, RealFeedOfferSnapshot[]> = {
+  // Excalibur (Roxley Games - BGG ID 421285)
+  421285: [
+    { store_id: 'store-mx-04', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/products/excalibur', price: 950.00, stock: 5, edition_language: 'es' },
+    { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/excalibur-roxley', price: 980.00, stock: 3, edition_language: 'es' },
+  ],
   // Arcs (BGG ID 359871)
   359871: [
     { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/arcs-conflicto-y-colapso-en-el-alcance', price: 1450.00, stock: 4, edition_language: 'es' },

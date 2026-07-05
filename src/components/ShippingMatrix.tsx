@@ -210,7 +210,7 @@ export function ShippingMatrix({ storeId, initialRates }: Props) {
         <button
           type="submit"
           disabled={isSaving}
-          className="w-full bg-indigo-650 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg text-sm transition-colors shadow-sm disabled:opacity-50"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg text-sm transition-colors shadow-sm disabled:opacity-50"
         >
           {isSaving ? 'Guardando...' : 'Guardar Cambios'}
         </button>

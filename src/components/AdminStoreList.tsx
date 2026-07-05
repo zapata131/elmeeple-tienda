@@ -150,7 +150,7 @@ export function AdminStoreList({ initialStores }: Props) {
                       className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-colors border shadow-sm disabled:opacity-50 ${
                         s.verified
                           ? 'bg-white hover:bg-gray-50 text-red-600 border-gray-300'
-                          : 'bg-indigo-650 hover:bg-indigo-700 text-white border-transparent'
+                          : 'bg-indigo-600 hover:bg-indigo-700 text-white border-transparent'
                       }`}
                     >
                       {loadingId === s.id

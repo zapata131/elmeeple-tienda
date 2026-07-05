@@ -258,6 +258,18 @@ export const MOCK_GAMES: MockGame[] = [
     max_players: 5,
     playing_time: 45,
     base_price_eur: 29.90,
+  },
+  {
+    bgg_id: 373106,
+    name: 'Sky Team',
+    thumbnail: 'https://cf.geekdo-images.com/Hn2eE8fLzX66m1y90eP34Q__small/img/xP_K3p7lHkE6y-F3x3x-4lR_3n4=/fit-in/200x150/filters:strip_icc()/pic7541603.jpg',
+    image: 'https://cf.geekdo-images.com/Hn2eE8fLzX66m1y90eP34Q__original/img/gL_3wZ8Y61oM_m5tQv8qY_k0zM4=/0x0/filters:format(jpeg)/pic7541603.jpg',
+    description: 'En Sky Team, eres un equipo de piloto y copiloto en los mandos de un avión comercial. Coordinen sus dados en silencio y aterricen a salvo en aeropuertos del todo el mundo.',
+    weight: 2.05,
+    min_players: 2,
+    max_players: 2,
+    playing_time: 20,
+    base_price_eur: 29.90,
   }
 ];
 

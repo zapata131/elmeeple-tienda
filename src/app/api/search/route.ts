@@ -61,6 +61,31 @@ export async function GET(request: NextRequest) {
       return false;
     }).slice(0, 6);
 
+    if (matchedGames.length === 0) {
+      try {
+        const bggRes = await fetch(`https://boardgamegeek.com/xmlapi2/search?query=${encodeURIComponent(query.trim())}&type=boardgame`);
+        if (bggRes.ok) {
+          const bggXml = await bggRes.text();
+          const itemRegex = /<item[^>]*?id=["'](\d+)["'][^>]*?>([\s\S]*?)<\/item>/gi;
+          let m;
+          while ((m = itemRegex.exec(bggXml)) !== null && matchedGames.length < 6) {
+            const bgg_id = parseInt(m[1], 10);
+            const block = m[2];
+            const nameMatch = /<name[^>]*?value=["']([^"']+)["']/i.exec(block);
+            if (nameMatch) {
+              matchedGames.push({
+                bgg_id,
+                name: nameMatch[1],
+                thumbnail: 'https://cf.geekdo-images.com/W3Bsga_uLP9kO91gZ7H8yw__thumb/img/8a9HeqFydO7Uun_le9bXWPnidcA=/fit-in/200x150/filters:strip_icc()/pic2419375.jpg',
+              });
+            }
+          }
+        }
+      } catch (bggErr) {
+        console.warn('[API Search] BGG live fallback search failed:', bggErr);
+      }
+    }
+
     // 2. Query stores
     const { data: dbStores } = await supabase
       .from('stores')

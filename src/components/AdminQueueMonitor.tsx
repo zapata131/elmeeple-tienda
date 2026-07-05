@@ -91,7 +91,7 @@ export function AdminQueueMonitor({ initialItems }: Props) {
           <button
             onClick={handleProcessQueue}
             disabled={isProcessing || items.length === 0}
-            className="bg-indigo-650 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow-sm transition-colors disabled:opacity-50"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow-sm transition-colors disabled:opacity-50"
           >
             {isProcessing ? 'Procesando BGG API...' : 'Procesar Cola BGG Ahora'}
           </button>
@@ -147,7 +147,7 @@ export function AdminQueueMonitor({ initialItems }: Props) {
                       href={item.store_product_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-indigo-650 hover:underline truncate max-w-xs inline-block"
+                      className="text-indigo-600 hover:underline truncate max-w-xs inline-block"
                     >
                       {item.store_product_url}
                     </a>

@@ -86,6 +86,7 @@ export async function seedMockData() {
     { bgg_id: 366013, name: 'Heat: Pedal to the Metal', thumbnail: 'https://cf.geekdo-images.com/9k1h8g7H3v5M2t4y0JvD5A__thumb/img/7k8h9g1H4v2M5t6y0JvD5A=/fit-in/200x150/filters:strip_icc()/pic6926071.jpg', weight: 2.21, min_players: 1, max_players: 6, playing_time: 60, categories: ['Carreras', 'Gestión de Mano'], ean: '8435407600202' },
     { bgg_id: 414317, name: 'Harmonies', thumbnail: 'https://cf.geekdo-images.com/8k7h9g1H2v4M5t3y0JvD5A__thumb/img/1k9h8g7H3v5M2t4y0JvD5A=/fit-in/200x150/filters:strip_icc()/pic8073521.png', weight: 1.80, min_players: 1, max_players: 4, playing_time: 30, categories: ['Colocación de Fichas', 'Naturaleza'], ean: '8435407600219' },
     { bgg_id: 391163, name: 'Forest Shuffle', thumbnail: 'https://cf.geekdo-images.com/5k7h8g9H1v3M2t4y0JvD5A__thumb/img/6k8h9g7H2v4M5t3y0JvD5A=/fit-in/200x150/filters:strip_icc()/pic7541291.jpg', weight: 2.15, min_players: 2, max_players: 5, playing_time: 60, categories: ['Cartas', 'Bosque'], ean: '8435407600226' },
+    { bgg_id: 373106, name: 'Sky Team', thumbnail: 'https://cf.geekdo-images.com/Hn2eE8fLzX66m1y90eP34Q__thumb/img/xP_K3p7lHkE6y-F3x3x-4lR_3n4=/fit-in/200x150/filters:strip_icc()/pic7541603.jpg', weight: 2.05, min_players: 2, max_players: 2, playing_time: 20, categories: ['Cooperativo', 'Dados', 'Aviación'], ean: '8435407600233' },
   ];
 
   await supabase.from('bgg_games_cache').upsert(

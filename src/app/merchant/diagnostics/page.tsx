@@ -31,7 +31,7 @@ export default async function MerchantDiagnosticsPage() {
             </p>
             <Link
               href="/"
-              className="text-xs bg-indigo-650 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg mt-2 block shadow-sm"
+              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg mt-2 block shadow-sm"
             >
               Back to Home
             </Link>

@@ -31,7 +31,7 @@ export default async function MerchantShippingPage() {
             </p>
             <Link
               href="/"
-              className="text-xs bg-indigo-650 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg mt-2 block shadow-sm"
+              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg mt-2 block shadow-sm"
             >
               Back to Home
             </Link>
@@ -75,7 +75,7 @@ export default async function MerchantShippingPage() {
           </div>
           <Link
             href="/"
-            className="text-sm font-semibold text-indigo-650 hover:text-indigo-700 hover:underline"
+            className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 hover:underline"
           >
             ← Back to Home
           </Link>

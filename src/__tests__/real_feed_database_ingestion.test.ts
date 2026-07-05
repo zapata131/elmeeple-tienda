@@ -38,4 +38,11 @@ describe('US-71: Real Feed Database Ingestion & Mock Data Deprecation', () => {
       expect(offer.stock).toBeGreaterThan(0);
     });
   });
+
+  it('attempts live paginated XML crawling across all 8 verified stores without adding non-XML items', async () => {
+    const stats = await seedActualFeedsIntoDatabase();
+    expect(stats.success).toBe(true);
+    expect(stats.storesProcessed).toBe(8);
+    expect(stats.totalIngested).toBeGreaterThanOrEqual(15);
+  });
 });

@@ -28,7 +28,8 @@ interface QueryEdition {
   parent_bgg_id: number | null;
 }
 
-import { MOCK_GAMES, getMockOffersForGame } from '@/utils/mockData';
+import { MOCK_GAMES } from '@/utils/mockData';
+import { getRealFeedOffersForGame } from '@/utils/real_feed_data';
 
 export async function fetchGameDetails(bggId: number) {
   const { data, error } = await supabase
@@ -207,11 +208,7 @@ export async function fetchGameOffers(bggId: number, countryCode: string = 'MX')
 
   if (error || !data || data.length === 0) {
     console.warn(`[queries] fetchGameOffers offline fallback triggered for ${bggId}`);
-    const isMockCatalogGame = MOCK_GAMES.some((g) => g.bgg_id === bggId);
-    if (isMockCatalogGame) {
-      return getMockOffersForGame(bggId, countryCode);
-    }
-    return [];
+    return getRealFeedOffersForGame(bggId, countryCode);
   }
 
   const typedData = data as unknown as QueryOffer[];

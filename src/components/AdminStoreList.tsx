@@ -97,9 +97,9 @@ export function AdminStoreList({ initialStores }: Props) {
       const res = await fetch('/api/admin/seed-data', { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
-        setSeedMsg('¡Catálogo poblado con éxito! (35 juegos top con portadas BGG y 8 tiendas oficiales mexicanas en $ MXN)');
+        setSeedMsg('¡Base de datos poblada con éxito desde los feeds XML reales de las 8 tiendas verificadas en México!');
       } else {
-        setErrorMsg('Error al poblar datos de prueba.');
+        setErrorMsg('Error al poblar datos reales desde los feeds.');
       }
     } catch {
       setErrorMsg('Error de red al poblar datos.');
@@ -119,17 +119,17 @@ export function AdminStoreList({ initialStores }: Props) {
         </div>
       )}
 
-      {/* Seed Mock Data Card */}
+      {/* Real Feeds Ingestion Card */}
       <div className="bg-indigo-950 text-white p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-md border border-indigo-800">
         <div>
           <h3 className="font-extrabold text-sm text-indigo-100 flex items-center gap-2">
             <svg className="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
             </svg>
-            <span>Generador de Datos de Prueba (Mock Engine & BGG Covers)</span>
+            <span>Ingesta de Feeds XML Reales (Shopify Atom Engine)</span>
           </h3>
           <p className="text-xs text-indigo-300 mt-1 max-w-xl">
-            Puebla la base de datos local con 35 juegos top (Catan, Arcs, Wingspan, Faraway...) con portadas auténticas de BGG y las 8 tiendas oficiales en México ($ MXN).
+            Puebla la base de datos con ofertas auténticas extraídas de los feeds XML oficiales de las 8 tiendas verificadas en México.
           </p>
           {seedMsg && (
             <p className="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-300 mt-2">
@@ -145,7 +145,7 @@ export function AdminStoreList({ initialStores }: Props) {
           disabled={isSeeding}
           className="bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold px-6 py-2.5 rounded-xl text-xs transition-colors shadow-sm disabled:opacity-50 shrink-0"
         >
-          {isSeeding ? 'Generando datos...' : 'Poblar catálogo mock ahora'}
+          {isSeeding ? 'Ingestando feeds...' : 'Ingestar Feeds Reales Ahora'}
         </button>
       </div>
 

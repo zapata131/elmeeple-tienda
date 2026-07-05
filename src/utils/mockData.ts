@@ -14,6 +14,8 @@ export interface MockGame {
   bgg_id: number;
   name: string;
   thumbnail: string;
+  image?: string;
+  description?: string;
   weight: number;
   min_players: number;
   max_players: number;
@@ -136,50 +138,50 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     free_shipping_threshold: 45.0,
   },
 
-  // México (MX) - Iberoamérica
+  // México (MX) - Tiendas Oficiales Verificadas
   {
-    id: 'store-mx-11',
+    id: 'store-mx-01',
     name: 'El Duende Juegos CDMX',
     country: 'MX',
     logo_url: null,
     rating: 4.9,
-    review_count: 420,
+    review_count: 540,
     website: 'https://elduende.mx',
-    default_shipping_flat: 5.50,
-    free_shipping_threshold: 55.0,
+    default_shipping_flat: 99.0,
+    free_shipping_threshold: 1200.0,
   },
   {
-    id: 'store-mx-12',
-    name: 'La Madriguera GDL',
+    id: 'store-mx-02',
+    name: 'La Caravana Gamelab',
     country: 'MX',
     logo_url: null,
     rating: 4.8,
-    review_count: 280,
-    website: 'https://lamadriguera.mx',
-    default_shipping_flat: 6.00,
-    free_shipping_threshold: 60.0,
+    review_count: 680,
+    website: 'https://lacaravanagamelab.com',
+    default_shipping_flat: 120.0,
+    free_shipping_threshold: 1500.0,
   },
   {
-    id: 'store-mx-13',
-    name: 'Orcs Stories Board Games',
+    id: 'store-mx-03',
+    name: 'Dungeoneers México',
     country: 'MX',
     logo_url: null,
     rating: 4.9,
-    review_count: 510,
-    website: 'https://orcsstories.mx',
-    default_shipping_flat: 4.99,
-    free_shipping_threshold: 50.0,
+    review_count: 410,
+    website: 'https://dungeoneers.mx',
+    default_shipping_flat: 110.0,
+    free_shipping_threshold: 999.0,
   },
   {
-    id: 'store-mx-14',
-    name: 'El Reino Monterrey',
+    id: 'store-mx-04',
+    name: 'Devir México Tienda Oficial',
     country: 'MX',
     logo_url: null,
     rating: 4.7,
-    review_count: 195,
-    website: 'https://elreinojuegos.mx',
-    default_shipping_flat: 5.80,
-    free_shipping_threshold: 58.0,
+    review_count: 320,
+    website: 'https://devir.mx',
+    default_shipping_flat: 89.0,
+    free_shipping_threshold: 800.0,
   },
 
   // Brasil (BR) - Iberoamérica
@@ -286,6 +288,8 @@ export const MOCK_GAMES: MockGame[] = [
     bgg_id: 13,
     name: 'Catan',
     thumbnail: 'https://cf.geekdo-images.com/W3Bsga_uLP9kO91gZ7H8yw__thumb/img/8a9HeqFydO7Uun_le9bXWPnidcA=/fit-in/200x150/filters:strip_icc()/pic2419375.jpg',
+    image: 'https://cf.geekdo-images.com/W3Bsga_uLP9kO91gZ7H8yw__original/img/original/pic2419375.jpg',
+    description: 'En Catan, los jugadores intentan ser la fuerza dominante en la isla construyendo colonias, ciudades y carreteras mediante el comercio de recursos como lana, cereales, madera, ladrillo y mineral.',
     weight: 2.3,
     min_players: 3,
     max_players: 4,
@@ -296,6 +300,8 @@ export const MOCK_GAMES: MockGame[] = [
     bgg_id: 266192,
     name: 'Wingspan',
     thumbnail: 'https://cf.geekdo-images.com/yLZJCVLlIx4c7eJEWUNJ7w__thumb/img/s3k1Kj9jMv2V8EaU3Rk8oJ5P2mU=/fit-in/200x150/filters:strip_icc()/pic4458123.jpg',
+    image: 'https://cf.geekdo-images.com/yLZJCVLlIx4c7eJEWUNJ7w__original/img/original/pic4458123.jpg',
+    description: 'Eres un entusiasta de las aves: investigador, observador de aves, ornitólogo o coleccionista que busca atraer las mejores y más hermosas especies a su red de reservas naturales.',
     weight: 2.46,
     min_players: 1,
     max_players: 5,
@@ -306,6 +312,8 @@ export const MOCK_GAMES: MockGame[] = [
     bgg_id: 167791,
     name: 'Terraforming Mars',
     thumbnail: 'https://cf.geekdo-images.com/wg9oOLcsKvDesSUdZQ4rxw__thumb/img/8o5Gv9aP1bH9aU9s_WJz4Vb_a2c=/fit-in/200x150/filters:strip_icc()/pic3536616.jpg',
+    image: 'https://cf.geekdo-images.com/wg9oOLcsKvDesSUdZQ4rxw__original/img/original/pic3536616.jpg',
+    description: 'En el siglo XXIV, la humanidad comienza a terraformar el planeta Marte. Corporaciones gigantes lideradas por el Gobierno Mundial invierten recursos para elevar la temperatura, el oxígeno y los océanos.',
     weight: 3.24,
     min_players: 1,
     max_players: 5,
@@ -316,6 +324,8 @@ export const MOCK_GAMES: MockGame[] = [
     bgg_id: 169786,
     name: 'Scythe',
     thumbnail: 'https://cf.geekdo-images.com/7k_nOxpO9e45llwI411nkw__thumb/img/G1s_Z_44498k2K_s85sL63E8k7s=/fit-in/200x150/filters:strip_icc()/pic3163924.jpg',
+    image: 'https://cf.geekdo-images.com/7k_nOxpO9e45llwI411nkw__original/img/original/pic3163924.jpg',
+    description: 'Scythe es un juego de construcción de motores de estrategia ambientado en una historia alternativa en la Europa de los años 1920 tras la Gran Guerra.',
     weight: 3.44,
     min_players: 1,
     max_players: 5,
@@ -326,6 +336,8 @@ export const MOCK_GAMES: MockGame[] = [
     bgg_id: 342942,
     name: 'Ark Nova',
     thumbnail: 'https://cf.geekdo-images.com/so6c-DqB_s4e_X1_W17K_g__thumb/img/v4c9E_q_y_z_T7j_310_e62k_a4=/fit-in/200x150/filters:strip_icc()/pic6293412.jpg',
+    image: 'https://cf.geekdo-images.com/so6c-DqB_s4e_X1_W17K_g__original/img/original/pic6293412.jpg',
+    description: 'En Ark Nova planificarás y diseñarás un zoológico científicamente administrado con las instalaciones más avanzadas y proyectos de conservación global.',
     weight: 3.76,
     min_players: 1,
     max_players: 4,
@@ -406,25 +418,15 @@ export const MOCK_GAMES: MockGame[] = [
 
 export function getMockOffersForGame(bggId: number, countryCode: string = 'MX') {
   const game = MOCK_GAMES.find((g) => g.bgg_id === bggId) || MOCK_GAMES[0];
+  const targetStores = MOCK_IBEROAMERICAN_STORES.filter((s) => s.country === 'MX');
 
-  return MOCK_IBEROAMERICAN_STORES.map((store, idx) => {
-    const isMxn = countryCode === 'MX' || store.country === 'MX';
-    const multiplier = isMxn ? 20 : 1;
+  return targetStores.map((store, idx) => {
+    const baseMxnPrice = Math.max(250, Math.round(game.base_price_eur * 20 + ((idx % 3) - 1) * 45));
+    const shipping_flat = store.default_shipping_flat;
+    const shipping_free_threshold = store.free_shipping_threshold;
 
-    // Generate slight price variance (+/- 15%) around base_price_eur * multiplier
-    const priceVariance = ((idx % 5) - 2) * 1.5 * multiplier;
-    const basePrice = Math.max(15.0 * multiplier, Number(((game.base_price_eur * multiplier) + priceVariance).toFixed(2)));
-
-    const isDomestic = store.country.toUpperCase() === countryCode.toUpperCase();
-    // Domestic shipping flat rate or regional flat rate
-    const shipping_flat = Number((isDomestic ? store.default_shipping_flat * multiplier : (store.default_shipping_flat + 8.00) * multiplier).toFixed(2));
-    const shipping_free_threshold = isDomestic && store.free_shipping_threshold ? Number((store.free_shipping_threshold * multiplier).toFixed(2)) : null;
-
-    // Language edition based on store country
-    const edition_language = store.country === 'BR' || store.country === 'PT' ? 'pt' : 'es';
-
-    // Stock availability: most in stock, every 5th item out of stock to test alerts
-    const stock = idx === 4 ? 0 : (idx + 1) * 3;
+    // Stock availability: most in stock, every 4th item out of stock to test stock alerts
+    const stock = idx === 3 ? 0 : (idx + 1) * 4;
 
     return {
       id: `offer-${bggId}-${store.id}`,
@@ -435,12 +437,12 @@ export function getMockOffersForGame(bggId: number, countryCode: string = 'MX') 
       rating: store.rating,
       review_count: store.review_count,
       store_product_url: store.website,
-      price: basePrice,
+      price: baseMxnPrice,
       stock,
-      edition_language,
+      edition_language: 'es',
       shipping_flat,
       shipping_free_threshold,
-      is_featured: idx === 0,
+      is_featured: idx === 0, // El Duende featured recommendation
     };
   });
 }

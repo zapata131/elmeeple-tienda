@@ -17,15 +17,13 @@ Tabletop gaming in Mexico is thriving, but inventory and pricing across local on
 ## 2. Key Features ⭐
 
 ### For Players (Compradores)
-* **Instant Smart Search:** Predictive autocomplete search finding board games by localized Spanish titles or original BGG names.
-* **Transparent Price Comparison ($ MXN):** Lists competing Mexican stores side-by-side sorted by total delivered cost (Base Price + Shipping).
-* **Direct Merchant Redirect:** One-click affiliate links taking players directly to the verified seller's product page to complete their purchase.
-* **Edition Language Badges:** Clear markers distinguishing Spanish (`ES`), English (`EN`), or multilingual box versions.
+* **Instant Discovery & BGG Hotness:** Unified homepage (`/`) featuring predictive smart search and live BoardGameGeek (BGG) world trend listings available across stores in Mexico.
+* **Full-Width Hero Comparative UI (`/game/[id]`):** Breathtaking full-width Hero Cover Art headers with high-resolution box art and side-by-side Mexican store price comparisons (`Precio artículo + Envío = Coste total ($ MXN)`).
+* **Direct Merchant Redirect:** One-click affiliate links taking players directly to verified authentic sellers (El Duende CDMX, La Caravana Gamelab, Dungeoneers México, Devir México).
 
 ### For Stores (Socios & Tiendas) 📦
-* **Streamlined Onboarding:** Simple self-serve merchant panel (`/merchant/dashboard`) to register store contact info and set flat shipping rates in MXN.
+* **Streamlined Onboarding:** Simple self-serve merchant panel (`/merchant/dashboard`, `/merchant/onboard`) to register store contact info and set flat shipping rates in MXN.
 * **Automated XML Feed Sync:** Connect standard Google Shopping product feeds to automatically update store pricing and inventory daily.
-* **Referral Tracking:** Transparent click counting proving affiliate traffic and conversions.
 
 ---
 

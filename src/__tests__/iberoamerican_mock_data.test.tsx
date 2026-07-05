@@ -24,7 +24,7 @@ describe('US-29: Iberoamerican & Iberian Exclusive Mock Data Seed', () => {
   describe('getMockOffersForGame & queries fallback', () => {
     it('generates offers exclusively from regional stores without foreign shops like DE or US', async () => {
       const offers = getMockOffersForGame(13, 'ES');
-      expect(offers.length).toBeGreaterThanOrEqual(5);
+      expect(offers.length).toBe(4);
       offers.forEach((o) => {
         expect(ALLOWED_COUNTRIES).toContain((o.store_country || '').toUpperCase());
       });

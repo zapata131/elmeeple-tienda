@@ -155,6 +155,12 @@ graph TD
 *   **Multi-Currency Complexity vs Commercial Speed:** Exposing multi-currency dropdowns and live foreign exchange conversion engines (`EUR`, `USD`, `BRL`, `ARS`) during initial commercial launch adds visual clutter and cognitive overhead for local players.
     *   *Convention:* For our primary commercial launch, the platform locks target market scope to Mexico (`MX`) and standardizes all price displays strictly to Mexican Pesos (`MXN $`). The global navigation header (`Toolbar.tsx`) displays a static sentence-case market lock badge (`México · $ MXN`) with clean SVG vector iconography instead of country and currency select dropdowns. All queries and fallback data pools (`queries.ts`, `mockData.ts`) scale prices and shipping rates to realistic MXN figures when querying or returning fallback offers for Mexico.
 
+### 5.13 Streamlined Single-Market Navigation & Hero Cover Art Overhaul (US-49)
+*   **Redundant Catalog Navigation vs Direct Homepage Discovery:** Maintaining a separate `/catalog` route and "Catálogo completo" header link duplicates game discovery tools already present on the Homepage (`/`), creating visual clutter and unneeded complexity.
+    *   *Convention:* The Homepage (`/`) serves as the single unified discovery portal featuring predictive smart search (`SearchBar`) and live BGG Hotness world trends (`Tendencias BGG`). The global header (`Toolbar.tsx`) retains only brand identity (`MeeplePrecios 🇲🇽`) and direct partner/merchant portals (`Dar de alta tienda`, `Acceso socios`).
+*   **Hero Box Art vs Cramped Sidebar Layouts:** Narrow 1-column sidebars on game comparison pages (`/game/[id]`) crush cover imagery and metadata readability.
+    *   *Convention:* Standardize all game detail pages on a full-width Hero Cover Box Art header card displaying high-resolution BGG cover images (`<image>`), clear typographic stats, and verified Mexican store deals (`El Duende CDMX`, `La Caravana Gamelab`, `Dungeoneers México`, `Devir México`) in full-width comparison tables below.
+
 
 ---
 

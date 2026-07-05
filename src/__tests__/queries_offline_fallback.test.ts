@@ -35,6 +35,8 @@ describe('Issue #38: Offline Fallback Detection in queries.ts', () => {
         bgg_id: 13,
         name: 'Catan',
         thumbnail: expect.any(String),
+        image: expect.any(String),
+        description: expect.any(String),
         weight: 2.3,
         min_players: 3,
         max_players: 4,

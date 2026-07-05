@@ -430,7 +430,7 @@ export const MOCK_GAMES: MockGame[] = [
   }
 ];
 
-export function getMockOffersForGame(bggId: number, countryCode: string = 'MX') {
+export function getMockOffersForGame(bggId: number, _countryCode: string = 'MX') {
   const game = MOCK_GAMES.find((g) => g.bgg_id === bggId) || MOCK_GAMES[0];
   const targetStores = MOCK_IBEROAMERICAN_STORES.filter((s) => s.country === 'MX');
 

@@ -117,7 +117,7 @@ export async function fetchBggHotness() {
       const itemRegex = /<item[^>]*?id=["'](\d+)["'][^>]*?>([\s\S]*?)<\/item>/gi;
       const rawResults = [];
       let match;
-      while ((match = itemRegex.exec(xml)) !== null && rawResults.length < 8) {
+      while ((match = itemRegex.exec(xml)) !== null && rawResults.length < 10) {
         const bgg_id = parseInt(match[1], 10);
         const block = match[2];
         const nameMatch = /<name[^>]*?value=["']([^"']+)["']/i.exec(block);
@@ -128,7 +128,7 @@ export async function fetchBggHotness() {
       }
 
       if (rawResults.length > 0) {
-        // Batch query /thing to get exact high-resolution <image> URLs for all 8 trending items
+        // Batch query /thing to get exact high-resolution <image> URLs for all 10 trending items
         const ids = rawResults.map((r) => r.bgg_id).join(',');
         const imageMap: Record<number, string> = {};
         const weightMap: Record<number, number> = {};
@@ -171,7 +171,7 @@ export async function fetchBggHotness() {
     console.warn('[queries] fetchBggHotness API fallback triggered:', err);
   }
   // Fallback to top Mexican catalog games with high-res cover art
-  return MOCK_GAMES.slice(0, 8).map((g) => ({
+  return MOCK_GAMES.slice(0, 10).map((g) => ({
     bgg_id: g.bgg_id,
     name: g.name,
     thumbnail: g.thumbnail,

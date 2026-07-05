@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { MOCK_GAMES } from '@/utils/mockData';
 
 interface GameSuggestion {
   type: 'game';
@@ -111,9 +112,32 @@ export function SearchBar() {
     if (item.type === 'game') {
       router.push(`/game/${item.bgg_id}`);
     } else if (item.type === 'store') {
-      router.push(`/catalog?store=${item.id}`);
+      router.push(`/store/${item.id}`);
     } else if (item.type === 'category') {
-      router.push(`/catalog?category=${encodeURIComponent(item.tag)}`);
+      if (games.length > 0) {
+        router.push(`/game/${games[0].bgg_id}`);
+      } else {
+        router.push('/game/13');
+      }
+    }
+  };
+
+  const handleSearchSubmit = () => {
+    setIsOpen(false);
+    if (activeIndex >= 0 && activeIndex < flattenedItems.length) {
+      selectItem(flattenedItems[activeIndex]);
+    } else if (games.length > 0) {
+      router.push(`/game/${games[0].bgg_id}`);
+    } else if (stores.length > 0) {
+      router.push(`/store/${stores[0].id}`);
+    } else {
+      const numericId = parseInt(query.trim(), 10);
+      if (!isNaN(numericId) && numericId > 0) {
+        router.push(`/game/${numericId}`);
+      } else {
+        const match = MOCK_GAMES.find((g) => g.name.toLowerCase().includes(query.trim().toLowerCase()));
+        router.push(`/game/${match ? match.bgg_id : 13}`);
+      }
     }
   };
 
@@ -121,8 +145,7 @@ export function SearchBar() {
     if (!isOpen || flattenedItems.length === 0) {
       if (e.key === 'Enter' && query.trim().length > 0) {
         e.preventDefault();
-        setIsOpen(false);
-        router.push(`/catalog?q=${encodeURIComponent(query)}`);
+        handleSearchSubmit();
       }
       return;
     }
@@ -135,12 +158,7 @@ export function SearchBar() {
       setActiveIndex((prev) => (prev > 0 ? prev - 1 : flattenedItems.length - 1));
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (activeIndex >= 0 && activeIndex < flattenedItems.length) {
-        selectItem(flattenedItems[activeIndex]);
-      } else if (query.trim().length > 0) {
-        setIsOpen(false);
-        router.push(`/catalog?q=${encodeURIComponent(query)}`);
-      }
+      handleSearchSubmit();
     } else if (e.key === 'Escape') {
       setIsOpen(false);
     }

@@ -8,12 +8,12 @@ jest.mock('next/navigation', () => ({
 }));
 
 describe('Clean Functional Toolbar', () => {
-  it('renders brand name and core functional navigation links (Alta de tienda, Acceso socios)', () => {
+  it('renders brand name cleanly without distracting merchant header links', () => {
     render(<Toolbar />);
 
     expect(screen.getByText(/MeeplePrecios/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /dar de alta tienda/i })).toHaveAttribute('href', '/merchant/onboard');
-    expect(screen.getByRole('link', { name: /acceso socios/i })).toHaveAttribute('href', '/merchant/dashboard');
+    expect(screen.queryByRole('link', { name: /dar de alta tienda/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /acceso socios/i })).not.toBeInTheDocument();
   });
 
   it('does NOT render non-functional mock profile pills or redundant catalog link', () => {

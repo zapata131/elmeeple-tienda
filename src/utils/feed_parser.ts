@@ -9,6 +9,7 @@ export interface ParsedFeedItem {
   price: number;
   stock: number;
   ean: string | null;
+  language?: string;
 }
 
 interface StoreGameInsertRow {
@@ -39,6 +40,31 @@ export function isLikelyBoardGame(title: string, contentBlock: string = ''): boo
     }
   }
   return true;
+}
+
+export function detectLanguage(title: string, contentBlock: string = ''): string {
+  const getTagValue = (tagPattern: string) => {
+    const regex = new RegExp(`<${tagPattern}[^>]*>([\\s\\S]*?)<\\/${tagPattern.split(' ')[0].replace(/[^a-zA-Z0-9:-]/g, '')}>`, 'i');
+    const m = regex.exec(contentBlock);
+    return m ? m[1].trim().toLowerCase() : '';
+  };
+
+  const explicitLang = getTagValue('g:language') || getTagValue('language') || '';
+  if (explicitLang.includes('es') || explicitLang.includes('spa') || explicitLang.includes('espa')) return 'es';
+  if (explicitLang.includes('en') || explicitLang.includes('eng') || explicitLang.includes('ingl')) return 'en';
+  if (explicitLang.includes('de') || explicitLang.includes('ger') || explicitLang.includes('alem')) return 'de';
+  if (explicitLang.includes('pt') || explicitLang.includes('por')) return 'pt';
+  if (explicitLang.includes('fr') || explicitLang.includes('fre') || explicitLang.includes('fran')) return 'fr';
+  if (explicitLang.includes('multi')) return 'multi';
+
+  const combined = `${title} ${contentBlock}`.toLowerCase();
+  if (combined.includes('multilingüe') || combined.includes('multilanguage') || combined.includes('idioma independiente') || combined.includes('independiente del idioma')) return 'multi';
+  if (combined.includes('edición en inglés') || combined.includes('edicion en ingles') || combined.includes('english edition') || (combined.includes('inglés') && !combined.includes('español'))) return 'en';
+  if (combined.includes('edición en alemán') || combined.includes('german edition')) return 'de';
+  if (combined.includes('portug')) return 'pt';
+  if (combined.includes('edición en español') || combined.includes('edicion en espanol') || combined.includes('spanish edition') || combined.includes('en español')) return 'es';
+
+  return 'es'; // default locale matching Iberian/LATAM catalog
 }
 
 export function parseGoogleFeed(xmlContent: string): ParsedFeedItem[] {
@@ -73,9 +99,10 @@ export function parseGoogleFeed(xmlContent: string): ParsedFeedItem[] {
     const availability = getTagValue('g:availability') || block;
     const stock = availability.toLowerCase().includes('out of stock') || availability.toLowerCase().includes('agotado') ? 0 : 1;
     const ean = getTagValue('g:gtin') || getTagValue('s:sku') || null;
+    const language = detectLanguage(title, block);
 
     if (title && price > 0 && isLikelyBoardGame(title, block)) {
-      items.push({ title, link, price, stock, ean });
+      items.push({ title, link, price, stock, ean, language });
     }
   }
 
@@ -84,7 +111,7 @@ export function parseGoogleFeed(xmlContent: string): ParsedFeedItem[] {
 
 export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedItem[]> {
   const allItems: ParsedFeedItem[] = [];
-  
+
   if (feedUrl.includes('.atom')) {
     const baseUrl = feedUrl.split('?')[0];
     for (let page = 1; page <= 15; page++) {
@@ -96,7 +123,7 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
         const items = parseGoogleFeed(xml);
         if (items.length === 0) break;
         allItems.push(...items);
-        await new Promise((resolve) => setTimeout(resolve, 1500)); // 1.5s delay to respect Cloudflare rate limits
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       } catch (err) {
         console.warn(`[Feed Fetcher] Page ${page} failed for ${baseUrl}:`, err);
         break;
@@ -111,13 +138,6 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
     return parseGoogleFeed(xml);
   }
   return [];
-}
-
-function detectLanguage(title: string): string {
-  const lower = title.toLowerCase();
-  if (lower.includes('portug')) return 'pt';
-  if (lower.includes('english') || lower.includes('ingl')) return 'en';
-  return 'es'; // default locale matching Iberian/LATAM
 }
 
 interface QueueInsertRow {
@@ -176,7 +196,7 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
         store_product_url: item.link,
         price: item.price,
         stock: item.stock,
-        edition_language: detectLanguage(item.title),
+        edition_language: item.language || detectLanguage(item.title),
         last_updated_at: new Date().toISOString(),
       });
     } else {

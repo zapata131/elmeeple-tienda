@@ -1,5 +1,6 @@
 export interface MockStore {
   id: string;
+  slug?: string;
   name: string;
   country: string; // ES, PT, MX, BR, AR, CO, CL, PE, UY
   logo_url: string | null;
@@ -29,7 +30,8 @@ export interface MockGame {
 
 export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
   {
-    id: 'store-mx-01',
+    id: '11111111-1111-1111-1111-111111111101',
+    slug: 'store-mx-01',
     name: 'Ficha y Dado',
     country: 'MX',
     logo_url: null,
@@ -44,7 +46,8 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     specialties: ['Eurogames pesados', 'Preventas exclusivas', 'Juegos importados', 'Accesorios de hobby'],
   },
   {
-    id: 'store-mx-02',
+    id: '11111111-1111-1111-1111-111111111102',
+    slug: 'store-mx-02',
     name: 'Mundo Meeple Store',
     country: 'MX',
     logo_url: null,
@@ -59,7 +62,8 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     specialties: ['Juegos modernos', 'Rompecabezas 3D', 'Juegos familiares', 'Novedades editoriales'],
   },
   {
-    id: 'store-mx-03',
+    id: '11111111-1111-1111-1111-111111111103',
+    slug: 'store-mx-03',
     name: 'Roll Games',
     country: 'MX',
     logo_url: null,
@@ -74,7 +78,8 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     specialties: ['Board Game Café', 'Juegos de fiesta', 'Eventos en vivo', 'Novedades importadas'],
   },
   {
-    id: 'store-mx-04',
+    id: '11111111-1111-1111-1111-111111111104',
+    slug: 'store-mx-04',
     name: 'Con T de Tlacuache',
     country: 'MX',
     logo_url: null,
@@ -89,7 +94,8 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     specialties: ['Estrategia pesada', 'Títulos independientes', 'Hobby y pinturas', 'Fundas premium'],
   },
   {
-    id: 'store-mx-05',
+    id: '11111111-1111-1111-1111-111111111105',
+    slug: 'store-mx-05',
     name: 'Geeky Stuff',
     country: 'MX',
     logo_url: null,
@@ -104,7 +110,8 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     specialties: ['Ameritrash', 'Juegos con miniaturas', 'Cooperativos', 'Ediciones especiales'],
   },
   {
-    id: 'store-mx-06',
+    id: '11111111-1111-1111-1111-111111111106',
+    slug: 'store-mx-06',
     name: 'Quantum Boardgames',
     country: 'MX',
     logo_url: null,
@@ -119,7 +126,8 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     specialties: ['Abstractos elegantes', 'Eurogames de alta escuela', 'Juegos para 2 jugadores', 'Importaciones europeas'],
   },
   {
-    id: 'store-mx-07',
+    id: '11111111-1111-1111-1111-111111111107',
+    slug: 'store-mx-07',
     name: 'Alfa y Delta',
     country: 'MX',
     logo_url: null,
@@ -134,7 +142,8 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     specialties: ['Asesoría personalizada', 'Juegos de campaña', 'Fillers rápidos', 'Empaque reforzado'],
   },
   {
-    id: 'store-mx-08',
+    id: '11111111-1111-1111-1111-111111111108',
+    slug: 'store-mx-08',
     name: 'Bundaba',
     country: 'MX',
     logo_url: null,

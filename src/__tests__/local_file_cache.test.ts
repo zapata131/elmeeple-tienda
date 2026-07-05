@@ -13,7 +13,7 @@ describe('US-88: Zero-Docker Local Filesystem Catalog Cache', () => {
   const sampleOffers: CachedOffer[] = [
     {
       id: 'offer-1',
-      store_id: 'store-mx-04',
+      store_id: '11111111-1111-1111-1111-111111111104',
       store_name: 'Con T de Tlacuache',
       store_logo: null,
       store_country: 'MX',

@@ -43,10 +43,10 @@ describe('US-71: Real Feed Database Ingestion & Mock Data Deprecation', () => {
     const offers = getRealFeedOffersForGame(359871, 'MX');
     expect(offers.length).toBe(REAL_FEED_ITEMS_SNAPSHOT[359871].length);
 
-    const fichaDado = offers.find((o) => o.store_name === 'Ficha y Dado');
-    expect(fichaDado).toBeDefined();
-    expect(fichaDado?.price).toBe(1450.00);
-    expect(fichaDado?.store_product_url).toBe('https://fichaydado.com/products/arcs-conflicto-y-colapso-en-el-alcance');
+    const rollGames = offers.find((o) => o.store_name === 'Roll Games');
+    expect(rollGames).toBeDefined();
+    expect(rollGames?.price).toBe(1480.00);
+    expect(rollGames?.store_product_url).toBe('https://rollgames.mx/search?q=Arcs');
   });
 
   it('returns universal coverage across all 8 verified Mexican stores for Catan (13) with direct product URLs', () => {

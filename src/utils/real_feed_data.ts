@@ -19,57 +19,59 @@ export interface RealFeedOfferSnapshot {
 export const REAL_FEED_ITEMS_SNAPSHOT: Record<number, RealFeedOfferSnapshot[]> = {
   // Excalibur (Roxley Games - BGG ID 421285)
   421285: [
-    { store_id: 'store-mx-04', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/products/excalibur', price: 950.00, stock: 5, edition_language: 'es' },
-    { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/excalibur-roxley', price: 980.00, stock: 3, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111104', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/search?q=Excalibur', price: 950.00, stock: 5, edition_language: 'es' },
   ],
   // Arcs (BGG ID 359871)
   359871: [
-    { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/arcs-conflicto-y-colapso-en-el-alcance', price: 1450.00, stock: 4, edition_language: 'es' },
-    { store_id: 'store-mx-03', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/products/arcs-juego-de-mesa', price: 1480.00, stock: 2, edition_language: 'es' },
-    { store_id: 'store-mx-06', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/products/arcs', price: 1499.00, stock: 1, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111103', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/search?q=Arcs', price: 1480.00, stock: 2, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111106', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/search?q=Arcs', price: 1499.00, stock: 1, edition_language: 'es' },
   ],
   // Catan (BGG ID 13) - Available across all 8 verified Mexican stores
   13: [
-    { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/catan-el-juego', price: 890.00, stock: 12, edition_language: 'es' },
-    { store_id: 'store-mx-02', store_name: 'Mundo Meeple Store', store_product_url: 'https://mundomeeplestore.com/products/catan', price: 920.00, stock: 8, edition_language: 'es' },
-    { store_id: 'store-mx-03', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/products/colonos-de-catan', price: 899.00, stock: 15, edition_language: 'es' },
-    { store_id: 'store-mx-04', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/products/catan', price: 885.00, stock: 6, edition_language: 'es' },
-    { store_id: 'store-mx-05', store_name: 'Geeky Stuff', store_product_url: 'https://www.geekystuff.mx/products/catan', price: 915.00, stock: 5, edition_language: 'es' },
-    { store_id: 'store-mx-06', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/products/catan', price: 910.00, stock: 4, edition_language: 'es' },
-    { store_id: 'store-mx-07', store_name: 'Alfa y Delta', store_product_url: 'https://alfaydelta.com/products/catan', price: 895.00, stock: 9, edition_language: 'es' },
-    { store_id: 'store-mx-08', store_name: 'Bundaba', store_product_url: 'https://bundaba.com.mx/products/catan-juego', price: 905.00, stock: 7, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111101', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/search?q=Catan', price: 890.00, stock: 12, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111102', store_name: 'Mundo Meeple Store', store_product_url: 'https://mundomeeplestore.com/search?q=Catan', price: 920.00, stock: 8, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111103', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/search?q=Catan', price: 899.00, stock: 15, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111104', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/search?q=Catan', price: 885.00, stock: 6, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111105', store_name: 'Geeky Stuff', store_product_url: 'https://www.geekystuff.mx', price: 915.00, stock: 5, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111106', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/search?q=Catan', price: 910.00, stock: 4, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111107', store_name: 'Alfa y Delta', store_product_url: 'https://alfaydelta.com/search?q=Catan', price: 895.00, stock: 9, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111108', store_name: 'Bundaba', store_product_url: 'https://bundaba.com.mx/search?q=Catan', price: 905.00, stock: 7, edition_language: 'es' },
   ],
   // Wingspan (BGG ID 266192)
   266192: [
-    { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/wingspan', price: 1150.00, stock: 6, edition_language: 'es' },
-    { store_id: 'store-mx-02', store_name: 'Mundo Meeple Store', store_product_url: 'https://mundomeeplestore.com/products/wingspan-espanol', price: 1180.00, stock: 4, edition_language: 'es' },
-    { store_id: 'store-mx-04', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/products/wingspan', price: 1120.00, stock: 3, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111101', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/search?q=Wingspan', price: 1150.00, stock: 6, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111102', store_name: 'Mundo Meeple Store', store_product_url: 'https://mundomeeplestore.com/search?q=Wingspan', price: 1180.00, stock: 4, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111104', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/search?q=Wingspan', price: 1120.00, stock: 3, edition_language: 'es' },
   ],
   // Sky Team (BGG ID 373106)
   373106: [
-    { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/sky-team', price: 680.00, stock: 9, edition_language: 'es' },
-    { store_id: 'store-mx-03', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/products/sky-team-cooperativo', price: 699.00, stock: 7, edition_language: 'es' },
-    { store_id: 'store-mx-07', store_name: 'Alfa y Delta', store_product_url: 'https://alfaydelta.com/products/sky-team', price: 675.00, stock: 4, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111101', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/search?q=Sky%20Team', price: 680.00, stock: 9, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111103', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/search?q=Sky%20Team', price: 699.00, stock: 7, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111107', store_name: 'Alfa y Delta', store_product_url: 'https://alfaydelta.com/search?q=Sky%20Team', price: 675.00, stock: 4, edition_language: 'es' },
   ],
   // Faraway (BGG ID 386618)
   386618: [
-    { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/faraway', price: 450.00, stock: 10, edition_language: 'es' },
-    { store_id: 'store-mx-08', store_name: 'Bundaba', store_product_url: 'https://bundaba.com.mx/products/faraway-juego', price: 460.00, stock: 6, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111101', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/search?q=Faraway', price: 450.00, stock: 10, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111108', store_name: 'Bundaba', store_product_url: 'https://bundaba.com.mx/search?q=Faraway', price: 460.00, stock: 6, edition_language: 'es' },
   ],
   // Dune: Imperium - Uprising (BGG ID 397598)
   397598: [
-    { store_id: 'store-mx-02', store_name: 'Mundo Meeple Store', store_product_url: 'https://mundomeeplestore.com/products/dune-imperium-uprising', price: 1350.00, stock: 5, edition_language: 'es' },
-    { store_id: 'store-mx-03', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/products/dune-uprising', price: 1380.00, stock: 3, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111102', store_name: 'Mundo Meeple Store', store_product_url: 'https://mundomeeplestore.com/search?q=Dune%20Imperium', price: 1350.00, stock: 5, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111103', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/search?q=Dune%20Imperium', price: 1380.00, stock: 3, edition_language: 'es' },
   ],
   // The White Castle (BGG ID 371942)
   371942: [
-    { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/the-white-castle', price: 720.00, stock: 8, edition_language: 'es' },
-    { store_id: 'store-mx-04', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/products/el-castillo-blanco', price: 740.00, stock: 4, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111101', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/search?q=White%20Castle', price: 720.00, stock: 8, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111104', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/search?q=White%20Castle', price: 740.00, stock: 4, edition_language: 'es' },
   ],
   // Revive (BGG ID 354570)
   354570: [
-    { store_id: 'store-mx-05', store_name: 'Geeky Stuff', store_product_url: 'https://www.geekystuff.mx/products/revive', price: 1650.00, stock: 2, edition_language: 'es' },
-    { store_id: 'store-mx-06', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/products/revive', price: 1690.00, stock: 3, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111105', store_name: 'Geeky Stuff', store_product_url: 'https://www.geekystuff.mx', price: 1650.00, stock: 2, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111106', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/search?q=Revive', price: 1690.00, stock: 3, edition_language: 'es' },
+  ],
+  // Scout (BGG ID 9264692)
+  9264692: [
+    { store_id: '11111111-1111-1111-1111-111111111107', store_name: 'Alfa y Delta', store_product_url: 'https://alfaydelta.com/products/scout-ingles', price: 490.00, stock: 4, edition_language: 'en' },
   ],
 };
 
@@ -97,13 +99,15 @@ export function getRealFeedOffersForGame(bggId: number, _countryCode: string = '
 }
 
 export async function seedActualFeedsIntoDatabase() {
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  const adminKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
+  const supabase = createClient(supabaseUrl, adminKey);
   let totalIngested = 0;
 
   // 1. Ensure verified stores exist in database
   const storesToUpsert = MOCK_IBEROAMERICAN_STORES.map((s) => ({
     id: s.id,
     name: s.name,
+    slug: s.slug || s.id,
     base_url: s.website,
     google_shopping_feed_url: `${s.website}/collections/all.atom`,
     owner_email: `contacto@${new URL(s.website).hostname}`,
@@ -114,13 +118,12 @@ export async function seedActualFeedsIntoDatabase() {
 
   // 1.5. Ensure official shipping rates exist in database for Mexican stores
   const shippingRatesToUpsert = MOCK_IBEROAMERICAN_STORES.map((s) => ({
-    id: `rate-mx-${s.id}`,
     store_id: s.id,
     destination_country: 'MX',
     flat_rate: s.default_shipping_flat ?? 99.0,
     free_shipping_threshold: s.free_shipping_threshold ?? 1200.0,
   }));
-  await supabase.from('shipping_rates').upsert(shippingRatesToUpsert, { onConflict: 'id' });
+  await supabase.from('shipping_rates').upsert(shippingRatesToUpsert, { onConflict: 'store_id,destination_country' });
 
   // 2. Ensure games cache contains our indexed catalog
   await supabase.from('bgg_games_cache').upsert(

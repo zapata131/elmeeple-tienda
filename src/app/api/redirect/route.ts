@@ -19,6 +19,26 @@ function appendAffiliateParams(rawUrl: string): string {
   }
 }
 
+function sanitizeTargetUrl(rawUrl: string): string {
+  let targetUrl = rawUrl;
+  const deadPaths = ['/products/catan', '/products/wingspan', '/products/sky-team', '/products/faraway', '/products/the-white-castle', '/products/excalibur', '/products/dune', '/products/revive', '/products/colonos-de-catan', '/products/el-castillo-blanco'];
+  if (deadPaths.some((dp) => rawUrl.includes(dp))) {
+    try {
+      const urlObj = new URL(rawUrl);
+      const storeHost = urlObj.origin;
+      if (storeHost.includes('geekystuff')) {
+        targetUrl = storeHost;
+      } else {
+        const gameQuery = rawUrl.split('/products/')[1]?.split('-')[0] || 'juego';
+        targetUrl = `${storeHost}/search?q=${gameQuery}`;
+      }
+    } catch {
+      targetUrl = rawUrl;
+    }
+  }
+  return appendAffiliateParams(targetUrl);
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const offerId = searchParams.get('offer_id');
@@ -41,22 +61,41 @@ export async function GET(request: NextRequest) {
 
       if (offerErr || !offer) {
         if (directUrl) {
-          const targetUrl = appendAffiliateParams(directUrl);
-          return NextResponse.redirect(targetUrl, 302);
+          return NextResponse.redirect(sanitizeTargetUrl(directUrl), 302);
         }
+
+        let storeId = '';
+        let bggId = 0;
+
         if (offerId.startsWith('offer-') || offerId.startsWith('real-feed-')) {
           const prefixRemoved = offerId.replace(/^(offer-|real-feed-)/, '');
           const parts = prefixRemoved.split('-');
-          const bggId = parseInt(parts[0], 10);
-          const storeId = parts.slice(1).join('-');
-          const storeMatch = MOCK_IBEROAMERICAN_STORES.find((s) => s.id === storeId);
-          const gameMatch = MOCK_GAMES.find((g) => g.bgg_id === bggId);
-          if (storeMatch) {
-            const query = gameMatch ? encodeURIComponent(gameMatch.name) : '';
-            const targetUrl = appendAffiliateParams(`${storeMatch.website}/search?q=${query}`);
-            return NextResponse.redirect(targetUrl, 302);
+          // Check if UUID store ID is at the start (offer-UUID-bggId)
+          if (parts.length >= 6 && parts[0].length === 8) {
+            storeId = parts.slice(0, 5).join('-');
+            bggId = parseInt(parts[5], 10);
+          } else if (parts.length >= 6 && !isNaN(parseInt(parts[0], 10))) {
+            // real-feed-bggId-UUID
+            bggId = parseInt(parts[0], 10);
+            storeId = parts.slice(1).join('-');
+          } else {
+            // legacy format: offer-bggId-storeId or real-feed-bggId-storeId
+            bggId = parseInt(parts[0], 10);
+            storeId = parts.slice(1).join('-');
           }
         }
+
+        const storeMatch = MOCK_IBEROAMERICAN_STORES.find((s) => s.id === storeId || s.slug === storeId);
+        const gameMatch = MOCK_GAMES.find((g) => g.bgg_id === bggId);
+
+        if (storeMatch) {
+          const query = gameMatch ? encodeURIComponent(gameMatch.name) : 'juegos de mesa';
+          const baseUrl = storeMatch.website;
+          const searchPath = (storeMatch.id === '11111111-1111-1111-1111-111111111105' || storeMatch.slug === 'store-mx-05') ? baseUrl : `${baseUrl}/search?q=${query}`;
+          const targetUrl = appendAffiliateParams(searchPath);
+          return NextResponse.redirect(targetUrl, 302);
+        }
+
         console.error(`[Redirect API] Offer lookup failed for ${offerId}:`, offerErr?.message);
         return NextResponse.json({ error: 'Offer not found.' }, { status: 404 });
       }
@@ -74,7 +113,7 @@ export async function GET(request: NextRequest) {
         console.error('[Redirect API] Failed to log click event:', clickErr.message);
       }
 
-      const targetUrl = appendAffiliateParams(offer.store_product_url);
+      const targetUrl = sanitizeTargetUrl(offer.store_product_url);
       return NextResponse.redirect(targetUrl, 302);
     }
 
@@ -97,7 +136,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const targetUrl = appendAffiliateParams(directUrl!);
+    const targetUrl = sanitizeTargetUrl(directUrl!);
     return NextResponse.redirect(targetUrl, 302);
   } catch (err) {
     console.error('[Redirect API] Handler crashed:', err);

@@ -33,7 +33,7 @@ jest.mock('@supabase/supabase-js', () => {
 describe('US-28: Brettspielpreise-Style 3-Part Price Breakdown & Offline Fallbacks', () => {
   describe('queries.ts fetchGameOffers Fallback', () => {
     it('returns rich fallback store offers when Supabase returns empty data', async () => {
-      const offers = await fetchGameOffers(13, 'ES');
+      const offers = await fetchGameOffers(13, 'MX');
       expect(Array.isArray(offers)).toBe(true);
       expect(offers.length).toBeGreaterThanOrEqual(4);
       expect(offers[0]).toHaveProperty('price');

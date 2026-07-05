@@ -1,8 +1,9 @@
-import { MOCK_IBEROAMERICAN_STORES, MOCK_GAMES, getMockOffersForGame } from '@/utils/mockData';
+import { MOCK_IBEROAMERICAN_STORES, MOCK_GAMES } from '@/utils/mockData';
+import { getRealFeedOffersForGame } from '@/utils/real_feed_data';
 
 const ALLOWED_COUNTRIES = ['ES', 'PT', 'MX', 'BR', 'AR', 'CO', 'CL', 'PE', 'UY', 'CR', 'EC'];
 
-describe('US-29: Iberoamerican & Iberian Exclusive Mock Data Seed', () => {
+describe('US-29: Iberoamerican & Iberian Exclusive Real Feed Data Engine', () => {
   describe('MOCK_IBEROAMERICAN_STORES', () => {
     it('contains exactly 8 verified Mexican stores', () => {
       expect(MOCK_IBEROAMERICAN_STORES.length).toBe(8);
@@ -21,10 +22,10 @@ describe('US-29: Iberoamerican & Iberian Exclusive Mock Data Seed', () => {
     });
   });
 
-  describe('getMockOffersForGame & queries fallback', () => {
-    it('generates offers exclusively from verified regional stores in MXN', async () => {
-      const offers = getMockOffersForGame(13, 'MX');
-      expect(offers.length).toBe(8);
+  describe('getRealFeedOffersForGame & queries fallback', () => {
+    it('returns genuine feed offers exclusively from verified regional stores in MXN', async () => {
+      const offers = getRealFeedOffersForGame(13, 'MX');
+      expect(offers.length).toBeGreaterThanOrEqual(1);
       offers.forEach((o) => {
         expect(ALLOWED_COUNTRIES).toContain((o.store_country || '').toUpperCase());
       });

@@ -465,33 +465,5 @@ export const MOCK_GAMES: MockGame[] = [
   }
 ];
 
-export function getMockOffersForGame(bggId: number, _countryCode: string = 'MX') {
-  const game = MOCK_GAMES.find((g) => g.bgg_id === bggId) || MOCK_GAMES[0];
-  const targetStores = MOCK_IBEROAMERICAN_STORES.filter((s) => s.country === 'MX');
-
-  return targetStores.map((store, idx) => {
-    const baseMxnPrice = Math.max(250, Math.round(game.base_price_eur * 20 + ((idx % 3) - 1) * 45));
-    const shipping_flat = store.default_shipping_flat;
-    const shipping_free_threshold = store.free_shipping_threshold;
-
-    // Stock availability: most in stock, every 4th item out of stock to test stock alerts
-    const stock = idx === 3 ? 0 : (idx + 1) * 4;
-
-    return {
-      id: `offer-${bggId}-${store.id}`,
-      store_id: store.id,
-      store_name: store.name,
-      store_logo: store.logo_url,
-      store_country: store.country,
-      rating: store.rating,
-      review_count: store.review_count,
-      store_product_url: `${store.website}/search?q=${encodeURIComponent(game.name)}`,
-      price: baseMxnPrice,
-      stock,
-      edition_language: 'es',
-      shipping_flat,
-      shipping_free_threshold,
-      is_featured: idx === 0, // El Duende featured recommendation
-    };
-  });
-}
+// Deprecated synthetic getMockOffersForGame deleted per US-71 (Issue #112).
+// Real XML feed data is now served via getRealFeedOffersForGame in real_feed_data.ts.

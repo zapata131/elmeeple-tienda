@@ -12,6 +12,7 @@ interface QueryOffer {
   stock: number;
   edition_language: string;
   store_product_url: string;
+  is_featured?: boolean;
   stores: { id: string; name: string; logo_url: string | null; country?: string } | null;
   shipping_rates: Array<{
     flat_rate: number;
@@ -62,6 +63,7 @@ export async function fetchGameOffers(bggId: number, countryCode: string) {
       stock,
       edition_language,
       store_product_url,
+      is_featured,
       stores (
         id,
         name,
@@ -101,6 +103,7 @@ export async function fetchGameOffers(bggId: number, countryCode: string) {
       edition_language: item.edition_language,
       shipping_flat: matchingRate ? Number(matchingRate.flat_rate) : null,
       shipping_free_threshold: matchingRate && matchingRate.free_shipping_threshold ? Number(matchingRate.free_shipping_threshold) : null,
+      is_featured: !!item.is_featured,
     };
   });
 }

@@ -157,6 +157,10 @@ graph TD
 *   **Title Case Inconsistencies vs Google Style Guide:** Mixing Title Case in Spanish or English UI headers (`Compare Store Offers`, `Mejor Precio Actual`, `Puntuación Media`) violates conversational UX standards and editorial consistency across viewports.
     *   *Convention:* All headings (`h1`, `h2`, `h3`), buttons, and table labels must adhere strictly to sentence case per the Google Developer Documentation Style Guide (e.g., `Comparativa de ofertas por tienda`, `★ Mejor precio actual`, `Puntuación media`). Automated regressions are caught by `src/__tests__/sentence_case_style.test.tsx` during `npm run verify`.
 
+### 5.11 Sponsored Featured Store Placement & Priority Sorting Precedence (US-41)
+*   **Monetization Visibility vs Pure Price Sorting:** Sorting store offers strictly by ascending total cost buries merchant deals that have opted into sponsored placements when their base price is even slightly higher than the lowest market competitor.
+    *   *Convention:* In `StoreOffersComparisonTable.tsx`, always partition and sort comparison offers by `is_featured` descending first, and subsequently by ascending `totalCost`. Featured offers must render a distinct sentence-case badge (`★ Tienda recomendada`) styled with official brand tokens (`#8367C7`/15) and clean inline SVG vectors without raw unicode emojis. Self-serve merchant featuring toggles in `/merchant/dashboard` must use accessible tactile switches (`role="switch"`) and guard against unauthenticated page redirects during E2E walkthroughs.
+
 
 ---
 

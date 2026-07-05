@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabaseServer';
 import { stripDiacritics } from '@/utils/string';
-import { seedMockData } from '@/utils/seed_mock_data';
 
 interface GameCacheRow {
   bgg_id: number;
@@ -38,15 +37,21 @@ export async function GET(request: NextRequest) {
       .select('bgg_id, name, thumbnail, categories, alternate_names')
       .limit(1000);
 
-    let games: GameCacheRow[] = (dbGames || []) as GameCacheRow[];
+    const games: GameCacheRow[] = (dbGames || []) as GameCacheRow[];
 
-    if (games.length === 0) {
-      try {
-        await seedMockData();
-      } catch (seedErr) {
-        console.warn('[API Search] Auto-seed notice:', seedErr);
+    if (games.length < MOCK_GAMES.length) {
+      const existingIds = new Set(games.map(g => g.bgg_id));
+      for (const mg of MOCK_GAMES) {
+        if (!existingIds.has(mg.bgg_id)) {
+          games.push({
+            bgg_id: mg.bgg_id,
+            name: mg.name,
+            thumbnail: mg.thumbnail,
+            categories: [],
+            alternate_names: [],
+          });
+        }
       }
-      games = MOCK_GAMES;
     }
 
     const matchedGames = games.filter((game) => {
@@ -59,7 +64,7 @@ export async function GET(request: NextRequest) {
         );
       }
       return false;
-    }).slice(0, 6);
+    }).slice(0, 50);
 
     if (matchedGames.length === 0) {
       try {

@@ -39,17 +39,63 @@ export async function fetchGameDetails(bggId: number) {
 
   if (error || !data || (Array.isArray(data) && data.length === 0)) {
     console.warn(`[queries] fetchGameDetails offline fallback for ${bggId}`);
-    const mock = MOCK_GAMES.find((g) => g.bgg_id === bggId) || MOCK_GAMES[0];
+    const mock = MOCK_GAMES.find((g) => g.bgg_id === bggId);
+    if (mock) {
+      return {
+        bgg_id: mock.bgg_id,
+        name: mock.name,
+        thumbnail: mock.thumbnail,
+        image: mock.image || mock.thumbnail,
+        description: mock.description || 'Juego de mesa verificado en el catálogo mexicano de MeeplePrecios.',
+        weight: mock.weight,
+        min_players: mock.min_players,
+        max_players: mock.max_players,
+        playing_time: mock.playing_time,
+      };
+    }
+
+    // Dynamic live fetch from BGG XMLAPI2 if not in cache or MOCK_GAMES
+    try {
+      const headers: HeadersInit = {};
+      const apiKey = process.env.BGG_API_KEY;
+      if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
+      const res = await fetch(`https://boardgamegeek.com/xmlapi2/thing?id=${bggId}&stats=1`, { headers, next: { revalidate: 86400 } });
+      if (res.ok) {
+        const xml = await res.text();
+        const nameMatch = /<name[^>]*?type=["']primary["'][^>]*?value=["']([^"']+)["']/i.exec(xml) || /<name[^>]*?value=["']([^"']+)["']/i.exec(xml);
+        const thumbMatch = /<thumbnail[^>]*?>([\s\S]*?)<\/thumbnail>/i.exec(xml);
+        const imgMatch = /<image[^>]*?>([\s\S]*?)<\/image>/i.exec(xml);
+        const descMatch = /<description[^>]*?>([\s\S]*?)<\/description>/i.exec(xml);
+        const weightMatch = /<averageweight[^>]*?value=["']([^"']+)["']/i.exec(xml);
+        const minMatch = /<minplayers[^>]*?value=["']([^"']+)["']/i.exec(xml);
+        const maxMatch = /<maxplayers[^>]*?value=["']([^"']+)["']/i.exec(xml);
+        const timeMatch = /<playingtime[^>]*?value=["']([^"']+)["']/i.exec(xml);
+
+        if (nameMatch) {
+          const thumbUrl = thumbMatch ? thumbMatch[1].trim() : null;
+          const imgUrl = imgMatch ? imgMatch[1].trim() : thumbUrl;
+          return {
+            bgg_id: bggId,
+            name: nameMatch[1],
+            thumbnail: thumbUrl,
+            image: imgUrl,
+            description: descMatch ? descMatch[1].trim().replace(/&#10;/g, '\n').replace(/&quot;/g, '"').replace(/&amp;/g, '&') : 'Juego en tendencia mundial disponible en MeeplePrecios.',
+            weight: weightMatch ? parseFloat(weightMatch[1]) : 2.8,
+            min_players: minMatch ? parseInt(minMatch[1], 10) : 2,
+            max_players: maxMatch ? parseInt(maxMatch[1], 10) : 4,
+            playing_time: timeMatch ? parseInt(timeMatch[1], 10) : 60,
+          };
+        }
+      }
+    } catch (err) {
+      console.warn(`[queries] live BGG fetch failed for ${bggId}:`, err);
+    }
+
+    const fallback = MOCK_GAMES[0];
     return {
-      bgg_id: mock.bgg_id,
-      name: mock.name,
-      thumbnail: mock.thumbnail,
-      image: mock.image || mock.thumbnail,
-      description: mock.description || 'Juego de mesa verificado en el catálogo mexicano de MeeplePrecios.',
-      weight: mock.weight,
-      min_players: mock.min_players,
-      max_players: mock.max_players,
-      playing_time: mock.playing_time,
+      ...fallback,
+      bgg_id: bggId,
+      name: `Juego #${bggId}`,
     };
   }
   return data;
@@ -64,7 +110,7 @@ export async function fetchBggHotness() {
     }
     const res = await fetch('https://boardgamegeek.com/xmlapi2/hot?type=boardgame', {
       headers,
-      next: { revalidate: 3600 },
+      next: { revalidate: 43200 }, // Cached for 12 hours (43,200s) per user request
     });
     if (res.ok) {
       const xml = await res.text();
@@ -80,12 +126,7 @@ export async function fetchBggHotness() {
         const thumbnail = thumbMatch ? thumbMatch[1] : null;
 
         const bggGameMatch = MOCK_GAMES.find((g) => g.bgg_id === bgg_id);
-        const highResThumb = thumbnail
-          ? thumbnail
-              .replace(/__thumb\/img\/[^/]+\//, '__original/img/original/')
-              .replace(/\/fit-in\/[0-9]+x[0-9]+\/filters:[^/]+\//, '/')
-          : null;
-        const image = bggGameMatch?.image || highResThumb || thumbnail;
+        const image = bggGameMatch?.image || thumbnail;
 
         results.push({ bgg_id, name, thumbnail, image, weight: bggGameMatch?.weight || 2.8 });
       }
@@ -131,7 +172,11 @@ export async function fetchGameOffers(bggId: number, countryCode: string = 'MX')
 
   if (error || !data || data.length === 0) {
     console.warn(`[queries] fetchGameOffers offline fallback triggered for ${bggId}`);
-    return getMockOffersForGame(bggId, countryCode);
+    const isMockCatalogGame = MOCK_GAMES.some((g) => g.bgg_id === bggId);
+    if (isMockCatalogGame) {
+      return getMockOffersForGame(bggId, countryCode);
+    }
+    return [];
   }
 
   const typedData = data as unknown as QueryOffer[];

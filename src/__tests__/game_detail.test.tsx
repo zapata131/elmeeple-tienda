@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import GameDetailPage from '@/app/game/[id]/page';
@@ -47,7 +46,6 @@ describe('Redesigned Full-Width GameDetailPage', () => {
     render(jsx);
 
     expect(screen.getByText('Catan Español')).toBeInTheDocument();
-    expect(screen.getByText(/Edición verificada en México/i)).toBeInTheDocument();
     expect(screen.getByText('El Duende Juegos CDMX')).toBeInTheDocument();
     expect(screen.getByText(/749\.00/)).toBeInTheDocument();
   });

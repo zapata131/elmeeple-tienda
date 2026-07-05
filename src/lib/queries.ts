@@ -65,7 +65,6 @@ export async function fetchGameDetails(bggId: number) {
         const nameMatch = /<name[^>]*?type=["']primary["'][^>]*?value=["']([^"']+)["']/i.exec(xml) || /<name[^>]*?value=["']([^"']+)["']/i.exec(xml);
         const thumbMatch = /<thumbnail[^>]*?>([\s\S]*?)<\/thumbnail>/i.exec(xml);
         const imgMatch = /<image[^>]*?>([\s\S]*?)<\/image>/i.exec(xml);
-        const descMatch = /<description[^>]*?>([\s\S]*?)<\/description>/i.exec(xml);
         const weightMatch = /<averageweight[^>]*?value=["']([^"']+)["']/i.exec(xml);
         const minMatch = /<minplayers[^>]*?value=["']([^"']+)["']/i.exec(xml);
         const maxMatch = /<maxplayers[^>]*?value=["']([^"']+)["']/i.exec(xml);
@@ -79,7 +78,7 @@ export async function fetchGameDetails(bggId: number) {
             name: nameMatch[1],
             thumbnail: thumbUrl,
             image: imgUrl,
-            description: descMatch ? descMatch[1].trim().replace(/&#10;/g, '\n').replace(/&quot;/g, '"').replace(/&amp;/g, '&') : 'Juego en tendencia mundial disponible en MeeplePrecios.',
+            description: null,
             weight: weightMatch ? parseFloat(weightMatch[1]) : 2.8,
             min_players: minMatch ? parseInt(minMatch[1], 10) : 2,
             max_players: maxMatch ? parseInt(maxMatch[1], 10) : 4,
@@ -96,6 +95,7 @@ export async function fetchGameDetails(bggId: number) {
       ...fallback,
       bgg_id: bggId,
       name: `Juego #${bggId}`,
+      description: null,
     };
   }
   return data;
@@ -115,22 +115,57 @@ export async function fetchBggHotness() {
     if (res.ok) {
       const xml = await res.text();
       const itemRegex = /<item[^>]*?id=["'](\d+)["'][^>]*?>([\s\S]*?)<\/item>/gi;
-      const results = [];
+      const rawResults = [];
       let match;
-      while ((match = itemRegex.exec(xml)) !== null && results.length < 8) {
+      while ((match = itemRegex.exec(xml)) !== null && rawResults.length < 8) {
         const bgg_id = parseInt(match[1], 10);
         const block = match[2];
         const nameMatch = /<name[^>]*?value=["']([^"']+)["']/i.exec(block);
         const name = nameMatch ? nameMatch[1] : `Hot Game #${bgg_id}`;
         const thumbMatch = /<thumbnail[^>]*?value=["']([^"']+)["']/i.exec(block);
         const thumbnail = thumbMatch ? thumbMatch[1] : null;
-
-        const bggGameMatch = MOCK_GAMES.find((g) => g.bgg_id === bgg_id);
-        const image = bggGameMatch?.image || thumbnail;
-
-        results.push({ bgg_id, name, thumbnail, image, weight: bggGameMatch?.weight || 2.8 });
+        rawResults.push({ bgg_id, name, thumbnail });
       }
-      if (results.length > 0) return results;
+
+      if (rawResults.length > 0) {
+        // Batch query /thing to get exact high-resolution <image> URLs for all 8 trending items
+        const ids = rawResults.map((r) => r.bgg_id).join(',');
+        const imageMap: Record<number, string> = {};
+        const weightMap: Record<number, number> = {};
+        try {
+          const thingRes = await fetch(`https://boardgamegeek.com/xmlapi2/thing?id=${ids}&stats=1`, {
+            headers,
+            next: { revalidate: 43200 },
+          });
+          if (thingRes.ok) {
+            const thingXml = await thingRes.text();
+            const thingRegex = /<item[^>]*?id=["'](\d+)["'][^>]*?>([\s\S]*?)<\/item>/gi;
+            let tMatch;
+            while ((tMatch = thingRegex.exec(thingXml)) !== null) {
+              const tid = parseInt(tMatch[1], 10);
+              const tBlock = tMatch[2];
+              const imgMatch = /<image[^>]*?>([\s\S]*?)<\/image>/i.exec(tBlock);
+              const wMatch = /<averageweight[^>]*?value=["']([^"']+)["']/i.exec(tBlock);
+              if (imgMatch) imageMap[tid] = imgMatch[1].trim();
+              if (wMatch) weightMap[tid] = parseFloat(wMatch[1]);
+            }
+          }
+        } catch (thingErr) {
+          console.warn('[queries] batch thing fetch failed:', thingErr);
+        }
+
+        return rawResults.map((r) => {
+          const bggGameMatch = MOCK_GAMES.find((g) => g.bgg_id === r.bgg_id);
+          const exactImage = imageMap[r.bgg_id] || bggGameMatch?.image || r.thumbnail;
+          return {
+            bgg_id: r.bgg_id,
+            name: r.name,
+            thumbnail: r.thumbnail,
+            image: exactImage,
+            weight: weightMap[r.bgg_id] || bggGameMatch?.weight || 2.8,
+          };
+        });
+      }
     }
   } catch (err) {
     console.warn('[queries] fetchBggHotness API fallback triggered:', err);

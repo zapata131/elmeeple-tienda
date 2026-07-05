@@ -485,7 +485,7 @@ export function getMockOffersForGame(bggId: number, _countryCode: string = 'MX')
       store_country: store.country,
       rating: store.rating,
       review_count: store.review_count,
-      store_product_url: store.website,
+      store_product_url: `${store.website}/search?q=${encodeURIComponent(game.name)}`,
       price: baseMxnPrice,
       stock,
       edition_language: 'es',

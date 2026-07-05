@@ -10,13 +10,9 @@ test.describe('E2E Walkthrough: Home, Predictive Search, and Catalog Navigation'
     const heading = page.locator('h1', { hasText: /MeeplePrecios/i });
     await expect(heading).toBeVisible();
 
-    // Verify active mock user badge is displayed
-    const userBadge = page.locator('text=Usuario:');
-    await expect(userBadge).toBeVisible();
-
-    // Verify consolidated Regional Domestic Store toggle switch exists in Home search UI
-    const domesticSwitch = page.locator('header input[role="switch"]');
-    await expect(domesticSwitch).toBeAttached();
+    // Verify clean functional header navigation links exist
+    const navCatalog = page.locator('header a[href="/catalog"]');
+    await expect(navCatalog).toBeVisible();
 
     // 2. Navigate to Catalog page
     const catalogLink = page.locator('a[href="/catalog"]', { hasText: /Catálogo completo/i });

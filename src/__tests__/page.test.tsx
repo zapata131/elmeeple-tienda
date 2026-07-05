@@ -1,8 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '@/app/page';
-import { RegionalStoreToggle } from '@/components/RegionalStoreToggle';
 import { CatalogView } from '@/components/CatalogView';
 
 // Mock Supabase for Home
@@ -23,50 +22,24 @@ jest.mock('@supabase/supabase-js', () => {
 });
 
 // Mock next/navigation
-const mockRefresh = jest.fn();
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
-    refresh: mockRefresh,
+    refresh: jest.fn(),
   }),
   usePathname: () => '/',
-  useSearchParams: () => new URLSearchParams(),
 }));
 
-describe('US-36: Consolidated Regional Domestic Store Toggles in Catalog and Search UI', () => {
-  beforeEach(() => {
-    mockRefresh.mockClear();
-    document.cookie = 'meeple_country=ES; path=/';
-    document.cookie = 'meeple_domestic_only=true; path=/';
-  });
-
-  it('renders accessible tactile switch (role="switch") directly in Home search page UI', async () => {
+describe('Clean Home and Catalog Navigation', () => {
+  it('renders Home search header and hot games grid', async () => {
     const jsx = await Home();
     render(jsx);
 
-    const toggleSwitch = screen.getByRole('switch', { name: /Solo tiendas en mi país/i });
-    expect(toggleSwitch).toBeInTheDocument();
-    expect(toggleSwitch).toBeChecked();
-    expect(toggleSwitch).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByPlaceholderText(/buscar/i)).toBeInTheDocument();
+    expect(screen.getByText(/Juegos del Momento/i)).toBeInTheDocument();
   });
 
-  it('RegionalStoreToggle stops click propagation and updates cookie on change', () => {
-    const parentClick = jest.fn();
-    render(
-      <div onClick={parentClick}>
-        <RegionalStoreToggle />
-      </div>
-    );
-
-    const toggleSwitch = screen.getByRole('switch', { name: /Solo tiendas en mi país/i });
-    fireEvent.click(toggleSwitch);
-
-    expect(parentClick).not.toHaveBeenCalled();
-    expect(document.cookie).toContain('meeple_domestic_only=false');
-    expect(mockRefresh).toHaveBeenCalled();
-  });
-
-  it('renders accessible tactile switch in CatalogView filters UI', () => {
+  it('renders accessible tactile switch (role="switch") for In Stock filter in CatalogView', () => {
     const mockGames = [
       {
         bgg_id: 1,
@@ -80,7 +53,7 @@ describe('US-36: Consolidated Regional Domestic Store Toggles in Catalog and Sea
 
     render(<CatalogView initialGames={mockGames} />);
 
-    const domesticToggle = screen.getByRole('switch', { name: /Solo tiendas en mi país/i });
-    expect(domesticToggle).toBeInTheDocument();
+    const stockToggle = screen.getByRole('switch', { name: /mostrar solo en stock/i });
+    expect(stockToggle).toBeInTheDocument();
   });
 });

@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { RegionalStoreToggle } from './RegionalStoreToggle';
 
 interface CatalogGame {
   bgg_id: number;
@@ -50,12 +49,7 @@ export function CatalogView({ initialGames }: Props) {
     <div className="flex flex-col md:flex-row gap-8 w-full max-w-6xl mx-auto px-4 py-8">
       {/* Sidebar Filter Panel */}
       <aside className="w-full md:w-64 bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-6 h-fit">
-        <h3 className="font-bold text-gray-900 text-lg border-b border-gray-150 pb-2">Filters</h3>
-
-        {/* Regional Domestic Store Filter */}
-        <div className="flex flex-col gap-2">
-          <RegionalStoreToggle className="!justify-start [&>label]:!bg-gray-50 [&>label]:!text-gray-800 [&>label]:!border-gray-200 [&>label]:w-full" />
-        </div>
+        <h3 className="font-bold text-gray-900 text-lg border-b border-gray-150 pb-2">Filtros</h3>
 
         {/* In Stock Tactile Switch */}
         <div className="flex items-center gap-2.5">

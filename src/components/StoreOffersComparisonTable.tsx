@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 
 export interface ComparisonOffer {
   id: string;
@@ -26,53 +24,65 @@ interface StoreOffersComparisonTableProps {
   historicalMinPrice?: number | null;
 }
 
-function renderEditionBadge(langCode: string) {
-  const code = langCode.toLowerCase();
-  let label = code.toUpperCase();
-  let testIdKey = code;
-  let badgeColor = 'bg-[#8367C7]/15 text-[#8367C7] border-[#8367C7]/30';
+const renderEditionBadge = (langCode?: string) => {
+  const code = (langCode || 'es').toLowerCase().trim();
 
-  if (code === 'es') {
-    label = 'ES · Español';
-    testIdKey = 'es';
-    badgeColor = 'bg-[#8367C7]/15 text-indigo-950 border-[#8367C7]/40 font-extrabold';
-  } else if (code === 'pt') {
-    label = 'PT · Português';
-    testIdKey = 'pt';
-    badgeColor = 'bg-[#73D8D4]/20 text-teal-950 border-[#73D8D4]/40 font-extrabold';
-  } else if (code === 'br') {
-    label = 'BR · PT-Brasil';
-    testIdKey = 'br';
-    badgeColor = 'bg-[#73D8D4]/20 text-teal-950 border-[#73D8D4]/40 font-extrabold';
-  } else if (code === 'en') {
-    label = 'EN · English';
-    testIdKey = 'en';
-    badgeColor = 'bg-blue-50 text-blue-900 border-blue-200 font-extrabold';
-  } else if (code === 'de') {
-    label = 'DE · Deutsch';
-    testIdKey = 'de';
-    badgeColor = 'bg-amber-50 text-amber-900 border-amber-200 font-extrabold';
-  } else if (code === 'multi') {
-    label = 'MULTI · Multi-idioma';
-    testIdKey = 'multi';
-    badgeColor = 'bg-[#FF9E8A]/20 text-rose-950 border-[#FF9E8A]/40 font-extrabold';
-  } else {
-    label = code.toUpperCase();
-    testIdKey = code;
+  switch (code) {
+    case 'es':
+      return (
+        <span
+          data-testid="edition-badge-es"
+          className="inline-flex items-center gap-1 bg-[#8367C7]/15 text-[#8367C7] border border-[#8367C7]/30 text-xs font-bold px-2 py-0.5 rounded shadow-2xs select-none"
+          title="Edición en Español"
+        >
+          <svg className="w-3 h-3 text-[#8367C7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span>ES</span>
+        </span>
+      );
+    case 'pt':
+    case 'br':
+      return (
+        <span
+          data-testid="edition-badge-pt"
+          className="inline-flex items-center gap-1 bg-[#73D8D4]/20 text-[#2B8C88] border border-[#73D8D4]/50 text-xs font-bold px-2 py-0.5 rounded shadow-2xs select-none"
+          title="Edição em Português"
+        >
+          <svg className="w-3 h-3 text-[#2B8C88]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span>PT</span>
+        </span>
+      );
+    case 'en':
+      return (
+        <span
+          data-testid="edition-badge-en"
+          className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 border border-gray-300 text-xs font-bold px-2 py-0.5 rounded shadow-2xs select-none"
+          title="English Edition"
+        >
+          <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span>EN</span>
+        </span>
+      );
+    default:
+      return (
+        <span
+          data-testid={`edition-badge-${code}`}
+          className="inline-flex items-center gap-1 bg-[#FF9E8A]/20 text-[#C9533B] border border-[#FF9E8A]/40 text-xs font-bold px-2 py-0.5 rounded shadow-2xs select-none uppercase"
+          title={`Edición: ${code.toUpperCase()}`}
+        >
+          <svg className="w-3 h-3 text-[#C9533B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span>{code.toUpperCase()}</span>
+        </span>
+      );
   }
-
-  return (
-    <span
-      data-testid={`edition-badge-${testIdKey}`}
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs border shadow-2xs ${badgeColor}`}
-    >
-      <svg className="w-3.5 h-3.5 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-      </svg>
-      <span>{label}</span>
-    </span>
-  );
-}
+};
 
 export default function StoreOffersComparisonTable({
   offers,
@@ -81,18 +91,13 @@ export default function StoreOffersComparisonTable({
   selectedCountry = 'MX',
   historicalMinPrice,
 }: StoreOffersComparisonTableProps) {
-  // Activated by default as requested by user
-  const [onlyDomestic, setOnlyDomestic] = useState(true);
-
-  const filteredOffers = (onlyDomestic
-    ? offers.filter((offer) => (offer.store_country || 'MX').toUpperCase() === selectedCountry.toUpperCase())
-    : offers).slice().sort((a, b) => {
-      if (a.is_featured && !b.is_featured) return -1;
-      if (!a.is_featured && b.is_featured) return 1;
-      if (a.totalCost === null) return 1;
-      if (b.totalCost === null) return -1;
-      return a.totalCost - b.totalCost;
-    });
+  const filteredOffers = offers.slice().sort((a, b) => {
+    if (a.is_featured && !b.is_featured) return -1;
+    if (!a.is_featured && b.is_featured) return 1;
+    if (a.totalCost === null) return 1;
+    if (b.totalCost === null) return -1;
+    return a.totalCost - b.totalCost;
+  });
 
   const availableCosts = filteredOffers
     .filter((o) => o.stock > 0 && o.totalCost !== null)
@@ -101,49 +106,15 @@ export default function StoreOffersComparisonTable({
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-      {/* Header bar with Domestic Toggle */}
+      {/* Header bar */}
       <div className="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/50 rounded-t-xl">
         <div>
           <h2 className="text-lg font-bold text-gray-900">Comparativa de ofertas por tienda</h2>
           <p className="text-xs text-gray-500 font-medium mt-0.5">
-            Desglose 3 partes: Precio artículo + Envío = Coste total
+            Desglose 3 partes: Precio artículo + Envío = Coste total ($ MXN)
           </p>
         </div>
-
-        <div className="flex items-center gap-3 bg-white px-3.5 py-2 rounded-lg border border-gray-200 shadow-2xs">
-          <label className="flex items-center gap-2.5 cursor-pointer select-none">
-            <div className="relative inline-flex items-center">
-              <input
-                type="checkbox"
-                role="switch"
-                aria-checked={onlyDomestic}
-                checked={onlyDomestic}
-                onChange={(e) => setOnlyDomestic(e.target.checked)}
-                onClick={(e) => e.stopPropagation()}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-650 cursor-pointer"></div>
-            </div>
-            <span className="text-xs font-bold text-gray-800">
-              Solo tiendas de mi país ({selectedCountry})
-            </span>
-          </label>
-          {!onlyDomestic && (
-            <span className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 font-semibold px-2 py-0.5 rounded-full">
-              Incluye tiendas internacionales
-            </span>
-          )}
-        </div>
       </div>
-
-      {!onlyDomestic && (
-        <div className="bg-amber-50/70 border-b border-amber-150 px-6 py-2.5 text-xs text-amber-800 flex items-center gap-2">
-          <svg className="w-4 h-4 text-amber-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span>Has desactivado el filtro local. Ten en cuenta que las tiendas internacionales pueden implicar mayores costos de envío y aranceles de importación en aduanas.</span>
-        </div>
-      )}
 
       {/* Comparison Table */}
       <div className="overflow-x-auto">
@@ -163,24 +134,12 @@ export default function StoreOffersComparisonTable({
             {filteredOffers.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-6 py-12 text-center text-gray-500 font-medium">
-                  {onlyDomestic ? (
-                    <div className="flex flex-col items-center gap-2">
-                      <p>No hay ofertas disponibles en tiendas de tu país ({selectedCountry}).</p>
-                      <button
-                        onClick={() => setOnlyDomestic(false)}
-                        className="text-xs font-bold text-indigo-650 hover:underline"
-                      >
-                        Ver ofertas de tiendas internacionales →
-                      </button>
-                    </div>
-                  ) : (
-                    'No hay ofertas disponibles para este juego todavía.'
-                  )}
+                  No hay ofertas disponibles para este juego en este momento.
                 </td>
               </tr>
             ) : (
               filteredOffers.map((offer) => {
-                const originCountryCode = (offer.store_country || 'ES').toUpperCase();
+                const originCountryCode = (offer.store_country || 'MX').toUpperCase();
                 const isInternational = originCountryCode !== selectedCountry.toUpperCase();
                 const isBestCurrentOffer = minCurrentCost !== null && offer.stock > 0 && offer.totalCost === minCurrentCost;
                 const isHistoricalRecord = historicalMinPrice != null && offer.totalCost !== null && offer.totalCost <= historicalMinPrice * 1.03;

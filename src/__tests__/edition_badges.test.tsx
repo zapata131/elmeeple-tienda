@@ -77,10 +77,6 @@ describe('US-30 (Issue #33): Multi-Language Box Edition Badges', () => {
       />
     );
 
-    // Turn off domestic filter so PT store also renders
-    const toggleSwitch = screen.getByRole('switch', { name: /Solo tiendas de mi país/i });
-    fireEvent.click(toggleSwitch);
-
     // Verify edition badges are rendered using clean typographic pills or vector elements
     expect(screen.getByTestId('edition-badge-es')).toBeInTheDocument();
     expect(screen.getByTestId('edition-badge-pt')).toBeInTheDocument();

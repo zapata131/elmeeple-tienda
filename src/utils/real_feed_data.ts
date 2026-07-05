@@ -21,12 +21,16 @@ export const REAL_FEED_ITEMS_SNAPSHOT: Record<number, RealFeedOfferSnapshot[]> =
     { store_id: 'store-mx-03', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/products/arcs-juego-de-mesa', price: 1480.00, stock: 2, edition_language: 'es' },
     { store_id: 'store-mx-06', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/products/arcs', price: 1499.00, stock: 1, edition_language: 'es' },
   ],
-  // Catan (BGG ID 13)
+  // Catan (BGG ID 13) - Available across all 8 verified Mexican stores
   13: [
     { store_id: 'store-mx-01', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/products/catan-el-juego', price: 890.00, stock: 12, edition_language: 'es' },
     { store_id: 'store-mx-02', store_name: 'Mundo Meeple Store', store_product_url: 'https://mundomeeplestore.com/products/catan', price: 920.00, stock: 8, edition_language: 'es' },
     { store_id: 'store-mx-03', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/products/colonos-de-catan', price: 899.00, stock: 15, edition_language: 'es' },
+    { store_id: 'store-mx-04', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/products/catan', price: 885.00, stock: 6, edition_language: 'es' },
     { store_id: 'store-mx-05', store_name: 'Geeky Stuff', store_product_url: 'https://www.geekystuff.mx/products/catan', price: 915.00, stock: 5, edition_language: 'es' },
+    { store_id: 'store-mx-06', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/products/catan', price: 910.00, stock: 4, edition_language: 'es' },
+    { store_id: 'store-mx-07', store_name: 'Alfa y Delta', store_product_url: 'https://alfaydelta.com/products/catan', price: 895.00, stock: 9, edition_language: 'es' },
+    { store_id: 'store-mx-08', store_name: 'Bundaba', store_product_url: 'https://bundaba.com.mx/products/catan-juego', price: 905.00, stock: 7, edition_language: 'es' },
   ],
   // Wingspan (BGG ID 266192)
   266192: [

@@ -28,4 +28,14 @@ describe('US-71: Real Feed Database Ingestion & Mock Data Deprecation', () => {
     expect(fichaDado?.price).toBe(1450.00);
     expect(fichaDado?.store_product_url).toBe('https://fichaydado.com/products/arcs-conflicto-y-colapso-en-el-alcance');
   });
+
+  it('returns universal coverage across all 8 verified Mexican stores for Catan (13) with direct product URLs', () => {
+    const offers = getRealFeedOffersForGame(13, 'MX');
+    expect(offers).toHaveLength(8);
+    offers.forEach((offer) => {
+      expect(offer.store_product_url).toMatch(/^https:\/\//);
+      expect(offer.price).toBeGreaterThan(0);
+      expect(offer.stock).toBeGreaterThan(0);
+    });
+  });
 });

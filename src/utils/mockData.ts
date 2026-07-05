@@ -8,6 +8,10 @@ export interface MockStore {
   website: string;
   default_shipping_flat: number;
   free_shipping_threshold: number | null;
+  city?: string;
+  address?: string;
+  description?: string;
+  specialties?: string[];
 }
 
 export interface MockGame {
@@ -34,6 +38,10 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     website: 'https://fichaydado.com',
     default_shipping_flat: 99.0,
     free_shipping_threshold: 1200.0,
+    city: 'Ciudad de México, CDMX',
+    address: 'Showroom en CDMX y envíos diarios a toda la República Mexicana',
+    description: 'Una de las tiendas de juegos de mesa más consolidadas de México, destacada por su inmenso surtido de eurogames pesados, preventas internacionales y atención especializada al aficionado.',
+    specialties: ['Eurogames pesados', 'Preventas exclusivas', 'Juegos importados', 'Accesorios de hobby'],
   },
   {
     id: 'store-mx-02',
@@ -45,6 +53,10 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     website: 'https://mundomeeplestore.com',
     default_shipping_flat: 110.0,
     free_shipping_threshold: 1499.0,
+    city: 'Monterrey, N.L.',
+    address: 'Centro de distribución en el norte y envíos a todo México',
+    description: 'Tienda apasionada con una excelente selección de juegos modernos, eurogames familiares accesibles y espectaculares rompecabezas mecánicos en 3D.',
+    specialties: ['Juegos modernos', 'Rompecabezas 3D', 'Juegos familiares', 'Novedades editoriales'],
   },
   {
     id: 'store-mx-03',
@@ -56,6 +68,10 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     website: 'https://rollgames.mx',
     default_shipping_flat: 120.0,
     free_shipping_threshold: 1500.0,
+    city: 'Ciudad de México, CDMX',
+    address: 'Colonia Roma / Insurgentes Sur, CDMX (Tienda y Board Game Café)',
+    description: 'Una vibrante comunidad y board game café en la Ciudad de México con una enorme ludoteca abierta y un catálogo repleto de novedades recién salidas del horno.',
+    specialties: ['Board Game Café', 'Juegos de fiesta', 'Eventos en vivo', 'Novedades importadas'],
   },
   {
     id: 'store-mx-04',
@@ -67,6 +83,10 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     website: 'https://tdetlacuache.com',
     default_shipping_flat: 105.0,
     free_shipping_threshold: 1199.0,
+    city: 'Guadalajara, JAL.',
+    address: 'Despachos express desde el occidente del país a toda la República',
+    description: 'El refugio para los jugones de hueso colorado: especialistas en estrategia profunda, títulos independientes difíciles de conseguir y protección premium para tus juegos.',
+    specialties: ['Estrategia pesada', 'Títulos independientes', 'Hobby y pinturas', 'Fundas premium'],
   },
   {
     id: 'store-mx-05',
@@ -78,6 +98,10 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     website: 'https://www.geekystuff.mx',
     default_shipping_flat: 99.0,
     free_shipping_threshold: 999.0,
+    city: 'Puebla, PUE.',
+    address: 'Atención personalizada y logística rápida en el centro del país',
+    description: 'Tu tienda geek de confianza para grandes producciones con miniaturas espectaculares, juegos cooperativos inmersivos y campañas narrativas épicas.',
+    specialties: ['Ameritrash', 'Juegos con miniaturas', 'Cooperativos', 'Ediciones especiales'],
   },
   {
     id: 'store-mx-06',
@@ -89,6 +113,10 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     website: 'https://quantumboardgames.com',
     default_shipping_flat: 110.0,
     free_shipping_threshold: 1299.0,
+    city: 'Querétaro, QRO.',
+    address: 'Tienda en línea y punto de entrega en Querétaro con envíos nacionales',
+    description: 'Buscamos la perfección lúdica: joyas abstractas, eurogames elegantes de alta escuela y novedades europeas seleccionadas con rigor.',
+    specialties: ['Abstractos elegantes', 'Eurogames de alta escuela', 'Juegos para 2 jugadores', 'Importaciones europeas'],
   },
   {
     id: 'store-mx-07',
@@ -100,6 +128,10 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     website: 'https://alfaydelta.com',
     default_shipping_flat: 99.0,
     free_shipping_threshold: 1199.0,
+    city: 'Mérida, YUC.',
+    address: 'Envíos a la Península de Yucatán y a todo el país con empaque reforzado',
+    description: 'Desde el sureste mexicano, llevamos la pasión por los juegos de mesa modernos a tu hogar con asesoría cercana y envíos extra protegidos.',
+    specialties: ['Asesoría personalizada', 'Juegos de campaña', 'Fillers rápidos', 'Empaque reforzado'],
   },
   {
     id: 'store-mx-08',
@@ -111,6 +143,10 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
     website: 'https://bundaba.com.mx',
     default_shipping_flat: 105.0,
     free_shipping_threshold: 1399.0,
+    city: 'Tijuana, B.C.',
+    address: 'Logística ágil desde la frontera norte hacia todos los rincones de México',
+    description: 'Conectando fronteras a través del juego: especialistas en novedades internacionales, exitosos proyectos de Kickstarter y juegos familiares entrañables.',
+    specialties: ['Novedades internacionales', 'Proyectos Kickstarter', 'Juegos familiares', 'Juegos de cartas'],
   },
 ];
 

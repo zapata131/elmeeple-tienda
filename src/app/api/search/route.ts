@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabaseServer';
 import { stripDiacritics } from '@/utils/string';
+import { loadLocalCatalogCache } from '@/utils/local_file_cache';
 
 interface GameCacheRow {
   bgg_id: number;
@@ -38,6 +39,23 @@ export async function GET(request: NextRequest) {
       .limit(1000);
 
     const games: GameCacheRow[] = (dbGames || []) as GameCacheRow[];
+
+    const fileCache = loadLocalCatalogCache();
+    if (fileCache && fileCache.games.length > 0) {
+      const existingIds = new Set(games.map(g => g.bgg_id));
+      for (const fg of fileCache.games) {
+        if (!existingIds.has(fg.bgg_id)) {
+          existingIds.add(fg.bgg_id);
+          games.push({
+            bgg_id: fg.bgg_id,
+            name: fg.name,
+            thumbnail: fg.thumbnail,
+            categories: [],
+            alternate_names: [],
+          });
+        }
+      }
+    }
 
     if (games.length < MOCK_GAMES.length) {
       const existingIds = new Set(games.map(g => g.bgg_id));

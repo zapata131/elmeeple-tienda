@@ -30,6 +30,7 @@ interface QueryEdition {
 
 import { MOCK_GAMES } from '@/utils/mockData';
 import { getRealFeedOffersForGame } from '@/utils/real_feed_data';
+import { loadLocalCatalogCache } from '@/utils/local_file_cache';
 
 export async function fetchGameDetails(bggId: number) {
   const { data, error } = await supabase
@@ -52,6 +53,22 @@ export async function fetchGameDetails(bggId: number) {
         min_players: mock.min_players,
         max_players: mock.max_players,
         playing_time: mock.playing_time,
+      };
+    }
+
+    const fileCache = loadLocalCatalogCache();
+    const cachedGame = fileCache?.games.find((g) => g.bgg_id === bggId);
+    if (cachedGame) {
+      return {
+        bgg_id: cachedGame.bgg_id,
+        name: cachedGame.name,
+        thumbnail: cachedGame.thumbnail,
+        image: cachedGame.thumbnail,
+        description: 'Juego de mesa verificado en el catálogo mexicano de MeeplePrecios.',
+        weight: 2.5,
+        min_players: 2,
+        max_players: 4,
+        playing_time: 45,
       };
     }
 
@@ -208,6 +225,11 @@ export async function fetchGameOffers(bggId: number, countryCode: string = 'MX')
 
   if (error || !data || data.length === 0) {
     console.warn(`[queries] fetchGameOffers offline fallback triggered for ${bggId}`);
+    const fileCache = loadLocalCatalogCache();
+    const cachedOffers = fileCache?.offers.filter((o) => o.bgg_id === bggId) || [];
+    if (cachedOffers.length > 0) {
+      return cachedOffers;
+    }
     return getRealFeedOffersForGame(bggId, countryCode);
   }
 

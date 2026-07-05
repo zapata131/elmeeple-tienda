@@ -8,7 +8,7 @@ function getFetch(): typeof fetch {
   if (typeof clearImmediate !== 'undefined') {
     return undiciFetch as unknown as typeof fetch;
   }
-  return ((url: string) => Promise.resolve({ ok: false, status: 500, text: () => Promise.resolve('') })) as unknown as typeof fetch;
+  return ((_url: string) => Promise.resolve({ ok: false, status: 500, text: () => Promise.resolve('') })) as unknown as typeof fetch;
 }
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';

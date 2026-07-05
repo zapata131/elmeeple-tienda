@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 import { AdminStoreList } from '@/components/AdminStoreList';
 import { AdminGamesCatalogTable, AdminGameRow } from '@/components/AdminGamesCatalogTable';
 import { MOCK_GAMES } from '@/utils/mockData';
+import { loadLocalCatalogCache } from '@/utils/local_file_cache';
 import { Toolbar } from '@/components/Toolbar';
 import Link from 'next/link';
 
@@ -16,7 +17,6 @@ export default async function AdminDashboardPage() {
   const session = await getServerSession(authOptions);
 
   let isAdmin = false;
-
   if (process.env.NODE_ENV === 'development') {
     isAdmin = true;
   } else if (session?.user?.email) {
@@ -33,25 +33,23 @@ export default async function AdminDashboardPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
+      <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900 select-none">
         <Toolbar />
-        <main className="flex-1 flex items-center justify-center py-24 px-4">
-          <div className="max-w-md w-full bg-white border border-gray-250 p-8 rounded-xl shadow-sm text-center flex flex-col gap-4">
-            <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-2">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <h2 className="text-lg font-bold text-gray-900">Acceso Restringido</h2>
-            <p className="text-sm text-gray-600">
+        <main className="flex-1 flex items-center justify-center p-6">
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-200 text-center max-w-md w-full">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-red-600">Acceso Restringido</span>
+            <h1 className="text-2xl font-bold text-gray-900 mt-1">403 Forbidden</h1>
+            <p className="text-gray-600 text-xs mt-2 font-medium leading-relaxed">
               Only system administrators are authorized to access this auditing portal.
             </p>
-            <Link
-              href="/"
-              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg mt-2 block shadow-sm"
-            >
-              Back to Home
-            </Link>
+            <div className="mt-6">
+              <Link
+                href="/"
+                className="inline-block bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-xs"
+              >
+                ← Regresar al inicio
+              </Link>
+            </div>
           </div>
         </main>
       </div>
@@ -75,12 +73,17 @@ export default async function AdminDashboardPage() {
 
   let games: AdminGameRow[] = (gamesData || []) as AdminGameRow[];
   if (games.length === 0) {
-    games = MOCK_GAMES.map((g) => ({
-      bgg_id: g.bgg_id,
-      name: g.name,
-      thumbnail: g.thumbnail,
-      last_updated_at: new Date().toISOString(),
-    }));
+    const fileCache = loadLocalCatalogCache();
+    if (fileCache && fileCache.games.length > 0) {
+      games = fileCache.games;
+    } else {
+      games = MOCK_GAMES.map((g) => ({
+        bgg_id: g.bgg_id,
+        name: g.name,
+        thumbnail: g.thumbnail,
+        last_updated_at: new Date().toISOString(),
+      }));
+    }
   }
 
   return (

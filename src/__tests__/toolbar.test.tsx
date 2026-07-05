@@ -15,7 +15,7 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-describe('US-03: Global Shipping and Currency Settings (Toolbar)', () => {
+describe('US-44: Lock market scope to Mexico and standardize pricing strictly to Mexican Pesos (MXN) (Toolbar)', () => {
   beforeEach(() => {
     // Clear cookies before each test
     document.cookie.split(';').forEach((c) => {
@@ -26,36 +26,21 @@ describe('US-03: Global Shipping and Currency Settings (Toolbar)', () => {
     mockRefresh.mockClear();
   });
 
-  it('renders default country and currency if no cookies are set', () => {
+  it('renders market lock badge for Mexico ($ MXN) and sets default country/currency cookies', () => {
     render(<Toolbar />);
     
-    // Default country: Spain (ES)
-    const countrySelect = screen.getByLabelText(/shipping country|país de envío/i) as HTMLSelectElement;
-    expect(countrySelect.value).toBe('ES');
+    // Verifies market lock badge is rendered
+    const badge = screen.getByTestId('market-lock-badge');
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveTextContent(/México · \$ MXN/i);
 
-    // Default currency: EUR
-    const currencySelect = screen.getByLabelText(/currency|moneda/i) as HTMLSelectElement;
-    expect(currencySelect.value).toBe('EUR');
-  });
+    // Verifies country and currency selectors are removed per US-44 simplification
+    expect(screen.queryByLabelText(/shipping country|país de envío/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/currency|moneda/i)).not.toBeInTheDocument();
 
-  it('stores selected country in cookies and refreshes the page on change', () => {
-    render(<Toolbar />);
-    const countrySelect = screen.getByLabelText(/shipping country|país de envío/i) as HTMLSelectElement;
-
-    fireEvent.change(countrySelect, { target: { value: 'MX' } });
-
+    // Verifies cookies are automatically locked to MX and MXN
     expect(document.cookie).toContain('meeple_country=MX');
-    expect(mockRefresh).toHaveBeenCalled();
-  });
-
-  it('stores selected currency in cookies and refreshes the page on change', () => {
-    render(<Toolbar />);
-    const currencySelect = screen.getByLabelText(/currency|moneda/i) as HTMLSelectElement;
-
-    fireEvent.change(currencySelect, { target: { value: 'BRL' } });
-
-    expect(document.cookie).toContain('meeple_currency=BRL');
-    expect(mockRefresh).toHaveBeenCalled();
+    expect(document.cookie).toContain('meeple_currency=MXN');
   });
 
   it('stores selected language in cookies and refreshes the page on change', () => {
@@ -68,19 +53,12 @@ describe('US-03: Global Shipping and Currency Settings (Toolbar)', () => {
     expect(mockRefresh).toHaveBeenCalled();
   });
 
-  it('initializes country, currency, and language selectors from persisted cookies', () => {
-    document.cookie = 'meeple_country=AR; path=/';
-    document.cookie = 'meeple_currency=ARS; path=/';
+  it('initializes language selector from persisted cookies', () => {
     document.cookie = 'meeple_language=en; path=/';
 
     render(<Toolbar />);
 
-    const countrySelect = screen.getByLabelText(/shipping country|país de envío/i) as HTMLSelectElement;
-    const currencySelect = screen.getByLabelText(/currency|moneda/i) as HTMLSelectElement;
     const languageSelect = screen.getByLabelText(/idioma/i) as HTMLSelectElement;
-
-    expect(countrySelect.value).toBe('AR');
-    expect(currencySelect.value).toBe('ARS');
     expect(languageSelect.value).toBe('en');
   });
 
@@ -111,5 +89,6 @@ describe('US-03: Global Shipping and Currency Settings (Toolbar)', () => {
     expect(screen.queryByRole('link', { name: /Dar de alta tienda/i })).not.toBeInTheDocument();
   });
 });
+
 
 

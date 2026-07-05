@@ -10,11 +10,10 @@ test.describe('E2E Walkthrough: Home, Predictive Search, and Multi-Game Cart Opt
     const heading = page.locator('h1', { hasText: /MeeplePrecios/i });
     await expect(heading).toBeVisible();
 
-    // Verify Toolbar shipping country selector works
-    const countrySelect = page.locator('#country-select');
-    await expect(countrySelect).toBeVisible();
-    await countrySelect.selectOption('PT');
-    await expect(countrySelect).toHaveValue('PT');
+    // Verify Toolbar market lock badge works per US-44
+    const marketLockBadge = page.getByTestId('market-lock-badge');
+    await expect(marketLockBadge).toBeVisible();
+    await expect(marketLockBadge).toHaveText(/México · \$ MXN/i);
 
     // Verify consolidated Regional Domestic Store toggle switch exists in Home search UI
     const domesticSwitch = page.locator('header input[role="switch"]');

@@ -5,27 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
-const countries = [
-  { code: 'ES', name: 'España' },
-  { code: 'PT', name: 'Portugal' },
-  { code: 'MX', name: 'México' },
-  { code: 'BR', name: 'Brasil' },
-  { code: 'AR', name: 'Argentina' },
-  { code: 'CO', name: 'Colombia' },
-  { code: 'CL', name: 'Chile' },
-  { code: 'PE', name: 'Perú' },
-];
 
-const currencies = [
-  { code: 'EUR', symbol: '€' },
-  { code: 'BRL', symbol: 'R$' },
-  { code: 'MXN', symbol: '$' },
-  { code: 'ARS', symbol: '$' },
-  { code: 'COP', symbol: '$' },
-  { code: 'CLP', symbol: '$' },
-  { code: 'PEN', symbol: 'S/.' },
-  { code: 'USD', symbol: '$' },
-];
 
 const languages = [
   { code: 'es', label: 'Español' },
@@ -50,38 +30,20 @@ function getCookie(name: string): string | null {
 export function Toolbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [country, setCountry] = useState('ES');
-  const [currency, setCurrency] = useState('EUR');
   const [language, setLanguage] = useState('es'); // Default Spanish
   const [role, setRole] = useState('player');
   const [isSeeding, setIsSeeding] = useState(false);
   const [seedMsg, setSeedMsg] = useState('');
 
   useEffect(() => {
-    const savedCountry = getCookie('meeple_country');
-    const savedCurrency = getCookie('meeple_currency');
+    document.cookie = 'meeple_country=MX; path=/; max-age=31536000; SameSite=Lax';
+    document.cookie = 'meeple_currency=MXN; path=/; max-age=31536000; SameSite=Lax';
     const savedLang = getCookie('meeple_language');
     const savedRole = getCookie('meeple_role');
 
-    if (savedCountry) setCountry(savedCountry);
-    if (savedCurrency) setCurrency(savedCurrency);
     if (savedLang) setLanguage(savedLang);
     if (savedRole) setRole(savedRole);
   }, []);
-
-  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
-    setCountry(val);
-    document.cookie = `meeple_country=${val}; path=/; max-age=31536000; SameSite=Lax`;
-    router.refresh();
-  };
-
-  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
-    setCurrency(val);
-    document.cookie = `meeple_currency=${val}; path=/; max-age=31536000; SameSite=Lax`;
-    router.refresh();
-  };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -153,37 +115,13 @@ export function Toolbar() {
         <div className="flex flex-wrap items-center gap-3 ml-auto">
           
 
-          {/* Country Selector */}
-          <div className="flex items-center gap-1.5">
-            <select
-              id="country-select"
-              aria-label="país de envío"
-              value={country}
-              onChange={handleCountryChange}
-              className="bg-gray-800 text-white text-xs font-bold rounded-lg px-2.5 py-1.5 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-            >
-              {countries.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.code} - {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Currency Selector */}
-          <div className="flex items-center gap-1.5">
-            <select
-              aria-label="moneda"
-              value={currency}
-              onChange={handleCurrencyChange}
-              className="bg-gray-800 text-white text-xs font-bold rounded-lg px-2.5 py-1.5 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-            >
-              {currencies.map((curr) => (
-                <option key={curr.code} value={curr.code}>
-                  {curr.code} ({curr.symbol})
-                </option>
-              ))}
-            </select>
+          {/* Market Lock Badge (Mexico / MXN) */}
+          <div data-testid="market-lock-badge" className="flex items-center gap-1.5 bg-gray-800 text-gray-300 text-xs font-bold rounded-lg px-3 py-1.5 border border-gray-700 select-none">
+            <svg className="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>México · $ MXN</span>
           </div>
 
           {/* Language Selector (Default Spanish) */}

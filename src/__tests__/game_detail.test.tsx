@@ -122,15 +122,15 @@ describe('US-02 & US-16: Game Detail Page & Comparison Table', () => {
     // Verify Store C shipping calculated as Free (55.00 >= 50.00 threshold)
     const storeCContainer = screen.getByText('Store C').closest('tr');
     expect(storeCContainer).toHaveTextContent('Gratis');
-    expect(storeCContainer).toHaveTextContent('€55.00'); // total cost is 55 + 0
+    expect(storeCContainer).toHaveTextContent('$55.00'); // total cost is 55 + 0
 
     // Verify Store A total is 35 (30 + 5)
     const storeAContainer = screen.getByText('Store A').closest('tr');
-    expect(storeAContainer).toHaveTextContent('€35.00');
+    expect(storeAContainer).toHaveTextContent('$35.00');
 
     // Verify Store B total is 37 (28 + 9 since 28 < 40 threshold)
     const storeBContainer = screen.getByText('Store B').closest('tr');
-    expect(storeBContainer).toHaveTextContent('€37.00');
+    expect(storeBContainer).toHaveTextContent('$37.00');
 
     // Assert rows are sorted correctly by total cost: Store A (35.00), Store B (37.00), Store C (55.00)
     const rows = screen.getAllByRole('row');
@@ -148,7 +148,7 @@ describe('US-02 & US-16: Game Detail Page & Comparison Table', () => {
     const PageResolved = await GameDetailPage({ params: Promise.resolve({ id: '23' }) });
     render(PageResolved);
 
-    const countrySelect = screen.getByLabelText(/shipping country|país de envío/i);
-    expect(countrySelect).toBeInTheDocument();
+    const badge = screen.getByTestId('market-lock-badge');
+    expect(badge).toBeInTheDocument();
   });
 });

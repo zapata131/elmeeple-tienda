@@ -81,7 +81,7 @@ export function CatalogView({ initialGames }: Props) {
         <div className="flex flex-col gap-2">
           <div className="flex justify-between items-center text-sm font-medium">
             <label htmlFor="price-slider" className="text-gray-700">Precio máximo</label>
-            <span className="text-indigo-600 font-bold">€{maxPrice}</span>
+            <span className="text-indigo-600 font-bold">${maxPrice}</span>
           </div>
           <input
             type="range"
@@ -171,7 +171,7 @@ export function CatalogView({ initialGames }: Props) {
                     <span className="text-xs text-gray-500 font-medium">Precio mínimo</span>
                     <div className="flex items-center gap-1.5">
                       <span className="font-extrabold text-gray-900">
-                        {game.min_price !== null ? `€${game.min_price.toFixed(2)}` : '--'}
+                        {game.min_price !== null ? `$${game.min_price.toFixed(2)}` : '--'}
                       </span>
                       {game.min_price !== null &&
                         game.historical_min_price != null &&

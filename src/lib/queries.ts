@@ -33,7 +33,7 @@ import { MOCK_GAMES, getMockOffersForGame } from '@/utils/mockData';
 export async function fetchGameDetails(bggId: number) {
   const { data, error } = await supabase
     .from('bgg_games_cache')
-    .select('bgg_id, name, thumbnail, weight, min_players, max_players, playing_time')
+    .select('bgg_id, name, thumbnail, image, description, weight, min_players, max_players, playing_time')
     .eq('bgg_id', bggId)
     .single();
 
@@ -44,6 +44,8 @@ export async function fetchGameDetails(bggId: number) {
       bgg_id: mock.bgg_id,
       name: mock.name,
       thumbnail: mock.thumbnail,
+      image: mock.image || mock.thumbnail,
+      description: mock.description || 'Juego de mesa verificado en el catálogo mexicano de MeeplePrecios.',
       weight: mock.weight,
       min_players: mock.min_players,
       max_players: mock.max_players,
@@ -51,6 +53,37 @@ export async function fetchGameDetails(bggId: number) {
     };
   }
   return data;
+}
+
+export async function fetchBggHotness() {
+  try {
+    const res = await fetch('https://boardgamegeek.com/xmlapi2/hot?type=boardgame', { next: { revalidate: 3600 } });
+    if (res.ok) {
+      const xml = await res.text();
+      const itemRegex = /<item[^>]*?id=["'](\d+)["'][^>]*?>([\s\S]*?)<\/item>/gi;
+      const results = [];
+      let match;
+      while ((match = itemRegex.exec(xml)) !== null && results.length < 8) {
+        const bgg_id = parseInt(match[1], 10);
+        const block = match[2];
+        const nameMatch = /<name[^>]*?value=["']([^"']+)["']/i.exec(block);
+        const name = nameMatch ? nameMatch[1] : `Hot Game #${bgg_id}`;
+        const thumbMatch = /<thumbnail[^>]*?value=["']([^"']+)["']/i.exec(block);
+        const thumbnail = thumbMatch ? thumbMatch[1] : null;
+        results.push({ bgg_id, name, thumbnail, weight: 2.8 });
+      }
+      if (results.length > 0) return results;
+    }
+  } catch (err) {
+    console.warn('[queries] fetchBggHotness API fallback triggered:', err);
+  }
+  // Fallback to top Mexican catalog games
+  return MOCK_GAMES.slice(0, 6).map((g) => ({
+    bgg_id: g.bgg_id,
+    name: g.name,
+    thumbnail: g.thumbnail,
+    weight: g.weight,
+  }));
 }
 
 export async function fetchGameOffers(bggId: number, countryCode: string = 'MX') {

@@ -2,24 +2,14 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '@/app/page';
-import { CatalogView } from '@/components/CatalogView';
 
-// Mock Supabase for Home
-jest.mock('@supabase/supabase-js', () => {
-  const mockClientInstance = {
-    from: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockImplementation(() => Promise.resolve({
-      data: [
-        { bgg_id: 23, name: 'Catan', thumbnail: 'http://img/catan.jpg', weight: 2.3 },
-      ],
-      error: null,
-    })),
-  };
-  return {
-    createClient: jest.fn(() => mockClientInstance),
-  };
-});
+// Mock queries for Home
+jest.mock('@/lib/queries', () => ({
+  fetchBggHotness: jest.fn().mockResolvedValue([
+    { bgg_id: 13, name: 'Catan', thumbnail: 'http://img/catan.jpg', weight: 2.3 },
+    { bgg_id: 266192, name: 'Wingspan', thumbnail: 'http://img/wingspan.jpg', weight: 2.46 },
+  ]),
+}));
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -30,30 +20,22 @@ jest.mock('next/navigation', () => ({
   usePathname: () => '/',
 }));
 
-describe('Clean Home and Catalog Navigation', () => {
-  it('renders Home search header and hot games grid', async () => {
+describe('Clean Homepage and BGG Hotness Grid', () => {
+  it('renders Home search bar and BGG Hotness grid in Mexico ($ MXN)', async () => {
     const jsx = await Home();
     render(jsx);
 
     expect(screen.getByPlaceholderText(/buscar/i)).toBeInTheDocument();
-    expect(screen.getByText(/Juegos del Momento/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tendencias BGG/i)).toBeInTheDocument();
+    expect(screen.getByText('Catan')).toBeInTheDocument();
+    expect(screen.getByText('Wingspan')).toBeInTheDocument();
   });
 
-  it('renders accessible tactile switch (role="switch") for In Stock filter in CatalogView', () => {
-    const mockGames = [
-      {
-        bgg_id: 1,
-        name: 'Catan',
-        thumbnail: 'http://img/catan.jpg',
-        categories: ['Strategy'],
-        min_price: 35,
-        in_stock: true,
-      },
-    ];
+  it('does NOT render removed promotional feature explanation cards or catalog switches', async () => {
+    const jsx = await Home();
+    render(jsx);
 
-    render(<CatalogView initialGames={mockGames} />);
-
-    const stockToggle = screen.getByRole('switch', { name: /mostrar solo en stock/i });
-    expect(stockToggle).toBeInTheDocument();
+    expect(screen.queryByText(/Envíos Localizados/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Tu Moneda Local/i)).not.toBeInTheDocument();
   });
 });

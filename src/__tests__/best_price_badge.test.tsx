@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import StoreOffersComparisonTable, { ComparisonOffer } from '../components/StoreOffersComparisonTable';
-import { CatalogView } from '../components/CatalogView';
 
 const mockOffers: ComparisonOffer[] = [
   {
@@ -61,35 +60,6 @@ describe('Best Price Deal Badges and Market Bargain Indicator (US-38)', () => {
     const historicalBadge = screen.getByTestId('best-price-badge-historical');
     expect(historicalBadge).toBeInTheDocument();
     expect(historicalBadge).toHaveTextContent('★ Récord mínimo histórico');
-  });
-
-  test('renders catalog best price badge when min_price meets historical_min_price in CatalogView', () => {
-    const catalogGames = [
-      {
-        bgg_id: 13,
-        name: 'Catan Español',
-        thumbnail: null,
-        categories: ['Strategy'],
-        min_price: 38.5,
-        in_stock: true,
-        historical_min_price: 39.0,
-      },
-      {
-        bgg_id: 14,
-        name: 'Carcassonne',
-        thumbnail: null,
-        categories: ['Family'],
-        min_price: 25.0,
-        in_stock: true,
-        historical_min_price: 22.0,
-      },
-    ];
-
-    render(<CatalogView initialGames={catalogGames} />);
-
-    const badges = screen.getAllByTestId('catalog-best-price-badge');
-    expect(badges).toHaveLength(1);
-    expect(badges[0]).toHaveTextContent('★ Mínimo histórico');
   });
 
   test('ensures zero unicode emoji leakage in badge components', () => {

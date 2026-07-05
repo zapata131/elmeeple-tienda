@@ -34,15 +34,6 @@ export function Toolbar() {
         {/* Clean Functional Navigation */}
         <nav className="flex items-center gap-6 text-xs font-bold text-gray-300">
           <Link
-            href="/catalog"
-            className="hover:text-white transition-colors"
-          >
-            Catálogo completo
-          </Link>
-
-          <div className="h-4 w-px bg-gray-800"></div>
-
-          <Link
             href="/merchant/onboard"
             className="hover:text-white transition-colors text-indigo-400"
           >

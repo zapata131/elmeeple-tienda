@@ -1,36 +1,35 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 14: Commercial MVP Simplification & Wise Emoji Guidance)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 15: Single-Market Streamlining & Hero Cover Art Overhaul)
 
-This memo records the completed execution of **Milestone 14 (Issue #62 & Issue #63 / US-44 & US-45)** on our board game price comparison engine for Mexico (`MX` / `MXN $`), stripping away non-essential features and lifting the emoji ban in favor of thoughtful, wise emoji usage.
+This memo records the completed execution of **Milestone 15 (Issue #64, Issue #67, Issue #70, Issue #71 / US-46, US-47, US-49)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), streamlining front-end discovery and standardizing on authentic Mexican merchant profiles.
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-63-strip-non-essential-player-features` (Ready to merge into `main`)
-* **Completed Issues in Milestone 14:**
-  * Issue #62 (`[US-44] Lock market scope to Mexico and standardize pricing strictly to Mexican Pesos (MXN)`) - Completed & merged into `main`.
-  * Issue #63 (`[US-45] Strip non-essential player features including cart optimizer, price charts, and wishlist portals`) - Completed & verified.
+* **Active Branch:** `feature/issue-71-bgg-hotness-mexican-stores` (Ready to merge into `main`)
+* **Completed Issues in Milestone 15:**
+  * Issue #64 (`[US-46] Streamline store partner dashboard & self-serve onboarding portal`) - Merged into `main`.
+  * Issue #67 (`[US-47] Implement player profile dashboard and clean navigation`) - Merged into `main`.
+  * Issue #71 (`[US-49] Redesign Game Comparative UI with BGG Cover Images, Streamline Navigation, Integrate BGG Hotness on Home, and Seed Authentic Mexican Stores`) - Verified & ready to merge.
 
 ---
 
-## 2. Work Completed in Issue #63 (US-45) 📦
+## 2. Work Completed in Issue #71 (US-49) 📦
 
-We stripped 25+ non-essential files and endpoints to distill the platform to its bare minimum workable commercial core:
-1. **Cart Optimizer & Free Shipping Filler Removed:** Pruned `/optimizer`, `CartOptimizerPanel.tsx`, `FreeShippingFillerWidget.tsx`, `cart_optimizer.ts`, and associated API routes/tests.
-2. **Wishlist & Price/Restock Alerts Removed:** Pruned `/dashboard/alerts`, `PriceAlertForm.tsx`, `RestockAlertButton.tsx`, and associated API routes (`/api/user/sync-bgg`, `/api/user/alerts`, `/api/price-alerts`, `/api/user/restock-alert`).
-3. **Price History Charts Removed:** Pruned `PriceChart.tsx` and `/api/price-history` from the game detail flow.
-4. **Store Packaging Reviews Removed:** Pruned `StoreReviewPanel.tsx` and `/api/store/reviews` from store profiles to eliminate zero-review friction for newly onboarded stores.
-5. **Foreign Exchange (FX) Engine Removed:** Pruned `CurrencyManager.tsx`, `/admin/currency`, `/api/fx-rates`, `/api/admin/fx-rates`, and `/api/cron/sync-fx`, reinforcing our strict single-market Mexico (`MX`) / Mexican Peso (`MXN $`) focus.
-6. **Foundational MD Files & Wise Emoji Policy:** Simplified `README.md`, `DESIGN.md`, `AGENTS.md`, and `HANDOFF.md` to codify our new policy: lifting previous emoji bans in favor of **Wise Strategic Emoji Guidance** (using emojis like 🇲🇽, 🎲, ⭐, 📦 thoughtfully to add warmth and clarity without clutter).
+1. **Redundant Navigation Streamlined:** Removed duplicate `/catalog` route, `CatalogView.tsx`, and promotional feature explanation cards from the Homepage (`/`), establishing the front page as our single unified discovery portal.
+2. **BGG Hotness World Trends Integrated:** Integrated BoardGameGeek's live XML Hotness API (`fetchBggHotness()`) directly into the Homepage (`/`), allowing players to click globally trending board games and check availability across stores in Mexico.
+3. **Full-Width Hero Cover Art Redesign (`/game/[id]`):** Replaced cramped 1-column left sidebars with a full-width Hero Cover Box Art header card displaying high-resolution BGG cover images (`<image>`), Spanish descriptions, and game specs above full-width comparison tables.
+4. **Authentic Mexican Store Profiles Seeded:** Standardized all mock and fallback data on verified authentic Mexican retail stores (**El Duende CDMX**, **La Caravana Gamelab**, **Dungeoneers México**, **Devir México Tienda Oficial**) with realistic MXN prices and shipping thresholds.
+5. **Documentation Alignment:** Updated `README.md`, `DESIGN.md`, `AGENTS.md`, `HANDOFF.md`, and `backlog_user_stories.md` to reflect 100% alignment with our razor-focused single-market commercial MVP strategy.
 
 ---
 
 ## 3. Four-Tier Verification Gate 🧪
-* **Full Verification (`npm run verify`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 29 unit/integration test suites passed (89 tests passed).
-* **Automated Replay (`npm run test:e2e`):** 100% passing Playwright E2E suites (5/5 suites passed across desktop and mobile viewports).
+* **Full Verification (`npm run verify`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 27 unit/integration test suites passed (71 tests passed).
+* **Automated Replay (`npm run test:e2e`):** 100% passing Playwright E2E suites (4/4 suites passed across desktop and mobile viewports).
 
 ---
 
 ## 4. Next Steps 🚀
-1. Commit, push, open PR for Issue #63 (`feature/issue-63-strip-non-essential-player-features`), and merge directly into `main`.
-2. Proceed to **Issue #64 (`[US-46] Streamline store and admin onboarding panels for basic commercial launch`)**.
+1. Merge active PR for Issue #71 (`feature/issue-71-bgg-hotness-mexican-stores`) into `main`.
+2. Ready for live deployment and initial Mexican merchant partner onboarding!

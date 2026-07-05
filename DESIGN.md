@@ -13,22 +13,22 @@ By standardizing pricing strictly in **Mexican Pesos ($ MXN)** and computing fla
 ### 2.1 Players & Buyers (Compradores)
 * **Profile:** Board game enthusiasts and collectors across Mexico (CDMX, Guadalajara, Monterrey, etc.).
 * **Goal:** Find specific localized language editions (Spanish `ES` vs English `EN`) in stock at the best total cost ($ MXN base price + shipping).
-* **Solution:** A clean search engine and side-by-side comparison table ranking store offers by total cost.
+* **Solution:** A clean homepage discovery portal featuring live BGG Hotness trends and full-width comparison tables ranking verified store offers by total delivered cost.
 
 ### 2.2 Partners & Merchants (Socios & Tiendas) 📦
-* **Profile:** Independent tabletop store owners in Mexico.
+* **Profile:** Independent tabletop store owners in Mexico (e.g., El Duende CDMX, La Caravana Gamelab, Dungeoneers México, Devir México).
 * **Goal:** Increase online sales without manual listing maintenance.
-* **Solution:** Self-serve onboarding (`/merchant/dashboard`) where stores register their contact details, flat domestic shipping rates, and Google Shopping XML product feed URL for automated daily inventory syncing.
+* **Solution:** Self-serve onboarding (`/merchant/dashboard`, `/merchant/onboard`) where stores register their contact details, flat domestic shipping rates in MXN, and Google Shopping XML product feed URLs for automated daily inventory syncing.
 
 ---
 
 ## 3. Commercial MVP Feature Scope ⚡
 
-* **Predictive Smart Search (`/api/search`):** Autocomplete search bar finding games by title or barcode (EAN/UPC) with instant keyboard navigation.
-* **Game Comparison Table (`StoreOffersComparisonTable.tsx`):** Displays store offers sorted by total cost (Base Price + Shipping in $ MXN). Renders distinct edition language badges (`ES`, `EN`) and clear out-of-stock indicators.
-* **Direct Affiliate Checkout Redirects (`/api/redirect`):** One-click redirect appending standard UTM tracking parameters (`?ref=meepleprecios&utm_source=meepleprecios&utm_medium=affiliate`) and recording click events for merchant reconciliation.
-* **Self-Serve Merchant Portal (`/merchant/dashboard`, `/merchant/onboard`, `/merchant/shipping`):** Portal for store partners to register storefronts, configure flat shipping fees in MXN, monitor XML feed health, and view referral click logs.
-* **Platform Admin Control Panel (`/admin/dashboard`, `/admin/queue`):** Centralized administration portal for store verification, feed diagnostics, and BGG metadata curation.
+* **Unified Homepage Discovery (`/`):** Streamlined front page featuring predictive smart search (`SearchBar`) and live world board game trends imported from BGG Hotness (`Tendencias BGG`).
+* **Full-Width Hero Comparative UI (`/game/[id]`):** Displays high-resolution box art (`<image>`) from BGG, clear typographic game stats, and side-by-side store comparison offers sorted by total cost (`Precio artículo + Envío = Coste total ($ MXN)`).
+* **Direct Affiliate Checkout Redirects (`/api/redirect`):** One-click redirect appending standard UTM tracking parameters (`?ref=meepleprecios`) and recording click events for merchant reconciliation.
+* **Self-Serve Merchant Portal (`/merchant/dashboard`, `/merchant/onboard`, `/merchant/shipping`):** Portal for store partners to register storefronts, configure flat shipping fees in MXN, and monitor XML feed health.
+* **Platform Admin Control Panel (`/admin/dashboard`, `/admin/queue`):** Centralized administration portal for store verification and feed diagnostics.
 
 ---
 
@@ -46,8 +46,8 @@ We adhere to a minimalist, premium design aesthetic tailored for high legibility
 | Price Highlights | Coral deslavado | `#FF9E8A` |
 
 ### 4.2 Wise Strategic Emoji Guidance 💡
-* **Policy:** We lift previous bans on emojis in favor of **Wise Strategic Emoji Usage**. Emojis (e.g., 🇲🇽, 🎲, ⭐, 📦, ⚡) may be used thoughtfully across headings, badges, and documentation to add warmth, visual anchors, and conversational clarity without cluttering functional data tables.
-* **Sentence Case Governance:** All headings, buttons, and table headers follow sentence case per Google style guidelines (e.g., *Comparativa de ofertas por tienda*, *★ Mejor precio actual*).
+* **Policy:** We adhere to **Wise Strategic Emoji Usage**. Emojis (e.g., 🇲🇽, 🎲, ⭐, 📦, ⚡) may be used thoughtfully across headings and documentation to add warmth and visual anchors without cluttering functional data tables.
+* **Sentence Case Governance:** All headings, buttons, and table headers follow sentence case per Google style guidelines (e.g., *Comparativa de ofertas por tienda*, *★ Tienda recomendada*).
 
 ---
 
@@ -57,7 +57,7 @@ We adhere to a minimalist, premium design aesthetic tailored for high legibility
 * **Database:** Supabase (PostgreSQL) with strict Row-Level Security (RLS).
   * `stores`: Merchant details, XML feed URL, feed health metrics, and verification flags.
   * `shipping_rates`: Flat domestic delivery costs and free shipping thresholds in MXN.
-  * `bgg_games_cache`: Board game metadata (title, thumbnail, complexity weight, player counts, EAN barcode).
+  * `bgg_games_cache`: Board game metadata (title, thumbnail, high-res image, description, complexity weight, player counts).
   * `store_games`: Intermediate inventory table linking stores and games with base price ($ MXN), stock status, and edition language.
   * `clicks`: Outbound affiliate referral click log.
 
@@ -67,4 +67,4 @@ We adhere to a minimalist, premium design aesthetic tailored for high legibility
 
 Every feature branch must pass our rigorous verification pipeline before merging into `main`:
 1. **Serial Jest Unit Tests:** `npm run test -- --runInBand --forceExit` verifying calculation helpers, RLS rules, and sentence-case style compliance.
-2. **Playwright E2E Walkthroughs:** `npm run test:e2e` simulating live buyer searches, catalog browsing, and merchant portal navigation across desktop and mobile viewports.
+2. **Playwright E2E Walkthroughs:** `npm run test:e2e` simulating live buyer searches and merchant portal navigation across desktop and mobile viewports.

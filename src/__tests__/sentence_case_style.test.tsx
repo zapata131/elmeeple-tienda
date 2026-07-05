@@ -1,29 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CatalogView } from '@/components/CatalogView';
 import StoreOffersComparisonTable, { ComparisonOffer } from '@/components/StoreOffersComparisonTable';
-
-const mockCatalogGames = [
-  {
-    bgg_id: 1,
-    name: 'Catan',
-    thumbnail: null,
-    categories: ['Estrategia', 'Familiar'],
-    min_price: 35.0,
-    in_stock: true,
-    historical_min_price: 30.0,
-  },
-  {
-    bgg_id: 2,
-    name: 'Carcassonne',
-    thumbnail: null,
-    categories: ['Colocación de losetas'],
-    min_price: 25.0,
-    in_stock: true,
-    historical_min_price: 22.0,
-  },
-];
 
 const mockComparisonOffers: ComparisonOffer[] = [
   {
@@ -31,9 +9,7 @@ const mockComparisonOffers: ComparisonOffer[] = [
     store_id: 'store-1',
     store_name: 'Tienda Madrid',
     store_logo: null,
-    store_country: 'ES',
-    rating: 4.8,
-    review_count: 50,
+    store_country: 'MX',
     price: 35.0,
     stock: 5,
     edition_language: 'es',
@@ -42,7 +18,6 @@ const mockComparisonOffers: ComparisonOffer[] = [
   },
 ];
 
-// Helper to detect Title Case violations in multi-word strings (words capitalized that are not proper nouns/acronyms)
 const BANNED_TITLE_CASE_STRINGS = [
   'Mejor Oferta',
   'Lista De Deseos',
@@ -62,32 +37,13 @@ const BANNED_TITLE_CASE_STRINGS = [
 ];
 
 describe('US-40: Automated Sentence Case Verification Suite & UI Harmonization', () => {
-  it('ensures CatalogView headings, filter labels, and buttons strictly follow sentence case without Title Case violations', () => {
-    const { container } = render(<CatalogView initialGames={mockCatalogGames} />);
-    const textContent = container.textContent || '';
-
-    BANNED_TITLE_CASE_STRINGS.forEach((banned) => {
-      expect(textContent).not.toContain(banned);
-    });
-
-    // Check specific headings in CatalogView
-    const h1s = container.querySelectorAll('h1, h2, h3, h4');
-    h1s.forEach((h) => {
-      const text = h.textContent?.trim() || '';
-      if (text && text.length > 3) {
-        // First letter should be capitalized, but not 3 words in a row starting with capital unless acronym/proper noun
-        expect(text).not.toMatch(/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+ [A-ZÁÉÍÓÚÑ][a-záéíóúñ]+ [A-ZÁÉÍÓÚÑ][a-záéíóúñ]+$/);
-      }
-    });
-  });
-
   it('ensures StoreOffersComparisonTable headings and badges follow sentence case', () => {
     const { container } = render(
       <StoreOffersComparisonTable
         offers={mockComparisonOffers}
         bggId={1}
         gameName="Catan"
-        selectedCountry="ES"
+        selectedCountry="MX"
         historicalMinPrice={30.0}
       />
     );
@@ -103,5 +59,3 @@ describe('US-40: Automated Sentence Case Verification Suite & UI Harmonization',
     expect(textContent).not.toContain('Ir A Tienda');
   });
 });
-
-

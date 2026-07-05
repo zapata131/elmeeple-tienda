@@ -55,7 +55,7 @@ describe('US-28: Brettspielpreise-Style 3-Part Price Breakdown & Offline Fallbac
 
       // Check fallback stores appear
       expect(screen.getByText(/El Duende Juegos CDMX/i)).toBeInTheDocument();
-      expect(screen.getByText(/La Madriguera GDL/i)).toBeInTheDocument();
+      expect(screen.getByText(/La Caravana Gamelab/i)).toBeInTheDocument();
     });
   });
 });

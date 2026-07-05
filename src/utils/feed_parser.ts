@@ -89,12 +89,19 @@ export function parseGoogleFeed(xmlContent: string): ParsedFeedItem[] {
       if (linkMatch) link = linkMatch[1];
     }
 
-    let rawPrice = getTagValue('s:price') || getTagValue('g:price') || getTagValue('price') || '';
-    if (!rawPrice) {
-      const priceMatch = /price[^0-9]*([0-9]+(?:\.[0-9]{2})?)/i.exec(block);
-      if (priceMatch) rawPrice = priceMatch[1];
-    }
-    const price = parseFloat(rawPrice.replace(/[^\d.]/g, '')) || 0;
+    const getPriceValue = () => {
+      const sPriceMatch = /<s:price[^>]*>([0-9.,]+)<\/s:price>/i.exec(block);
+      if (sPriceMatch) return sPriceMatch[1];
+      const gPriceMatch = /<g:price[^>]*>([0-9.,]+)/i.exec(block);
+      if (gPriceMatch) return gPriceMatch[1];
+      const priceMatch = /<price[^>]*>([0-9.,]+)/i.exec(block);
+      if (priceMatch) return priceMatch[1];
+      const fallbackMatch = /currency=["'][A-Z]{3}["'][^>]*>([0-9.,]+)/i.exec(block);
+      return fallbackMatch ? fallbackMatch[1] : '';
+    };
+
+    const rawPrice = getPriceValue();
+    const price = parseFloat(rawPrice.replace(/,/g, '')) || 0;
 
     const availability = getTagValue('g:availability') || block;
     const stock = availability.toLowerCase().includes('out of stock') || availability.toLowerCase().includes('agotado') ? 0 : 1;
@@ -109,6 +116,13 @@ export function parseGoogleFeed(xmlContent: string): ParsedFeedItem[] {
   return items;
 }
 
+const BROWSER_HEADERS = {
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+  'Accept': 'application/atom+xml,application/xml,text/xml;q=0.9,text/html;q=0.8,*/*;q=0.7',
+  'Accept-Language': 'es-MX,es;q=0.9,en-US;q=0.8,en;q=0.7',
+  'Cache-Control': 'no-cache',
+};
+
 export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedItem[]> {
   const allItems: ParsedFeedItem[] = [];
 
@@ -121,7 +135,7 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
     while (page <= MAX_SAFETY_PAGES) {
       try {
         const pageUrl = `${baseUrl}?page=${page}`;
-        const res = await fetch(pageUrl, { headers: { 'User-Agent': 'MeeplePreciosBot/1.0' } });
+        const res = await fetch(pageUrl, { headers: BROWSER_HEADERS });
         if (!res.ok) break;
         const xml = await res.text();
         const items = parseGoogleFeed(xml);
@@ -152,7 +166,7 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
     return allItems;
   }
 
-  const res = await fetch(feedUrl, { headers: { 'User-Agent': 'MeeplePreciosBot/1.0' } });
+  const res = await fetch(feedUrl, { headers: BROWSER_HEADERS });
   if (res.ok) {
     const xml = await res.text();
     return parseGoogleFeed(xml);

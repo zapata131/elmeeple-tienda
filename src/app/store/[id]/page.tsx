@@ -56,7 +56,7 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ id
 
           <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
             <a
-              href={baseUrl}
+              href={`/api/redirect?url=${encodeURIComponent(baseUrl)}&store_id=${storeId}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl transition-colors shadow-sm"

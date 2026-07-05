@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { parseGoogleFeed, syncStoreCatalog } from '@/utils/feed_parser';
+import { fetchFullStoreFeed, syncStoreCatalog } from '@/utils/feed_parser';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
@@ -42,14 +42,7 @@ export async function GET(request: NextRequest) {
     for (const store of stores) {
       try {
         const feedUrl = store.google_shopping_feed_url!;
-        const res = await fetch(feedUrl);
-        
-        if (!res.ok) {
-          throw new Error(`Failed to fetch XML file: ${res.statusText}`);
-        }
-
-        const xmlText = await res.text();
-        const parsedItems = parseGoogleFeed(xmlText);
+        const parsedItems = await fetchFullStoreFeed(feedUrl);
         
         const stats = await syncStoreCatalog(store.id, parsedItems);
         

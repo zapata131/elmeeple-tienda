@@ -122,24 +122,50 @@ export function SearchBar() {
     }
   };
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = async () => {
     setIsOpen(false);
     if (activeIndex >= 0 && activeIndex < flattenedItems.length) {
       selectItem(flattenedItems[activeIndex]);
-    } else if (games.length > 0) {
+      return;
+    }
+    if (games.length > 0) {
       router.push(`/game/${games[0].bgg_id}`);
-    } else if (stores.length > 0) {
+      return;
+    }
+    if (stores.length > 0) {
       router.push(`/store/${stores[0].id}`);
-    } else {
-      const numericId = parseInt(query.trim(), 10);
-      if (!isNaN(numericId) && numericId > 0) {
-        router.push(`/game/${numericId}`);
-      } else {
-        const match = MOCK_GAMES.find((g) => g.name.toLowerCase().includes(query.trim().toLowerCase()));
-        if (match) {
-          router.push(`/game/${match.bgg_id}`);
+      return;
+    }
+
+    const trimmed = query.trim();
+    if (!trimmed) return;
+
+    const numericId = parseInt(trimmed, 10);
+    if (!isNaN(numericId) && numericId > 0) {
+      router.push(`/game/${numericId}`);
+      return;
+    }
+
+    const match = MOCK_GAMES.find((g) => g.name.toLowerCase().includes(trimmed.toLowerCase()));
+    if (match) {
+      router.push(`/game/${match.bgg_id}`);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.games && data.games.length > 0) {
+          router.push(`/game/${data.games[0].bgg_id}`);
+          return;
         }
       }
+    } catch (err) {
+      console.error('Immediate search submit failed:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -170,7 +196,13 @@ export function SearchBar() {
 
   return (
     <div className="relative w-full max-w-md" ref={dropdownRef}>
-      <div className="relative">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearchSubmit();
+        }}
+        className="relative flex items-center"
+      >
         <input
           type="search"
           value={query}
@@ -180,14 +212,26 @@ export function SearchBar() {
             if (flattenedItems.length > 0) setIsOpen(true);
           }}
           placeholder="Buscar juegos de mesa, tiendas o categorías... / Search board games..."
-          className="w-full px-4 py-2.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all"
+          className="w-full pl-4 pr-12 py-2.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all"
         />
-        {isLoading && (
-          <div className="absolute right-3 top-3">
-            <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        )}
-      </div>
+        <div className="absolute right-2 flex items-center gap-1">
+          {isLoading ? (
+            <div className="p-1.5">
+              <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            <button
+              type="submit"
+              aria-label="Buscar"
+              className="p-1.5 text-gray-400 hover:text-indigo-600 rounded-lg transition-colors focus:outline-none"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          )}
+        </div>
+      </form>
 
       {isOpen && (
         <div

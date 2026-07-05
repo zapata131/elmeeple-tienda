@@ -50,14 +50,14 @@ export async function seedMockData() {
 
   // 1. Regional Stores
   const storesToSeed = [
-    { id: 'store-mx-01', name: 'Ficha y Dado', base_url: 'https://fichaydado.com', owner_email: 'contacto@fichaydado.com', verified: true, feed_status: 'success' },
-    { id: 'store-mx-02', name: 'Mundo Meeple Store', base_url: 'https://mundomeeplestore.com', owner_email: 'contacto@mundomeeplestore.com', verified: true, feed_status: 'success' },
-    { id: 'store-mx-03', name: 'Roll Games', base_url: 'https://rollgames.mx', owner_email: 'info@rollgames.mx', verified: true, feed_status: 'success' },
-    { id: 'store-mx-04', name: 'Con T de Tlacuache', base_url: 'https://tdetlacuache.com', owner_email: 'ventas@tdetlacuache.com', verified: true, feed_status: 'success' },
-    { id: 'store-mx-05', name: 'Geeky Stuff', base_url: 'https://www.geekystuff.mx', owner_email: 'hola@geekystuff.mx', verified: true, feed_status: 'success' },
-    { id: 'store-mx-06', name: 'Quantum Boardgames', base_url: 'https://quantumboardgames.com', owner_email: 'info@quantumboardgames.com', verified: true, feed_status: 'success' },
-    { id: 'store-mx-07', name: 'Alfa y Delta', base_url: 'https://alfaydelta.com', owner_email: 'contacto@alfaydelta.com', verified: true, feed_status: 'success' },
-    { id: 'store-mx-08', name: 'Bundaba', base_url: 'https://bundaba.com.mx', owner_email: 'hola@bundaba.com.mx', verified: true, feed_status: 'success' },
+    { id: 'store-mx-01', name: 'Ficha y Dado', base_url: 'https://fichaydado.com', google_shopping_feed_url: 'https://fichaydado.com/collections/all.atom', owner_email: 'contacto@fichaydado.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-02', name: 'Mundo Meeple Store', base_url: 'https://mundomeeplestore.com', google_shopping_feed_url: 'https://mundomeeplestore.com/collections/all.atom', owner_email: 'contacto@mundomeeplestore.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-03', name: 'Roll Games', base_url: 'https://rollgames.mx', google_shopping_feed_url: 'https://rollgames.mx/collections/all.atom', owner_email: 'info@rollgames.mx', verified: true, feed_status: 'success' },
+    { id: 'store-mx-04', name: 'Con T de Tlacuache', base_url: 'https://tdetlacuache.com', google_shopping_feed_url: 'https://tdetlacuache.com/collections/all.atom', owner_email: 'ventas@tdetlacuache.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-05', name: 'Geeky Stuff', base_url: 'https://www.geekystuff.mx', google_shopping_feed_url: 'https://www.geekystuff.mx/collections/all.atom', owner_email: 'hola@geekystuff.mx', verified: true, feed_status: 'success' },
+    { id: 'store-mx-06', name: 'Quantum Boardgames', base_url: 'https://quantumboardgames.com', google_shopping_feed_url: 'https://quantumboardgames.com/collections/all.atom', owner_email: 'info@quantumboardgames.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-07', name: 'Alfa y Delta', base_url: 'https://alfaydelta.com', google_shopping_feed_url: 'https://alfaydelta.com/collections/all.atom', owner_email: 'contacto@alfaydelta.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-08', name: 'Bundaba', base_url: 'https://bundaba.com.mx', google_shopping_feed_url: 'https://bundaba.com.mx/collections/all.atom', owner_email: 'hola@bundaba.com.mx', verified: true, feed_status: 'success' },
   ];
 
   await supabase.from('stores').upsert(storesToSeed, { onConflict: 'id' });

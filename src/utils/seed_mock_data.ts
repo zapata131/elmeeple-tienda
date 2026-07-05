@@ -50,19 +50,11 @@ export async function seedMockData() {
 
   // 1. Regional Stores
   const storesToSeed = [
-    { id: '11111111-1111-1111-1111-111111111101', name: 'Zygomatic España', base_url: 'https://zygomatic.es', owner_email: 'es1@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111102', name: 'Dungeon Marvels ES', base_url: 'https://dungeonmarvels.es', owner_email: 'es2@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111103', name: 'Mathom Store ES', base_url: 'https://mathom.es', owner_email: 'es3@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111104', name: 'Meeple Lisboa PT', base_url: 'https://meeplelisboa.pt', owner_email: 'pt1@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111105', name: 'BoardGame Portugal', base_url: 'https://boardgame.pt', owner_email: 'pt2@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111106', name: 'Jugamos México', base_url: 'https://jugamos.mx', owner_email: 'mx1@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111107', name: 'El Duende México', base_url: 'https://elduende.mx', owner_email: 'mx2@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111108', name: 'Galápagos Brasil', base_url: 'https://galapagos.br', owner_email: 'br1@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111109', name: 'Meeple Outlet Brasil', base_url: 'https://meepleoutlet.br', owner_email: 'br2@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111110', name: 'BoardGame Argentina', base_url: 'https://boardgame.ar', owner_email: 'ar1@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111111', name: 'Dice & Boards Colombia', base_url: 'https://diceboards.co', owner_email: 'co1@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111112', name: 'Ludoteca Chile', base_url: 'https://ludoteca.cl', owner_email: 'cl1@meeple.com', verified: true, feed_status: 'success' },
-    { id: '11111111-1111-1111-1111-111111111113', name: 'Meeple Perú', base_url: 'https://meeple.pe', owner_email: 'pe1@meeple.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-01', name: 'Ficha y Dado', base_url: 'https://fichaydado.com', owner_email: 'contacto@fichaydado.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-02', name: 'Mundo Meeple Store', base_url: 'https://mundomeeplestore.com', owner_email: 'contacto@mundomeeplestore.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-03', name: 'Roll Games', base_url: 'https://rollgames.mx', owner_email: 'info@rollgames.mx', verified: true, feed_status: 'success' },
+    { id: 'store-mx-04', name: 'Con T de Tlacuache', base_url: 'https://tdetlacuache.com', owner_email: 'ventas@tdetlacuache.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-05', name: 'Geeky Stuff', base_url: 'https://www.geekystuff.mx', owner_email: 'hola@geekystuff.mx', verified: true, feed_status: 'success' },
   ];
 
   await supabase.from('stores').upsert(storesToSeed, { onConflict: 'id' });

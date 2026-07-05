@@ -193,6 +193,14 @@ This document details the product planning for **MeeplePrecios**, the board game
     2. Displays exchange rates relative to the base currency (EUR) and enables manual overrides or daily automated FX fetches from an external exchange rates API.
 *   **Status:** **[PLANNED]**
 
+### US-39: Admin Direct Link in Toolbar
+*   **Formula:** As a **Platform Admin**, I want the **header navigation toolbar to display a direct link to the Admin Panel instead of the Partner/Merchant Panel**, so that I can **immediately access system administration without navigating through irrelevant store screens**.
+*   **Acceptance Criteria:**
+    1. When the active user role is `admin` in `Toolbar.tsx`, display a link button to `/admin/dashboard` (`Panel de admin`) instead of `/merchant/dashboard` / `/merchant/onboard`.
+    2. Ensure sentence case typography and zero unicode emojis.
+    3. Add full TDD verification in `toolbar.test.tsx`.
+*   **Status:** **[PLANNED - Issue #54]**
+
 ---
 
 ## 5. Technical & Automation Backlog (Backend Stories)
@@ -220,3 +228,12 @@ This document details the product planning for **MeeplePrecios**, the board game
     2. Render a high-contrast, brand-styled badge (`★ Mejor Precio Actual` / `★ Récord Mínimo Histórico` / `★ Mínimo Histórico`) using crisp SVG vectors and typography without raw unicode emojis.
     3. Ensure full responsiveness, accessibility (sentence case, contrast), and 100% test coverage via Jest and Playwright E2E.
 *   **Status:** **[COMPLETED - Issue #52]**
+
+### US-40: Automated Sentence Case Linter Suite and UI Style Harmonization
+*   **Formula:** As a **Developer and UX Expert**, I want an **automated sentence-case verification suite and UI string harmonization aligned with Google Developer Documentation Style Guide**, so that **no Title Case headings or buttons violate user experience standards across the platform**.
+*   **Acceptance Criteria:**
+    1. Create a dedicated Jest verification suite (`src/__tests__/sentence_case_style.test.tsx`) or linter script verifying that UI headings, buttons, and labels follow Google sentence case rules (e.g. `Compare store offers` instead of `Compare Store Offers`).
+    2. Harmonize UI strings across components to strictly follow sentence case.
+    3. Ensure 100% verification passing with `npm run verify`.
+*   **Status:** **[PLANNED - Issue #55]**
+

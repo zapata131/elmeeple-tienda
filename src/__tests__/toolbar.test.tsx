@@ -89,5 +89,27 @@ describe('US-03: Global Shipping and Currency Settings (Toolbar)', () => {
     expect(screen.queryByRole('switch', { name: /Solo Tiendas Nacionales/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('switch', { name: /Solo tiendas/i })).not.toBeInTheDocument();
   });
+
+  it('US-39: renders direct link to Admin Panel in sentence case when role is admin, without partner/merchant links', () => {
+    document.cookie = 'meeple_role=admin; path=/';
+    render(<Toolbar />);
+
+    const adminPanelLink = screen.getByRole('link', { name: /Panel de admin/i });
+    expect(adminPanelLink).toBeInTheDocument();
+    expect(adminPanelLink).toHaveAttribute('href', '/admin/dashboard');
+
+    const fxLink = screen.getByRole('link', { name: /Tipos de cambio FX/i });
+    expect(fxLink).toBeInTheDocument();
+    expect(fxLink).toHaveAttribute('href', '/admin/currency');
+
+    const queueLink = screen.getByRole('link', { name: /Cola metadatos BGG/i });
+    expect(queueLink).toBeInTheDocument();
+    expect(queueLink).toHaveAttribute('href', '/admin/queue');
+
+    // Ensure partner links are not present
+    expect(screen.queryByRole('link', { name: /Panel tienda/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Dar de alta tienda/i })).not.toBeInTheDocument();
+  });
 });
+
 

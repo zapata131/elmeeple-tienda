@@ -222,7 +222,7 @@ export function Toolbar() {
             <svg className="w-4 h-4 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-            <span>Comparador Multi-Juego</span>
+            <span>Comparador multi-juego</span>
           </Link>
         </div>
       </div>
@@ -231,13 +231,13 @@ export function Toolbar() {
       <div className="bg-gray-950 px-6 py-2 border-t border-gray-800/80 flex items-center justify-between text-xs font-semibold text-gray-400">
         <div className="flex items-center gap-6">
           <span className="text-gray-500 uppercase font-mono text-[10px] tracking-wider">
-            Navegación por Rol ({role.toUpperCase()}):
+            Navegación por rol ({role.toUpperCase()}):
           </span>
 
           {role === 'player' && (
             <>
-              <Link href="/catalog" className="hover:text-white transition-colors">Catálogo Completo</Link>
-              <Link href="/optimizer" className="hover:text-white transition-colors">Lista de Deseos & Envíos</Link>
+              <Link href="/catalog" className="hover:text-white transition-colors">Catálogo completo</Link>
+              <Link href="/optimizer" className="hover:text-white transition-colors">Lista de deseos y envíos</Link>
             </>
           )}
 
@@ -247,11 +247,11 @@ export function Toolbar() {
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <span>Panel Tienda</span>
+                <span>Panel tienda</span>
               </Link>
-              <Link href="/merchant/onboard" className="hover:text-white transition-colors">Dar de Alta Tienda</Link>
-              <Link href="/merchant/shipping" className="hover:text-white transition-colors">Tarifas de Envío</Link>
-              <Link href="/merchant/diagnostics" className="hover:text-white transition-colors">Diagnóstico de Feeds</Link>
+              <Link href="/merchant/onboard" className="hover:text-white transition-colors">Dar de alta tienda</Link>
+              <Link href="/merchant/shipping" className="hover:text-white transition-colors">Tarifas de envío</Link>
+              <Link href="/merchant/diagnostics" className="hover:text-white transition-colors">Diagnóstico de feeds</Link>
             </>
           )}
 
@@ -261,10 +261,10 @@ export function Toolbar() {
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <span>Panel Administración</span>
+                <span>Panel de admin</span>
               </Link>
-              <Link href="/admin/currency" className="hover:text-white transition-colors">Tipos de Cambio FX</Link>
-              <Link href="/admin/queue" className="hover:text-white transition-colors">Cola Metadatos BGG</Link>
+              <Link href="/admin/currency" className="hover:text-white transition-colors">Tipos de cambio FX</Link>
+              <Link href="/admin/queue" className="hover:text-white transition-colors">Cola metadatos BGG</Link>
               <button
                 onClick={triggerSeed}
                 disabled={isSeeding}
@@ -273,7 +273,7 @@ export function Toolbar() {
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                <span>{isSeeding ? 'Poblando...' : 'Poblar Catálogo Mock (22 Juegos & Portadas)'}</span>
+                <span>{isSeeding ? 'Poblando...' : 'Poblar catálogo mock (22 juegos y portadas)'}</span>
               </button>
               {seedMsg && <span className="text-[#73D8D4] font-extrabold ml-2">{seedMsg}</span>}
             </>

@@ -45,11 +45,15 @@ This memo summarizes the architectural planning, TDD verification, and completed
 *   `#47` [US-37: Complete System-Wide Emoji Eradication across Admin, Merchant, and Catalog UI](https://github.com/zapata131/elmeeple-tienda/issues/47) [COMPLETED]
 *   `#52` [US-38: Historical Best-Price Deal Badge and Market Bargain Indicator for Players](https://github.com/zapata131/elmeeple-tienda/issues/52) [COMPLETED]
 *   `#54` [US-39: Admin direct link in toolbar instead of partner panel](https://github.com/zapata131/elmeeple-tienda/issues/54) [COMPLETED - PR #56 Merged]
-*   `#55` [US-40: Automated sentence case linter suite and UI style harmonization](https://github.com/zapata131/elmeeple-tienda/issues/55) [COMPLETED - PR Pending Merge]
+*   `#55` [US-40: Automated sentence case linter suite and UI style harmonization](https://github.com/zapata131/elmeeple-tienda/issues/55) [COMPLETED - PR #57 Merged]
+*   `#58` [US-41: Sponsored featured store placement in comparison table](https://github.com/zapata131/elmeeple-tienda/issues/58) [PLANNED - Milestone 13]
+*   `#59` [US-42: Automated feed failure webhook and email alerts to merchants](https://github.com/zapata131/elmeeple-tienda/issues/59) [PLANNED - Milestone 13]
+*   `#60` [US-43: Affiliate link-rot and 404 monitor (dead link checker)](https://github.com/zapata131/elmeeple-tienda/issues/60) [PLANNED - Milestone 13]
 
 ---
 
 ## 5. Next Steps
-1.  **Merge Issue #55 PR:** Review and merge the open Pull Request for branch `feature/issue-55-sentence-case-linter` into `main`.
-2.  **Milestone 13 Planning:** Audit and prioritize upcoming community features or partner integrations in the backlog.
+1.  **Execute Milestone 13 (Partner & Technical Monetization / Reliability):**
+    *   Start execution of **Issue #58 (US-41)** by branching off `main` to `feature/issue-58-sponsored-placement` following TDD and conventional commits.
+    *   Proceed sequentially with **Issue #59 (US-42)** (Feed failure email alerts) and **Issue #60 (US-43)** (Affiliate dead link monitor).
 

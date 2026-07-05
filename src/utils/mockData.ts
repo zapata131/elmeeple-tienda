@@ -152,6 +152,18 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
 
 export const MOCK_GAMES: MockGame[] = [
   {
+    bgg_id: 421285,
+    name: 'Excalibur',
+    thumbnail: 'https://cf.geekdo-images.com/W3Bsga_uLP9kO91gZ7H8yw__thumb/img/8a9HeqFydO7Uun_le9bXWPnidcA=/fit-in/200x150/filters:strip_icc()/pic2419375.jpg',
+    image: 'https://cf.geekdo-images.com/W3Bsga_uLP9kO91gZ7H8yw__original/img/oRc0AomWA9ZtFqQDZiZbIyKE1j0=/0x0/filters:format(png)/pic2419375.jpg',
+    description: 'Excalibur de Roxley Games es un elegante juego táctico de intriga legendaria y enfrentamientos decisivos, donde cada movimiento define el destino del reino.',
+    weight: 2.6,
+    min_players: 2,
+    max_players: 4,
+    playing_time: 45,
+    base_price_eur: 45.0,
+  },
+  {
     bgg_id: 13,
     name: 'Catan',
     thumbnail: 'https://cf.geekdo-images.com/0XODRpReiZBFUffEcqT5-Q__small/img/SNVfF23OQafv3u8xdFolJnMkBoM=/fit-in/200x150/filters:strip_icc()/pic9156909.png',

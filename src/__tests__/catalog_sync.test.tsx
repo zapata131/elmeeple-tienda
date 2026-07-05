@@ -162,4 +162,22 @@ describe('US-09: Automated Catalog Sync via XML/CSV Feeds', () => {
     // Assert upsert is called exactly twice (500 items + 100 items)
     expect(supabaseMock.upsert).toHaveBeenCalledTimes(2);
   });
+
+  it('auto-creates bgg_games_cache entries for new XML items and groups duplicates under the same generated ID', async () => {
+    supabaseMock.single.mockResolvedValue({ data: null, error: null });
+    supabaseMock.limit.mockResolvedValue({ data: [], error: null });
+
+    const newItems = [
+      { title: 'Brand New Space Opera (2026)', link: 'https://store1.mx/space', price: 1200, stock: 5, ean: null },
+      { title: 'Brand New Space Opera - Edición en Español', link: 'https://store2.mx/space', price: 1250, stock: 3, ean: null },
+    ];
+
+    const stats = await syncStoreCatalog('store-abc', newItems);
+    expect(stats.unmatched).toBe(2);
+    expect(stats.queued).toBe(2);
+    expect(supabaseMock.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Brand New Space Opera' }),
+      expect.anything()
+    );
+  });
 });

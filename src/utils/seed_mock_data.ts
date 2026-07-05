@@ -55,6 +55,9 @@ export async function seedMockData() {
     { id: 'store-mx-03', name: 'Roll Games', base_url: 'https://rollgames.mx', owner_email: 'info@rollgames.mx', verified: true, feed_status: 'success' },
     { id: 'store-mx-04', name: 'Con T de Tlacuache', base_url: 'https://tdetlacuache.com', owner_email: 'ventas@tdetlacuache.com', verified: true, feed_status: 'success' },
     { id: 'store-mx-05', name: 'Geeky Stuff', base_url: 'https://www.geekystuff.mx', owner_email: 'hola@geekystuff.mx', verified: true, feed_status: 'success' },
+    { id: 'store-mx-06', name: 'Quantum Boardgames', base_url: 'https://quantumboardgames.com', owner_email: 'info@quantumboardgames.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-07', name: 'Alfa y Delta', base_url: 'https://alfaydelta.com', owner_email: 'contacto@alfaydelta.com', verified: true, feed_status: 'success' },
+    { id: 'store-mx-08', name: 'Bundaba', base_url: 'https://bundaba.com.mx', owner_email: 'hola@bundaba.com.mx', verified: true, feed_status: 'success' },
   ];
 
   await supabase.from('stores').upsert(storesToSeed, { onConflict: 'id' });

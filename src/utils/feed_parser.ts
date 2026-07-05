@@ -188,8 +188,48 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
       }
     }
 
+    // 3. Auto-create game page entry in bgg_games_cache for unique unmatched XML feed items AND enqueue for BGG metadata enrichment
+    let isAutoCreated = false;
+    if (!matchedGame && item.title) {
+      const cleanTitle = item.title.replace(/\s*\([^)]*\)/g, '').split(' - ')[0].trim();
+      if (cleanTitle.length >= 2) {
+        const normalizedForHash = cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
+        let hash = 0;
+        for (let i = 0; i < normalizedForHash.length; i++) {
+          hash = (hash << 5) - hash + normalizedForHash.charCodeAt(i);
+          hash |= 0;
+        }
+        const generatedId = 8000000 + Math.abs(hash) % 1999999;
+
+        const newGameRow = {
+          bgg_id: generatedId,
+          name: cleanTitle,
+          thumbnail: '',
+          last_updated_at: new Date().toISOString(),
+        };
+
+        await supabase.from('bgg_games_cache').upsert(newGameRow, { onConflict: 'bgg_id' });
+        matchedGame = newGameRow;
+        isAutoCreated = true;
+      }
+    }
+
     if (matchedGame) {
-      stats.matched++;
+      if (!isAutoCreated) {
+        stats.matched++;
+      } else {
+        stats.unmatched++;
+        stats.queued++;
+        queueBuffer.push({
+          store_id: storeId,
+          ean: item.ean || null,
+          title: item.title || 'Unknown Title',
+          store_product_url: item.link || '',
+          status: 'pending',
+          created_at: new Date().toISOString(),
+        });
+      }
+
       buffer.push({
         store_id: storeId,
         bgg_id: matchedGame.bgg_id,

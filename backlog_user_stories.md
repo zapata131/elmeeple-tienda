@@ -344,4 +344,17 @@ This document details the product planning for **MeeplePrecios**, the board game
 *   **Formula:** As a **Player and Product Creator**, I want **the platform stripped down to its bare minimum workable commercial MVP core (search, price comparison table, store contact/redirects)**, so that **the user experience is frictionless, fast, and completely focused on core commercial value**.
 *   **Status:** **[COMPLETED - Issue #63]**
 
+### US-46: Streamline Store Partner Dashboard and Self-Serve Onboarding Portal
+*   **Formula:** As a **Partner Store Owner**, I want an **intuitive, streamlined merchant dashboard and self-serve onboarding portal (`/merchant/dashboard`, `/merchant/onboard`, and `/merchant/shipping`)**, so that **I can easily manage my mock store profile, register my Google Shopping XML product feed URL, and configure flat domestic shipping rates in $ MXN without visual clutter or broken controls**.
+*   **Status:** **[IN PROGRESS - Issue #64]**
+
+### US-47: Player Profile and Search Preference Management Portal
+*   **Formula:** As a **Player**, I want a **clean profile dashboard (`/player/dashboard`) linked directly from the global navigation toolbar**, so that **I can view my active mock buyer identity (`Comprador LATAM` / `sofia@meeple.mx`) and easily manage my default search and catalog display preferences in Mexico**.
+*   **Status:** **[QUEUED - Issue #67]**
+
+### US-48: Streamline Platform Admin Control Console and Remove Broken Navigation Links
+*   **Formula:** As a **Platform Admin**, I want a **streamlined administration console (`/admin/dashboard` and `/admin/queue`) with clean navigation in the header toolbar**, so that **I can audit verified store partners, monitor BGG metadata resolution queues, and trigger test database seeding without encountering dead or broken links**.
+*   **Status:** **[QUEUED - Issue #68]**
+
+
 

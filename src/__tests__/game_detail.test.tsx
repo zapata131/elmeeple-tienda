@@ -145,7 +145,7 @@ describe('US-02 & US-16: Game Detail Page & Comparison Table', () => {
     const PageResolved = await GameDetailPage({ params: Promise.resolve({ id: '23' }) });
     render(PageResolved);
 
-    const badge = screen.getByTestId('market-lock-badge');
-    expect(badge).toBeInTheDocument();
+    expect(screen.getByText(/Perfil mock:/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Comprador/i })).toBeInTheDocument();
   });
 });

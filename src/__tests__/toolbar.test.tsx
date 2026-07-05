@@ -1,9 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Toolbar } from '@/components/Toolbar';
 
-// Mock next/navigation
 const mockRefresh = jest.fn();
 jest.mock('next/navigation', () => ({
   useRouter() {
@@ -15,9 +14,8 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-describe('US-44: Lock market scope to Mexico and standardize pricing strictly to Mexican Pesos (MXN) (Toolbar)', () => {
+describe('US-44 & US-47: Simplified Toolbar & Role Navigation', () => {
   beforeEach(() => {
-    // Clear cookies before each test
     document.cookie.split(';').forEach((c) => {
       document.cookie = c
         .replace(/^ +/, '')
@@ -26,69 +24,43 @@ describe('US-44: Lock market scope to Mexico and standardize pricing strictly to
     mockRefresh.mockClear();
   });
 
-  it('renders market lock badge for Mexico ($ MXN) and sets default country/currency cookies', () => {
+  it('sets default country/currency cookies and renders clean role switcher without non-functional selectors', () => {
     render(<Toolbar />);
-    
-    // Verifies market lock badge is rendered
-    const badge = screen.getByTestId('market-lock-badge');
-    expect(badge).toBeInTheDocument();
-    expect(badge).toHaveTextContent(/México · \$ MXN/i);
 
-    // Verifies country and currency selectors are removed per US-44 simplification
+    // Verifies language and country selectors are removed per user simplification request
     expect(screen.queryByLabelText(/shipping country|país de envío/i)).not.toBeInTheDocument();
-    expect(screen.queryByLabelText(/currency|moneda/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/idioma/i)).not.toBeInTheDocument();
 
     // Verifies cookies are automatically locked to MX and MXN
     expect(document.cookie).toContain('meeple_country=MX');
     expect(document.cookie).toContain('meeple_currency=MXN');
   });
 
-  it('stores selected language in cookies and refreshes the page on change', () => {
-    render(<Toolbar />);
-    const languageSelect = screen.getByLabelText(/idioma/i) as HTMLSelectElement;
-
-    fireEvent.change(languageSelect, { target: { value: 'pt' } });
-
-    expect(document.cookie).toContain('meeple_language=pt');
-    expect(mockRefresh).toHaveBeenCalled();
-  });
-
-  it('initializes language selector from persisted cookies', () => {
-    document.cookie = 'meeple_language=en; path=/';
-
+  it('renders Mi perfil and Catálogo completo links when role is player (US-47)', () => {
+    document.cookie = 'meeple_role=player; path=/';
     render(<Toolbar />);
 
-    const languageSelect = screen.getByLabelText(/idioma/i) as HTMLSelectElement;
-    expect(languageSelect.value).toBe('en');
+    expect(screen.getByRole('link', { name: /catálogo completo/i })).toHaveAttribute('href', '/catalog');
+    expect(screen.getByRole('link', { name: /mi perfil/i })).toHaveAttribute('href', '/player/dashboard');
   });
 
-  it('does NOT render domestic store switch in toolbar (relocated directly into page/comparison UI per US-36)', () => {
-    render(<Toolbar />);
-    expect(screen.queryByRole('switch', { name: /Solo Tiendas Nacionales/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('switch', { name: /Solo tiendas/i })).not.toBeInTheDocument();
-  });
-
-  it('US-39: renders direct link to Admin Panel in sentence case when role is admin, without partner/merchant links', () => {
+  it('US-39 & US-48: renders direct link to Admin Panel in sentence case when role is admin, without dead FX link', () => {
     document.cookie = 'meeple_role=admin; path=/';
     render(<Toolbar />);
 
-    const adminPanelLink = screen.getByRole('link', { name: /Panel de admin/i });
+    const adminPanelLink = screen.getByRole('link', { name: /panel de admin/i });
     expect(adminPanelLink).toBeInTheDocument();
     expect(adminPanelLink).toHaveAttribute('href', '/admin/dashboard');
 
-    const fxLink = screen.getByRole('link', { name: /Tipos de cambio FX/i });
-    expect(fxLink).toBeInTheDocument();
-    expect(fxLink).toHaveAttribute('href', '/admin/currency');
-
-    const queueLink = screen.getByRole('link', { name: /Cola metadatos BGG/i });
+    const queueLink = screen.getByRole('link', { name: /cola metadatos bgg/i });
     expect(queueLink).toBeInTheDocument();
     expect(queueLink).toHaveAttribute('href', '/admin/queue');
 
+    // Ensure dead FX link is removed per US-48
+    expect(screen.queryByRole('link', { name: /tipos de cambio fx/i })).not.toBeInTheDocument();
+
     // Ensure partner links are not present
-    expect(screen.queryByRole('link', { name: /Panel tienda/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /Dar de alta tienda/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /panel tienda/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /dar de alta tienda/i })).not.toBeInTheDocument();
   });
 });
-
-
-

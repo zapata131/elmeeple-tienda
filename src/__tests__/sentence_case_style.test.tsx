@@ -3,7 +3,6 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { CatalogView } from '@/components/CatalogView';
 import StoreOffersComparisonTable, { ComparisonOffer } from '@/components/StoreOffersComparisonTable';
-import { MOCK_GAMES } from '@/utils/mockData';
 
 const mockCatalogGames = [
   {

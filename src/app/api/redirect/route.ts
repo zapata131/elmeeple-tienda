@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { MOCK_IBEROAMERICAN_STORES, MOCK_GAMES } from '@/utils/mockData';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
@@ -39,6 +40,18 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (offerErr || !offer) {
+        if (offerId.startsWith('offer-')) {
+          const parts = offerId.split('-');
+          const bggId = parseInt(parts[1], 10);
+          const storeId = parts.slice(2).join('-');
+          const storeMatch = MOCK_IBEROAMERICAN_STORES.find((s) => s.id === storeId);
+          const gameMatch = MOCK_GAMES.find((g) => g.bgg_id === bggId);
+          if (storeMatch) {
+            const query = gameMatch ? encodeURIComponent(gameMatch.name) : '';
+            const targetUrl = appendAffiliateParams(`${storeMatch.website}/search?q=${query}`);
+            return NextResponse.redirect(targetUrl, 302);
+          }
+        }
         console.error(`[Redirect API] Offer lookup failed for ${offerId}:`, offerErr?.message);
         return NextResponse.json({ error: 'Offer not found.' }, { status: 404 });
       }

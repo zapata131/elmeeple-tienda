@@ -146,27 +146,14 @@ export function SearchBar() {
       return;
     }
 
-    const match = MOCK_GAMES.find((g) => g.name.toLowerCase().includes(trimmed.toLowerCase()));
-    if (match) {
-      router.push(`/game/${match.bgg_id}`);
+    const exactMatch = MOCK_GAMES.find((g) => g.name.toLowerCase() === trimmed.toLowerCase());
+    if (exactMatch) {
+      router.push(`/game/${exactMatch.bgg_id}`);
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.games && data.games.length > 0) {
-          router.push(`/game/${data.games[0].bgg_id}`);
-          return;
-        }
-      }
-    } catch (err) {
-      console.error('Immediate search submit failed:', err);
-    } finally {
-      setIsLoading(false);
-    }
+    // Non-exact or general search query routes to dedicated viable options page
+    router.push(`/search?q=${encodeURIComponent(trimmed)}`);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

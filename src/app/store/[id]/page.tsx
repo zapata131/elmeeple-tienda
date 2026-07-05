@@ -37,10 +37,10 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ id
             <span className="text-xs text-gray-500 font-medium">Socio Comercial MeeplePrecios ({country})</span>
           </div>
           <Link
-            href="/catalog"
+            href="/"
             className="text-xs font-bold text-indigo-650 hover:text-indigo-700 bg-indigo-50 px-4 py-2 rounded-xl transition-colors"
           >
-            ← Volver al Catálogo
+            ← Volver a Inicio
           </Link>
         </div>
       </header>

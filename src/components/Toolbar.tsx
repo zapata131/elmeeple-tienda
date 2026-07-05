@@ -31,23 +31,6 @@ export function Toolbar() {
           )}
         </div>
 
-        {/* Clean Functional Navigation */}
-        <nav className="flex items-center gap-6 text-xs font-bold text-gray-300">
-          <Link
-            href="/merchant/onboard"
-            className="hover:text-white transition-colors text-indigo-400"
-          >
-            Dar de alta tienda
-          </Link>
-
-          <Link
-            href="/merchant/dashboard"
-            className="hover:text-white transition-colors"
-          >
-            Acceso socios
-          </Link>
-        </nav>
-
       </div>
     </header>
   );

@@ -9,8 +9,8 @@ test.describe('E2E Walkthrough: Home, Predictive Search, and Merchant Navigation
     const heading = page.locator('h1', { hasText: /MeeplePrecios/i });
     await expect(heading).toBeVisible();
 
-    // Verify clean functional header navigation links exist
-    const navOnboard = page.locator('header a[href="/merchant/onboard"]');
+    // Verify clean functional footer navigation links exist
+    const navOnboard = page.locator('footer a[href="/merchant/onboard"]');
     await expect(navOnboard).toBeVisible();
 
     // 2. Interact with Predictive Search Bar on Home

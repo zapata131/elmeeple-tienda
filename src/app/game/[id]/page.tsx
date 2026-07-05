@@ -146,8 +146,12 @@ export default async function GameDetailPage({ params }: Props) {
 
       </main>
 
-      <footer className="bg-gray-900 text-white border-t border-gray-800 py-6 px-6 text-center text-xs text-gray-500 mt-auto">
-        <p>© 2026 MeeplePrecios México. Todos los derechos reservados.</p>
+      <footer className="bg-gray-900 text-white border-t border-gray-800 py-8 px-6 text-center text-xs text-gray-500 mt-auto">
+        <p className="mb-3">© 2026 MeeplePrecios México. Todos los derechos reservados.</p>
+        <div className="flex justify-center gap-6 text-gray-400 font-medium">
+          <Link href="/merchant/onboard" className="hover:text-gray-300 transition-colors">¿Eres una tienda de juegos? Únete como socio</Link>
+          <Link href="/merchant/dashboard" className="hover:text-gray-300 transition-colors">Portal de socios</Link>
+        </div>
       </footer>
     </div>
   );

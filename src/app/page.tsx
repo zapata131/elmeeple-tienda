@@ -54,14 +54,17 @@ export default async function Home() {
             </h2>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {hotGames.map((game) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {hotGames.map((game, index) => (
               <Link
                 key={game.bgg_id}
                 href={`/game/${game.bgg_id}`}
                 className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5 group flex flex-col justify-between"
               >
-                <div className="h-56 sm:h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative border-b border-gray-100">
+                <div className="h-36 sm:h-40 bg-gray-100 flex items-center justify-center overflow-hidden relative border-b border-gray-100">
+                  <span className="absolute top-2 left-2 z-10 bg-gray-900/85 text-white font-extrabold text-[11px] px-2 py-0.5 rounded-md shadow-xs">
+                    #{index + 1}
+                  </span>
                   {game.thumbnail && (
                     <img
                       src={(game as { image?: string }).image || game.thumbnail}
@@ -70,13 +73,13 @@ export default async function Home() {
                     />
                   )}
                 </div>
-                <div className="p-4 flex-1 flex flex-col justify-between">
-                  <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors truncate text-base">
+                <div className="p-3 flex-1 flex flex-col justify-between">
+                  <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors truncate text-sm">
                     {game.name}
                   </h3>
-                  <div className="flex items-center justify-between text-xs text-gray-500 mt-3 pt-2 border-t border-gray-100">
-                    <span>Complejidad: {game.weight || 2.5} / 5</span>
-                    <span className="text-indigo-600 font-bold group-hover:underline">Comparar precios →</span>
+                  <div className="flex items-center justify-between text-[11px] text-gray-500 mt-2 pt-2 border-t border-gray-100">
+                    <span>Peso: {game.weight ? Number(game.weight).toFixed(1) : '2.5'} / 5</span>
+                    <span className="text-indigo-600 font-bold group-hover:underline">Ver →</span>
                   </div>
                 </div>
               </Link>
@@ -87,8 +90,12 @@ export default async function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white border-t border-gray-800 py-6 px-6 text-center text-xs text-gray-500">
-        <p>© 2026 MeeplePrecios México. Todos los derechos reservados.</p>
+      <footer className="bg-gray-900 text-white border-t border-gray-800 py-8 px-6 text-center text-xs text-gray-500">
+        <p className="mb-3">© 2026 MeeplePrecios México. Comparador independiente de precios en $ MXN.</p>
+        <div className="flex justify-center gap-6 text-gray-400 font-medium">
+          <Link href="/merchant/onboard" className="hover:text-gray-300 transition-colors">¿Eres una tienda de juegos? Únete como socio</Link>
+          <Link href="/merchant/dashboard" className="hover:text-gray-300 transition-colors">Portal de socios</Link>
+        </div>
       </footer>
 
     </div>

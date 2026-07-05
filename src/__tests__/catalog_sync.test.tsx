@@ -66,6 +66,7 @@ describe('US-09: Automated Catalog Sync via XML/CSV Feeds', () => {
       price: 39.95,
       stock: 1, // 'in stock' maps to 1 or default inventory > 0
       ean: '8435407624108',
+      language: 'es',
     });
 
     expect(items[1]).toEqual({
@@ -74,6 +75,7 @@ describe('US-09: Automated Catalog Sync via XML/CSV Feeds', () => {
       price: 24.95,
       stock: 0, // 'out of stock' maps to 0
       ean: '8435407623101',
+      language: 'es',
     });
   });
 

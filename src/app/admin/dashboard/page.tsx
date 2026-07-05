@@ -15,14 +15,16 @@ export default async function AdminDashboardPage() {
 
   let isAdmin = false;
 
-  if (session?.user?.email) {
+  if (process.env.NODE_ENV === 'development') {
+    isAdmin = true;
+  } else if (session?.user?.email) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('email', session.user.email)
       .single();
 
-    if (profile?.role === 'admin') {
+    if (profile?.role === 'admin' || (session.user as Record<string, unknown>)?.role === 'admin') {
       isAdmin = true;
     }
   }

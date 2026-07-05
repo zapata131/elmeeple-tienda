@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { MOCK_GAMES } from '@/utils/mockData';
 
 interface GameSuggestion {
   type: 'game';
@@ -63,9 +62,9 @@ export function SearchBar() {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         if (res.ok) {
           const data = await res.json();
-          const gList: GameSuggestion[] = (data.games || []).map((g: RawGame) => ({ ...g, type: 'game' }));
-          const sList: StoreSuggestion[] = (data.stores || []).map((s: RawStore) => ({ ...s, type: 'store' }));
-          const cList: CategorySuggestion[] = (data.categories || []).map((c: RawCategory) => ({ ...c, type: 'category' }));
+          const gList: GameSuggestion[] = (data.games || []).slice(0, 6).map((g: RawGame) => ({ ...g, type: 'game' }));
+          const sList: StoreSuggestion[] = (data.stores || []).slice(0, 3).map((s: RawStore) => ({ ...s, type: 'store' }));
+          const cList: CategorySuggestion[] = (data.categories || []).slice(0, 4).map((c: RawCategory) => ({ ...c, type: 'category' }));
 
           setGames(gList);
           setStores(sList);
@@ -128,31 +127,11 @@ export function SearchBar() {
       selectItem(flattenedItems[activeIndex]);
       return;
     }
-    if (games.length > 0) {
-      router.push(`/game/${games[0].bgg_id}`);
-      return;
-    }
-    if (stores.length > 0) {
-      router.push(`/store/${stores[0].id}`);
-      return;
-    }
 
     const trimmed = query.trim();
     if (!trimmed) return;
 
-    const numericId = parseInt(trimmed, 10);
-    if (!isNaN(numericId) && numericId > 0) {
-      router.push(`/game/${numericId}`);
-      return;
-    }
-
-    const exactMatch = MOCK_GAMES.find((g) => g.name.toLowerCase() === trimmed.toLowerCase());
-    if (exactMatch) {
-      router.push(`/game/${exactMatch.bgg_id}`);
-      return;
-    }
-
-    // Non-exact or general search query routes to dedicated viable options page
+    // Navigate directly to dedicated search results page to display all actual search hits
     router.push(`/search?q=${encodeURIComponent(trimmed)}`);
   };
 

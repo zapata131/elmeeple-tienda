@@ -52,4 +52,18 @@ describe('US-74: Dedicated Search Results Page for Non-Exact Queries', () => {
 
     expect(mockPush).toHaveBeenCalledWith('/search?q=estrategia%20gal%C3%A1ctica');
   });
+
+  it('routes unselected autocomplete query submission directly to /search?q=... instead of jumping to first game', async () => {
+    render(<SearchBar />);
+    const input = screen.getByPlaceholderText(/Buscar juegos de mesa/i);
+    fireEvent.change(input, { target: { value: 'Arcs' } });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Arcs')).toBeInTheDocument();
+    });
+
+    // Submitting form without pressing arrow down or clicking activeIndex
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+    expect(mockPush).toHaveBeenCalledWith('/search?q=Arcs');
+  });
 });

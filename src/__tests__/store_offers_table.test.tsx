@@ -59,4 +59,46 @@ describe('US-32 (Issue #35): Tactile Regional Domestic Filtering Toggle', () => 
     );
     expect(screen.getByText('Ludotek Madrid')).toBeInTheDocument();
   });
+
+  it('sorts out-of-stock offers to the bottom below all in-stock offers', () => {
+    const mixedOffers: ComparisonOffer[] = [
+      {
+        id: 'off-cheap-oos',
+        store_id: 'store-mx-1',
+        store_name: 'Tienda Agotada Barata',
+        store_logo: null,
+        price: 100,
+        stock: 0,
+        edition_language: 'es',
+        shippingCost: 0,
+        totalCost: 100,
+      },
+      {
+        id: 'off-pricier-in-stock',
+        store_id: 'store-mx-2',
+        store_name: 'Tienda En Stock',
+        store_logo: null,
+        price: 200,
+        stock: 5,
+        edition_language: 'es',
+        shippingCost: 0,
+        totalCost: 200,
+      },
+    ];
+
+    render(
+      <StoreOffersComparisonTable
+        offers={mixedOffers}
+        bggId={101}
+        gameName="Wingspan"
+        selectedCountry="MX"
+      />
+    );
+
+    const rows = screen.getAllByTestId(/^store-offer-row-/);
+    expect(rows).toHaveLength(2);
+    // First row should be Tienda En Stock despite being $200 vs $100
+    expect(rows[0]).toHaveTextContent('Tienda En Stock');
+    expect(rows[1]).toHaveTextContent('Tienda Agotada Barata');
+  });
 });

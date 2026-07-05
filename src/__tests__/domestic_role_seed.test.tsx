@@ -54,11 +54,11 @@ describe('US-18 Domestic Toggle, US-25 Language & Role Switcher, US-26 Rich Mock
   });
 
   describe('seedMockData Utility', () => {
-    it('seeds 12+ stores and 20+ board games with authentic BGG cover images', async () => {
+    it('seeds 5 verified Mexican stores and 20+ board games with authentic BGG cover images', async () => {
       const stats = await seedMockData();
-      expect(stats.storesCount).toBeGreaterThanOrEqual(12);
+      expect(stats.storesCount).toBe(5);
       expect(stats.gamesCount).toBeGreaterThanOrEqual(20);
-      expect(stats.offersCount).toBeGreaterThanOrEqual(40);
+      expect(stats.offersCount).toBeGreaterThanOrEqual(20);
 
       expect(mockClient.from).toHaveBeenCalledWith('stores');
       expect(mockClient.from).toHaveBeenCalledWith('bgg_games_cache');

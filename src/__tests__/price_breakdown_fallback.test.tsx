@@ -54,8 +54,8 @@ describe('US-28: Brettspielpreise-Style 3-Part Price Breakdown & Offline Fallbac
       expect(screen.getAllByText(/Coste total/i).length).toBeGreaterThanOrEqual(1);
 
       // Check fallback stores appear
-      expect(screen.getByText(/El Duende Juegos CDMX/i)).toBeInTheDocument();
-      expect(screen.getByText(/La Caravana Gamelab/i)).toBeInTheDocument();
+      expect(screen.getByText(/Ficha y Dado/i)).toBeInTheDocument();
+      expect(screen.getByText(/Mundo Meeple Store/i)).toBeInTheDocument();
     });
   });
 });

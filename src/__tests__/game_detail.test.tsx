@@ -19,7 +19,7 @@ jest.mock('@/lib/queries', () => ({
     {
       id: 'off-1',
       store_id: 'store-mx-01',
-      store_name: 'El Duende Juegos CDMX',
+      store_name: 'Ficha y Dado',
       store_logo: null,
       store_country: 'MX',
       price: 749.00,
@@ -46,7 +46,7 @@ describe('Redesigned Full-Width GameDetailPage', () => {
     render(jsx);
 
     expect(screen.getByText('Catan Español')).toBeInTheDocument();
-    expect(screen.getByText('El Duende Juegos CDMX')).toBeInTheDocument();
+    expect(screen.getByText('Ficha y Dado')).toBeInTheDocument();
     expect(screen.getByText(/749\.00/)).toBeInTheDocument();
   });
 });

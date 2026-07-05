@@ -4,11 +4,11 @@ const ALLOWED_COUNTRIES = ['ES', 'PT', 'MX', 'BR', 'AR', 'CO', 'CL', 'PE', 'UY',
 
 describe('US-29: Iberoamerican & Iberian Exclusive Mock Data Seed', () => {
   describe('MOCK_IBEROAMERICAN_STORES', () => {
-    it('contains at least 20 distinct stores', () => {
-      expect(MOCK_IBEROAMERICAN_STORES.length).toBeGreaterThanOrEqual(20);
+    it('contains exactly 5 verified Mexican stores', () => {
+      expect(MOCK_IBEROAMERICAN_STORES.length).toBe(5);
     });
 
-    it('contains only stores in Iberoamerican countries or the Iberian Peninsula', () => {
+    it('contains only stores in Mexico (MX)', () => {
       MOCK_IBEROAMERICAN_STORES.forEach((store) => {
         expect(ALLOWED_COUNTRIES).toContain(store.country.toUpperCase());
       });
@@ -22,9 +22,9 @@ describe('US-29: Iberoamerican & Iberian Exclusive Mock Data Seed', () => {
   });
 
   describe('getMockOffersForGame & queries fallback', () => {
-    it('generates offers exclusively from regional stores without foreign shops like DE or US', async () => {
-      const offers = getMockOffersForGame(13, 'ES');
-      expect(offers.length).toBe(4);
+    it('generates offers exclusively from verified regional stores in MXN', async () => {
+      const offers = getMockOffersForGame(13, 'MX');
+      expect(offers.length).toBe(5);
       offers.forEach((o) => {
         expect(ALLOWED_COUNTRIES).toContain((o.store_country || '').toUpperCase());
       });

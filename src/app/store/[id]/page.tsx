@@ -2,6 +2,7 @@ import React from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { Toolbar } from '@/components/Toolbar';
 import Link from 'next/link';
+import { MOCK_IBEROAMERICAN_STORES } from '@/utils/mockData';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
@@ -17,9 +18,10 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ id
     .eq('id', storeId)
     .single();
 
-  const storeName = storeData?.name || (storeId === '11111111-1111-1111-1111-111111111101' ? 'Zygomatic España' : `Tienda Asociada #${storeId.slice(0, 6)}`);
-  const baseUrl = storeData?.base_url || 'https://example.com';
-  const country = storeData?.country || 'MX';
+  const mockMatch = MOCK_IBEROAMERICAN_STORES.find((s) => s.id === storeId);
+  const storeName = storeData?.name || mockMatch?.name || (storeId === '11111111-1111-1111-1111-111111111101' ? 'Zygomatic España' : `Tienda Asociada #${storeId.slice(0, 6)}`);
+  const baseUrl = storeData?.base_url || mockMatch?.website || 'https://fichaydado.com';
+  const country = storeData?.country || mockMatch?.country || 'MX';
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">

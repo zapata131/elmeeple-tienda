@@ -438,6 +438,7 @@ export function getMockOffersForGame(bggId: number, countryCode: string) {
       edition_language,
       shipping_flat,
       shipping_free_threshold,
+      is_featured: idx === 0,
     };
   });
 }

@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { Toolbar } from '@/components/Toolbar';
 import { MerchantAnalyticsCharts, ClickLogItem } from '@/components/MerchantAnalyticsCharts';
+import { MerchantFeaturedDealsPanel } from '@/components/MerchantFeaturedDealsPanel';
 import Link from 'next/link';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
@@ -44,6 +45,40 @@ export default async function MerchantDashboardPage() {
 
   const clicks = (clicksData as unknown as ClickLogItem[]) || [];
   const clicksCount = clicks.length;
+
+  // Fetch store deals for sponsored placement management
+  const { data: storeGamesData } = await supabase
+    .from('store_games')
+    .select(`
+      id,
+      bgg_id,
+      price,
+      stock,
+      is_featured,
+      bgg_games_cache (
+        name
+      )
+    `)
+    .eq('store_id', store.id)
+    .limit(10);
+
+  const initialDeals = (storeGamesData && Array.isArray(storeGamesData) && storeGamesData.length > 0)
+    ? storeGamesData.map((g: Record<string, unknown>) => {
+        const cache = g.bgg_games_cache as { name?: string } | null;
+        return {
+          id: String(g.id || ''),
+          bgg_id: Number(g.bgg_id || 0),
+          game_name: cache?.name || `Juego #${g.bgg_id}`,
+          price: Number(g.price || 39.90),
+          stock: Number(g.stock || 5),
+          is_featured: !!g.is_featured,
+        };
+      })
+    : [
+        { id: 'deal-default-1', bgg_id: 13, game_name: 'Catan Español', price: 37.50, stock: 12, is_featured: true },
+        { id: 'deal-default-2', bgg_id: 266192, game_name: 'Wingspan Edición Española', price: 49.90, stock: 8, is_featured: false },
+        { id: 'deal-default-3', bgg_id: 167791, game_name: 'Terraforming Mars', price: 54.95, stock: 4, is_featured: false },
+      ];
 
   // Mock standard CTR ratio based on industry averages (4.2% click through rate)
   const ctrRatio = clicksCount > 0 ? '4.2%' : '0.0%';
@@ -120,6 +155,9 @@ export default async function MerchantDashboardPage() {
           </div>
 
         </div>
+
+        {/* Sponsored Featured Store Placements Panel (US-41) */}
+        <MerchantFeaturedDealsPanel storeId={store.id} initialDeals={initialDeals} />
 
         {/* Interactive Analytics Charts, Top Games, and UTM Guide */}
         <MerchantAnalyticsCharts clicks={clicks} storeUrl={store.base_url || 'https://tutienda.es'} />

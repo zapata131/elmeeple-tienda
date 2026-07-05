@@ -110,6 +110,11 @@ We strictly adhere to the visual design system of **El Meeple** to ensure a prem
 *   **Cookie Syncing:** Changing the country or currency in the settings toolbar writes key-value configuration cookies directly to the client browser context (`meeple_country` and `meeple_currency`) with a 1-year max age limit.
 *   **SSR Reading:** During Server-Side Rendering (SSR) pages (like `/game/[id]`), the values are retrieved using Next.js `cookies()` headers adapter to dynamically fetch country-specific shipping flat rates and trigger currency conversions on the fly.
 
+### 5.3 Sponsored Featured Store Placement & Priority Sorting (US-41)
+*   **Data Model & Offer Sorting:** Offers queried via `store_games` include an optional `is_featured` boolean attribute. In `StoreOffersComparisonTable.tsx`, offers are partitioned such that featured placements (`is_featured: true`) always render at the top of the comparison list, sorted among themselves by ascending `totalCost`, followed by non-featured offers sorted by ascending `totalCost`.
+*   **Visual Tokens & Badge Standards:** Featured offers display a sentence-case badge (`★ Tienda recomendada`) styled with official Malva Suave tokens (`bg-[#8367C7]/15 text-[#8367C7] border border-[#8367C7]/30`) and crisp inline SVG vectors without raw unicode emojis.
+*   **Self-Serve Merchant Management:** Store partners can manage sponsored featured placements directly within `/merchant/dashboard` via `MerchantFeaturedDealsPanel.tsx`, utilizing accessible tactile toggle controls (`role="switch"`).
+
 
 
 ---

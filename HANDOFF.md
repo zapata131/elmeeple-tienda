@@ -1,37 +1,39 @@
-# Handoff Sprint Memo: MeeplePrecios (Milestone 12: Admin Navigation Direct Link & Sentence Case Linter Suite Completed)
+# Handoff Sprint Memo: MeeplePrecios (Milestone 13: Sponsored Featured Store Placements Completed)
 
-This memo summarizes the architectural planning, TDD verification, and completed execution of **Milestone 12 (Issues #54 & #55 / US-39 & US-40)** on the board game price comparison platform across the Iberian Peninsula (Spain, Portugal) and Latin America.
+This memo summarizes the architectural planning, TDD verification, and completed execution of **Milestone 13 (Issue #58 / US-41)** on the board game price comparison platform across the Iberian Peninsula (Spain, Portugal) and Latin America.
 
 ---
 
 ## 1. Repository & Branch Details
 *   **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-*   **Active Branch:** `feature/issue-55-sentence-case-linter` (PR pending merge into `main`)
-*   **Completed Issues in Milestone 12:**
-    *   Issue #54 (`[US-39] Admin direct link in toolbar instead of partner panel`) - Completed & merged into `main` (PR #56)
-    *   Issue #55 (`[US-40] Automated sentence case linter suite and UI style harmonization`) - Completed & PR pending merge
-*   **Completed Deliverables (Issue #55):**
-    *   [src/__tests__/sentence_case_style.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/sentence_case_style.test.tsx): Created dedicated verification suite validating that key UI components (`CatalogView`, `StoreOffersComparisonTable`, `StoreReviewPanel`, `CartOptimizerPanel`) adhere to Google Developer Documentation Style Guide sentence case rules and contain no banned Title Case strings.
-    *   [src/components/StoreOffersComparisonTable.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/StoreOffersComparisonTable.tsx), [src/components/StoreReviewPanel.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/StoreReviewPanel.tsx), [src/components/CatalogView.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/CatalogView.tsx), [src/components/CartOptimizerPanel.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/CartOptimizerPanel.tsx): Harmonized headings, buttons, badges (`★ Mejor precio actual`, `★ Récord mínimo histórico`, `★ Mínimo histórico`), and labels to strict sentence case and added protective array fallbacks (`categories || []`).
-    *   **Verification Gate:** 100% clean ESLint (**0 errors, 0 warnings**), 100% green unit test suite (**38 suites, 145 tests passed**), clean production build, and 100% passing Playwright E2E suites (**6 suites passed** across desktop and mobile viewports).
+*   **Active Branch:** `main` (Issue #58 completed, PR merged into `main`)
+*   **Completed Issues in Milestone 13:**
+    *   Issue #58 (`[US-41] Sponsored featured store placement in comparison table`) - Completed & merged into `main`
+*   **Completed Deliverables (Issue #58 / US-41):**
+    *   [src/__tests__/featured_store_placement.test.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/__tests__/featured_store_placement.test.tsx): Created dedicated TDD verification suite validating priority table sorting for `is_featured: true` offers, sentence-case badge rendering (`★ Tienda recomendada`), accessible tactile switches (`role="switch"`), and zero raw unicode emoji leakage.
+    *   [e2e/sponsored_placements.spec.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/e2e/sponsored_placements.spec.ts): Created E2E replay script validating top positioning of featured offers in game comparison tables and merchant dashboard access rules.
+    *   [src/components/MerchantFeaturedDealsPanel.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/MerchantFeaturedDealsPanel.tsx): Implemented self-serve merchant panel in `/merchant/dashboard` for store owners to toggle sponsored featured placements on their catalog deals.
+    *   [src/components/StoreOffersComparisonTable.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/StoreOffersComparisonTable.tsx), [src/lib/queries.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/lib/queries.ts), [src/utils/mockData.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/utils/mockData.ts): Integrated `is_featured` sorting and badge rendering.
+    *   **Verification Gate:** 100% clean ESLint (**0 errors, 0 warnings**), 100% green unit test suite (**39 suites, 149 tests passed**), clean production build, and 100% passing Playwright E2E suites (**8 suites passed** across desktop and mobile viewports).
 
 ---
 
 ## 2. Milestone and Task Progress
 
-### Milestone 1 to Milestone 11: MVP Core Platform, Affiliate Analytics, Zero Emojis & Best-Price Badges [100% COMPLETED]
-*   [x] Predictive autocomplete search (`US-01`, `US-19`), game catalog filters (`US-04`), multi-game cart optimizer (`US-17`, `US-23`), regional shipping matrices (`US-03`, `US-08`), background XML feed sync & diagnostics (`US-09`, `US-12`, `US-14`), BGG metadata resolution (`US-15`, `US-16`), restock alerts (`US-24`), store reviews & vibe badges (`US-22`), foreign exchange rate caching (`US-13`), multi-region mock data seeding (`US-26`), navbar identity (`US-30`), layout SEO targeting (`US-31`), regional domestic tactile switches (`US-32`), edition language badges (`US-33`), system-wide emoji eradication (`US-34`, `US-37`), BGG wishlist sync (`US-35`), consolidated regional toggles (`US-36`), affiliate analytics dashboard (`US-10`), code quality audit (`Issue #48`), and historical best-price deal badges (`US-38`).
+### Milestone 1 to Milestone 12: MVP Core Platform, Affiliate Analytics, Zero Emojis, Best-Price Badges & Sentence Case Linter [100% COMPLETED]
+*   [x] Predictive autocomplete search (`US-01`, `US-19`), game catalog filters (`US-04`), multi-game cart optimizer (`US-17`, `US-23`), regional shipping matrices (`US-03`, `US-08`), background XML feed sync & diagnostics (`US-09`, `US-12`, `US-14`), BGG metadata resolution (`US-15`, `US-16`), restock alerts (`US-24`), store reviews & vibe badges (`US-22`), foreign exchange rate caching (`US-13`), multi-region mock data seeding (`US-26`), navbar identity (`US-30`), layout SEO targeting (`US-31`), regional domestic tactile switches (`US-32`), edition language badges (`US-33`), system-wide emoji eradication (`US-34`, `US-37`), BGG wishlist sync (`US-35`), consolidated regional toggles (`US-36`), affiliate analytics dashboard (`US-10`), code quality audit (`Issue #48`), historical best-price deal badges (`US-38`), admin direct link (`US-39`), and automated sentence case linter suite (`US-40`).
 
-### Milestone 12: Admin Navigation Direct Link & Automated Sentence Case Linter Suite [100% COMPLETED]
-*   [x] **US-39 (Issue #54) Admin Direct Link in Toolbar:** Completed and merged (PR #56).
-*   [x] **US-40 (Issue #55) Automated Sentence Case Linter Suite & UI Harmonization:** Completed and verified (PR pending merge).
+### Milestone 13: Partner & Technical Monetization / Reliability [IN PROGRESS]
+*   [x] **US-41 (Issue #58) Sponsored Featured Store Placement in Comparison Table:** Completed, verified, and merged.
+*   [ ] **US-42 (Issue #59) Automated feed failure webhook and email alerts to merchants:** Planned next.
+*   [ ] **US-43 (Issue #60) Affiliate link-rot and 404 monitor (dead link checker):** Planned.
 
 ---
 
 ## 3. Four-Tier Test Suite Status
-*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% green (`npm run test -- --runInBand --forceExit`: 38 suites, 145 tests passed).
+*   **Tier 1 & 2 Unit/Integration Tests (Jest):** 100% green (`npm run test -- --runInBand --forceExit`: 39 suites, 149 tests passed).
 *   **Tier 3 Live Browser Audits (DevTools for Agents):** Visual layouts and sentence case compliance verified on live UI components.
-*   **Tier 4 Automated Replay Scripts (Playwright CLI):** E2E walkthrough suites (`npm run test:e2e`) passing 100% cleanly across desktop and mobile viewports (6/6 tests passed).
+*   **Tier 4 Automated Replay Scripts (Playwright CLI):** E2E walkthrough suites (`npm run test:e2e`) passing 100% cleanly across desktop and mobile viewports (8/8 tests passed).
 *   **Full Verification Gate (`npm run verify`):** 100% clean build, zero TypeScript errors, and zero linting violations.
 
 ---
@@ -46,14 +48,14 @@ This memo summarizes the architectural planning, TDD verification, and completed
 *   `#52` [US-38: Historical Best-Price Deal Badge and Market Bargain Indicator for Players](https://github.com/zapata131/elmeeple-tienda/issues/52) [COMPLETED]
 *   `#54` [US-39: Admin direct link in toolbar instead of partner panel](https://github.com/zapata131/elmeeple-tienda/issues/54) [COMPLETED - PR #56 Merged]
 *   `#55` [US-40: Automated sentence case linter suite and UI style harmonization](https://github.com/zapata131/elmeeple-tienda/issues/55) [COMPLETED - PR #57 Merged]
-*   `#58` [US-41: Sponsored featured store placement in comparison table](https://github.com/zapata131/elmeeple-tienda/issues/58) [PLANNED - Milestone 13]
-*   `#59` [US-42: Automated feed failure webhook and email alerts to merchants](https://github.com/zapata131/elmeeple-tienda/issues/59) [PLANNED - Milestone 13]
-*   `#60` [US-43: Affiliate link-rot and 404 monitor (dead link checker)](https://github.com/zapata131/elmeeple-tienda/issues/60) [PLANNED - Milestone 13]
+*   `#58` [US-41: Sponsored featured store placement in comparison table](https://github.com/zapata131/elmeeple-tienda/issues/58) [COMPLETED - Merged]
+*   `#59` [US-42: Automated feed failure webhook and email alerts to merchants](https://github.com/zapata131/elmeeple-tienda/issues/59) [PLANNED - Next Sprint Target]
+*   `#60` [US-43: Affiliate link-rot and 404 monitor (dead link checker)](https://github.com/zapata131/elmeeple-tienda/issues/60) [PLANNED]
 
 ---
 
 ## 5. Next Steps
-1.  **Execute Milestone 13 (Partner & Technical Monetization / Reliability):**
-    *   Start execution of **Issue #58 (US-41)** by branching off `main` to `feature/issue-58-sponsored-placement` following TDD and conventional commits.
-    *   Proceed sequentially with **Issue #59 (US-42)** (Feed failure email alerts) and **Issue #60 (US-43)** (Affiliate dead link monitor).
-
+1.  **Execute Issue #59 (US-42):**
+    *   Checkout dedicated feature branch `feature/issue-59-feed-failure-alerts` off updated `main`.
+    *   Implement TDD suite for daily cron feed sync email alerts and webhook notifications.
+    *   Run `npm run verify` and `npm run test:e2e`, open PR, and merge into `main`.

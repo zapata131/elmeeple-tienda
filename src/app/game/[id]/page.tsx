@@ -80,11 +80,7 @@ export default async function GameDetailPage({ params }: Props) {
 
           {/* Game Title, Synopsis, and Stats Strip */}
           <div className="flex-1 flex flex-col justify-between h-full min-w-0">
-            <div>
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <span className="bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-extrabold px-2.5 py-0.5 rounded-full">
-                  Edición verificada en México 🇲🇽
-                </span>
+              <div className="mb-2">
                 <span className="text-xs text-gray-400 font-mono">BGG ID: {game.bgg_id}</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
@@ -95,7 +91,6 @@ export default async function GameDetailPage({ params }: Props) {
                   {game.description}
                 </p>
               )}
-            </div>
 
             {/* Stats Pill Strip */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-4 border-t border-gray-150">

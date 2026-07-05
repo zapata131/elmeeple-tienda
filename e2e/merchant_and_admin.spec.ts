@@ -20,12 +20,7 @@ test.describe('E2E Walkthrough: Merchant Services and Global Administration Port
     const diagHeader = page.locator('h2', { hasText: /Acceso Restringido|Diagnóstico de Feed/i });
     await expect(diagHeader).toBeVisible();
 
-    // 4. Visit Global Admin Currency Manager
-    await page.goto('/admin/currency');
-    const currencyHeader = page.locator('h2', { hasText: /Acceso Restringido|Gestión de Tipos de Cambio/i });
-    await expect(currencyHeader).toBeVisible();
-
-    // 5. Visit Global Admin Feed Queue Monitor
+    // 4. Visit Global Admin Feed Queue Monitor
     await page.goto('/admin/queue');
     const queueHeader = page.locator('h2', { hasText: /Acceso Restringido|Monitor de Cola de Metadatos/i });
     await expect(queueHeader).toBeVisible();

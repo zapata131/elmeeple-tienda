@@ -77,7 +77,7 @@ All AI agents working within this workspace **must** utilize our modular skills 
 
 ### 3.2 The UX Expert (Product Design & Copywriting)
 *   **Objective:** Audit layouts, typography, navigation paths, and copy consistency to deliver a premium, low-friction user experience.
-*   **Visual Guidelines:** Minimalist layout, highly legible typography, brand palette (Blanco Roto, Carbón, Malva, Turquesa, Coral). Absolute ban on raw emojis in user-facing components; use clean SVG vectors instead.
+*   **Visual Guidelines:** Minimalist layout, highly legible typography, brand palette (Blanco Roto, Carbón, Malva, Turquesa, Coral). **Wise Strategic Emoji Guidance:** Emojis (e.g., 🇲🇽, 🎲, ⭐, 📦) may be used thoughtfully across user-facing components and documentation to add warmth and clarity without cluttering functional data tables.
 
 ### 3.3 The Builder (TDD & Implementation)
 *   **Objective:** Write tests first (TDD), implement the minimal code required to pass them, and refactor for cleanliness.
@@ -111,10 +111,6 @@ graph TD
 *   **Game Name Matching:** Online shops frequently list the same game with minor naming differences (e.g., *Catan*, *Catan: El Juego*, *Los Colonos de Catan*).
     *   *Convention:* Match games using barcode (EAN/UPC) first. If EAN is unavailable, query `bgg_games_cache` and its `alternate_names` text array using case-insensitive SQL matching.
 
-### 5.2 Currency Conversion and Exchange Rates
-*   **FX Rate Fluctuations:** Fetching external conversion rates on every client page render increases latency and network overhead.
-    *   *Convention:* Store exchange rates locally in the `exchange_rates` relation with a 24-hour expiration. Conversion calculations on the user interface query PostgreSQL cached rates only.
-
 ### 5.3 Test Optimization and Execution (TDD)
 *   **JSDOM Memory Bloat with Jest:** Running JSDOM test suites in parallel can exhaust Node memory in sandboxed environments.
     *   *Convention:* Always run Jest tests in serial mode: `npm run test -- --runInBand --forceExit`.
@@ -134,15 +130,9 @@ graph TD
 *   **Playwright Strict Mode Violations on Multiple Heading Matches:** Combining locators like `resultsSection.or(warningSection)` when both elements render simultaneously causes strict mode errors.
     *   *Convention:* Target unambiguous, singular container elements or use precise `.first()` / scoped locators when validating conditional rendering states.
 
-### 5.6 Server Component Testing, Layout SEO Targeting & Emoji Eradication Conventions
+### 5.5 Server Component Testing & Layout SEO Targeting
 *   **Async Server Components in Jest JSDOM & Layout SEO Targeting:** Testing async Server Components like `Home` (`page.tsx`) or dynamic metadata generators (`src/app/layout.tsx`, `src/app/game/[id]/page.tsx`) that query Supabase without mocks can cause 5000ms test timeouts or unhandled rejection warnings during rendering.
-    *   *Convention:* Always mock `@supabase/supabase-js` or provide deterministic instant return fallbacks inside Jest suites when rendering async Server Components. For SEO verification (`seo_metadata.test.tsx`), explicitly test exported `metadata` or `generateMetadata` return structures ensuring proper page title templates (`%s | MeeplePrecios`), descriptions, and OpenGraph/Twitter card tags targeting Latin American and Iberian marketplaces.
-*   **System-Wide Emoji Eradication & Vector SVG Edition Badges:** When validating zero raw unicode emoji leakage across DOM containers, string searching against a single character can miss subtle unicode symbols (like `⚡` or flags).
-    *   *Convention:* Maintain a comprehensive `BANNED_EMOJIS` array in unit tests (`src/__tests__/emoji_eradication.test.tsx`) and loop over `container.textContent` asserting `expect(textContent).not.toContain(emoji)`. Replace all status icons, flags, and decorative elements with clean inline SVG vector paths or standardized typographic edition badges (`renderEditionBadge` in `StoreOffersComparisonTable.tsx`) styled with official color tokens (`#8367C7`, `#73D8D4`, `#FF9E8A`).
-
-### 5.7 BGG Wishlist Dual-Endpoint Collection Sync & Discount Alert Deprecation
-*   **Dual-Endpoint XML Fetching & Null Target Prices:** When importing user wishlists from BoardGameGeek API v2 (`/xmlapi2/collection`), items in user profiles are frequently split across `wishlist=1` (priority items) and `wanttobuy=1` (immediate purchase intents). Furthermore, coupling wishlist sync with arbitrary target discount thresholds creates UI friction and redundant user inputs.
-    *   *Convention:* Always iterate over both endpoints (`wishlist=1` and `wanttobuy=1`) in sequential order during collection sync (`POST /api/user/sync-bgg`) to capture the full union of desired games. Store all synchronized items in `price_alerts` with `target_price: null`. When querying or rendering user alert records, guard against empty array returns (`if (error || !data || (Array.isArray(data) && data.length === 0))`) before falling back to local fallback wishlists (`FALLBACK_WISHLIST`), and display direct Best Price CTAs (`Ver Ofertas`) without discount target comparison grids.
+    *   *Convention:* Always mock `@supabase/supabase-js` or provide deterministic instant return fallbacks inside Jest suites when rendering async Server Components. For SEO verification (`seo_metadata.test.tsx`), explicitly test exported `metadata` or `generateMetadata` return structures ensuring proper page title templates (`%s | MeeplePrecios`), descriptions, and OpenGraph/Twitter card tags targeting Latin American marketplaces.
 
 
 ### 5.8 Contextual Filter Placement vs Global Header Navigation (US-36)

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { RestockAlertButton } from './RestockAlertButton';
 
 export interface ComparisonOffer {
   id: string;
@@ -319,11 +318,7 @@ export default function StoreOffersComparisonTable({
                           Ir a la tienda
                         </a>
                       ) : (
-                        <RestockAlertButton
-                          bggId={bggId}
-                          gameName={gameName}
-                          userEmail="player@meeple.com"
-                        />
+                        <span className="text-xs text-gray-400 font-semibold">Agotado en tienda</span>
                       )}
                     </td>
                   </tr>

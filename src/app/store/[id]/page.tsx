@@ -1,21 +1,11 @@
 import React from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { StoreReviewPanel, StoreReviewItem } from '@/components/StoreReviewPanel';
 import { Toolbar } from '@/components/Toolbar';
 import Link from 'next/link';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-interface StoreReviewRow {
-  id: string;
-  user_name: string;
-  rating: number;
-  tags: string[];
-  comment: string;
-  created_at: string;
-}
 
 export default async function StoreDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -28,39 +18,8 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ id
     .single();
 
   const storeName = storeData?.name || (storeId === '11111111-1111-1111-1111-111111111101' ? 'Zygomatic España' : `Tienda Asociada #${storeId.slice(0, 6)}`);
-
-  // Fetch reviews
-  const { data: dbReviews } = await supabase
-    .from('store_reviews')
-    .select('id, store_id, user_name, rating, tags, comment, created_at')
-    .eq('store_id', storeId);
-
-  let rows = dbReviews || [];
-  if (rows.length === 0 && storeId === '11111111-1111-1111-1111-111111111101') {
-    rows = [
-      { id: 'rev-1', store_id: storeId, user_name: 'Sofía M.', rating: 5, tags: ['Esquinas Protegidas', 'Caja Doble'], comment: 'Las cajas llegaron impecables.', created_at: '2026-07-01' },
-      { id: 'rev-2', store_id: storeId, user_name: 'Mateo R.', rating: 5, tags: ['Esquinas Protegidas', 'Embalaje Ecológico'], comment: 'Cartón reciclado muy robusto.', created_at: '2026-06-28' },
-    ];
-  }
-
-  const initialReviews: StoreReviewItem[] = rows.map((r: StoreReviewRow) => ({
-    id: r.id,
-    userName: r.user_name,
-    rating: Number(r.rating),
-    tags: r.tags || [],
-    comment: r.comment,
-    createdAt: r.created_at,
-  }));
-
-  const totalRating = initialReviews.reduce((sum, r) => sum + r.rating, 0);
-  const initialAvgRating = initialReviews.length > 0 ? Number((totalRating / initialReviews.length).toFixed(1)) : 5.0;
-
-  const initialTagCounts: Record<string, number> = {};
-  for (const r of initialReviews) {
-    for (const tag of r.tags) {
-      initialTagCounts[tag] = (initialTagCounts[tag] || 0) + 1;
-    }
-  }
+  const baseUrl = storeData?.base_url || 'https://example.com';
+  const country = storeData?.country || 'MX';
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
@@ -75,7 +34,7 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ id
                 ✓ Tienda Verificada
               </span>
             </div>
-            <span className="text-xs text-gray-500 font-medium">Perfil de Vibe Tags de Embalaje & Reputación</span>
+            <span className="text-xs text-gray-500 font-medium">Socio Comercial MeeplePrecios ({country})</span>
           </div>
           <Link
             href="/catalog"
@@ -87,17 +46,29 @@ export default async function StoreDetailPage({ params }: { params: Promise<{ id
       </header>
 
       <main className="flex-1 max-w-5xl w-full mx-auto py-12 px-6">
-        <StoreReviewPanel
-          storeId={storeId}
-          storeName={storeName}
-          initialReviews={initialReviews}
-          initialAvgRating={initialAvgRating}
-          initialTagCounts={initialTagCounts}
-        />
+        <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm flex flex-col gap-6">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 mb-2">Información de la tienda</h2>
+            <p className="text-sm text-gray-600">
+              Esta tienda se encuentra verificada para ventas y envíos dentro de nuestro catálogo en México.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
+            <a
+              href={baseUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl transition-colors shadow-sm"
+            >
+              <span>Visitar sitio web oficial</span>
+            </a>
+          </div>
+        </div>
       </main>
 
       <footer className="bg-gray-900 text-white border-t border-gray-800 py-8 px-6 text-center text-xs text-gray-500 mt-12">
-        <p>© 2026 MeeplePrecios. Comparador Inteligente LATAM & Península Ibérica.</p>
+        <p>© 2026 MeeplePrecios. Comparador Inteligente de Juegos de Mesa.</p>
       </footer>
     </div>
   );

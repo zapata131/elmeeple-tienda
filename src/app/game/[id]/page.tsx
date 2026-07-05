@@ -1,7 +1,6 @@
 import React from 'react';
-import { fetchGameDetails, fetchGameOffers, fetchGameEditions, fetchPriceHistory } from '@/lib/queries';
 import Link from 'next/link';
-import { PriceChart } from '@/components/PriceChart';
+import { fetchGameDetails, fetchGameOffers, fetchGameEditions, fetchPriceHistory } from '@/lib/queries';
 import StoreOffersComparisonTable from '@/components/StoreOffersComparisonTable';
 import { Toolbar } from '@/components/Toolbar';
 
@@ -114,7 +113,6 @@ export default async function GameDetailPage({ params }: Props) {
             selectedCountry="MX"
             historicalMinPrice={historicalMinPrice}
           />
-          <PriceChart bggId={game.bgg_id} />
         </div>
 
       </main>

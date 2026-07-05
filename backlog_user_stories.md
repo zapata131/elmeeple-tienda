@@ -334,5 +334,14 @@ This document details the product planning for **MeeplePrecios**, the board game
 *   **Acceptance Criteria:**
     1. A scheduled background task periodically performs HEAD/GET requests against active `store_games.store_product_url` entries.
     2. If a link returns 404 or persistent HTTP errors, flag the record as `broken_link: true` and log it on the admin dashboard (`/admin/diagnostics`).
-*   **Status:** **[PLANNED - Issue #60]**
+*   **Status:** **[CLOSED - Non-Essential MVP]**
+
+### US-44: Lock Market Scope to Mexico and Standardize Pricing to Mexican Pesos (MXN)
+*   **Formula:** As a **Player and Merchant in Mexico**, I want **the platform to be strictly focused on the Mexican market and display all prices in Mexican Pesos ($ MXN)**, so that **I don't get distracted or confused by foreign currencies, conversion rates, or multi-country toggles**.
+*   **Status:** **[COMPLETED - Issue #62]**
+
+### US-45: Strip Non-Essential Player Features (Cart Optimizer, Price Charts, Wishlists)
+*   **Formula:** As a **Player and Product Creator**, I want **the platform stripped down to its bare minimum workable commercial MVP core (search, price comparison table, store contact/redirects)**, so that **the user experience is frictionless, fast, and completely focused on core commercial value**.
+*   **Status:** **[COMPLETED - Issue #63]**
+
 

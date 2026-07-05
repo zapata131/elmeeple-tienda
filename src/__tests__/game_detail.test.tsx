@@ -11,10 +11,7 @@ jest.mock('@/lib/queries', () => ({
   fetchPriceHistory: jest.fn().mockResolvedValue([{ min_price: 39.0, recorded_at: '2026-06-01' }]),
 }));
 
-// Mock PriceChart subcomponent
-jest.mock('@/components/PriceChart', () => ({
-  PriceChart: () => <div data-testid="mock-price-chart" />,
-}));
+
 
 // Mock next/navigation params and headers
 jest.mock('next/navigation', () => ({

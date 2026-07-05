@@ -57,7 +57,15 @@ export async function fetchGameDetails(bggId: number) {
 
 export async function fetchBggHotness() {
   try {
-    const res = await fetch('https://boardgamegeek.com/xmlapi2/hot?type=boardgame', { next: { revalidate: 3600 } });
+    const headers: HeadersInit = {};
+    const apiKey = process.env.BGG_API_KEY;
+    if (apiKey) {
+      headers['Authorization'] = `Bearer ${apiKey}`;
+    }
+    const res = await fetch('https://boardgamegeek.com/xmlapi2/hot?type=boardgame', {
+      headers,
+      next: { revalidate: 3600 },
+    });
     if (res.ok) {
       const xml = await res.text();
       const itemRegex = /<item[^>]*?id=["'](\d+)["'][^>]*?>([\s\S]*?)<\/item>/gi;

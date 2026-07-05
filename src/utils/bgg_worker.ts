@@ -104,10 +104,18 @@ export async function processMetadataQueueBatch(limit = 20) {
         }
       }
 
+      const bggHeaders: HeadersInit = {};
+      const apiKey = process.env.BGG_API_KEY;
+      if (apiKey) {
+        bggHeaders['Authorization'] = `Bearer ${apiKey}`;
+      }
+
       // 2. If not found in cache, search BGG API
       if (!targetBggId) {
         const cleanQuery = item.title.split('(')[0].split(' - ')[0].trim();
-        const searchRes = await fetch(`https://boardgamegeek.com/xmlapi2/search?query=${encodeURIComponent(cleanQuery)}&type=boardgame`);
+        const searchRes = await fetch(`https://boardgamegeek.com/xmlapi2/search?query=${encodeURIComponent(cleanQuery)}&type=boardgame`, {
+          headers: bggHeaders,
+        });
         
         if (searchRes.status === 202 || searchRes.status === 429) {
           stats.retried++;
@@ -131,7 +139,9 @@ export async function processMetadataQueueBatch(limit = 20) {
       }
 
       // 3. Fetch BGG Game Details from /thing API
-      const thingRes = await fetch(`https://boardgamegeek.com/xmlapi2/thing?id=${targetBggId}&stats=1`);
+      const thingRes = await fetch(`https://boardgamegeek.com/xmlapi2/thing?id=${targetBggId}&stats=1`, {
+        headers: bggHeaders,
+      });
       
       if (thingRes.status === 202 || thingRes.status === 429) {
         stats.retried++;

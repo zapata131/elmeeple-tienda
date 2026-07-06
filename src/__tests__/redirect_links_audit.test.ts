@@ -25,7 +25,7 @@ describe('US-90: Audit and Certify Store Redirect Links and Remove Dead Mock Ref
         if (offer.store_product_url.includes('/products/')) {
           expect(offer.store_product_url).toContain('scout-ingles');
         } else {
-          expect(offer.store_product_url).toMatch(/(search\?q=|geekystuff\.mx)/);
+          expect(offer.store_product_url).toMatch(/search\?q=/);
         }
       }
     }

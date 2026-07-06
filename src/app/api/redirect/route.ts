@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
         if (storeMatch) {
           const query = gameMatch ? encodeURIComponent(gameMatch.name) : 'juegos de mesa';
           const baseUrl = storeMatch.website;
-          const searchPath = (storeMatch.id === '11111111-1111-1111-1111-111111111105' || storeMatch.slug === 'store-mx-05') ? baseUrl : `${baseUrl}/search?q=${query}`;
+          const searchPath = `${baseUrl}/search?q=${query}`;
           const targetUrl = appendAffiliateParams(searchPath);
           return NextResponse.redirect(targetUrl, 302);
         }

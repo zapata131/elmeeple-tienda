@@ -35,7 +35,7 @@ describe('US-71: Real Feed Database Ingestion & Mock Data Deprecation', () => {
   it('seeds genuine real feed items into Supabase store_games without synthetic randomized prices', async () => {
     const stats = await seedActualFeedsIntoDatabase();
     expect(stats.success).toBe(true);
-    expect(stats.storesProcessed).toBe(8);
+    expect(stats.storesProcessed).toBe(7);
     expect(stats.totalIngested).toBeGreaterThanOrEqual(10);
   });
 
@@ -49,9 +49,9 @@ describe('US-71: Real Feed Database Ingestion & Mock Data Deprecation', () => {
     expect(rollGames?.store_product_url).toBe('https://rollgames.mx/search?q=Arcs');
   });
 
-  it('returns universal coverage across all 8 verified Mexican stores for Catan (13) with direct product URLs', () => {
+  it('returns universal coverage across all 7 verified Mexican stores for Catan (13) with direct product URLs', () => {
     const offers = getRealFeedOffersForGame(13, 'MX');
-    expect(offers).toHaveLength(8);
+    expect(offers).toHaveLength(7);
     offers.forEach((offer) => {
       expect(offer.store_product_url).toMatch(/^https:\/\//);
       expect(offer.price).toBeGreaterThan(0);
@@ -59,10 +59,10 @@ describe('US-71: Real Feed Database Ingestion & Mock Data Deprecation', () => {
     });
   });
 
-  it('attempts live paginated XML crawling across all 8 verified stores without adding non-XML items', async () => {
+  it('attempts live paginated XML crawling across all 7 verified stores without adding non-XML items', async () => {
     const stats = await seedActualFeedsIntoDatabase();
     expect(stats.success).toBe(true);
-    expect(stats.storesProcessed).toBe(8);
+    expect(stats.storesProcessed).toBe(7);
     expect(stats.totalIngested).toBeGreaterThanOrEqual(15);
   });
 });

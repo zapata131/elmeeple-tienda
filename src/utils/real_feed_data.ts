@@ -32,7 +32,6 @@ export const REAL_FEED_ITEMS_SNAPSHOT: Record<number, RealFeedOfferSnapshot[]> =
     { store_id: '11111111-1111-1111-1111-111111111102', store_name: 'Mundo Meeple Store', store_product_url: 'https://mundomeeplestore.com/search?q=Catan', price: 920.00, stock: 8, edition_language: 'es' },
     { store_id: '11111111-1111-1111-1111-111111111103', store_name: 'Roll Games', store_product_url: 'https://rollgames.mx/search?q=Catan', price: 899.00, stock: 15, edition_language: 'es' },
     { store_id: '11111111-1111-1111-1111-111111111104', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/search?q=Catan', price: 885.00, stock: 6, edition_language: 'es' },
-    { store_id: '11111111-1111-1111-1111-111111111105', store_name: 'Geeky Stuff', store_product_url: 'https://www.geekystuff.mx', price: 915.00, stock: 5, edition_language: 'es' },
     { store_id: '11111111-1111-1111-1111-111111111106', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/search?q=Catan', price: 910.00, stock: 4, edition_language: 'es' },
     { store_id: '11111111-1111-1111-1111-111111111107', store_name: 'Alfa y Delta', store_product_url: 'https://alfaydelta.com/search?q=Catan', price: 895.00, stock: 9, edition_language: 'es' },
     { store_id: '11111111-1111-1111-1111-111111111108', store_name: 'Bundaba', store_product_url: 'https://bundaba.com.mx/search?q=Catan', price: 905.00, stock: 7, edition_language: 'es' },
@@ -66,7 +65,6 @@ export const REAL_FEED_ITEMS_SNAPSHOT: Record<number, RealFeedOfferSnapshot[]> =
   ],
   // Revive (BGG ID 354570)
   354570: [
-    { store_id: '11111111-1111-1111-1111-111111111105', store_name: 'Geeky Stuff', store_product_url: 'https://www.geekystuff.mx', price: 1650.00, stock: 2, edition_language: 'es' },
     { store_id: '11111111-1111-1111-1111-111111111106', store_name: 'Quantum Boardgames', store_product_url: 'https://quantumboardgames.com/search?q=Revive', price: 1690.00, stock: 3, edition_language: 'es' },
   ],
   // Scout (BGG ID 9264692)
@@ -104,19 +102,16 @@ export async function seedActualFeedsIntoDatabase() {
   let totalIngested = 0;
 
   // 1. Ensure verified stores exist in database
-  const storesToUpsert = MOCK_IBEROAMERICAN_STORES.map((s) => {
-    const isWixStore = s.id === '11111111-1111-1111-1111-111111111105'; // Geeky Stuff
-    return {
-      id: s.id,
-      name: s.name,
-      slug: s.slug || s.id,
-      base_url: s.website,
-      google_shopping_feed_url: isWixStore ? null : `${s.website}/collections/all.atom`,
-      owner_email: `contacto@${new URL(s.website).hostname}`,
-      verified: !isWixStore,
-      feed_status: isWixStore ? 'failed' : 'success',
-    };
-  });
+  const storesToUpsert = MOCK_IBEROAMERICAN_STORES.map((s) => ({
+    id: s.id,
+    name: s.name,
+    slug: s.slug || s.id,
+    base_url: s.website,
+    google_shopping_feed_url: `${s.website}/collections/all.atom`,
+    owner_email: `contacto@${new URL(s.website).hostname}`,
+    verified: true,
+    feed_status: 'success',
+  }));
   await supabase.from('stores').upsert(storesToUpsert, { onConflict: 'id' });
 
   // 1.5. Ensure official shipping rates exist in database for Mexican stores
@@ -213,8 +208,8 @@ export async function seedActualFeedsIntoDatabase() {
     return {
       success: true,
       totalIngested: liveXmlItemsIngested,
-      storesProcessed: 8,
-      storesCount: 8,
+      storesProcessed: MOCK_IBEROAMERICAN_STORES.length,
+      storesCount: MOCK_IBEROAMERICAN_STORES.length,
       gamesCount: fileGamesMap.size,
       offersCount: fileOffersList.length,
     };
@@ -262,8 +257,8 @@ export async function seedActualFeedsIntoDatabase() {
   return {
     success: true,
     totalIngested,
-    storesProcessed: 8,
-    storesCount: 8,
+    storesProcessed: MOCK_IBEROAMERICAN_STORES.length,
+    storesCount: MOCK_IBEROAMERICAN_STORES.length,
     gamesCount: fileGamesMap.size,
     offersCount: fileOffersList.length,
   };

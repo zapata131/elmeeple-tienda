@@ -5,8 +5,8 @@ const ALLOWED_COUNTRIES = ['ES', 'PT', 'MX', 'BR', 'AR', 'CO', 'CL', 'PE', 'UY',
 
 describe('US-29: Iberoamerican & Iberian Exclusive Real Feed Data Engine', () => {
   describe('MOCK_IBEROAMERICAN_STORES', () => {
-    it('contains exactly 8 verified Mexican stores', () => {
-      expect(MOCK_IBEROAMERICAN_STORES.length).toBe(8);
+    it('contains exactly 7 verified Mexican stores', () => {
+      expect(MOCK_IBEROAMERICAN_STORES.length).toBe(7);
     });
 
     it('contains only stores in Mexico (MX)', () => {

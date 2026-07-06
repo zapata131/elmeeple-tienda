@@ -227,11 +227,19 @@ export function SearchBar() {
                       idx === activeIndex ? 'bg-indigo-50 text-indigo-900 font-bold' : 'hover:bg-gray-50 text-gray-800'
                     }`}
                   >
-                    <img
-                      src={g.thumbnail}
-                      alt={g.name}
-                      className="w-8 h-8 object-cover rounded-lg shrink-0 bg-gray-100 border border-gray-200"
-                    />
+                    <div className="w-8 h-8 rounded-lg shrink-0 bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
+                      {g.thumbnail ? (
+                        <img
+                          src={g.thumbnail}
+                          alt={g.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <svg className="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                      )}
+                    </div>
                     <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
                       <div>
                         <div className="text-xs truncate font-semibold">{g.name}</div>

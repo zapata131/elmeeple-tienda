@@ -9,6 +9,8 @@ interface GameItem {
   bgg_id: number;
   name: string;
   thumbnail: string;
+  offers_count?: number;
+  in_stock_count?: number;
 }
 
 interface StoreItem {
@@ -65,12 +67,12 @@ function SearchResultsContent() {
         <div>
           <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-600">Búsqueda en catálogo México</span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-950 mt-1">
-            {query ? `Opciones viables para "${query}"` : 'Búsqueda general'}
+            {query ? `Resultados para "${query}"` : 'Búsqueda general'}
           </h1>
           <p className="text-xs text-gray-500 mt-1">
             {isLoading
               ? 'Consultando base de datos y feeds XML en tiempo real...'
-              : `${totalResults} opción(es) encontrada(s) en juegos, tiendas y categorías.`}
+              : `${totalResults} coincidencia(s) encontrada(s) en juegos, tiendas y categorías.`}
           </p>
         </div>
       </div>
@@ -109,7 +111,7 @@ function SearchResultsContent() {
           {games.length > 0 && (
             <section className="flex flex-col gap-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <span>🎲 Juegos de mesa viables</span>
+                <span>🎲 Juegos similares</span>
                 <span className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded-full font-bold">{games.length}</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -126,12 +128,23 @@ function SearchResultsContent() {
                         <span className="text-xs text-gray-400 font-bold">BGG</span>
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[10px] text-gray-400 font-mono">BGG #{game.bgg_id}</span>
-                      <h3 className="font-bold text-sm text-gray-900 group-hover:text-indigo-600 transition-colors truncate">
-                        {game.name}
-                      </h3>
-                      <span className="text-xs font-semibold text-indigo-600 mt-1 inline-block">
+                    <div className="flex-1 min-w-0 flex flex-col justify-between">
+                      <div>
+                        <span className="text-[10px] text-gray-400 font-mono block">BGG #{game.bgg_id}</span>
+                        <h3 className="font-bold text-sm text-gray-900 group-hover:text-indigo-600 transition-colors truncate">
+                          {game.name}
+                        </h3>
+                        {game.in_stock_count !== undefined && game.in_stock_count > 0 ? (
+                          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-md border border-emerald-250 mt-1">
+                            ● En stock
+                          </span>
+                        ) : game.offers_count !== undefined && game.offers_count > 0 ? (
+                          <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-[10px] font-extrabold px-2 py-0.5 rounded-md border border-amber-250 mt-1">
+                            ● Agotado
+                          </span>
+                        ) : null}
+                      </div>
+                      <span className="text-xs font-semibold text-indigo-600 mt-2 block">
                         Comparar precios en tiendas →
                       </span>
                     </div>
@@ -199,7 +212,7 @@ export default function SearchResultsPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900 select-none">
       <Toolbar />
-      <Suspense fallback={<div className="p-8 text-center text-xs font-bold text-gray-500">Cargando opciones viables...</div>}>
+      <Suspense fallback={<div className="p-8 text-center text-xs font-bold text-gray-500">Cargando resultados de búsqueda...</div>}>
         <SearchResultsContent />
       </Suspense>
     </div>

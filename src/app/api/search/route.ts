@@ -3,12 +3,13 @@ import { createClient } from '@/lib/supabaseServer';
 import { stripDiacritics } from '@/utils/string';
 import { loadLocalCatalogCache } from '@/utils/local_file_cache';
 
-interface GameCacheRow {
+interface SearchGameRow {
   bgg_id: number;
   name: string;
   thumbnail: string | null;
   categories?: string[] | null;
   alternate_names?: string[] | null;
+  store_games?: Array<{ id: string; stock: number }> | null;
 }
 
 interface StoreRow {
@@ -32,19 +33,30 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
 
-    // 1. Query games
+    // 1. Query games matching query in DB, ensuring they have at least one store game listing via inner join
     const { data: dbGames } = await supabase
       .from('bgg_games_cache')
-      .select('bgg_id, name, thumbnail, categories, alternate_names')
-      .limit(1000);
+      .select('bgg_id, name, thumbnail, categories, alternate_names, store_games!inner(id, stock)')
+      .or(`name.ilike.%${query}%,alternate_names.cs.{"${query}"}`)
+      .limit(100);
 
-    const games: GameCacheRow[] = (dbGames || []) as GameCacheRow[];
+    const games: SearchGameRow[] = [];
+    const existingIds = new Set<number>();
+
+    if (dbGames) {
+      for (const dg of dbGames) {
+        if (!existingIds.has(dg.bgg_id)) {
+          existingIds.add(dg.bgg_id);
+          games.push(dg as unknown as SearchGameRow);
+        }
+      }
+    }
 
     const fileCache = loadLocalCatalogCache();
     if (fileCache && fileCache.games.length > 0) {
-      const existingIds = new Set(games.map(g => g.bgg_id));
       for (const fg of fileCache.games) {
-        if (!existingIds.has(fg.bgg_id)) {
+        const fileOffers = fileCache.offers.filter(o => o.bgg_id === fg.bgg_id);
+        if (fileOffers.length > 0 && !existingIds.has(fg.bgg_id)) {
           existingIds.add(fg.bgg_id);
           games.push({
             bgg_id: fg.bgg_id,
@@ -52,26 +64,27 @@ export async function GET(request: NextRequest) {
             thumbnail: fg.thumbnail,
             categories: [],
             alternate_names: [],
+            store_games: fileOffers.map(o => ({ id: o.id, stock: o.stock })),
           });
         }
       }
     }
 
     if (games.length < MOCK_GAMES.length) {
-      const existingIds = new Set(games.map(g => g.bgg_id));
       for (const mg of MOCK_GAMES) {
         if (!existingIds.has(mg.bgg_id)) {
+          existingIds.add(mg.bgg_id);
           games.push({
             bgg_id: mg.bgg_id,
             name: mg.name,
             thumbnail: mg.thumbnail,
             categories: [],
             alternate_names: [],
+            store_games: [{ id: 'mock-offer', stock: 1 }],
           });
         }
       }
     }
-
     const matchedGames = games.filter((game) => {
       const normName = stripDiacritics((game.name || '').toLowerCase());
       if (normName.includes(normalizedQuery)) return true;
@@ -82,6 +95,22 @@ export async function GET(request: NextRequest) {
         );
       }
       return false;
+    }).sort((a, b) => {
+      const aOffers = a.store_games || [];
+      const bOffers = b.store_games || [];
+      const aInStock = aOffers.some((o) => o.stock > 0);
+      const bInStock = bOffers.some((o) => o.stock > 0);
+
+      if (aInStock && !bInStock) return -1;
+      if (!aInStock && bInStock) return 1;
+
+      const aVerified = a.bgg_id < 8000000;
+      const bVerified = b.bgg_id < 8000000;
+
+      if (aVerified && !bVerified) return -1;
+      if (!aVerified && bVerified) return 1;
+
+      return 0;
     }).slice(0, 50);
 
     if (matchedGames.length === 0) {
@@ -99,7 +128,8 @@ export async function GET(request: NextRequest) {
               matchedGames.push({
                 bgg_id,
                 name: nameMatch[1],
-                thumbnail: 'https://cf.geekdo-images.com/W3Bsga_uLP9kO91gZ7H8yw__thumb/img/8a9HeqFydO7Uun_le9bXWPnidcA=/fit-in/200x150/filters:strip_icc()/pic2419375.jpg',
+                thumbnail: '',
+                store_games: [{ id: 'bgg-live-offer', stock: 1 }],
               });
             }
           }
@@ -140,11 +170,17 @@ export async function GET(request: NextRequest) {
     const matchedCategories = Array.from(tagSet).slice(0, 4).map((tag) => ({ tag }));
 
     return NextResponse.json({
-      games: matchedGames.map((g) => ({
-        bgg_id: g.bgg_id,
-        name: g.name,
-        thumbnail: g.thumbnail || MOCK_GAMES[0].thumbnail,
-      })),
+      games: matchedGames.map((g) => {
+        const offers = g.store_games || [];
+        const inStockCount = offers.filter((o) => o.stock > 0).length;
+        return {
+          bgg_id: g.bgg_id,
+          name: g.name,
+          thumbnail: g.thumbnail || '',
+          offers_count: offers.length,
+          in_stock_count: inStockCount,
+        };
+      }),
       stores: matchedStores,
       categories: matchedCategories,
     });

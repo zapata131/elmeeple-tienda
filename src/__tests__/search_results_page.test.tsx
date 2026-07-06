@@ -18,7 +18,7 @@ global.fetch = jest.fn().mockImplementation((url) => {
       ok: true,
       json: () =>
         Promise.resolve({
-          games: [{ bgg_id: 359871, name: 'Arcs', thumbnail: 'https://mock.jpg' }],
+          games: [{ bgg_id: 359871, name: 'Arcs', thumbnail: 'https://mock.jpg', in_stock_count: 2, offers_count: 3 }],
           stores: [{ id: 'store-mx-01', name: 'Ficha y Dado', base_url: 'https://fichaydado.com' }],
           categories: [{ tag: 'Ciencia Ficción' }],
         }),
@@ -32,13 +32,15 @@ describe('US-74: Dedicated Search Results Page for Non-Exact Queries', () => {
     mockPush.mockClear();
   });
 
-  it('renders viable games, stores, and categories when visiting /search?q=espacio', async () => {
+  it('renders matching games, stores, and categories when visiting /search?q=espacio', async () => {
     render(<SearchResultsPage />);
 
-    expect(screen.getByText(/Opciones viables para "espacio"/i)).toBeInTheDocument();
+    expect(screen.getByText(/Resultados para "espacio"/i)).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getByText('Arcs')).toBeInTheDocument();
+      expect(screen.getByText(/Juegos similares/i)).toBeInTheDocument();
+      expect(screen.getByText(/En stock/i)).toBeInTheDocument();
       expect(screen.getByText('Ficha y Dado')).toBeInTheDocument();
       expect(screen.getByText('🏷️ Ciencia Ficción')).toBeInTheDocument();
     });

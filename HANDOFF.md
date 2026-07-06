@@ -1,26 +1,29 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 16: Direct Product Link Navigation & XML Parser Optimization)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 17: Search Results UX Refinements & Autocomplete Prioritization)
 
-This memo records the completed execution of **Milestone 16 (Issue #155 / US-155)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), delivering direct product links from Atom feeds, redirect outbound auditing, and high-performance batch-upsert XML parsing.
+This memo records the completed execution of **Milestone 17 (Issue #157, Issue #158 / US-56, US-57)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), delivering a prioritized, high-quality search discovery experience.
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-155-direct-product-links` (Ready to merge into `main`)
-* **Completed Issues in Milestone 16:**
-  * Issue #155 (`[US-155] Direct product link navigation and manual price alignment check`) - Verified & ready to merge.
+* **Active Branch:** `feature/issue-158-search-results-ux` (Ready to merge into `main`)
+* **Completed Issues in Milestone 17:**
+  * Issue #157 (`[US-56] Search Autocomplete Option Prioritization`) - Verified & ready to merge.
+  * Issue #158 (`[US-57] Search Results Thumbnail, Wording, and Stock Filters UX Refinement`) - Verified & ready to merge.
 
 ---
 
-## 2. Work Completed in Issue #155 (US-155) 📦
+## 2. Work Completed in Issues #157 & #158 📦
 
-1. **Direct Product Link Ingestion:** Modified `syncStoreCatalog` in [feed_parser.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/utils/feed_parser.ts) to read the direct product URLs from the Atom feeds (`<link rel="alternate">`) and store them directly in the `store_product_url` database field, eliminating fallback search-query navigation.
-2. **Outbound Click Auditing & Logger:** Implemented a Next.js API route handler in [route.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/api/redirect/route.ts) that intercepts outbound product clicks (`/api/redirect?url=...`), records a diagnostic audit log, and redirects users to the store's product page safely.
-3. **Database Performance Optimization:**
-   * Preloaded only verified catalog games (`bgg_id < 8000000`) into memory to work within Supabase's pagination limit.
-   * Batched newly discovered unmatched games in a memory buffer and executed bulk upserts of up to 500 games, reducing sequential remote SQL calls and preventing server/fetch HTTP stream timeout crashes.
-4. **Test Protection Guardrails:** Wrapped filesystem catalog caching in `process.env.NODE_ENV !== 'test'` checks to prevent test runs from polluting or corrupting development and production cache files on disk.
-5. **Serial Test Execution:** Updated [package.json](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/package.json) to execute Jest tests strictly in serial mode (`--runInBand --forceExit`), preventing JSDOM memory leaks and filesystem race conditions.
+1. **Stock Availability Filters (Inner Join):** Upgraded the search endpoint in [route.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/api/search/route.ts) to filter games database-side using `store_games!inner(id, stock)`. This ensures that search results only return games that have at least one associated store offer (in stock or out of stock), completely eliminating empty-store dead ends.
+2. **Autocomplete Prioritization Sort:** Implemented an in-memory search results sorting engine that prioritizes:
+   * Games with active stock (`stock > 0`) over out-of-stock games.
+   * Verified catalog games (`bgg_id < 8000000`) over auto-created games.
+3. **Dropdown and Grid Stock Badges:** Calculated `in_stock_count` and `offers_count` per game and rendered accessible indicators ("● En stock" / "● Agotado") on both the header search autocompletion list in [SearchBar.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/components/SearchBar.tsx) and the search results grid in [page.tsx](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/app/search/page.tsx).
+4. **Duplicate Thumbnail Bug Fix:** Cleaned up the search route payload to return empty thumbnails instead of falling back to Catan's thumbnail (`pic2419375.jpg`), allowing the UI to render proper gray BGG initials or placeholders for unmatched games.
+5. **UI Copy and Wording Alignment:** Standardized headings and loaders in search templates using sentence-case copywriting guidelines:
+   * "Opciones viables para..." -> "Resultados para..."
+   * "Juegos de mesa viables" -> "Juegos similares"
 
 ---
 
@@ -31,5 +34,5 @@ This memo records the completed execution of **Milestone 16 (Issue #155 / US-155
 ---
 
 ## 4. Next Steps 🚀
-1. Merge active PR for Issue #155 (`feature/issue-155-direct-product-links`) into `main`.
-2. Execute live cron sync in production to refresh direct links and product prices for Mexican board gamers!
+1. Merge active PR for Issues #157 and #158 (`feature/issue-158-search-results-ux`) into `main`.
+2. Ready to ship search refinements live to production!

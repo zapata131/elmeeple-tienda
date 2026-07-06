@@ -104,18 +104,19 @@ export async function seedActualFeedsIntoDatabase() {
   let totalIngested = 0;
 
   // 1. Ensure verified stores exist in database
-  const storesToUpsert = MOCK_IBEROAMERICAN_STORES.map((s) => ({
-    id: s.id,
-    name: s.name,
-    slug: s.slug || s.id,
-    base_url: s.website,
-    google_shopping_feed_url: s.id === '11111111-1111-1111-1111-111111111105'
-      ? `${s.website}/store-products-sitemap.xml`
-      : `${s.website}/collections/all.atom`,
-    owner_email: `contacto@${new URL(s.website).hostname}`,
-    verified: true,
-    feed_status: 'success',
-  }));
+  const storesToUpsert = MOCK_IBEROAMERICAN_STORES.map((s) => {
+    const isWixStore = s.id === '11111111-1111-1111-1111-111111111105'; // Geeky Stuff
+    return {
+      id: s.id,
+      name: s.name,
+      slug: s.slug || s.id,
+      base_url: s.website,
+      google_shopping_feed_url: isWixStore ? null : `${s.website}/collections/all.atom`,
+      owner_email: `contacto@${new URL(s.website).hostname}`,
+      verified: !isWixStore,
+      feed_status: isWixStore ? 'failed' : 'success',
+    };
+  });
   await supabase.from('stores').upsert(storesToUpsert, { onConflict: 'id' });
 
   // 1.5. Ensure official shipping rates exist in database for Mexican stores
@@ -150,6 +151,7 @@ export async function seedActualFeedsIntoDatabase() {
   }
 
   for (const store of storesToUpsert) {
+    if (!store.google_shopping_feed_url) continue;
     try {
       const feedItems = await fetchFullStoreFeed(store.google_shopping_feed_url);
       if (feedItems.length > 0) {

@@ -161,6 +161,13 @@ graph TD
 *   **Hero Box Art vs Cramped Sidebar Layouts:** Narrow 1-column sidebars on game comparison pages (`/game/[id]`) crush cover imagery and metadata readability.
     *   *Convention:* Standardize all game detail pages on a full-width Hero Cover Box Art header card displaying high-resolution BGG cover images (`<image>`), clear typographic stats, and verified Mexican store deals (`El Duende CDMX`, `La Caravana Gamelab`, `Dungeoneers México`, `Devir México`) in full-width comparison tables below.
 
+### 5.14 High-Performance Feed Parsing, File Caching & Test Isolation
+*   **Buffered Batch Upserts for Large XML Feeds:** Executing sequential remote SQL database queries inside large merchant catalog loops causes server/fetch timeout crashes.
+    *   *Convention:* Always buffer newly discovered unmatched games in memory (`newGamesToUpsert`) and execute bulk upserts of up to 500 records at a time.
+*   **Test Isolation for Shared Filesystem Caches:** Running unit tests that write mock data to catalog cache files on disk corrupts active development/production cache states.
+    *   *Convention:* Wrap filesystem cache writes (`saveLocalCatalogCache`) in checks against test mode (`process.env.NODE_ENV !== 'test'`).
+*   **Serial Test Mode Enforcement:** Running JSDOM testing workers in parallel results in excessive memory utilization and filesystem race conditions.
+    *   *Convention:* Maintain `"test": "jest --runInBand --forceExit"` inside `package.json` to enforce serial test runs.
 
 ---
 

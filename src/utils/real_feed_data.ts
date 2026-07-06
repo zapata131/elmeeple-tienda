@@ -107,7 +107,7 @@ export async function seedActualFeedsIntoDatabase() {
     name: s.name,
     slug: s.slug || s.id,
     base_url: s.website,
-    google_shopping_feed_url: `${s.website}/collections/all.atom`,
+    google_shopping_feed_url: `${s.website}/products.json`,
     owner_email: `contacto@${new URL(s.website).hostname}`,
     verified: true,
     feed_status: 'success',
@@ -124,10 +124,22 @@ export async function seedActualFeedsIntoDatabase() {
   await supabase.from('shipping_rates').upsert(shippingRatesToUpsert, { onConflict: 'store_id,destination_country' });
 
   // 2. Ensure games cache contains our indexed catalog
-  await supabase.from('bgg_games_cache').upsert(
-    MOCK_GAMES.map((g) => ({ ...g, last_updated_at: new Date().toISOString() })),
-    { onConflict: 'bgg_id' }
-  );
+  const bggGamesToUpsert = MOCK_GAMES.map((g) => ({
+    bgg_id: g.bgg_id,
+    name: g.name,
+    thumbnail: g.thumbnail ?? null,
+    weight: g.weight ?? null,
+    min_players: g.min_players ?? null,
+    max_players: g.max_players ?? null,
+    playing_time: g.playing_time ?? null,
+    last_updated_at: new Date().toISOString(),
+  }));
+  const { error: gamesErr } = await supabase
+    .from('bgg_games_cache')
+    .upsert(bggGamesToUpsert, { onConflict: 'bgg_id' });
+  if (gamesErr) {
+    console.error('[Real Feed Seeder] Failed to upsert games cache:', gamesErr.message);
+  }
 
   // 3. Crawl live paginated XML feeds across all 8 verified Mexican stores
   let liveXmlItemsIngested = 0;
@@ -204,7 +216,9 @@ export async function seedActualFeedsIntoDatabase() {
 
   // If live network crawling returned items, save to zero-Docker filesystem cache and report stats
   if (liveXmlItemsIngested > 0) {
-    saveLocalCatalogCache(Array.from(fileGamesMap.values()), fileOffersList);
+    if (process.env.NODE_ENV !== 'test') {
+      saveLocalCatalogCache(Array.from(fileGamesMap.values()), fileOffersList);
+    }
     return {
       success: true,
       totalIngested: liveXmlItemsIngested,

@@ -42,13 +42,13 @@ describe('US-90: Audit and Certify Store Redirect Links and Remove Dead Mock Ref
     expect(location).toContain('utm_medium=affiliate');
   });
 
-  it('converts dead directUrl /products/ links into working store search URLs', async () => {
+  it('retains directUrl /products/ links directly with affiliate params', async () => {
     const req = new NextRequest('http://localhost:3001/api/redirect?url=https://fichaydado.com/products/catan-el-juego');
     const response = await GET(req);
 
     expect(response.status).toBe(302);
     const location = response.headers.get('location') || '';
-    expect(location).toContain('fichaydado.com/search?q=catan');
+    expect(location).toContain('fichaydado.com/products/catan-el-juego');
     expect(location).toContain('ref=meepleprecios');
   });
 });

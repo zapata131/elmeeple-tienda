@@ -20,6 +20,12 @@ jest.mock('@supabase/supabase-js', () => {
   const mockClientInstance = {
     from: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
+    lt: jest.fn().mockImplementation(function (this: any, key: string, value: any) {
+      if (key === 'bgg_id' && value === 8000000) {
+        return Promise.resolve({ data: [], error: null });
+      }
+      return this;
+    }),
     eq: jest.fn().mockImplementation(function (this: unknown, key: string) {
       if (key === 'id' || key === 'status') {
         return Promise.resolve({ error: null });
@@ -49,10 +55,6 @@ describe('US-14: Scheduled Store Feed Parser & Metadata Queueing', () => {
 
   describe('Unmapped Game Enqueueing in syncStoreCatalog', () => {
     it('enqueues unmapped feed items into bgg_metadata_queue', async () => {
-      // Mock EAN and title lookup returning null / empty array (unmapped item)
-      mockClient.single.mockResolvedValueOnce({ data: null, error: null });
-      mockClient.limit.mockResolvedValueOnce({ data: [], error: null });
-
       const parsedItems = [
         {
           title: 'Mystery Board Game Deluxe 2026',
@@ -85,16 +87,13 @@ describe('US-14: Scheduled Store Feed Parser & Metadata Queueing', () => {
 
     it('batches bgg_metadata_queue upserts in segments of 500 items maximum', async () => {
       const parsedItems = Array.from({ length: 600 }).map((_, i) => ({
-        title: `Unmapped Game ${i}`,
+        title: `Unmapped Game ${String(i).padStart(4, '0')}`,
         link: `https://store.com/unmapped-${i}`,
         price: 29.99,
         stock: 1,
         ean: `ean-unmapped-${i}`,
       }));
 
-      // Always unmapped
-      mockClient.single.mockResolvedValue({ data: null, error: null });
-      mockClient.limit.mockResolvedValue({ data: [], error: null });
 
       const stats = await syncStoreCatalog('store-123', parsedItems);
 
@@ -144,6 +143,9 @@ describe('US-14: Scheduled Store Feed Parser & Metadata Queueing', () => {
       });
 
       const res = await AdminQueueGet();
+      if (res.status !== 200) {
+        console.warn('DIAGNOSTIC_ADMIN_QUEUE_GET_FAIL:', res.status, await res.json());
+      }
       expect(res.status).toBe(200);
       const body = await res.json();
       expect(body.items).toHaveLength(1);

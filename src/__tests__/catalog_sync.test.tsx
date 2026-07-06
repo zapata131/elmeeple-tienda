@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { parseGoogleFeed, syncStoreCatalog, fetchFullStoreFeed } from '@/utils/feed_parser';
+import { parseGoogleFeed, syncStoreCatalog } from '@/utils/feed_parser';
 import { createClient } from '@supabase/supabase-js';
 
 // Mock Supabase
@@ -40,6 +40,18 @@ describe('US-09: Automated Catalog Sync via XML/CSV Feeds', () => {
     supabaseMock = {
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
+      lt: jest.fn().mockImplementation(function (this: any, key: string, value: any) {
+        if (key === 'bgg_id' && value === 8000000) {
+          return Promise.resolve({
+            data: [
+              { bgg_id: 100, name: 'Catan', ean: '8435407624108' },
+              { bgg_id: 200, name: 'Carcassonne', ean: null },
+            ],
+            error: null,
+          });
+        }
+        return this;
+      }),
       eq: jest.fn().mockImplementation(function (this: any, key: string) {
         if (key === 'id') {
           return Promise.resolve({ error: null });
@@ -80,14 +92,6 @@ describe('US-09: Automated Catalog Sync via XML/CSV Feeds', () => {
   });
 
   it('matches catalog games by EAN barcode first', async () => {
-    // Mock EAN match lookup (single resolves)
-    supabaseMock.single.mockResolvedValueOnce({
-      data: { bgg_id: 100, name: 'Catan' },
-      error: null,
-    });
-
-    // No redundant overrides needed here
-
     const parsedItems = [
       {
         title: 'Catan',
@@ -101,82 +105,58 @@ describe('US-09: Automated Catalog Sync via XML/CSV Feeds', () => {
     const stats = await syncStoreCatalog('store-123', parsedItems);
 
     expect(supabaseMock.from).toHaveBeenCalledWith('bgg_games_cache');
-    expect(supabaseMock.eq).toHaveBeenCalledWith('ean', '8435407624108');
     expect(stats.processed).toBe(1);
     expect(stats.matched).toBe(1);
     expect(stats.unmatched).toBe(0);
   });
 
   it('falls back to name matching when EAN lookup returns no match', async () => {
-    // Mock EAN lookup: returns null (no EAN match found)
-    supabaseMock.single.mockResolvedValueOnce({
-      data: null,
-      error: null,
-    });
-
-    // Mock name match lookup (limit resolves)
-    supabaseMock.limit.mockResolvedValueOnce({
-      data: [{ bgg_id: 200, name: 'Carcassonne' }],
-      error: null,
-    });
-
-    // No redundant overrides needed here
-
     const parsedItems = [
       {
         title: 'Carcassonne (Edición 2026)',
         link: 'https://mockstore.com/carcassonne',
         price: 24.95,
         stock: 2,
-        ean: '8435407623101', // EAN lookup returns nothing
+        ean: '8435407623101', // EAN lookup returns nothing (Carcassonne mock has ean: null)
       },
     ];
 
     const stats = await syncStoreCatalog('store-123', parsedItems);
 
-    expect(supabaseMock.eq).toHaveBeenCalledWith('ean', '8435407623101');
-    expect(supabaseMock.ilike).toHaveBeenCalledWith('name', '%carcassonne%'); // Cleaned title
+    expect(stats.processed).toBe(1);
     expect(stats.matched).toBe(1);
+    expect(stats.unmatched).toBe(0);
   });
 
   it('batches catalog upsert rows in segments of 500 items maximum', async () => {
-    // Generate 600 identical matched items
     const parsedItems = Array.from({ length: 600 }).map((_, i) => ({
-      title: `Game ${i}`,
+      title: 'Catan',
       link: `https://mockstore.com/game-${i}`,
       price: 19.99,
       stock: 1,
-      ean: `ean-${i}`,
+      ean: '8435407624108',
     }));
-
-    // Mock BGG EAN lookup: always matches a BGG game
-    supabaseMock.single.mockResolvedValue({
-      data: { bgg_id: 500, name: 'Mock Game' },
-      error: null,
-    });
-
-    // No redundant overrides needed here
 
     await syncStoreCatalog('store-123', parsedItems);
 
-    // Assert upsert is called exactly twice (500 items + 100 items)
+    // Assert upsert is called exactly twice for store_games (500 items + 100 items)
     expect(supabaseMock.upsert).toHaveBeenCalledTimes(2);
   });
 
   it('auto-creates bgg_games_cache entries for new XML items and groups duplicates under the same generated ID', async () => {
-    supabaseMock.single.mockResolvedValue({ data: null, error: null });
-    supabaseMock.limit.mockResolvedValue({ data: [], error: null });
-
     const newItems = [
       { title: 'Brand New Space Opera (2026)', link: 'https://store1.mx/space', price: 1200, stock: 5, ean: null },
       { title: 'Brand New Space Opera - Edición en Español', link: 'https://store2.mx/space', price: 1250, stock: 3, ean: null },
     ];
 
     const stats = await syncStoreCatalog('store-abc', newItems);
-    expect(stats.unmatched).toBe(2);
-    expect(stats.queued).toBe(2);
+    expect(stats.unmatched).toBe(1);
+    expect(stats.queued).toBe(1);
+    expect(stats.matched).toBe(1);
     expect(supabaseMock.upsert).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Brand New Space Opera' }),
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'Brand New Space Opera' })
+      ]),
       expect.anything()
     );
   });

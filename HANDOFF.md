@@ -6,7 +6,7 @@ This memo records the completed execution of **Milestone 17 (Issue #157, Issue #
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-158-search-results-ux` (Ready to merge into `main`)
+* **Active Branch:** `feature/issue-158-wingspan-cache-refinements` (Ready to merge into `main`)
 * **Completed Issues in Milestone 17:**
   * Issue #157 (`[US-56] Search Autocomplete Option Prioritization`) - Verified & ready to merge.
   * Issue #158 (`[US-57] Search Results Thumbnail, Wording, and Stock Filters UX Refinement`) - Verified & ready to merge.
@@ -28,6 +28,9 @@ This memo records the completed execution of **Milestone 17 (Issue #157, Issue #
    * Implemented `cleanBoardGameTitle` to sanitize catalog names from common retailer suffixes and publisher tags case-insensitively.
    * Defined strict word boundary matching (`\bprimer\b`) for paint primer exclusions to prevent false positive exclusions on Spanish words (like `primeros` or `primera`), fixing base game Catan pricing mismatches.
 7. **Referential Integrity Database Write Order:** Upgraded `syncStoreCatalog` in [feed_parser.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/utils/feed_parser.ts) to write parent `bgg_games_cache` items prior to flushing child `store_games` offers, avoiding database foreign key constraint violations during batch catalog seedings.
+8. **Shopify Crawl Page Ceiling Increment:** Increased `MAX_SAFETY_PAGES` to `60` (allowing up to 15,000 products per store) to successfully cover large merchant catalogs (like Con T de Tlacuache's 9,500+ items catalog containing Wingspan base game).
+9. **Local Cache Merging Fallbacks:** Implemented merge fallbacks to query the existing disk cache if live crawlers hit Cloudflare blocks/rate-limits (status 429), preventing failed runs from deleting previously indexed database store offers.
+10. **Wingspan Product Link Fix:** Certified and updated Con T de Tlacuache Wingspan base game snapshot price to `1120.00 MXN` with its direct product URL (`/products/wingspan-maldito-games`) in [real_feed_data.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/utils/real_feed_data.ts).
 
 ---
 
@@ -38,5 +41,5 @@ This memo records the completed execution of **Milestone 17 (Issue #157, Issue #
 ---
 
 ## 4. Next Steps 🚀
-1. Merge active PR for Issues #157 and #158 (`feature/issue-158-search-results-ux`) into `main`.
-2. Ready to ship search refinements live to production!
+1. Merge active PR for Issues #157 and #158 (`feature/issue-158-wingspan-cache-refinements`) into `main`.
+2. Ready to ship search and catalog refinements live to production!

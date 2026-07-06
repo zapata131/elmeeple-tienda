@@ -172,6 +172,8 @@ graph TD
     *   *Convention:* Use `cleanBoardGameTitle` to sanitize store catalog names case-insensitively before matching. Exclude miniature paint `'primer'` entries strictly using word boundaries (`\bprimer\b`) to prevent false-positive exclusions on Spanish words like `primeros`.
 *   **Database Write Sequence Integrity:** Inserting store product offers referencing parent game cache rows before parent rows are written to `bgg_games_cache` throws database foreign key errors.
     *   *Convention:* Always write and flush `newGamesToUpsert` items to `bgg_games_cache` prior to executing any `store_games` upserts in the sync catalog loop.
+*   **Local Disk Cache Fallback Merging:** Live network crawls encountering Cloudflare blockades (status 429) or connection failures return 0 items. Discarding these stores' offers deletes them from database comparison page displays and local disk caches.
+    *   *Convention:* When feed crawls return 0 items, always load the existing disk cache and fall back to reloading the cached store offers. Upsert the cached rows to the database and keep them in the newly saved cache payload to preserve catalog continuity.
 
 ---
 

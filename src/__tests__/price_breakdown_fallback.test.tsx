@@ -3,6 +3,11 @@ import '@testing-library/jest-dom';
 import { fetchGameOffers } from '@/lib/queries';
 import GameDetailPage from '@/app/game/[id]/page';
 
+jest.mock('@/utils/local_file_cache', () => ({
+  loadLocalCatalogCache: jest.fn(() => null),
+  saveLocalCatalogCache: jest.fn(),
+}));
+
 jest.mock('@supabase/supabase-js', () => {
   const mockClientInstance = {
     from: jest.fn().mockReturnThis(),

@@ -19,6 +19,8 @@ describe('US-63: Paginated Shopify Atom Feed Roll & Strict Board Game Filtering'
       expect(isLikelyBoardGame('Pintura Vallejo Model Color Blanco 17ml', 'Acrílico para modelismo')).toBe(false);
       expect(isLikelyBoardGame('Pincel Citadel Detail Brush', 'Pincel sintético de precisión')).toBe(false);
       expect(isLikelyBoardGame('Aerógrafo Hobby 0.3mm', 'Herramienta para pintar miniaturas')).toBe(false);
+      expect(isLikelyBoardGame('Army Painter Spray Primer Grey', 'Lata de imprimación')).toBe(false);
+      expect(isLikelyBoardGame('Catan en Español', 'Construyendo los primeros poblados')).toBe(true);
     });
 
     it('rejects puzzles, TCG boosters, and loose dice sets', () => {

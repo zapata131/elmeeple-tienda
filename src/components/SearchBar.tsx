@@ -8,6 +8,8 @@ interface GameSuggestion {
   bgg_id: number;
   name: string;
   thumbnail: string;
+  offers_count?: number;
+  in_stock_count?: number;
 }
 
 interface StoreSuggestion {
@@ -28,6 +30,8 @@ interface RawGame {
   bgg_id: number;
   name: string;
   thumbnail: string;
+  offers_count?: number;
+  in_stock_count?: number;
 }
 
 interface RawStore {
@@ -228,9 +232,20 @@ export function SearchBar() {
                       alt={g.name}
                       className="w-8 h-8 object-cover rounded-lg shrink-0 bg-gray-100 border border-gray-200"
                     />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs truncate">{g.name}</div>
-                      <span className="text-[10px] text-gray-400 font-mono">BGG #{g.bgg_id}</span>
+                    <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                      <div>
+                        <div className="text-xs truncate font-semibold">{g.name}</div>
+                        <span className="text-[9px] text-gray-400 font-mono block">BGG #{g.bgg_id}</span>
+                      </div>
+                      {g.in_stock_count !== undefined && g.in_stock_count > 0 ? (
+                        <span className="bg-emerald-50 text-emerald-700 text-[8px] font-extrabold px-1.5 py-0.5 rounded-sm border border-emerald-250 shrink-0">
+                          En stock
+                        </span>
+                      ) : g.offers_count !== undefined && g.offers_count > 0 ? (
+                        <span className="bg-amber-50 text-amber-700 text-[8px] font-extrabold px-1.5 py-0.5 rounded-sm border border-amber-250 shrink-0">
+                          Agotado
+                        </span>
+                      ) : null}
                     </div>
                   </div>
                 );

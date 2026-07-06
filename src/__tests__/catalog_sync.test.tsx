@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { parseGoogleFeed, syncStoreCatalog } from '@/utils/feed_parser';
+import { parseGoogleFeed, syncStoreCatalog, fetchFullStoreFeed } from '@/utils/feed_parser';
 import { createClient } from '@supabase/supabase-js';
 
 // Mock Supabase
@@ -179,5 +179,46 @@ describe('US-09: Automated Catalog Sync via XML/CSV Feeds', () => {
       expect.objectContaining({ name: 'Brand New Space Opera' }),
       expect.anything()
     );
+  });
+
+  it('crawls and parses Wix store-products-sitemap.xml and HTML product pages in fetchFullStoreFeed', async () => {
+
+    const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        <url>
+          <loc>https://www.geekystuff.mx/product-page/arcs</loc>
+        </url>
+      </urlset>`;
+
+    const productHtml = `
+      <html>
+        <head>
+          <meta property="og:title" content="Arcs | Geeky Stuff"/>
+          <meta property="product:price:amount" content="1350"/>
+          <meta property="og:availability" content="instock"/>
+          <script type="application/ld+json">{"gtin":"4571394093412"}</script>
+        </head>
+      </html>`;
+
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(sitemapXml),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve(productHtml),
+      });
+
+    const items = await fetchFullStoreFeed('https://www.geekystuff.mx/store-products-sitemap.xml');
+    expect(items).toHaveLength(1);
+    expect(items[0]).toEqual({
+      title: 'Arcs',
+      link: 'https://www.geekystuff.mx/product-page/arcs',
+      price: 1350,
+      stock: 1,
+      ean: '4571394093412',
+      language: 'es',
+    });
   });
 });

@@ -109,7 +109,9 @@ export async function seedActualFeedsIntoDatabase() {
     name: s.name,
     slug: s.slug || s.id,
     base_url: s.website,
-    google_shopping_feed_url: `${s.website}/collections/all.atom`,
+    google_shopping_feed_url: s.id === '11111111-1111-1111-1111-111111111105'
+      ? `${s.website}/store-products-sitemap.xml`
+      : `${s.website}/collections/all.atom`,
     owner_email: `contacto@${new URL(s.website).hostname}`,
     verified: true,
     feed_status: 'success',

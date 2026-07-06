@@ -137,6 +137,92 @@ const BROWSER_HEADERS = {
 export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedItem[]> {
   const allItems: ParsedFeedItem[] = [];
 
+  if (feedUrl.includes('sitemap.xml')) {
+    try {
+      const res = await getFetch()(feedUrl, { headers: BROWSER_HEADERS });
+      if (!res.ok) return [];
+      const xml = await res.text();
+
+      const locRegex = /<loc>([^<]+)<\/loc>/gi;
+      const urls: string[] = [];
+      let match;
+      while ((match = locRegex.exec(xml)) !== null) {
+        const url = match[1].trim();
+        if (url.includes('/product-page/')) {
+          urls.push(url);
+        }
+      }
+
+      const gameKeywords = ['catan', 'wingspan', 'sky-team', 'skyteam', 'faraway', 'dune', 'white-castle', 'whitecastle', 'revive', 'scout', 'arcs', 'excalibur', 'monopoly', 'battleship', 'carcassonne'];
+      const filteredUrls = urls.filter((url) => {
+        const slug = url.split('/product-page/')[1]?.toLowerCase() || '';
+        return gameKeywords.some((kw) => slug.includes(kw));
+      });
+
+      const isTest = process.env.NODE_ENV === 'test';
+      const isFast = isTest || process.env.FAST_SEED === 'true';
+      const limit = isTest ? 3 : filteredUrls.length;
+      const targetUrls = filteredUrls.slice(0, limit);
+
+      const chunkSize = 2;
+
+      for (let i = 0; i < targetUrls.length; i += chunkSize) {
+        const chunk = targetUrls.slice(i, i + chunkSize);
+        const promises = chunk.map(async (url) => {
+          try {
+            const pageRes = await getFetch()(url, { headers: BROWSER_HEADERS });
+            if (!pageRes.ok) {
+              return null;
+            }
+            const html = await pageRes.text();
+
+            const titleMatch = /<meta\s+property=["']og:title["']\s+content=["']([^"']+)["']/i.exec(html) ||
+                               /<meta\s+content=["']([^"']+)["']\s+property=["']og:title["']/i.exec(html);
+            const title = titleMatch ? titleMatch[1].split(' | ')[0].trim() : '';
+
+            const priceMatch = /<meta\s+property=["']product:price:amount["']\s+content=["']([0-9.,]+)["']/i.exec(html) ||
+                               /<meta\s+content=["']([0-9.,]+)["']\s+property=["']product:price:amount["']/i.exec(html);
+            const price = priceMatch ? parseFloat(priceMatch[1].replace(/,/g, '')) : 0;
+
+            const availMatch = /<meta\s+property=["']og:availability["']\s+content=["']([^"']+)["']/i.exec(html) ||
+                               /<meta\s+content=["']([^"']+)["']\s+property=["']og:availability["']/i.exec(html);
+            const stock = availMatch && (availMatch[1].toLowerCase().includes('in stock') || availMatch[1].toLowerCase().includes('instock')) ? 1 : 0;
+
+            const descMatch = /<meta\s+property=["']og:description["']\s+content=["']([^"']+)["']/i.exec(html) ||
+                              /<meta\s+content=["']([^"']+)["']\s+property=["']og:description["']/i.exec(html);
+            const description = descMatch ? descMatch[1] : '';
+
+            let ean: string | null = null;
+            const eanMatch = /"gtin"\s*:\s*["']([^"']+)["']/i.exec(html) || /"sku"\s*:\s*["']([^"']+)["']/i.exec(html);
+            if (eanMatch) {
+              ean = eanMatch[1];
+            }
+
+            const isLikelyGame = isLikelyBoardGame(title, description);
+            if (title && price > 0 && isLikelyGame) {
+              return { title, link: url, price, stock, ean, language: detectLanguage(title, html) };
+            }
+          } catch (err) {
+            console.warn(`[Wix Sitemap Crawler] Failed to crawl product URL ${url}:`, err);
+          }
+          return null;
+        });
+
+        const chunkResults = await Promise.all(promises);
+        for (const item of chunkResults) {
+          if (item) allItems.push(item);
+        }
+
+        if (!isFast && i + chunkSize < targetUrls.length) {
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+      }
+    } catch (err) {
+      console.warn(`[Wix Sitemap Crawler] Failed to process sitemap feed ${feedUrl}:`, err);
+    }
+    return allItems;
+  }
+
   if (feedUrl.includes('.atom')) {
     const baseUrl = feedUrl.split('?')[0];
     let page = 1;

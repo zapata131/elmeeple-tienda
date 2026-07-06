@@ -171,7 +171,7 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
     const baseUrl = feedUrl.split('?')[0];
     let page = 1;
     const seenLinks = new Set<string>();
-    const MAX_SAFETY_PAGES = 30; // Up to 7,500 products per store
+    const MAX_SAFETY_PAGES = 60; // Up to 15,000 products per store
 
     while (page <= MAX_SAFETY_PAGES) {
       try {

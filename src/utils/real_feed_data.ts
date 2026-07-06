@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { fetchFullStoreFeed, syncStoreCatalog } from '@/utils/feed_parser';
 import { MOCK_IBEROAMERICAN_STORES, MOCK_GAMES } from '@/utils/mockData';
-import { saveLocalCatalogCache, CachedGame, CachedOffer } from '@/utils/local_file_cache';
+import { saveLocalCatalogCache, loadLocalCatalogCache, CachedGame, CachedOffer } from '@/utils/local_file_cache';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
@@ -40,7 +40,7 @@ export const REAL_FEED_ITEMS_SNAPSHOT: Record<number, RealFeedOfferSnapshot[]> =
   266192: [
     { store_id: '11111111-1111-1111-1111-111111111101', store_name: 'Ficha y Dado', store_product_url: 'https://fichaydado.com/search?q=Wingspan', price: 1150.00, stock: 6, edition_language: 'es' },
     { store_id: '11111111-1111-1111-1111-111111111102', store_name: 'Mundo Meeple Store', store_product_url: 'https://mundomeeplestore.com/search?q=Wingspan', price: 1180.00, stock: 4, edition_language: 'es' },
-    { store_id: '11111111-1111-1111-1111-111111111104', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/search?q=Wingspan', price: 1120.00, stock: 3, edition_language: 'es' },
+    { store_id: '11111111-1111-1111-1111-111111111104', store_name: 'Con T de Tlacuache', store_product_url: 'https://tdetlacuache.com/products/wingspan-maldito-games', price: 1120.00, stock: 3, edition_language: 'es' },
   ],
   // Sky Team (BGG ID 373106)
   373106: [
@@ -157,10 +157,14 @@ export async function seedActualFeedsIntoDatabase() {
     });
   }
 
+  const existingCache = loadLocalCatalogCache();
+
+  const forceOffline = process.env.FORCE_OFFLINE === 'true';
+
   for (const store of storesToUpsert) {
     if (!store.google_shopping_feed_url) continue;
     try {
-      const feedItems = await fetchFullStoreFeed(store.google_shopping_feed_url);
+      const feedItems = forceOffline ? [] : await fetchFullStoreFeed(store.google_shopping_feed_url);
       if (feedItems.length > 0) {
         const stats = await syncStoreCatalog(store.id, feedItems);
         const storeIngestedCount = stats.processed || feedItems.length || 0;
@@ -206,6 +210,32 @@ export async function seedActualFeedsIntoDatabase() {
               is_featured: false,
               bgg_id: bggId,
             });
+          }
+        }
+      } else {
+        // Fallback: Read this store's offers from existing disk cache and upsert them to database!
+        console.warn(`[Real Feed Seeder] Store ${store.name} returned 0 items. Falling back to disk cache.`);
+        const cachedStoreOffers = existingCache?.offers.filter((o) => o.store_id === store.id) || [];
+        if (cachedStoreOffers.length > 0) {
+          const databaseRows = cachedStoreOffers.map((o) => ({
+            store_id: o.store_id,
+            bgg_id: o.bgg_id,
+            price: o.price,
+            stock: o.stock,
+            store_product_url: o.store_product_url,
+            edition_language: o.edition_language,
+            last_updated_at: now,
+          }));
+          const { error: fallbackErr } = await supabase
+            .from('store_games')
+            .upsert(databaseRows, { onConflict: 'store_id,bgg_id' });
+          
+          if (fallbackErr) {
+            console.error(`[Real Feed Seeder] Failed to upsert fallback cache offers for store ${store.name}:`, fallbackErr.message);
+          } else {
+            fileOffersList.push(...cachedStoreOffers);
+            liveXmlItemsIngested += cachedStoreOffers.length;
+            console.log(`[Real Feed Seeder] Store ${store.name} (${store.id}): successfully loaded ${cachedStoreOffers.length} fallback cache offers.`);
           }
         }
       }

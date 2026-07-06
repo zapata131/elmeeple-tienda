@@ -23,7 +23,7 @@ describe('US-90: Audit and Certify Store Redirect Links and Remove Dead Mock Ref
         expect(offer.store_product_url).toBeDefined();
         expect(offer.store_product_url.startsWith('https://')).toBe(true);
         if (offer.store_product_url.includes('/products/')) {
-          expect(offer.store_product_url).toContain('scout-ingles');
+          expect(offer.store_product_url).toMatch(/(scout-ingles|wingspan-maldito-games)/);
         } else {
           expect(offer.store_product_url).toMatch(/search\?q=/);
         }

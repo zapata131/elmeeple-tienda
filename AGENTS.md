@@ -168,6 +168,10 @@ graph TD
     *   *Convention:* Wrap filesystem cache writes (`saveLocalCatalogCache`) in checks against test mode (`process.env.NODE_ENV !== 'test'`).
 *   **Serial Test Mode Enforcement:** Running JSDOM testing workers in parallel results in excessive memory utilization and filesystem race conditions.
     *   *Convention:* Maintain `"test": "jest --runInBand --forceExit"` inside `package.json` to enforce serial test runs.
+*   **Strict Catalog Matching Casing & Word Boundaries:** Over-matching titles containing general brand roots (like matching Catan Plus or Dobble Catan to the Catan base game) pollutes listing comparison pricing.
+    *   *Convention:* Use `cleanBoardGameTitle` to sanitize store catalog names case-insensitively before matching. Exclude miniature paint `'primer'` entries strictly using word boundaries (`\bprimer\b`) to prevent false-positive exclusions on Spanish words like `primeros`.
+*   **Database Write Sequence Integrity:** Inserting store product offers referencing parent game cache rows before parent rows are written to `bgg_games_cache` throws database foreign key errors.
+    *   *Convention:* Always write and flush `newGamesToUpsert` items to `bgg_games_cache` prior to executing any `store_games` upserts in the sync catalog loop.
 
 ---
 

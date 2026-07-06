@@ -160,4 +160,16 @@ describe('US-09: Automated Catalog Sync via XML/CSV Feeds', () => {
       expect.anything()
     );
   });
+
+  it('prevents matching different editions or scenarios containing exclusion words to the base game', async () => {
+    const newItems = [
+      { title: 'Catan: El Duelo (Doble)', link: 'https://store1.mx/duelo', price: 599, stock: 5, ean: null },
+      { title: 'Catan: Viaje Edición', link: 'https://store2.mx/viaje', price: 950, stock: 2, ean: null },
+    ];
+
+    const stats = await syncStoreCatalog('store-123', newItems);
+    expect(stats.matched).toBe(0);
+    expect(stats.unmatched).toBe(2);
+  });
 });
+

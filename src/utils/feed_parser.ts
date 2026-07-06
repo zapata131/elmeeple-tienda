@@ -33,12 +33,36 @@ interface StoreGameInsertRow {
   last_updated_at: string;
 }
 
+export function cleanBoardGameTitle(title: string): string {
+  let clean = title;
+  
+  // Remove brackets content
+  clean = clean.replace(/\s*\([^)]*\)/g, '');
+  
+  // Remove common store/retailer suffixes and publisher labels
+  const SUFFIXES_TO_REMOVE = [
+    'en español', 'en espanol', 'español', 'espanol',
+    'en inglés', 'en ingles', 'inglés', 'ingles', 'english edition',
+    'juego de mesa', 'juego de cartas', 'juego',
+    'devir', 'asmodee', 'maldito games', 'ravensburger', 'hasbro'
+  ];
+  
+  for (const suffix of SUFFIXES_TO_REMOVE) {
+    const regex = new RegExp(`\\b${suffix}\\b`, 'gi');
+    clean = clean.replace(regex, '').trim();
+  }
+  
+  // Clean up extra spaces, hyphens, and commas at ends
+  clean = clean.replace(/^[,\s-]+|[,\s-]+$/g, '');
+  return clean.replace(/\s+/g, ' ').trim();
+}
+
 export function isLikelyBoardGame(title: string, contentBlock: string = ''): boolean {
   const lower = `${title} ${contentBlock}`.toLowerCase();
 
   const NON_BOARD_GAME_KEYWORDS = [
     'funda', 'sleeves', 'micas', 'protector de cartas', 'perfect fit',
-    'pintura', 'vallejo', 'citadel', 'army painter', 'pincel', 'aerógrafo', 'primer', 'barniz', 'diluyente',
+    'pintura', 'vallejo', 'citadel', 'army painter', 'pincel', 'aerógrafo', 'barniz', 'diluyente',
     'rompecabezas', 'puzzle',
     'booster', 'sobre mtg', 'sobre pokémon', 'sobre lorcana', 'display de sobres', 'caja de sobres', 'tcg sobre',
     'set de dados', 'torre de dados', 'dados d&d', 'dado d20',
@@ -50,6 +74,12 @@ export function isLikelyBoardGame(title: string, contentBlock: string = ''): boo
       return false;
     }
   }
+
+  // Standalone 'primer' (miniature paint primer) matches with word boundary to avoid false positives like 'primeros' or 'primera'
+  if (/\bprimer\b/i.test(lower)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -304,12 +334,28 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
     // 2. Fallback to case-insensitive name match
     if (!matchedGame && item.title) {
       // Clean title from common suffixes or editions details
-      const cleanTitle = item.title.toLowerCase().split('(')[0].split(' - ')[0].trim();
-      matchedGame = gamesList.find((g) => g.name.toLowerCase() === cleanTitle) || null;
+      const cleanTitle = cleanBoardGameTitle(item.title);
+      matchedGame = gamesList.find((g) => g.name.toLowerCase() === cleanTitle.toLowerCase()) || null;
       if (!matchedGame) {
+        const EXCLUSION_EDITION_WORDS = [
+          'expansion', 'expansión', 'ampliacion', 'ampliación', 'escenario', 'viaje', 'travel',
+          'junior', 'duelo', 'duel', 'extension', 'extensión', 'pack', 'set', 'scenario',
+          'plus', '3d', 'aniversario', 'anniversary', 'big box', 'bigbox', 'deluxe', 'especial', 'special'
+        ];
         matchedGame = gamesList.find((g) => {
           const cacheName = g.name.toLowerCase();
-          return cacheName.includes(cleanTitle) || cleanTitle.includes(cacheName);
+          const cleanLower = cleanTitle.toLowerCase();
+          const hasInclusion = cacheName.includes(cleanLower) || cleanLower.includes(cacheName);
+          if (!hasInclusion) return false;
+
+          for (const word of EXCLUSION_EDITION_WORDS) {
+            const cleanHasWord = cleanLower.includes(word);
+            const cacheHasWord = cacheName.includes(word);
+            if (cleanHasWord && !cacheHasWord) {
+              return false;
+            }
+          }
+          return true;
         }) || null;
       }
     }
@@ -317,7 +363,7 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
     // 3. Auto-create game page entry in bgg_games_cache for unique unmatched XML feed items AND enqueue for BGG metadata enrichment
     let isAutoCreated = false;
     if (!matchedGame && item.title) {
-      const cleanTitle = item.title.replace(/\s*\([^)]*\)/g, '').split(' - ')[0].trim();
+      const cleanTitle = cleanBoardGameTitle(item.title);
       if (cleanTitle.length >= 2) {
         const normalizedForHash = cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
         let hash = 0;
@@ -396,6 +442,17 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
 
     // Upsert matched batch if threshold reached
     if (buffer.length >= BATCH_LIMIT) {
+      if (newGamesToUpsert.length > 0) {
+        const dedupedNewGames = Array.from(new Map(newGamesToUpsert.map((g) => [g.bgg_id, g])).values());
+        const { error: newGamesErr } = await supabase
+          .from('bgg_games_cache')
+          .upsert(dedupedNewGames, { onConflict: 'bgg_id' });
+        if (newGamesErr) {
+          console.error('[syncStoreCatalog] Batch upsert of new games failed:', newGamesErr.message);
+        }
+        newGamesToUpsert.length = 0;
+      }
+
       const dedupedBuffer = Array.from(new Map(buffer.map((item) => [`${item.store_id}_${item.bgg_id}`, item])).values());
       const { error } = await supabase
         .from('store_games')
@@ -422,6 +479,17 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
   }
 
   // Upsert remaining matched buffer items
+  if (newGamesToUpsert.length > 0) {
+    const dedupedNewGames = Array.from(new Map(newGamesToUpsert.map((g) => [g.bgg_id, g])).values());
+    const { error: newGamesErr } = await supabase
+      .from('bgg_games_cache')
+      .upsert(dedupedNewGames, { onConflict: 'bgg_id' });
+    if (newGamesErr) {
+      console.error('[syncStoreCatalog] Final batch upsert of new games failed:', newGamesErr.message);
+    }
+    newGamesToUpsert.length = 0;
+  }
+
   if (buffer.length > 0) {
     const dedupedBuffer = Array.from(new Map(buffer.map((item) => [`${item.store_id}_${item.bgg_id}`, item])).values());
     const { error } = await supabase

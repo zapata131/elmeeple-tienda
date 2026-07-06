@@ -137,6 +137,83 @@ const BROWSER_HEADERS = {
 export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedItem[]> {
   const allItems: ParsedFeedItem[] = [];
 
+  if (feedUrl.includes('products.json')) {
+    const baseUrl = feedUrl.split('?')[0];
+    let page = 1;
+    const seenLinks = new Set<string>();
+    const MAX_SAFETY_PAGES = 30; // Up to 7,500 products per store
+
+    while (page <= MAX_SAFETY_PAGES) {
+      try {
+        const paginatedUrl = `${baseUrl}?limit=250&page=${page}`;
+        const res = await getFetch()(paginatedUrl, { headers: BROWSER_HEADERS });
+        if (!res.ok) break;
+        
+        interface ShopifyProductsResponse {
+          products: Array<{
+            id: number;
+            title: string;
+            handle: string;
+            body_html?: string;
+            variants?: Array<{
+              id: number;
+              title: string;
+              price: string;
+              available: boolean;
+              sku?: string | null;
+            }>;
+          }>;
+        }
+
+        const data = await res.json() as ShopifyProductsResponse;
+        const products = data.products || [];
+        if (products.length === 0) break;
+
+        let newCount = 0;
+        for (const prod of products) {
+          const cleanBase = baseUrl.replace('/products.json', '');
+          const link = `${cleanBase}/products/${prod.handle}`;
+          
+          if (!seenLinks.has(link)) {
+            seenLinks.add(link);
+            
+            for (const variant of prod.variants || []) {
+              const price = parseFloat(variant.price) || 0;
+              const stock = variant.available ? 1 : 0;
+              const ean = variant.sku || null;
+              const title = variant.title && variant.title !== 'Default Title' 
+                ? `${prod.title} (${variant.title})` 
+                : prod.title;
+              const description = prod.body_html || '';
+
+              if (title && price > 0 && isLikelyBoardGame(title, description)) {
+                allItems.push({
+                  title,
+                  link,
+                  price,
+                  stock,
+                  ean,
+                  language: detectLanguage(title, description),
+                });
+                newCount++;
+              }
+            }
+          }
+        }
+
+        if (newCount === 0) break;
+        page++;
+        
+        const delayMs = (process.env.NODE_ENV === 'test' || process.env.FAST_SEED === 'true') ? 0 : 200;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      } catch (err) {
+        console.warn(`[Products JSON Fetcher] Page ${page} failed for ${baseUrl}:`, err);
+        break;
+      }
+    }
+    return allItems;
+  }
+
   if (feedUrl.includes('.atom')) {
     const baseUrl = feedUrl.split('?')[0];
     let page = 1;
@@ -200,7 +277,20 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
   const stats = { processed: 0, matched: 0, unmatched: 0, queued: 0 };
   const buffer: StoreGameInsertRow[] = [];
   const queueBuffer: QueueInsertRow[] = [];
+  const newGamesToUpsert: Array<{ bgg_id: number; name: string; thumbnail: string; last_updated_at: string }> = [];
   const BATCH_LIMIT = 500;
+
+  // Pre-load all cached games in memory for speedy matching without making thousands of remote queries
+  // Limit to verified catalog games (bgg_id < 8,000,000) to avoid Supabase 1000 rows pagination limits
+  const { data: cachedGames, error: cacheErr } = await supabase
+    .from('bgg_games_cache')
+    .select('bgg_id, name, ean')
+    .lt('bgg_id', 8000000);
+  
+  if (cacheErr) {
+    console.error('[syncStoreCatalog] Failed to pre-load games cache:', cacheErr.message);
+  }
+  const gamesList: Array<{ bgg_id: number; name: string; ean: string | null }> = cachedGames || [];
 
   for (const item of items) {
     stats.processed++;
@@ -208,29 +298,19 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
 
     // 1. Match by EAN barcode first
     if (item.ean) {
-      const { data, error } = await supabase
-        .from('bgg_games_cache')
-        .select('bgg_id, name')
-        .eq('ean', item.ean)
-        .single();
-      
-      if (data && !error) {
-        matchedGame = data;
-      }
+      matchedGame = gamesList.find((g) => g.ean === item.ean) || null;
     }
 
     // 2. Fallback to case-insensitive name match
     if (!matchedGame && item.title) {
       // Clean title from common suffixes or editions details
       const cleanTitle = item.title.toLowerCase().split('(')[0].split(' - ')[0].trim();
-      const { data, error } = await supabase
-        .from('bgg_games_cache')
-        .select('bgg_id, name')
-        .ilike('name', `%${cleanTitle}%`)
-        .limit(1);
-
-      if (data && data.length > 0 && !error) {
-        matchedGame = data[0];
+      matchedGame = gamesList.find((g) => g.name.toLowerCase() === cleanTitle) || null;
+      if (!matchedGame) {
+        matchedGame = gamesList.find((g) => {
+          const cacheName = g.name.toLowerCase();
+          return cacheName.includes(cleanTitle) || cleanTitle.includes(cacheName);
+        }) || null;
       }
     }
 
@@ -254,9 +334,21 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
           last_updated_at: new Date().toISOString(),
         };
 
-        await supabase.from('bgg_games_cache').upsert(newGameRow, { onConflict: 'bgg_id' });
+        newGamesToUpsert.push(newGameRow);
         matchedGame = newGameRow;
+        gamesList.push({ bgg_id: generatedId, name: cleanTitle, ean: null });
         isAutoCreated = true;
+
+        if (newGamesToUpsert.length >= BATCH_LIMIT) {
+          const dedupedNewGames = Array.from(new Map(newGamesToUpsert.map((g) => [g.bgg_id, g])).values());
+          const { error: newGamesErr } = await supabase
+            .from('bgg_games_cache')
+            .upsert(dedupedNewGames, { onConflict: 'bgg_id' });
+          if (newGamesErr) {
+            console.error('[syncStoreCatalog] Batch upsert of new games failed:', newGamesErr.message);
+          }
+          newGamesToUpsert.length = 0;
+        }
       }
     }
 
@@ -282,7 +374,11 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
         store_product_url: item.link,
         price: item.price,
         stock: item.stock,
-        edition_language: item.language || detectLanguage(item.title),
+        edition_language: ['es', 'pt', 'en'].includes(item.language || '')
+          ? (item.language as string)
+          : ['es', 'pt', 'en'].includes(detectLanguage(item.title))
+            ? detectLanguage(item.title)
+            : 'es',
         last_updated_at: new Date().toISOString(),
       });
     } else {
@@ -346,6 +442,17 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
     
     if (error) {
       console.error('[syncStoreCatalog] Final queue buffer upsert failed:', error.message);
+    }
+  }
+
+  // Upsert remaining auto-created games
+  if (newGamesToUpsert.length > 0) {
+    const dedupedNewGames = Array.from(new Map(newGamesToUpsert.map((g) => [g.bgg_id, g])).values());
+    const { error: newGamesErr } = await supabase
+      .from('bgg_games_cache')
+      .upsert(dedupedNewGames, { onConflict: 'bgg_id' });
+    if (newGamesErr) {
+      console.error('[syncStoreCatalog] Final batch upsert of new games failed:', newGamesErr.message);
     }
   }
 

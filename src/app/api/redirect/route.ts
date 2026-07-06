@@ -20,23 +20,7 @@ function appendAffiliateParams(rawUrl: string): string {
 }
 
 function sanitizeTargetUrl(rawUrl: string): string {
-  let targetUrl = rawUrl;
-  const deadPaths = ['/products/catan', '/products/wingspan', '/products/sky-team', '/products/faraway', '/products/the-white-castle', '/products/excalibur', '/products/dune', '/products/revive', '/products/colonos-de-catan', '/products/el-castillo-blanco'];
-  if (deadPaths.some((dp) => rawUrl.includes(dp))) {
-    try {
-      const urlObj = new URL(rawUrl);
-      const storeHost = urlObj.origin;
-      if (storeHost.includes('geekystuff')) {
-        targetUrl = storeHost;
-      } else {
-        const gameQuery = rawUrl.split('/products/')[1]?.split('-')[0] || 'juego';
-        targetUrl = `${storeHost}/search?q=${gameQuery}`;
-      }
-    } catch {
-      targetUrl = rawUrl;
-    }
-  }
-  return appendAffiliateParams(targetUrl);
+  return appendAffiliateParams(rawUrl);
 }
 
 export async function GET(request: NextRequest) {

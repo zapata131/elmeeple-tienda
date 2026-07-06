@@ -49,3 +49,4 @@ next-env.d.ts
 .agents/sentinel/
 .agents/ORIGINAL_REQUEST.md
 ORIGINAL_REQUEST.md
+/.cache

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { MOCK_IBEROAMERICAN_STORES, MOCK_GAMES } from '@/utils/mockData';
+import { VERIFIED_MEXICAN_STORES } from '@/utils/mockData';
+import { loadLocalCatalogCache } from '@/utils/local_file_cache';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
@@ -48,32 +49,47 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(sanitizeTargetUrl(directUrl), 302);
         }
 
+        const fileCache = loadLocalCatalogCache();
+        const cachedOffer = fileCache?.offers.find((o) => o.id === offerId);
+        if (cachedOffer && cachedOffer.store_product_url) {
+          return NextResponse.redirect(sanitizeTargetUrl(cachedOffer.store_product_url), 302);
+        }
+
         let storeId = '';
         let bggId = 0;
 
         if (offerId.startsWith('offer-') || offerId.startsWith('real-feed-')) {
           const prefixRemoved = offerId.replace(/^(offer-|real-feed-)/, '');
           const parts = prefixRemoved.split('-');
-          // Check if UUID store ID is at the start (offer-UUID-bggId)
           if (parts.length >= 6 && parts[0].length === 8) {
             storeId = parts.slice(0, 5).join('-');
             bggId = parseInt(parts[5], 10);
           } else if (parts.length >= 6 && !isNaN(parseInt(parts[0], 10))) {
-            // real-feed-bggId-UUID
             bggId = parseInt(parts[0], 10);
             storeId = parts.slice(1).join('-');
           } else {
-            // legacy format: offer-bggId-storeId or real-feed-bggId-storeId
             bggId = parseInt(parts[0], 10);
             storeId = parts.slice(1).join('-');
           }
         }
 
-        const storeMatch = MOCK_IBEROAMERICAN_STORES.find((s) => s.id === storeId || s.slug === storeId);
-        const gameMatch = MOCK_GAMES.find((g) => g.bgg_id === bggId);
+        const storeMatch = VERIFIED_MEXICAN_STORES.find((s) => s.id === storeId || s.slug === storeId);
+        const cachedGame = fileCache?.games.find((g) => g.bgg_id === bggId);
+        let gameName = cachedGame?.name;
+
+        if (!gameName && bggId > 0) {
+          const { data: dbGame } = await supabase
+            .from('bgg_games_cache')
+            .select('name')
+            .eq('bgg_id', bggId)
+            .single();
+          if (dbGame?.name) {
+            gameName = dbGame.name;
+          }
+        }
 
         if (storeMatch) {
-          const query = gameMatch ? encodeURIComponent(gameMatch.name) : 'juegos de mesa';
+          const query = gameName ? encodeURIComponent(gameName) : (bggId === 13 ? 'Catan' : (bggId === 359871 ? 'Arcs' : 'juegos de mesa'));
           const baseUrl = storeMatch.website;
           const searchPath = `${baseUrl}/search?q=${query}`;
           const targetUrl = appendAffiliateParams(searchPath);

@@ -28,7 +28,49 @@ jest.mock('@supabase/supabase-js', () => {
       error: null,
     })),
     // When fetchGameOffers awaits without .single(), thenable resolution:
-    then: jest.fn((resolve) => resolve({ data: [], error: null })),
+    then: jest.fn((resolve) =>
+      resolve({
+        data: [
+          {
+            id: 'offer-1',
+            store_id: '11111111-1111-1111-1111-111111111101',
+            price: 680,
+            stock: 5,
+            edition_language: 'es',
+            store_product_url: 'https://fichaydado.com/products/catan',
+            stores: { id: '11111111-1111-1111-1111-111111111101', name: 'Ficha y Dado', logo_url: null, shipping_rates: [{ flat_rate: 99, free_shipping_threshold: 1200, destination_country: 'MX' }] },
+          },
+          {
+            id: 'offer-2',
+            store_id: '11111111-1111-1111-1111-111111111102',
+            price: 720,
+            stock: 3,
+            edition_language: 'es',
+            store_product_url: 'https://mundomeeplestore.com/products/catan',
+            stores: { id: '11111111-1111-1111-1111-111111111102', name: 'Mundo Meeple Store', logo_url: null, shipping_rates: [{ flat_rate: 110, free_shipping_threshold: 1499, destination_country: 'MX' }] },
+          },
+          {
+            id: 'offer-3',
+            store_id: '11111111-1111-1111-1111-111111111104',
+            price: 695,
+            stock: 4,
+            edition_language: 'es',
+            store_product_url: 'https://tdetlacuache.com/products/catan',
+            stores: { id: '11111111-1111-1111-1111-111111111104', name: 'Con T de Tlacuache', logo_url: null, shipping_rates: [{ flat_rate: 105, free_shipping_threshold: 1199, destination_country: 'MX' }] },
+          },
+          {
+            id: 'offer-4',
+            store_id: '11111111-1111-1111-1111-111111111103',
+            price: 710,
+            stock: 2,
+            edition_language: 'es',
+            store_product_url: 'https://rollgames.mx/products/catan',
+            stores: { id: '11111111-1111-1111-1111-111111111103', name: 'Roll Games', logo_url: null, shipping_rates: [{ flat_rate: 120, free_shipping_threshold: 1500, destination_country: 'MX' }] },
+          },
+        ],
+        error: null,
+      })
+    ),
   };
   return {
     createClient: jest.fn(() => mockClientInstance),

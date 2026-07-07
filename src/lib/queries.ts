@@ -28,8 +28,6 @@ interface QueryEdition {
   parent_bgg_id: number | null;
 }
 
-import { MOCK_GAMES } from '@/utils/mockData';
-import { getRealFeedOffersForGame } from '@/utils/real_feed_data';
 import { loadLocalCatalogCache } from '@/utils/local_file_cache';
 
 export async function fetchGameDetails(bggId: number) {
@@ -40,22 +38,6 @@ export async function fetchGameDetails(bggId: number) {
     .single();
 
   if (error || !data || (Array.isArray(data) && data.length === 0)) {
-    console.warn(`[queries] fetchGameDetails offline fallback for ${bggId}`);
-    const mock = MOCK_GAMES.find((g) => g.bgg_id === bggId);
-    if (mock) {
-      return {
-        bgg_id: mock.bgg_id,
-        name: mock.name,
-        thumbnail: mock.thumbnail,
-        image: mock.image || mock.thumbnail,
-        description: mock.description || 'Juego de mesa verificado en el catálogo mexicano de MeeplePrecios.',
-        weight: mock.weight,
-        min_players: mock.min_players,
-        max_players: mock.max_players,
-        playing_time: mock.playing_time,
-      };
-    }
-
     const fileCache = loadLocalCatalogCache();
     const cachedGame = fileCache?.games.find((g) => g.bgg_id === bggId);
     if (cachedGame) {
@@ -72,7 +54,7 @@ export async function fetchGameDetails(bggId: number) {
       };
     }
 
-    // Dynamic live fetch from BGG XMLAPI2 if not in cache or MOCK_GAMES
+    // Dynamic live fetch from BGG XMLAPI2 if not in cache or DB
     try {
       const headers: HeadersInit = {};
       const apiKey = process.env.BGG_API_KEY;
@@ -108,13 +90,7 @@ export async function fetchGameDetails(bggId: number) {
       console.warn(`[queries] live BGG fetch failed for ${bggId}:`, err);
     }
 
-    const fallback = MOCK_GAMES[0];
-    return {
-      ...fallback,
-      bgg_id: bggId,
-      name: `Juego #${bggId}`,
-      description: null,
-    };
+    return null;
   }
   return data;
 }
@@ -173,14 +149,13 @@ export async function fetchBggHotness() {
         }
 
         return rawResults.map((r) => {
-          const bggGameMatch = MOCK_GAMES.find((g) => g.bgg_id === r.bgg_id);
-          const exactImage = imageMap[r.bgg_id] || bggGameMatch?.image || r.thumbnail;
+          const exactImage = imageMap[r.bgg_id] || r.thumbnail;
           return {
             bgg_id: r.bgg_id,
             name: r.name,
             thumbnail: r.thumbnail,
             image: exactImage,
-            weight: weightMap[r.bgg_id] || bggGameMatch?.weight || 2.8,
+            weight: weightMap[r.bgg_id] || 2.8,
           };
         });
       }
@@ -188,14 +163,56 @@ export async function fetchBggHotness() {
   } catch (err) {
     console.warn('[queries] fetchBggHotness API fallback triggered:', err);
   }
-  // Fallback to top Mexican catalog games with high-res cover art
-  return MOCK_GAMES.slice(0, 10).map((g) => ({
-    bgg_id: g.bgg_id,
-    name: g.name,
-    thumbnail: g.thumbnail,
-    image: g.image || g.thumbnail,
-    weight: g.weight,
-  }));
+
+  // Query top real Mexican catalog games from database or local file cache
+  const { data: topDbGames } = await supabase
+    .from('bgg_games_cache')
+    .select('bgg_id, name, thumbnail, image, weight')
+    .limit(10);
+
+  if (topDbGames && topDbGames.length > 0) {
+    return topDbGames.map((g) => ({
+      bgg_id: g.bgg_id,
+      name: g.name,
+      thumbnail: g.thumbnail,
+      image: g.image || g.thumbnail,
+      weight: g.weight || 2.8,
+    }));
+  }
+
+  const fileCache = loadLocalCatalogCache();
+  if (fileCache && fileCache.games.length > 0) {
+    return fileCache.games.slice(0, 10).map((g) => ({
+      bgg_id: g.bgg_id,
+      name: g.name,
+      thumbnail: g.thumbnail,
+      image: g.thumbnail,
+      weight: 2.8,
+    }));
+  }
+
+  return [];
+}
+
+interface QueryOfferStore {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  shipping_rates?: Array<{
+    flat_rate: number;
+    free_shipping_threshold: number | null;
+    destination_country: string;
+  }>;
+}
+
+interface QueryOfferRow {
+  id: string;
+  store_id: string;
+  price: number;
+  stock: number;
+  edition_language: string;
+  store_product_url: string;
+  stores: QueryOfferStore | null;
 }
 
 export async function fetchGameOffers(bggId: number, countryCode: string = 'MX') {
@@ -208,43 +225,41 @@ export async function fetchGameOffers(bggId: number, countryCode: string = 'MX')
       stock,
       edition_language,
       store_product_url,
-      is_featured,
       stores (
         id,
         name,
         logo_url,
-        country
-      ),
-      shipping_rates:store_id (
-        flat_rate,
-        free_shipping_threshold,
-        destination_country
+        shipping_rates (
+          flat_rate,
+          free_shipping_threshold,
+          destination_country
+        )
       )
     `)
     .eq('bgg_id', bggId);
 
   if (error || !data || data.length === 0) {
-    console.warn(`[queries] fetchGameOffers offline fallback triggered for ${bggId}`);
+    if (error) {
+      console.warn(`[queries] fetchGameOffers DB error for ${bggId}:`, error.message);
+    }
     const fileCache = loadLocalCatalogCache();
     const cachedOffers = fileCache?.offers.filter((o) => o.bgg_id === bggId) || [];
-    if (cachedOffers.length > 0) {
-      return cachedOffers;
-    }
-    return getRealFeedOffersForGame(bggId, countryCode);
+    return cachedOffers;
   }
 
-  const typedData = data as unknown as QueryOffer[];
+  const typedData = data as unknown as QueryOfferRow[];
 
   return typedData.map((item) => {
-    const rates = Array.isArray(item.shipping_rates) ? item.shipping_rates : [];
+    const storeObj = item.stores;
+    const rates = Array.isArray(storeObj?.shipping_rates) ? storeObj.shipping_rates : [];
     const matchingRate = rates.find((r) => r.destination_country === countryCode);
 
     return {
       id: item.id,
-      store_id: item.store_id || item.stores?.id || '11111111-1111-1111-1111-111111111101',
-      store_name: item.stores?.name || 'Unknown',
-      store_logo: item.stores?.logo_url || null,
-      store_country: item.stores?.country || 'MX',
+      store_id: item.store_id || storeObj?.id || '11111111-1111-1111-1111-111111111101',
+      store_name: storeObj?.name || 'Unknown',
+      store_logo: storeObj?.logo_url || null,
+      store_country: 'MX',
       rating: 4.8,
       review_count: 50,
       store_product_url: item.store_product_url,
@@ -253,7 +268,7 @@ export async function fetchGameOffers(bggId: number, countryCode: string = 'MX')
       edition_language: item.edition_language,
       shipping_flat: matchingRate ? Number(matchingRate.flat_rate) : null,
       shipping_free_threshold: matchingRate && matchingRate.free_shipping_threshold ? Number(matchingRate.free_shipping_threshold) : null,
-      is_featured: !!item.is_featured,
+      is_featured: false,
     };
   });
 }

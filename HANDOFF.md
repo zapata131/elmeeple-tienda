@@ -1,32 +1,32 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 19: Permissive Catalog Ingestion, Title Word Boundary Matching & Full Re-seed)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 20: Nesting Box & Accessory Exclusion Safeguards for Exact Product Matching)
 
-This memo records the completed execution of **Milestone 19 (Issue #165 / US-60)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), making feed parsing fully permissive to ingest all store catalog items and certifying price, stock, and direct product link alignment across target games (Scout, Catan, Wingspan, etc.).
+This memo records the completed execution of **Milestone 20 (Issue #167 / US-61)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), expanding title exclusion safeguards to filter out storage boxes, nesting boxes, organizers, playmats, and component add-ons from base game comparison tables.
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-165-permissive-feed-parsing` (Ready to merge into `main`)
-* **Completed Issue in Milestone 19:**
-  * Issue #165 (`[US-60] Eliminate isLikelyBoardGame Restrictive Filter, Enable Permissive Feed Parsing, and Re-seed Catalog`) - Verified & ready to merge.
+* **Active Branch:** `feature/issue-167-exact-product-matching` (Ready to merge into `main`)
+* **Completed Issue in Milestone 20:**
+  * Issue #167 (`[US-61] Exact Product Matching & Accessory/Organizer Exclusion Safeguards`) - Verified & ready to merge.
 
 ---
 
-## 2. Work Completed in Issue #165 📦
+## 2. Work Completed in Issue #167 📦
 
-1. **Permissive Catalog Feed Ingestion:**
-   * Updated `isLikelyBoardGame()` in `src/utils/feed_parser.ts` to return `true` unconditionally, ensuring all store XML/JSON feed items are ingested into memory for BGG catalog matching without being dropped by keyword filters.
-2. **Word-Boundary & Expansion-Aware Title Matching:**
-   * Enhanced title matching in `syncStoreCatalog()` to use word boundary regexes (`\b<name>\b`) to prevent false positive matches on embedded strings (e.g., preventing *Chicatana Pocket* from matching *Catan* base game).
-   * Added `puzzle` and `rompecabezas` to `EXCLUSION_EDITION_WORDS` to prevent puzzle books/challenges from overwriting base game offers.
-3. **Scout & Popular Game Pre-population:**
-   * Added Scout (BGG ID 291453) to `MOCK_GAMES` / `bgg_games_cache` to ensure store listings for *Scout (Oink Games)* correctly map to BGG ID 291453 instead of auto-generated IDs.
-4. **Full Catalog Re-seed (27,391 Offers Ingested):**
-   * Re-seeded all 7 verified Mexican stores: processed **27,392 total feed items** across **20,650 board games**, populating **27,391 active store offers**.
-5. **Live Verification across Target Games:**
-   * **Scout (BGG ID 291453):** 7 store offers (Bundaba $450, Ficha y Dado $485, Alfa y Delta $490, Roll Games $499, Con T de Tlacuache $499, Quantum $850, Mundo Meeple $1399) - ALL pointing to direct product URLs.
-   * **Catan (BGG ID 13):** 7 store offers (Ficha y Dado $680, Con T de Tlacuache $749, Bundaba $750, Alfa y Delta $750, Roll Games $750, Quantum $850, Mundo Meeple $1150) - ALL pointing to direct product URLs.
-   * **Wingspan (BGG ID 266192):** 7 store offers (Bundaba $1200, Ficha y Dado $1245, Roll Games $1245, Alfa y Delta $1290, Con T de Tlacuache $1350, Quantum $2500) - ALL pointing to direct product URLs.
+1. **Accessory & Nesting Box Exclusion Safeguards:**
+   * Expanded `EXCLUSION_EDITION_WORDS` in `src/utils/feed_parser.ts` to include storage, organizers, and accessory keywords:
+     `'nesting'`, `'nesting box'`, `'caja nido'`, `'organizer'`, `'organizador'`, `'inserto'`, `'insert'`, `'folded space'`, `'box'`, `'caja'`, `'storage'`, `'caja organizadora'`, `'almacenamiento'`, `'sleeves'`, `'micas'`, `'funda'`, `'fundas'`, `'playmat'`, `'play-mat'`, `'tapete'`, `'monedas'`, `'coins'`, `'tokens'`, `'fichas'`, `'dice'`, `'dados'`, `'eggs'`, `'huevos'`, `'stone'`, `'meeple'`, `'miniaturas'`, `'promo'`, `'upgrade'`.
+2. **Re-seed & Elimination of False Positive Matches:**
+   * Successfully eliminated Quantum Boardgames' $2,500.00 MXN *Wingspan Nesting Box* and Mundo Meeple Store's $599.00 MXN *Wingspan Stone Eggs* from the Wingspan base game page.
+   * Updated Wingspan comparison table to strictly show exact base game listings:
+     * **Bundaba:** $1,200.00 MXN (`https://bundaba.com.mx/products/wingspan`)
+     * **Ficha y Dado:** $1,245.00 MXN (`https://fichaydado.com/products/wingspan-juego-de-mesa-maldito-games`)
+     * **Roll Games:** $1,245.00 MXN (`https://rollgames.mx/products/wingspan-en-espanol`)
+     * **Alfa y Delta:** $1,290.00 MXN (`https://alfaydelta.com/products/wingspan`)
+     * **Con T de Tlacuache:** $1,350.00 MXN (`https://tdetlacuache.com/products/wingspan-maldito-games`)
+     * **Mundo Meeple Store:** $1,450.00 MXN (`https://mundomeeplestore.com/products/wingspan`)
+     * **Quantum Boardgames:** $2,050.00 MXN (`https://quantumboardgames.com/products/902642534`)
 
 ---
 
@@ -37,5 +37,5 @@ This memo records the completed execution of **Milestone 19 (Issue #165 / US-60)
 ---
 
 ## 4. Next Steps 🚀
-1. Merge active PR for Issue #165 (`feature/issue-165-permissive-feed-parsing`) into `main`.
-2. Delete feature branch `feature/issue-165-permissive-feed-parsing`.
+1. Merge active PR for Issue #167 (`feature/issue-167-exact-product-matching`) into `main`.
+2. Delete feature branch `feature/issue-167-exact-product-matching`.

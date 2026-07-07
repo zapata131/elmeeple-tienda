@@ -58,36 +58,6 @@ export function cleanBoardGameTitle(title: string): string {
 }
 
 export function isLikelyBoardGame(title: string, contentBlock: string = ''): boolean {
-  const lower = `${title} ${contentBlock}`.toLowerCase();
-
-  // Standalone word boundary exclusions to prevent false positive exclusions on Spanish words like 'fundamentales', 'primeros', etc.
-  const WORD_BOUNDARY_EXCLUSIONS = [
-    /\bfundas?\b/i,
-    /\bprimer\b/i,
-    /\bpuzzles?\b/i,
-  ];
-
-  for (const regex of WORD_BOUNDARY_EXCLUSIONS) {
-    if (regex.test(lower)) {
-      return false;
-    }
-  }
-
-  const NON_BOARD_GAME_KEYWORDS = [
-    'sleeves', 'micas', 'protector de cartas', 'perfect fit',
-    'pintura', 'vallejo', 'citadel', 'army painter', 'pincel', 'aerógrafo', 'barniz', 'diluyente',
-    'rompecabezas',
-    'booster', 'sobre mtg', 'sobre pokémon', 'sobre lorcana', 'display de sobres', 'caja de sobres', 'tcg sobre',
-    'set de dados', 'torre de dados', 'dados d&d', 'dado d20',
-    'tapete', 'playmat', 'inserto folded space', 'organizador de madera', 'token de acrílico',
-  ];
-
-  for (const kw of NON_BOARD_GAME_KEYWORDS) {
-    if (lower.includes(kw)) {
-      return false;
-    }
-  }
-
   return true;
 }
 
@@ -347,12 +317,24 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
         const EXCLUSION_EDITION_WORDS = [
           'expansion', 'expansión', 'ampliacion', 'ampliación', 'escenario', 'viaje', 'travel',
           'junior', 'duelo', 'duel', 'extension', 'extensión', 'pack', 'set', 'scenario',
-          'plus', '3d', 'aniversario', 'anniversary', 'big box', 'bigbox', 'deluxe', 'especial', 'special'
+          'plus', '3d', 'aniversario', 'anniversary', 'big box', 'bigbox', 'deluxe', 'especial', 'special',
+          'puzzle', 'rompecabezas'
         ];
+        const escapeReg = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
         matchedGame = gamesList.find((g) => {
           const cacheName = g.name.toLowerCase();
           const cleanLower = cleanTitle.toLowerCase();
-          const hasInclusion = cacheName.includes(cleanLower) || cleanLower.includes(cacheName);
+          
+          let hasInclusion = false;
+          try {
+            const cacheReg = new RegExp(`\\b${escapeReg(cacheName)}\\b`, 'i');
+            const cleanReg = new RegExp(`\\b${escapeReg(cleanLower)}\\b`, 'i');
+            hasInclusion = cacheReg.test(cleanLower) || cleanReg.test(cacheName);
+          } catch {
+            hasInclusion = cacheName.includes(cleanLower) || cleanLower.includes(cacheName);
+          }
+          
           if (!hasInclusion) return false;
 
           for (const word of EXCLUSION_EDITION_WORDS) {

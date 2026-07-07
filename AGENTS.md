@@ -175,6 +175,12 @@ graph TD
 *   **Local Disk Cache Fallback Merging:** Live network crawls encountering Cloudflare blockades (status 429) or connection failures return 0 items. Discarding these stores' offers deletes them from database comparison page displays and local disk caches.
     *   *Convention:* When feed crawls return 0 items, always load the existing disk cache and fall back to reloading the cached store offers. Upsert the cached rows to the database and keep them in the newly saved cache payload to preserve catalog continuity.
 
+### 5.15 PostgREST Nested Selects & Word Boundary Catalog Exclusions (US-59)
+*   **PostgREST Nested Relation Selects vs Column Alias Errors:** Requesting non-existent columns (`stores.country`, `store_games.is_featured`) or invalid relation aliases in Supabase queries throws SQL error 42703, causing database queries to fail and trigger unwanted fallbacks to stale/mock data.
+    *   *Convention:* Always verify Supabase schema columns before specifying them in `.select()`. Nest relation queries cleanly: `stores (id, name, logo_url, shipping_rates (flat_rate, free_shipping_threshold, destination_country))` rather than requesting unaliased outer joins.
+*   **Word Boundary Exclusions for Spanish Catalog Filters:** Plain substring matching on catalog exclusion keywords (like `'funda'`) causes false-positive exclusions on common Spanish words in board game descriptions (such as `fundamentales` in Wingspan's description).
+    *   *Convention:* Always use standalone word boundary regexes (`/\bfundas?\b/i`, `/\bprimer\b/i`, `/\bpuzzles?\b/i`) in `isLikelyBoardGame()` to prevent valid board games from being rejected during catalog ingestion.
+
 ---
 
 ## 6. Four-Tier Testing Standards & Browser Automation

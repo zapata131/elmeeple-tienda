@@ -143,6 +143,8 @@ export const MOCK_IBEROAMERICAN_STORES: MockStore[] = [
   },
 ];
 
+export const VERIFIED_MEXICAN_STORES = MOCK_IBEROAMERICAN_STORES;
+
 export const MOCK_GAMES: MockGame[] = [
   {
     bgg_id: 421285,

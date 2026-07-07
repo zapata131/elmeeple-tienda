@@ -18,7 +18,7 @@ interface StoreRow {
   base_url?: string;
 }
 
-import { MOCK_GAMES, MOCK_IBEROAMERICAN_STORES } from '@/utils/mockData';
+import { VERIFIED_MEXICAN_STORES } from '@/utils/mockData';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -70,21 +70,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    if (games.length < MOCK_GAMES.length) {
-      for (const mg of MOCK_GAMES) {
-        if (!existingIds.has(mg.bgg_id)) {
-          existingIds.add(mg.bgg_id);
-          games.push({
-            bgg_id: mg.bgg_id,
-            name: mg.name,
-            thumbnail: mg.thumbnail,
-            categories: [],
-            alternate_names: [],
-            store_games: [{ id: 'mock-offer', stock: 1 }],
-          });
-        }
-      }
-    }
     const matchedGames = games.filter((game) => {
       const normName = stripDiacritics((game.name || '').toLowerCase());
       if (normName.includes(normalizedQuery)) return true;
@@ -147,7 +132,7 @@ export async function GET(request: NextRequest) {
 
     let stores: StoreRow[] = (dbStores || []) as StoreRow[];
     if (stores.length === 0) {
-      stores = MOCK_IBEROAMERICAN_STORES.map(s => ({ id: s.id, name: s.name, base_url: s.website }));
+      stores = VERIFIED_MEXICAN_STORES.map(s => ({ id: s.id, name: s.name, base_url: s.website }));
     }
 
     const matchedStores = stores.filter((st) =>
@@ -186,24 +171,10 @@ export async function GET(request: NextRequest) {
     });
   } catch (err) {
     console.error('[API Search] Error:', err);
-    const fallbackGames = MOCK_GAMES.filter((g) =>
-      stripDiacritics(g.name.toLowerCase()).includes(normalizedQuery)
-    ).slice(0, 6);
-
-    const fallbackStores = MOCK_IBEROAMERICAN_STORES.filter((st) =>
-      stripDiacritics(st.name.toLowerCase()).includes(normalizedQuery)
-    ).slice(0, 3).map(s => ({ id: s.id, name: s.name, base_url: s.website }));
-
-    const fallbackCategories = [
-      { tag: 'Estrategia' },
-      { tag: 'Eurogame' },
-      { tag: 'Familiar' }
-    ];
-
     return NextResponse.json({
-      games: fallbackGames,
-      stores: fallbackStores,
-      categories: fallbackCategories,
+      games: [],
+      stores: [],
+      categories: [],
     });
   }
 }

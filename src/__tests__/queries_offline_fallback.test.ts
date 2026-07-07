@@ -26,31 +26,11 @@ describe('Issue #38: Offline Fallback Detection in queries.ts', () => {
   });
 
   describe('fetchGameDetails', () => {
-    it('returns Catan specs from MOCK_GAMES when Supabase returns { data: [], error: null } for cached game 13', async () => {
+    it('returns null when Supabase returns empty data and game is not in cache or BGG', async () => {
       mockSingle.mockResolvedValueOnce({ data: [], error: null });
 
-      const details = await fetchGameDetails(13);
-
-      expect(details).toEqual({
-        bgg_id: 13,
-        name: 'Catan',
-        thumbnail: expect.any(String),
-        image: expect.any(String),
-        description: expect.any(String),
-        weight: 2.3,
-        min_players: 3,
-        max_players: 4,
-        playing_time: 120,
-      });
-    });
-
-    it('returns dynamic fallback with requested bgg_id when game is not in cache or MOCK_GAMES', async () => {
-      mockSingle.mockResolvedValueOnce({ data: [], error: null });
-
-      const details = await fetchGameDetails(23);
-
-      expect(details.bgg_id).toBe(23);
-      expect(details.name).toBe('Juego #23');
+      const details = await fetchGameDetails(9999999);
+      expect(details).toBeNull();
     });
   });
 

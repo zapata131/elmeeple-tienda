@@ -60,10 +60,23 @@ export function cleanBoardGameTitle(title: string): string {
 export function isLikelyBoardGame(title: string, contentBlock: string = ''): boolean {
   const lower = `${title} ${contentBlock}`.toLowerCase();
 
+  // Standalone word boundary exclusions to prevent false positive exclusions on Spanish words like 'fundamentales', 'primeros', etc.
+  const WORD_BOUNDARY_EXCLUSIONS = [
+    /\bfundas?\b/i,
+    /\bprimer\b/i,
+    /\bpuzzles?\b/i,
+  ];
+
+  for (const regex of WORD_BOUNDARY_EXCLUSIONS) {
+    if (regex.test(lower)) {
+      return false;
+    }
+  }
+
   const NON_BOARD_GAME_KEYWORDS = [
-    'funda', 'sleeves', 'micas', 'protector de cartas', 'perfect fit',
+    'sleeves', 'micas', 'protector de cartas', 'perfect fit',
     'pintura', 'vallejo', 'citadel', 'army painter', 'pincel', 'aerógrafo', 'barniz', 'diluyente',
-    'rompecabezas', 'puzzle',
+    'rompecabezas',
     'booster', 'sobre mtg', 'sobre pokémon', 'sobre lorcana', 'display de sobres', 'caja de sobres', 'tcg sobre',
     'set de dados', 'torre de dados', 'dados d&d', 'dado d20',
     'tapete', 'playmat', 'inserto folded space', 'organizador de madera', 'token de acrílico',
@@ -73,11 +86,6 @@ export function isLikelyBoardGame(title: string, contentBlock: string = ''): boo
     if (lower.includes(kw)) {
       return false;
     }
-  }
-
-  // Standalone 'primer' (miniature paint primer) matches with word boundary to avoid false positives like 'primeros' or 'primera'
-  if (/\bprimer\b/i.test(lower)) {
-    return false;
   }
 
   return true;
@@ -231,7 +239,6 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
           }
         }
 
-        if (newCount === 0) break;
         page++;
         
         const delayMs = (process.env.NODE_ENV === 'test' || process.env.FAST_SEED === 'true') ? 0 : 200;

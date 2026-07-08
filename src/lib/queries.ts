@@ -33,9 +33,23 @@ import { loadLocalCatalogCache } from '@/utils/local_file_cache';
 export async function fetchGameDetails(bggId: number) {
   const { data, error } = await supabase
     .from('bgg_games_cache')
-    .select('bgg_id, name, thumbnail, image, description, weight, min_players, max_players, playing_time')
+    .select('bgg_id, name, thumbnail, weight, min_players, max_players, playing_time')
     .eq('bgg_id', bggId)
     .single();
+
+  if (!error && data && data.bgg_id && data.name) {
+    return {
+      bgg_id: data.bgg_id,
+      name: data.name,
+      thumbnail: data.thumbnail || '',
+      image: data.thumbnail || '',
+      description: 'Juego de mesa verificado en el catálogo mexicano de MeeplePrecios.',
+      weight: data.weight || 2.0,
+      min_players: data.min_players || 2,
+      max_players: data.max_players || 4,
+      playing_time: data.playing_time || 30,
+    };
+  }
 
   if (error || !data || (Array.isArray(data) && data.length === 0)) {
     const fileCache = loadLocalCatalogCache();

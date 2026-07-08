@@ -57,7 +57,17 @@ export function cleanBoardGameTitle(title: string): string {
   return clean.replace(/\s+/g, ' ').trim();
 }
 
-export function isLikelyBoardGame(title: string, contentBlock: string = ''): boolean {
+export function isLikelyBoardGame(title: string, contentBlock: string = '', productType: string = ''): boolean {
+  const combinedType = `${productType} ${contentBlock}`.toLowerCase();
+  
+  // Exclude non-boardgame categories in Atom/XML feeds unless explicitly marked as a board game
+  const excludedTypes = ['figura', 'figuras', 'maqueta', 'ropa', 'merchandising', 'peluche', 'funko'];
+  for (const type of excludedTypes) {
+    if (combinedType.includes(type) && !combinedType.includes('juego de mesa') && !combinedType.includes('board game')) {
+      return false;
+    }
+  }
+
   return true;
 }
 
@@ -126,8 +136,9 @@ export function parseGoogleFeed(xmlContent: string): ParsedFeedItem[] {
     const stock = availability.toLowerCase().includes('out of stock') || availability.toLowerCase().includes('agotado') ? 0 : 1;
     const ean = getTagValue('g:gtin') || getTagValue('s:sku') || null;
     const language = detectLanguage(title, block);
+    const productType = getTagValue('s:type') || getTagValue('g:product_type') || getTagValue('category') || '';
 
-    if (title && price > 0 && isLikelyBoardGame(title, block)) {
+    if (title && price > 0 && isLikelyBoardGame(title, block, productType)) {
       items.push({ title, link, price, stock, ean, language });
     }
   }

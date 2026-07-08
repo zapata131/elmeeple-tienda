@@ -159,6 +159,18 @@ export const MOCK_GAMES: MockGame[] = [
     base_price_eur: 45.0,
   },
   {
+    bgg_id: 204583,
+    name: 'Kingdomino',
+    thumbnail: 'https://cf.geekdo-images.com/x3zxjr-Vw5iWnBDP36yY4A__small/img/1upgE6zU9E_22a1B8v_H2tJ0V_8=/fit-in/200x150/filters:strip_icc()/pic3132685.png',
+    image: 'https://cf.geekdo-images.com/x3zxjr-Vw5iWnBDP36yY4A__original/img/oRc0AomWA9ZtFqQDZiZbIyKE1j0=/0x0/filters:format(png)/pic3132685.png',
+    description: 'En Kingdomino, encarnas a un Señor que busca nuevas tierras para expandir su reino. Debes explorar todos los terrenos, campos de trigo, lagos y montañas para localizar las mejores parcelas.',
+    weight: 1.2,
+    min_players: 2,
+    max_players: 4,
+    playing_time: 15,
+    base_price_eur: 20.0,
+  },
+  {
     bgg_id: 13,
     name: 'Catan',
     thumbnail: 'https://cf.geekdo-images.com/0XODRpReiZBFUffEcqT5-Q__small/img/SNVfF23OQafv3u8xdFolJnMkBoM=/fit-in/200x150/filters:strip_icc()/pic9156909.png',

@@ -328,7 +328,8 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
           'sleeves', 'micas', 'funda', 'fundas', 'playmat', 'play-mat', 'play mat', 'tapete',
           'monedas', 'coins', 'metal coins', 'tokens', 'fichas', 'dice', 'dados', 'torre de dados', 'dice tower',
           'eggs', 'huevos', 'stone', 'meeple', 'meeples', 'miniatures', 'miniaturas',
-          'promo', 'promos', 'addon', 'add-on', 'upgrade', 'upgrade pack', 'artbook', 'art book', 'soundtrack', 'playera', 't-shirt', 'poster'
+          'promo', 'promos', 'addon', 'add-on', 'upgrade', 'upgrade pack', 'artbook', 'art book', 'soundtrack', 'playera', 't-shirt', 'poster',
+          'beetle', 'model', 'kit', 'figura', 'figure', 'toy', 'juguete', 'hot wheels', 'funko', 'gundam', 'gunpla', 'plamo', 'replica', 'réplica', 'statue', 'estatua', 'plush', 'peluche'
         ];
         const escapeReg = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 

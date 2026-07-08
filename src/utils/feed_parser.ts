@@ -314,6 +314,20 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
   const { data: baseRates } = await supabase.from('shipping_rates').select('*').eq('store_id', storeId);
   const knownEditionStores = new Set<string>([storeId]);
 
+  const EXCLUSION_EDITION_WORDS = [
+    'expansion', 'expansión', 'ampliacion', 'ampliación', 'escenario', 'viaje', 'travel',
+    'junior', 'duelo', 'duel', 'extension', 'extensión', 'pack', 'set', 'scenario',
+    'plus', '3d', 'aniversario', 'anniversary', 'big box', 'bigbox', 'deluxe', 'especial', 'special',
+    'puzzle', 'rompecabezas',
+    'nesting', 'nesting box', 'caja nido', 'organizer', 'organizador', 'inserto', 'insert', 'folded space',
+    'box', 'caja', 'storage', 'caja organizadora', 'almacenamiento',
+    'sleeves', 'micas', 'funda', 'fundas', 'playmat', 'play-mat', 'play mat', 'tapete',
+    'monedas', 'coins', 'metal coins', 'tokens', 'fichas', 'dice', 'dados', 'torre de dados', 'dice tower',
+    'eggs', 'huevos', 'stone', 'meeple', 'meeples', 'miniatures', 'miniaturas',
+    'promo', 'promos', 'addon', 'add-on', 'upgrade', 'upgrade pack', 'artbook', 'art book', 'soundtrack', 'playera', 't-shirt', 'poster',
+    'beetle', 'model', 'kit', 'figura', 'figure', 'toy', 'juguete', 'hot wheels', 'funko', 'gundam', 'gunpla', 'plamo', 'replica', 'réplica', 'statue', 'estatua', 'plush', 'peluche'
+  ];
+
   for (const item of items) {
     stats.processed++;
     let matchedGame = null;
@@ -329,19 +343,6 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
       const cleanTitle = cleanBoardGameTitle(item.title);
       matchedGame = gamesList.find((g) => g.name.toLowerCase() === cleanTitle.toLowerCase()) || null;
       if (!matchedGame) {
-        const EXCLUSION_EDITION_WORDS = [
-          'expansion', 'expansión', 'ampliacion', 'ampliación', 'escenario', 'viaje', 'travel',
-          'junior', 'duelo', 'duel', 'extension', 'extensión', 'pack', 'set', 'scenario',
-          'plus', '3d', 'aniversario', 'anniversary', 'big box', 'bigbox', 'deluxe', 'especial', 'special',
-          'puzzle', 'rompecabezas',
-          'nesting', 'nesting box', 'caja nido', 'organizer', 'organizador', 'inserto', 'insert', 'folded space',
-          'box', 'caja', 'storage', 'caja organizadora', 'almacenamiento',
-          'sleeves', 'micas', 'funda', 'fundas', 'playmat', 'play-mat', 'play mat', 'tapete',
-          'monedas', 'coins', 'metal coins', 'tokens', 'fichas', 'dice', 'dados', 'torre de dados', 'dice tower',
-          'eggs', 'huevos', 'stone', 'meeple', 'meeples', 'miniatures', 'miniaturas',
-          'promo', 'promos', 'addon', 'add-on', 'upgrade', 'upgrade pack', 'artbook', 'art book', 'soundtrack', 'playera', 't-shirt', 'poster',
-          'beetle', 'model', 'kit', 'figura', 'figure', 'toy', 'juguete', 'hot wheels', 'funko', 'gundam', 'gunpla', 'plamo', 'replica', 'réplica', 'statue', 'estatua', 'plush', 'peluche'
-        ];
         const escapeReg = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
         matchedGame = gamesList.find((g) => {
@@ -373,7 +374,11 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
 
     // 3. Auto-create game page entry in bgg_games_cache for unique unmatched XML feed items AND enqueue for BGG metadata enrichment
     let isAutoCreated = false;
-    if (!matchedGame && item.title) {
+    const isExcludedFromAutoCreation = EXCLUSION_EDITION_WORDS.some((word) => 
+      item.title.toLowerCase().includes(word)
+    );
+
+    if (!matchedGame && item.title && !isExcludedFromAutoCreation) {
       const cleanTitle = cleanBoardGameTitle(item.title);
       if (cleanTitle.length >= 2) {
         const normalizedForHash = cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '');

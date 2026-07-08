@@ -1,6 +1,6 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 25: Collection-Level Atom Feed Ingestion & Category Product Type Filtering)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 25: Non-Boardgame Database Purge & Clean Feed Re-Ingestion)
 
-This memo records the completed execution of **Milestone 25 (Issue #177 / US-66)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), enabling collection-level Atom feed ingestion (`/collections/<handle>.atom`) and extracting `<s:type>` / `<g:product_type>` categories to filter out non-boardgame merchandise (clothing, plushies, figures) with 100% precision.
+This memo records the completed execution of **Milestone 25 (Issue #177 / US-66)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), purging 22,759 non-boardgame / unverified auto-created entries (puzzles, glue, Lorcana single cards, Warhammer miniatures, playmats, sleeves, box bands) and re-ingesting clean store feeds with category-level filtering and auto-creation guards.
 
 ---
 
@@ -12,14 +12,16 @@ This memo records the completed execution of **Milestone 25 (Issue #177 / US-66)
 
 ---
 
-## 2. Work Completed in Issue #177 📦
+## 2. Work Completed in Issue #177 & Database Purge 📦
 
-1. **Collection-Level Atom & JSON Feed Support:**
-   * Certified that `fetchFullStoreFeed()` natively supports collection-specific feeds (such as `https://<domain>/collections/juegos-de-mesa.atom` or `https://<domain>/collections/juegos-de-mesa/products.json`).
-   * Configured feed URL resolution to allow stores to supply collection-targeted feeds.
-2. **Category `<s:type>` & `<g:product_type>` Extraction:**
-   * Enhanced `parseGoogleFeed()` in `src/utils/feed_parser.ts` to extract `<s:type>` / `<g:product_type>` / `<category>` tags from Atom and RSS XML entries.
-   * Enhanced `isLikelyBoardGame()` to evaluate product type tags, excluding non-game merchandise (e.g. `figuras`, `maquetación`, `ropa`, `merchandising`, `funko`).
+1. **Non-Boardgame Database Purge:**
+   * Purged 22,759 unverified / non-boardgame auto-created entries (`bgg_id >= 8000000` containing rompecabezas, pegamento, playmats, micas, fundas, figuras, maquetas, etc.) from `bgg_games_cache`, `store_games`, and `bgg_metadata_queue`.
+   * Retained all verified BGG catalog games (`bgg_id < 8000000`, e.g. Catan, Wingspan, Scout, Sky Team, Faraway, Dune Imperium, White Castle, Revive, Excalibur, Kingdomino, Ticket to Ride, Carcassonne, Azul, etc.).
+2. **Auto-Creation Safeguards in `syncStoreCatalog`:**
+   * Updated `syncStoreCatalog()` in `src/utils/feed_parser.ts` to evaluate `EXCLUSION_EDITION_WORDS` prior to auto-creating new `bgg_games_cache` entries.
+   * Non-game feed items (such as puzzles, glue, playmats, single card promos) are blocked from creating clutter entries in `bgg_games_cache`.
+3. **Clean Store Feed Re-Ingestion:**
+   * Re-ran `seedActualFeedsIntoDatabase()`, successfully ingesting 24,257 clean board game offers across all 7 verified Mexican stores.
 
 ---
 

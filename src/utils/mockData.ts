@@ -171,6 +171,18 @@ export const MOCK_GAMES: MockGame[] = [
     base_price_eur: 20.0,
   },
   {
+    bgg_id: 124742,
+    name: 'Concordia',
+    thumbnail: 'https://cf.geekdo-images.com/gK9J2L7-9l5G9y4S_N1G7Q__small/img/3-v46lX-9X9-L16M4W85A9W68Ww=/fit-in/200x150/filters:strip_icc()/pic2004240.jpg',
+    image: 'https://cf.geekdo-images.com/gK9J2L7-9l5G9y4S_N1G7Q__original/img/oRc0AomWA9ZtFqQDZiZbIyKE1j0=/0x0/filters:format(png)/pic2004240.jpg',
+    description: 'En Concordia, los jugadores lideran familias romanas para desarrollar su red comercial por todo el Imperio. Envían colonos, construyen casas y producen valiosos recursos como vino, telas y hierro.',
+    weight: 3.0,
+    min_players: 2,
+    max_players: 5,
+    playing_time: 100,
+    base_price_eur: 50.0,
+  },
+  {
     bgg_id: 13,
     name: 'Catan',
     thumbnail: 'https://cf.geekdo-images.com/0XODRpReiZBFUffEcqT5-Q__small/img/SNVfF23OQafv3u8xdFolJnMkBoM=/fit-in/200x150/filters:strip_icc()/pic9156909.png',

@@ -289,9 +289,9 @@ interface QueueInsertRow {
   created_at: string;
 }
 
-export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[]) {
+export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[], customSupabase?: any) {
   const adminKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
-  const supabase = createClient(supabaseUrl, adminKey);
+  const supabase = customSupabase || createClient(supabaseUrl, adminKey);
   const stats = { processed: 0, matched: 0, unmatched: 0, queued: 0 };
   const buffer: StoreGameInsertRow[] = [];
   const queueBuffer: QueueInsertRow[] = [];
@@ -318,7 +318,7 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
     'expansion', 'expansión', 'exp', 'expa', 'ampliacion', 'ampliación', 'escenario', 'viaje', 'travel',
     'junior', 'duelo', 'duel', 'extension', 'extensión', 'pack', 'set', 'scenario',
     'plus', '3d', 'aniversario', 'anniversary', 'big box', 'bigbox', 'deluxe', 'especial', 'special',
-    'cazadores', 'recolectores', 'constructores', 'catedrales', 'posadas', 'dragones', 'hadas', 'torre', 'abadía', 'abadias', 'niebla', 'barcos',
+    'cazadores', 'recolectores', 'constructores', 'catedrales', 'posadas', 'dragones', 'hadas', 'torre', 'abadía', 'abadias', 'niebla', 'salsa', 'barcos',
     'puzzle', 'rompecabezas',
     'nesting', 'nesting box', 'caja nido', 'organizer', 'organizador', 'inserto', 'insert', 'folded space',
     'box', 'caja', 'storage', 'caja organizadora', 'almacenamiento',

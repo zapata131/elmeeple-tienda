@@ -1,26 +1,22 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 29: Automated Catalog Audit Worker & Matching Safeguards)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 30: Quantum Base Carcassonne Offer Alignment)
 
-This memo records the completed execution of **Milestone 29 (Issue #183 / US-70)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), implementing an automated catalog audit worker (`auditDatabaseCatalogIntegrity()`) and a 38-suite test pipeline (`src/__tests__/catalog_matching_integrity.test.ts`) that continuously purges mismatched expansion / accessory offers and prevents non-boardgames from polluting base game pages.
+This memo records the completed execution of **Milestone 30 (Issue #184 / US-71)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), linking Quantum Boardgames' official base game product (*CARCASSONNE BASE SEGUNDA EDICION EN ESPAÑOL*, `1702974939`, $640.00 MXN, En stock) to Carcassonne base game (BGG ID `822`).
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-183-concordia-bgg-indexing` (Ready to merge into `main`)
-* **Completed Issue in Milestone 29:**
-  * Issue #183 (`[US-70] Automated Catalog Audit Worker & Expansion Matching Safeguards`) - Verified & ready to merge.
+* **Active Branch:** `main`
+* **Completed Issue in Milestone 30:**
+  * Issue #184 (`[US-71] Link Quantum Base Carcassonne Offer (1702974939)`) - Verified & merged.
 
 ---
 
-## 2. Work Completed in Issue #183 & Automated Safeguards 📦
+## 2. Work Completed in Issue #184 📦
 
-1. **Automated Catalog Audit Worker (`src/utils/catalog_audit_worker.ts`):**
-   * Scans `store_games` for offers linked to base games whose URL or title contains expansion keywords (`exp`, `expansion`, `niebla`, `dragones`, `cazadores`, `salsa`, `caja nido`, `playmat`).
-   * Automatically purges mismatched offers (including Quantum's *Niebla en Carcassonne* `2008390419` under base Carcassonne `822`).
-2. **Automated Matching Test Suite (`src/__tests__/catalog_matching_integrity.test.ts`):**
-   * Runs in `npm run test` and `npm run verify` to guarantee that:
-     - Base games match exclusively to verified BGG IDs.
-     - Expansion/accessory titles are never matched to base games or auto-created as board games.
+1. **Quantum Base Carcassonne Linkage:**
+   * Linked Quantum Boardgames' product `1702974939` (*CARCASSONNE BASE SEGUNDA EDICION EN ESPAÑOL*, `$640.00 MXN`, En stock) to Carcassonne base game (BGG ID `822`).
+   * Certified that `/game/822` displays Quantum Boardgames as the lowest in-stock price ($640.00 MXN).
 
 ---
 
@@ -31,5 +27,4 @@ This memo records the completed execution of **Milestone 29 (Issue #183 / US-70)
 ---
 
 ## 4. Next Steps 🚀
-1. Merge active PR for Issue #183 (`feature/issue-183-concordia-bgg-indexing`) into `main`.
-2. Delete feature branch `feature/issue-183-concordia-bgg-indexing`.
+1. Proceed with user feedback or next backlog feature.

@@ -181,6 +181,13 @@ graph TD
 *   **Word Boundary Exclusions for Spanish Catalog Filters:** Plain substring matching on catalog exclusion keywords (like `'funda'`) causes false-positive exclusions on common Spanish words in board game descriptions (such as `fundamentales` in Wingspan's description).
     *   *Convention:* Always use standalone word boundary regexes (`/\bfundas?\b/i`, `/\bprimer\b/i`, `/\bpuzzles?\b/i`) in `isLikelyBoardGame()` to prevent valid board games from being rejected during catalog ingestion.
 
+### 5.16 Systematic Root-Cause & Non-Regression Catalog Integrity Mandate
+*   **Root-Cause Investigation vs Surface Hot-Fixes:** When a product cataloguing, matching, or missing game issue is identified, agents must NEVER perform a one-off database edit in isolation.
+    *   *Convention:* Always execute a 3-part systemic resolution:
+        1. **Root-Cause Analysis:** Diagnose why the issue occurred in code, feed parsing, title cleaning, or database linking (e.g. numeric product handles, missing BGG ID pre-indexing, or unhandled expansion title variants).
+        2. **Systemic Engine & Rule Fix:** Update the feed ingestion engine (`feed_parser.ts`), pre-indexed BGG catalog (`MOCK_GAMES`), and automated audit worker (`catalog_audit_worker.ts`) to permanently handle the pattern.
+        3. **Non-Regression Test & Audit:** Add test cases to `src/__tests__/catalog_matching_integrity.test.ts` to ensure the fix does not drop valid offers or mis-assign other games, and run `npm run verify` to certify 100% green build.
+
 ---
 
 ## 6. Four-Tier Testing Standards & Browser Automation

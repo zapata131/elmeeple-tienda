@@ -315,9 +315,10 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
   const knownEditionStores = new Set<string>([storeId]);
 
   const EXCLUSION_EDITION_WORDS = [
-    'expansion', 'expansión', 'ampliacion', 'ampliación', 'escenario', 'viaje', 'travel',
+    'expansion', 'expansión', 'exp', 'expa', 'ampliacion', 'ampliación', 'escenario', 'viaje', 'travel',
     'junior', 'duelo', 'duel', 'extension', 'extensión', 'pack', 'set', 'scenario',
     'plus', '3d', 'aniversario', 'anniversary', 'big box', 'bigbox', 'deluxe', 'especial', 'special',
+    'cazadores', 'recolectores', 'constructores', 'catedrales', 'posadas', 'dragones', 'hadas', 'torre', 'abadía', 'abadias', 'niebla', 'barcos',
     'puzzle', 'rompecabezas',
     'nesting', 'nesting box', 'caja nido', 'organizer', 'organizador', 'inserto', 'insert', 'folded space',
     'box', 'caja', 'storage', 'caja organizadora', 'almacenamiento',

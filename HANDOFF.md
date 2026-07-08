@@ -1,22 +1,23 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 26: Predictive Search Bar on Game Comparison Pages)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 27: Carcassonne Base Game Offer Alignment)
 
-This memo records the completed execution of **Milestone 26 (Issue #179 / US-67)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), adding a predictive search bar to game detail comparison pages (`/game/[id]`) so players can easily search for and compare other games without returning to the home page.
+This memo records the completed execution of **Milestone 27 (Issue #181 / US-68)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), adding expansion keywords (such as `exp`, `expa`, `dragones`, `hadas`, `cazadores`, `recolectores`, `constructores`, `posadas`, `catedrales`) to `EXCLUSION_EDITION_WORDS` to prevent Carcassonne expansions and spinoffs from being misattributed to the Carcassonne base game.
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-179-game-detail-search-bar` (Ready to merge into `main`)
-* **Completed Issue in Milestone 26:**
-  * Issue #179 (`[US-67] Add Predictive Search Bar to Game Detail Comparison Pages`) - Verified & ready to merge.
+* **Active Branch:** `feature/issue-181-carcassonne-expansion-exclusions` (Ready to merge into `main`)
+* **Completed Issue in Milestone 27:**
+  * Issue #181 (`[US-68] Fix Carcassonne Catalog Matching & Expansion Exclusions`) - Verified & ready to merge.
 
 ---
 
-## 2. Work Completed in Issue #179 📦
+## 2. Work Completed in Issue #181 📦
 
-1. **Predictive Search Bar on Game Detail Pages:**
-   * Embedded the `SearchBar` component at the top of `/game/[id]` in `src/app/game/[id]/page.tsx`.
-   * Enables instant autocompletion and direct navigation to other game comparison pages.
+1. **Carcassonne Expansion Exclusions:**
+   * Expanded `EXCLUSION_EDITION_WORDS` in `src/utils/feed_parser.ts` to include common expansion prefixes (`exp`, `expa`) and Carcassonne-specific expansion/spinoff titles (`dragones`, `hadas`, `cazadores`, `recolectores`, `constructores`, `posadas`, `catedrales`, `torre`, `abadía`, `niebla`).
+   * Cleaned up mismatched expansion rows from Supabase `store_games` for Carcassonne base game (BGG ID `822`).
+   * Certified Carcassonne page (`/game/822`) now lists 100% verified base game offers (Roll Games, Quantum Boardgames, Alfa y Delta, Mundo Meeple).
 
 ---
 
@@ -27,5 +28,5 @@ This memo records the completed execution of **Milestone 26 (Issue #179 / US-67)
 ---
 
 ## 4. Next Steps 🚀
-1. Merge active PR for Issue #179 (`feature/issue-179-game-detail-search-bar`) into `main`.
-2. Delete feature branch `feature/issue-179-game-detail-search-bar`.
+1. Merge active PR for Issue #181 (`feature/issue-181-carcassonne-expansion-exclusions`) into `main`.
+2. Delete feature branch `feature/issue-181-carcassonne-expansion-exclusions`.

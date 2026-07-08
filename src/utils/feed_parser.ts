@@ -448,7 +448,7 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
         newGamesToUpsert.length = 0;
       }
 
-      const dedupedBuffer = Array.from(new Map(buffer.map((item) => [`${item.store_id}_${item.bgg_id}`, item])).values());
+      const dedupedBuffer = dedupeStoreOffers(buffer);
       const { error } = await supabase
         .from('store_games')
         .upsert(dedupedBuffer, { onConflict: 'store_id,bgg_id' });
@@ -486,7 +486,7 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
   }
 
   if (buffer.length > 0) {
-    const dedupedBuffer = Array.from(new Map(buffer.map((item) => [`${item.store_id}_${item.bgg_id}`, item])).values());
+    const dedupedBuffer = dedupeStoreOffers(buffer);
     const { error } = await supabase
       .from('store_games')
       .upsert(dedupedBuffer, { onConflict: 'store_id,bgg_id' });
@@ -532,4 +532,43 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
     .eq('id', storeId);
 
   return stats;
+}
+
+export function dedupeStoreOffers<T extends { store_id: string; bgg_id: number; stock: number; edition_language?: string; price: number }>(offers: T[]): T[] {
+  const map = new Map<string, T>();
+
+  for (const offer of offers) {
+    const key = `${offer.store_id}_${offer.bgg_id}`;
+    const existing = map.get(key);
+
+    if (!existing) {
+      map.set(key, offer);
+      continue;
+    }
+
+    // 1. In-stock priority: if new offer is in-stock and existing is out-of-stock, replace!
+    if (offer.stock > 0 && existing.stock === 0) {
+      map.set(key, offer);
+      continue;
+    }
+    if (existing.stock > 0 && offer.stock === 0) {
+      continue;
+    }
+
+    // 2. Language priority: if both have same stock status, prefer Spanish ('es') over non-Spanish
+    if (offer.edition_language === 'es' && existing.edition_language !== 'es') {
+      map.set(key, offer);
+      continue;
+    }
+    if (existing.edition_language === 'es' && offer.edition_language !== 'es') {
+      continue;
+    }
+
+    // 3. If stock & language priority are equal, keep lower price (if > 0)
+    if (offer.price > 0 && offer.price < existing.price) {
+      map.set(key, offer);
+    }
+  }
+
+  return Array.from(map.values());
 }

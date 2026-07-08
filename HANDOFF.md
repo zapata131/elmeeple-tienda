@@ -1,27 +1,22 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 25: Non-Boardgame Database Purge & Clean Feed Re-Ingestion)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 26: Predictive Search Bar on Game Comparison Pages)
 
-This memo records the completed execution of **Milestone 25 (Issue #177 / US-66)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), purging 22,759 non-boardgame / unverified auto-created entries (puzzles, glue, Lorcana single cards, Warhammer miniatures, playmats, sleeves, box bands) and re-ingesting clean store feeds with category-level filtering and auto-creation guards.
+This memo records the completed execution of **Milestone 26 (Issue #179 / US-67)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), adding a predictive search bar to game detail comparison pages (`/game/[id]`) so players can easily search for and compare other games without returning to the home page.
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-177-atom-collection-feed-filtering` (Ready to merge into `main`)
-* **Completed Issue in Milestone 25:**
-  * Issue #177 (`[US-66] Collection-Level Atom Feed Ingestion & Category Product Type Filtering`) - Verified & ready to merge.
+* **Active Branch:** `feature/issue-179-game-detail-search-bar` (Ready to merge into `main`)
+* **Completed Issue in Milestone 26:**
+  * Issue #179 (`[US-67] Add Predictive Search Bar to Game Detail Comparison Pages`) - Verified & ready to merge.
 
 ---
 
-## 2. Work Completed in Issue #177 & Database Purge 📦
+## 2. Work Completed in Issue #179 📦
 
-1. **Non-Boardgame Database Purge:**
-   * Purged 22,759 unverified / non-boardgame auto-created entries (`bgg_id >= 8000000` containing rompecabezas, pegamento, playmats, micas, fundas, figuras, maquetas, etc.) from `bgg_games_cache`, `store_games`, and `bgg_metadata_queue`.
-   * Retained all verified BGG catalog games (`bgg_id < 8000000`, e.g. Catan, Wingspan, Scout, Sky Team, Faraway, Dune Imperium, White Castle, Revive, Excalibur, Kingdomino, Ticket to Ride, Carcassonne, Azul, etc.).
-2. **Auto-Creation Safeguards in `syncStoreCatalog`:**
-   * Updated `syncStoreCatalog()` in `src/utils/feed_parser.ts` to evaluate `EXCLUSION_EDITION_WORDS` prior to auto-creating new `bgg_games_cache` entries.
-   * Non-game feed items (such as puzzles, glue, playmats, single card promos) are blocked from creating clutter entries in `bgg_games_cache`.
-3. **Clean Store Feed Re-Ingestion:**
-   * Re-ran `seedActualFeedsIntoDatabase()`, successfully ingesting 24,257 clean board game offers across all 7 verified Mexican stores.
+1. **Predictive Search Bar on Game Detail Pages:**
+   * Embedded the `SearchBar` component at the top of `/game/[id]` in `src/app/game/[id]/page.tsx`.
+   * Enables instant autocompletion and direct navigation to other game comparison pages.
 
 ---
 
@@ -32,5 +27,5 @@ This memo records the completed execution of **Milestone 25 (Issue #177 / US-66)
 ---
 
 ## 4. Next Steps 🚀
-1. Merge active PR for Issue #177 (`feature/issue-177-atom-collection-feed-filtering`) into `main`.
-2. Delete feature branch `feature/issue-177-atom-collection-feed-filtering`.
+1. Merge active PR for Issue #179 (`feature/issue-179-game-detail-search-bar`) into `main`.
+2. Delete feature branch `feature/issue-179-game-detail-search-bar`.

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { fetchGameDetails, fetchGameOffers, fetchGameEditions, fetchPriceHistory } from '@/lib/queries';
 import StoreOffersComparisonTable from '@/components/StoreOffersComparisonTable';
 import { Toolbar } from '@/components/Toolbar';
+import { SearchBar } from '@/components/SearchBar';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -58,10 +59,15 @@ export default async function GameDetailPage({ params }: Props) {
   const coverUrl = game.image || game.thumbnail;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900 select-none">
+    <div className="min-h-screen bg-gray-50 flex flex-col font-[#0f172a] font-sans select-none">
       <Toolbar />
       
-      <main className="flex-1 max-w-6xl mx-auto px-4 py-8 flex flex-col gap-8 w-full">
+      <main className="flex-1 max-w-6xl mx-auto px-4 py-6 flex flex-col gap-6 w-full">
+        
+        {/* Predictive Smart Search Bar */}
+        <section className="w-full max-w-2xl mx-auto">
+          <SearchBar />
+        </section>
         
         {/* Full-Width Hero Cover & Metadata Card */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center gap-8">

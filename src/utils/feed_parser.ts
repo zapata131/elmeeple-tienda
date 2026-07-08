@@ -298,6 +298,10 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
     console.error('[syncStoreCatalog] Failed to pre-load games cache:', cacheErr.message);
   }
   const gamesList: Array<{ bgg_id: number; name: string; ean: string | null }> = cachedGames || [];
+  const { data: baseStores } = await supabase.from('stores').select('*').eq('id', storeId);
+  const baseStore = baseStores?.[0] || null;
+  const { data: baseRates } = await supabase.from('shipping_rates').select('*').eq('store_id', storeId);
+  const knownEditionStores = new Set<string>([storeId]);
 
   for (const item of items) {
     stats.processed++;
@@ -409,17 +413,51 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
         });
       }
 
+      const itemLang = ['es', 'pt', 'en'].includes(item.language || '')
+        ? (item.language as string)
+        : ['es', 'pt', 'en'].includes(detectLanguage(item.title))
+          ? detectLanguage(item.title)
+          : 'es';
+
+      let effectiveStoreId = storeId;
+      if (itemLang !== 'es') {
+        const editionStoreId = getEditionStoreId(storeId, itemLang);
+        if (!knownEditionStores.has(editionStoreId)) {
+          if (baseStore) {
+            await supabase.from('stores').upsert({
+              id: editionStoreId,
+              name: baseStore.name,
+              slug: `${baseStore.slug}-${itemLang}`,
+              base_url: baseStore.base_url,
+              logo_url: baseStore.logo_url,
+              google_shopping_feed_url: baseStore.google_shopping_feed_url,
+              owner_email: baseStore.owner_email,
+              verified: true,
+              feed_status: 'success'
+            }, { onConflict: 'id' });
+
+            if (baseRates && baseRates.length > 0) {
+              const editionRates = baseRates.map(r => ({
+                store_id: editionStoreId,
+                destination_country: r.destination_country,
+                flat_rate: r.flat_rate,
+                free_shipping_threshold: r.free_shipping_threshold
+              }));
+              await supabase.from('shipping_rates').upsert(editionRates, { onConflict: 'store_id,destination_country' });
+            }
+          }
+          knownEditionStores.add(editionStoreId);
+        }
+        effectiveStoreId = editionStoreId;
+      }
+
       buffer.push({
-        store_id: storeId,
+        store_id: effectiveStoreId,
         bgg_id: matchedGame.bgg_id,
         store_product_url: item.link,
         price: item.price,
         stock: item.stock,
-        edition_language: ['es', 'pt', 'en'].includes(item.language || '')
-          ? (item.language as string)
-          : ['es', 'pt', 'en'].includes(detectLanguage(item.title))
-            ? detectLanguage(item.title)
-            : 'es',
+        edition_language: itemLang,
         last_updated_at: new Date().toISOString(),
       });
     } else {
@@ -532,6 +570,12 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[])
     .eq('id', storeId);
 
   return stats;
+}
+
+export function getEditionStoreId(baseStoreId: string, lang: string): string {
+  if (lang === 'es' || !lang) return baseStoreId;
+  const suffix = lang === 'en' ? '1' : '2';
+  return baseStoreId.slice(0, -1) + suffix;
 }
 
 export function dedupeStoreOffers<T extends { store_id: string; bgg_id: number; stock: number; edition_language?: string; price: number }>(offers: T[]): T[] {

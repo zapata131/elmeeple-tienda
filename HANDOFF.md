@@ -1,27 +1,25 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 22: Multi-Variant In-Stock & Spanish Language Prioritization for Catalog Ingestion)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 23: Multi-Edition Store Offer Routing for ES and EN Variants)
 
-This memo records the completed execution of **Milestone 22 (Issue #171 / US-63)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), implementing smart multi-variant deduplication during catalog ingestion so that in-stock Spanish editions (such as Con T de Tlacuache's Wingspan at $1,399 MXN) are prioritized over out-of-stock or foreign language variants.
+This memo records the completed execution of **Milestone 23 (Issue #173 / US-64)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), enabling multi-edition offer routing so that a store offering both Spanish and English versions of a game (such as Con T de Tlacuache for Wingspan) can list both edition rows separately in the comparison table.
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-171-tlacuache-wingspan-stock` (Ready to merge into `main`)
-* **Completed Issue in Milestone 22:**
-  * Issue #171 (`[US-63] Audit Con T de Tlacuache Stock Ingestion for Wingspan`) - Verified & ready to merge.
+* **Active Branch:** `feature/issue-173-multi-edition-store-offers` (Ready to merge into `main`)
+* **Completed Issue in Milestone 23:**
+  * Issue #173 (`[US-64] Multi-Edition Store Offer Listing (Spanish and English Variants in Comparison Table)`) - Verified & ready to merge.
 
 ---
 
-## 2. Work Completed in Issue #171 📦
+## 2. Work Completed in Issue #173 📦
 
-1. **Multi-Variant In-Stock & Language Prioritization (`dedupeStoreOffers`):**
-   * Added `dedupeStoreOffers` in `src/utils/feed_parser.ts` to evaluate multiple product variants (e.g. Spanish in-stock vs. English out-of-stock) from a single store feed:
-     - **In-Stock Priority:** In-stock variants (`stock > 0`) take precedence over out-of-stock variants (`stock === 0`).
-     - **Language Priority:** Spanish (`es`) editions take precedence over non-Spanish editions when stock status is equal.
-     - **Price Priority:** Keeps lower base price when stock and language status are equal.
-2. **Con T de Tlacuache Wingspan Stock Correction:**
-   * Corrected Con T de Tlacuache's Wingspan offer in `store_games` from out-of-stock English ($1,350 MXN) to in-stock Spanish ($1,399.00 MXN, `stock: 1`).
-   * Certified 7/7 stores in stock on the Wingspan comparison table (`/game/266192`).
+1. **Multi-Edition Store Offer Routing (`getEditionStoreId`):**
+   * Implemented edition-aware store routing in `src/utils/feed_parser.ts`: non-Spanish product variants (e.g. English `en` or Portuguese `pt`) are assigned edition-aware store IDs (cloning base store info & shipping rates) so they do not overwrite Spanish base game offers.
+2. **Comparison Table Multi-Edition Verification:**
+   * Certified that Wingspan (`/game/266192`) displays both:
+     - **Con T de Tlacuache [ES]:** $1,399.00 MXN (En stock) -> Direct product link
+     - **Con T de Tlacuache [EN]:** $1,350.00 MXN (Agotado) -> Direct product link
 
 ---
 
@@ -32,5 +30,5 @@ This memo records the completed execution of **Milestone 22 (Issue #171 / US-63)
 ---
 
 ## 4. Next Steps 🚀
-1. Merge active PR for Issue #171 (`feature/issue-171-tlacuache-wingspan-stock`) into `main`.
-2. Delete feature branch `feature/issue-171-tlacuache-wingspan-stock`.
+1. Merge active PR for Issue #173 (`feature/issue-173-multi-edition-store-offers`) into `main`.
+2. Proceed to Issue #174 (`feature/issue-174-scout-mundo-meeple-matching`).

@@ -34,13 +34,26 @@ const renderEditionBadge = (langCode?: string) => {
       return (
         <span
           data-testid="edition-badge-es"
-          className="inline-flex items-center gap-1 bg-[#8367C7]/15 text-[#8367C7] border border-[#8367C7]/30 text-xs font-bold px-2 py-0.5 rounded shadow-2xs select-none"
+          className="inline-flex items-center gap-1.5 bg-[#8367C7]/15 text-[#8367C7] border border-[#8367C7]/30 text-xs font-bold px-2.5 py-1 rounded-md shadow-2xs select-none"
           title="Edición en Español"
         >
-          <svg className="w-3 h-3 text-[#8367C7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+          <svg className="w-3.5 h-3.5 text-[#8367C7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
           </svg>
-          <span>ES</span>
+          <span>Español (ES)</span>
+        </span>
+      );
+    case 'en':
+      return (
+        <span
+          data-testid="edition-badge-en"
+          className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold px-2.5 py-1 rounded-md shadow-2xs select-none"
+          title="English Edition / Edición en Inglés"
+        >
+          <svg className="w-3.5 h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span>Inglés (EN)</span>
         </span>
       );
     case 'pt':
@@ -48,36 +61,36 @@ const renderEditionBadge = (langCode?: string) => {
       return (
         <span
           data-testid="edition-badge-pt"
-          className="inline-flex items-center gap-1 bg-[#73D8D4]/20 text-[#2B8C88] border border-[#73D8D4]/50 text-xs font-bold px-2 py-0.5 rounded shadow-2xs select-none"
+          className="inline-flex items-center gap-1.5 bg-[#73D8D4]/20 text-[#2B8C88] border border-[#73D8D4]/50 text-xs font-bold px-2.5 py-1 rounded-md shadow-2xs select-none"
           title="Edição em Português"
         >
-          <svg className="w-3 h-3 text-[#2B8C88]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+          <svg className="w-3.5 h-3.5 text-[#2B8C88]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
           </svg>
-          <span>PT</span>
+          <span>Portugués (PT)</span>
         </span>
       );
-    case 'en':
+    case 'multi':
       return (
         <span
-          data-testid="edition-badge-en"
-          className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 border border-gray-300 text-xs font-bold px-2 py-0.5 rounded shadow-2xs select-none"
-          title="English Edition"
+          data-testid="edition-badge-multi"
+          className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-md shadow-2xs select-none"
+          title="Edición Multilingüe / Independiente del idioma"
         >
-          <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+          <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
           </svg>
-          <span>EN</span>
+          <span>Multilingüe (MULTI)</span>
         </span>
       );
     default:
       return (
         <span
           data-testid={`edition-badge-${code}`}
-          className="inline-flex items-center gap-1 bg-[#FF9E8A]/20 text-[#C9533B] border border-[#FF9E8A]/40 text-xs font-bold px-2 py-0.5 rounded shadow-2xs select-none uppercase"
-          title={`Edición: ${code.toUpperCase()}`}
+          className="inline-flex items-center gap-1.5 bg-[#FF9E8A]/20 text-[#C9533B] border border-[#FF9E8A]/40 text-xs font-bold px-2.5 py-1 rounded-md shadow-2xs select-none uppercase"
+          title={`Idioma / Edición: ${code.toUpperCase()}`}
         >
-          <svg className="w-3 h-3 text-[#C9533B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+          <svg className="w-3.5 h-3.5 text-[#C9533B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
           </svg>
           <span>{code.toUpperCase()}</span>
@@ -131,7 +144,7 @@ export default function StoreOffersComparisonTable({
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wider">
               <th className="px-6 py-3">Tienda</th>
-              <th className="px-6 py-3">Edición</th>
+              <th className="px-6 py-3">Idioma / Edición</th>
               <th className="px-6 py-3">Disponibilidad</th>
               <th className="px-6 py-3">Precio artículo</th>
               <th className="px-6 py-3">Envío</th>

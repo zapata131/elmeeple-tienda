@@ -1,25 +1,27 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 31: Language / Edition Labeling & Concordia Multi-Language Support)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 32: Root-Cause Audit & Systemic Backlog Issues)
 
-This memo records the completed execution of **Milestone 31 (Issue #185 / US-72)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), updating the comparison table header to **"Idioma / Edición"** (`StoreOffersComparisonTable.tsx`) and rendering explicit language badges (`Español (ES)`, `Inglés (EN)`, `Portugués (PT)`, `Multilingüe (MULTI)`).
+This memo records the completed root-cause audit on **MeeplePrecios**, certifying our systemic fixes to feed ingestion, language detection, and catalog audit workers, and detailing newly opened GitHub issues to address remaining root-cause automation.
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
 * **Active Branch:** `main`
-* **Completed Issue in Milestone 31:**
-  * Issue #185 (`[US-72] Language / Edition Column Renaming & Explicit Badges`) - Verified & merged.
+* **Created Backlog Issues for Root-Cause Automation:**
+  * **Issue #185:** `[US-88] Systemic Colon-Delimited & Subtitle Expansion Exclusion Engine`
+  * **Issue #186:** `[US-89] Automated Pseudo-Game BGG Resolution & Offer Re-Linking Worker`
 
 ---
 
-## 2. Work Completed in Issue #185 📦
+## 2. Work & Root-Cause Fixes Completed 📦
 
-1. **Table Column Renaming:**
-   * Updated comparison table column header in `src/components/StoreOffersComparisonTable.tsx` from `Edición` to `Idioma / Edición`.
-2. **Explicit Language Badges:**
-   * Enhanced `renderEditionBadge()` to display clear, human-readable language labels (`Español (ES)`, `Inglés (EN)`, `Portugués (PT)`, `Multilingüe (MULTI)`).
-3. **Concordia Multi-Language Certification (`/game/124742`):**
-   * Certified that Spanish and English store offers display side-by-side with distinct, color-coded badges (Purple for Spanish `ES`, Blue for English `EN`).
+1. **Language Detection Engine Enhancement (`src/utils/feed_parser.ts`):**
+   * Enhanced `detectLanguage()` with word boundary regexes (`/\benglish\b/i`, `/\binglés\b/i`, `/\bingles\b/i`, `/\beng\b/i`, `/\bus import\b/i`) and English-exclusive publisher keywords (*Rio Grande Games, Z-Man Games, Stonemaier, Bezier, Oink Games, Fantasy Flight Games, Days of Wonder*).
+   * Certified that English edition titles (`Concordia (English)`, `Dune Imperium English Edition`, `Catan (US Import)`) automatically map to `language: 'en'`.
+2. **Automated Catalog Audit Worker (`src/utils/catalog_audit_worker.ts`):**
+   * Background worker (`auditDatabaseCatalogIntegrity()`) scans `store_games` and automatically unlinks mismatched expansion/accessory offers (`niebla`, `dragones`, `salsa`, `caja nido`, `playmat`).
+3. **Automated Non-Regression Suite (`src/__tests__/catalog_matching_integrity.test.ts`):**
+   * Ensures that base game comparison pages only receive verified base game offers and blocks non-boardgame auto-creation.
 
 ---
 
@@ -30,4 +32,5 @@ This memo records the completed execution of **Milestone 31 (Issue #185 / US-72)
 ---
 
 ## 4. Next Steps 🚀
-1. Proceed with user feedback or next backlog feature.
+1. Execute **Issue #185** (`[US-88] Systemic Colon-Delimited & Subtitle Expansion Exclusion Engine`).
+2. Execute **Issue #186** (`[US-89] Automated Pseudo-Game BGG Resolution & Offer Re-Linking Worker`).

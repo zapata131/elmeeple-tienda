@@ -10,6 +10,8 @@ describe('US-70: Correlate Edition Language Directly from Shopify XML Feed Conte
   it('detects edition keywords in title or summary description', () => {
     expect(detectLanguage('Arcs Edición en Español', 'Juego espacial')).toBe('es');
     expect(detectLanguage('Dune Imperium English Edition', 'Board game')).toBe('en');
+    expect(detectLanguage('Concordia (English)', 'Rio Grande Games')).toBe('en');
+    expect(detectLanguage('Catan (US Import)', 'Stonemaier games')).toBe('en');
     expect(detectLanguage('Harmonies Edición Multilingüe', 'Idioma independiente')).toBe('multi');
   });
 

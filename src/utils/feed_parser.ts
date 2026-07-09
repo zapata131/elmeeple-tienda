@@ -88,10 +88,21 @@ export function detectLanguage(title: string, contentBlock: string = ''): string
 
   const combined = `${title} ${contentBlock}`.toLowerCase();
   if (combined.includes('multilingüe') || combined.includes('multilanguage') || combined.includes('idioma independiente') || combined.includes('independiente del idioma')) return 'multi';
-  if (combined.includes('edición en inglés') || combined.includes('edicion en ingles') || combined.includes('english edition') || (combined.includes('inglés') && !combined.includes('español'))) return 'en';
+
+  // English detection: check for 'english', 'inglés', 'ingles', 'eng', or English-exclusive publisher keywords
+  const englishPublisherRegex = /\b(rio grande games|z-man games|stonemaier|stone maier|bezier|oink games|fantasy flight|ffg|days of wonder|rebel|horrible guild)\b/i;
+  const englishTextRegex = /\b(english|inglés|ingles|eng|en-us|en-gb|us import|importacion)\b/i;
+
+  if (englishTextRegex.test(combined) && !combined.includes('español') && !combined.includes('espanol') && !combined.includes('castellano')) {
+    return 'en';
+  }
+  if (englishPublisherRegex.test(combined) && !combined.includes('español') && !combined.includes('espanol') && !combined.includes('castellano') && !combined.includes('mas que oca') && !combined.includes('maldito')) {
+    return 'en';
+  }
+
   if (combined.includes('edición en alemán') || combined.includes('german edition')) return 'de';
   if (combined.includes('portug')) return 'pt';
-  if (combined.includes('edición en español') || combined.includes('edicion en espanol') || combined.includes('spanish edition') || combined.includes('en español')) return 'es';
+  if (combined.includes('edición en español') || combined.includes('edicion en espanol') || combined.includes('spanish edition') || combined.includes('en español') || combined.includes('castellano') || combined.includes('devir') || combined.includes('mas que oca') || combined.includes('maldito games') || combined.includes('zacatrus')) return 'es';
 
   return 'es'; // default locale matching Iberian/LATAM catalog
 }

@@ -199,7 +199,6 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
         const products = data.products || [];
         if (products.length === 0) break;
 
-        let newCount = 0;
         for (const prod of products) {
           const cleanBase = baseUrl.replace('/products.json', '');
           const link = `${cleanBase}/products/${prod.handle}`;
@@ -225,7 +224,6 @@ export async function fetchFullStoreFeed(feedUrl: string): Promise<ParsedFeedIte
                   ean,
                   language: detectLanguage(title, description),
                 });
-                newCount++;
               }
             }
           }
@@ -300,9 +298,10 @@ interface QueueInsertRow {
   created_at: string;
 }
 
-export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[], customSupabase?: any) {
+export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[], customSupabase?: ReturnType<typeof createClient> | Record<string, unknown>) {
   const adminKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
-  const supabase = customSupabase || createClient(supabaseUrl, adminKey);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase: any = customSupabase || createClient(supabaseUrl, adminKey);
   const stats = { processed: 0, matched: 0, unmatched: 0, queued: 0 };
   const buffer: StoreGameInsertRow[] = [];
   const queueBuffer: QueueInsertRow[] = [];
@@ -466,11 +465,11 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[],
             }, { onConflict: 'id' });
 
             if (baseRates && baseRates.length > 0) {
-              const editionRates = baseRates.map(r => ({
+              const editionRates = baseRates.map((r: Record<string, unknown>) => ({
                 store_id: editionStoreId,
-                destination_country: r.destination_country,
-                flat_rate: r.flat_rate,
-                free_shipping_threshold: r.free_shipping_threshold
+                destination_country: r.destination_country as string,
+                flat_rate: r.flat_rate as number,
+                free_shipping_threshold: r.free_shipping_threshold as number | null
               }));
               await supabase.from('shipping_rates').upsert(editionRates, { onConflict: 'store_id,destination_country' });
             }

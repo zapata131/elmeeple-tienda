@@ -31,11 +31,11 @@ describe('US-70: Automated Catalog Matching & Expansion Integrity Safeguards', (
   });
 
   describe('syncStoreCatalog Expansion & Base Game Matching Safeguards', () => {
-    let mockSupabase: any;
+    let mockSupabase: unknown;
 
     beforeEach(() => {
-      const makeQuery = (data: any) => {
-        const promise: any = Promise.resolve({ data, error: null });
+      const makeQuery = (data: unknown) => {
+        const promise = Promise.resolve({ data, error: null }) as unknown as Record<string, unknown>;
         promise.eq = jest.fn().mockImplementation(() => makeQuery(data));
         promise.lt = jest.fn().mockImplementation(() => makeQuery(data));
         promise.in = jest.fn().mockImplementation(() => makeQuery(data));

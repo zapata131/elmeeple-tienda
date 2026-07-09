@@ -5,7 +5,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
 
 const supabase = createSupabaseClient(supabaseUrl, supabaseAnonKey);
 
-interface QueryOffer {
+interface _QueryOffer {
   id: string;
   store_id: string;
   price: number;

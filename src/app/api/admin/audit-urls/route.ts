@@ -5,9 +5,10 @@ export async function GET() {
   try {
     const report = await auditAllDatabaseStoreOfferUrls();
     return NextResponse.json(report);
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to execute URL audit';
     return NextResponse.json(
-      { success: false, error: err.message || 'Failed to execute URL audit' },
+      { success: false, error: message },
       { status: 500 }
     );
   }

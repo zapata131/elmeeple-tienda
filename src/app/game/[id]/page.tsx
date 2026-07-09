@@ -56,7 +56,7 @@ export default async function GameDetailPage({ params }: Props) {
       return a.totalCost - b.totalCost;
     });
 
-  const coverUrl = game.image || game.thumbnail;
+  const coverUrl = ('image' in game && (game as { image?: string }).image) ? (game as { image?: string }).image : game.thumbnail;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-[#0f172a] font-sans select-none">
@@ -92,9 +92,9 @@ export default async function GameDetailPage({ params }: Props) {
               <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
                 {game.name}
               </h1>
-              {game.description && (
+              {'description' in game && Boolean((game as { description?: string }).description) && (
                 <p className="text-sm text-gray-600 leading-relaxed mt-3 line-clamp-3">
-                  {game.description}
+                  {(game as { description?: string }).description}
                 </p>
               )}
 

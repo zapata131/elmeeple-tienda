@@ -106,15 +106,48 @@ export default function StoreOffersComparisonTable({
   selectedCountry = 'MX',
   historicalMinPrice,
 }: StoreOffersComparisonTableProps) {
-  const filteredOffers = offers.slice().sort((a, b) => {
-    const aInStock = a.stock > 0;
-    const bInStock = b.stock > 0;
-    if (aInStock && !bInStock) return -1;
-    if (!aInStock && bInStock) return 1;
-    if (a.totalCost === null) return 1;
-    if (b.totalCost === null) return -1;
-    return a.totalCost - b.totalCost;
-  });
+  const [selectedState, setSelectedState] = React.useState<string>('CDMX');
+
+  // Regional shipping surcharge mapping (MXN)
+  const getRegionalSurcharge = (stateCode: string): number => {
+    switch (stateCode) {
+      case 'BC':
+      case 'SON':
+      case 'YUC':
+      case 'QROO':
+        return 45.0;
+      case 'JAL':
+      case 'NL':
+      case 'PUE':
+      case 'GTO':
+        return 20.0;
+      default:
+        return 0.0;
+    }
+  };
+
+  const regionalSurcharge = getRegionalSurcharge(selectedState);
+
+  const filteredOffers = offers
+    .map((o) => {
+      const baseShipping = o.shippingCost;
+      const adjustedShipping = baseShipping === null ? null : baseShipping === 0 ? 0 : baseShipping + regionalSurcharge;
+      const adjustedTotal = adjustedShipping === null ? null : o.price + adjustedShipping;
+      return {
+        ...o,
+        shippingCost: adjustedShipping,
+        totalCost: adjustedTotal,
+      };
+    })
+    .sort((a, b) => {
+      const aInStock = a.stock > 0;
+      const bInStock = b.stock > 0;
+      if (aInStock && !bInStock) return -1;
+      if (!aInStock && bInStock) return 1;
+      if (a.totalCost === null) return 1;
+      if (b.totalCost === null) return -1;
+      return a.totalCost - b.totalCost;
+    });
 
   const availableCosts = filteredOffers
     .filter((o) => o.stock > 0 && o.totalCost !== null)
@@ -135,6 +168,25 @@ export default function StoreOffersComparisonTable({
           <p className="text-xs text-gray-500 font-medium mt-0.5">
             Desglose 3 partes: Precio artículo + Envío = Coste total ($ MXN)
           </p>
+        </div>
+
+        {/* Destination State Selector */}
+        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-2xs">
+          <span className="text-xs font-bold text-gray-700">Enviar a:</span>
+          <select
+            data-testid="destination-state-select"
+            value={selectedState}
+            onChange={(e) => setSelectedState(e.target.value)}
+            className="text-xs font-extrabold text-indigo-700 bg-transparent border-none focus:ring-0 cursor-pointer"
+          >
+            <option value="CDMX">CDMX / Edomex (Zona Centro)</option>
+            <option value="JAL">Jalisco / Guadalajara</option>
+            <option value="NL">Nuevo León / Monterrey</option>
+            <option value="PUE">Puebla / Tlaxcala</option>
+            <option value="GTO">Guanajuato / Querétaro</option>
+            <option value="BC">Baja California / Norte (+ $45 MXN)</option>
+            <option value="YUC">Yucatán / Quintana Roo (+ $45 MXN)</option>
+          </select>
         </div>
         {historicalMinPrice != null && (
           <div

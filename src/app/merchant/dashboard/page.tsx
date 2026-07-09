@@ -6,6 +6,8 @@ import { createClient } from '@supabase/supabase-js';
 import { Toolbar } from '@/components/Toolbar';
 import { MerchantAnalyticsCharts, ClickLogItem } from '@/components/MerchantAnalyticsCharts';
 import { MerchantFeaturedDealsPanel } from '@/components/MerchantFeaturedDealsPanel';
+import { MerchantFeedInspector } from '@/components/MerchantFeedInspector';
+import { MerchantClickAnalytics, ClickRecord } from '@/components/MerchantClickAnalytics';
 import Link from 'next/link';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
@@ -22,7 +24,7 @@ export default async function MerchantDashboardPage() {
   // Load merchant store details
   const { data: store, error: storeErr } = await supabase
     .from('stores')
-    .select('id, name, feed_status, base_url')
+    .select('id, name, feed_status, base_url, google_shopping_feed_url')
     .eq('owner_email', session.user.email)
     .single();
 
@@ -34,6 +36,7 @@ export default async function MerchantDashboardPage() {
   const { data: clicksData } = await supabase
     .from('clicks')
     .select(`
+      id,
       created_at,
       bgg_id,
       bgg_games_cache (
@@ -43,7 +46,14 @@ export default async function MerchantDashboardPage() {
     .eq('store_id', store.id)
     .order('created_at', { ascending: false });
 
-  const clicks = (clicksData as unknown as ClickLogItem[]) || [];
+  const rawClicks = (clicksData || []) as Array<{ id?: string; created_at: string; bgg_id: number; bgg_games_cache?: { name?: string } | null }>;
+  const clicks = rawClicks.map((c, index) => ({
+    id: c.id || `click-${index}`,
+    created_at: c.created_at,
+    bgg_id: c.bgg_id,
+    bgg_games_cache: c.bgg_games_cache,
+  }));
+
   const clicksCount = clicks.length;
 
   // Fetch store deals for sponsored placement management
@@ -80,7 +90,6 @@ export default async function MerchantDashboardPage() {
         { id: 'deal-default-3', bgg_id: 167791, game_name: 'Terraforming Mars', price: 54.95, stock: 4, is_featured: false },
       ];
 
-  // Mock standard CTR ratio based on industry averages (4.2% click through rate)
   const ctrRatio = clicksCount > 0 ? '4.2%' : '0.0%';
 
   return (
@@ -159,8 +168,14 @@ export default async function MerchantDashboardPage() {
         {/* Sponsored Featured Store Placements Panel (US-41) */}
         <MerchantFeaturedDealsPanel storeId={store.id} initialDeals={initialDeals} />
 
+        {/* US-99: Interactive Merchant Feed Inspection & Diagnostic Debugger */}
+        <MerchantFeedInspector initialFeedUrl={store.google_shopping_feed_url || ''} />
+
+        {/* US-100: Merchant Outbound Click Analytics & CPC Monthly Billing Generator */}
+        <MerchantClickAnalytics clicks={clicks as ClickRecord[]} storeName={store.name} defaultCpcRate={3.00} />
+
         {/* Interactive Analytics Charts, Top Games, and UTM Guide */}
-        <MerchantAnalyticsCharts clicks={clicks} storeUrl={store.base_url || 'https://tutienda.es'} />
+        <MerchantAnalyticsCharts clicks={clicks as ClickLogItem[]} storeUrl={store.base_url || 'https://tutienda.es'} />
 
         {/* Clicks Log Table */}
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">

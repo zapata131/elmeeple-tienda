@@ -1,33 +1,42 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 35: All-Time Lowest Price Badge & Historical Summary Banner)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 36: Multi-Team Parallel Sprint - Ingestion Isolation & Merchant Analytics)
 
-This memo records the completed execution of **Milestone 35 (Issue #199 / US-75)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), implementing an all-time lowest price summary banner in `StoreOffersComparisonTable.tsx` and an automated TDD test suite (`src/__tests__/all_time_lowest_badge.test.tsx`).
+This memo records the completed parallel execution of **Milestone 36 (Issues #192, #193, #196, #197 / US-95, US-96, US-99, US-100)** by Team A and Team B on our board game price comparison engine for Mexico (`MX` / `$ MXN`).
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-199-all-time-lowest-price-badge` (Merging to `main`)
-* **Completed Issue in Milestone 35:**
-  * Issue #199 (`[US-75] All-Time Lowest Price Badge & Historical Price Trend Summary`) - Verified & merged.
+* **Active Branch:** `main`
+* **Completed Issues in Milestone 36:**
+  * **Team A (Ingestion & Isolation):**
+    - Issue #192 (`[US-95] Strict Sub-Title & Colon-Delimited Expansion Isolation Engine`)
+    - Issue #193 (`[US-96] Automated Background BGG Resolution and Image Hydration Worker`)
+  * **Team B (Merchant Portal & Analytics):**
+    - Issue #196 (`[US-99] Interactive Merchant Feed Inspection & Diagnostic Debugger`)
+    - Issue #197 (`[US-100] Merchant Outbound Click Analytics and CPC Monthly Billing Generator`)
 
 ---
 
-## 2. Work Completed in Issue #199 📦
+## 2. Work Completed Across Teams 📦
 
-1. **Historical Price Summary Banner (`src/components/StoreOffersComparisonTable.tsx`):**
-   * Displays a sentence-case historical minimum price banner (`data-testid="historical-price-summary-banner"`) in the header of the store comparison table.
-   * Highlights active all-time lowest price deals with a prominent badge (`¡Récord mínimo histórico activo!`).
-2. **Automated TDD Test Suite (`src/__tests__/all_time_lowest_badge.test.tsx`):**
-   * Added to `npm run test` and `npm run verify` to test historical summary banner rendering and all-time low badge conditions.
-3. **Backlog Keepup (`backlog_user_stories.md`):**
-   * Updated backlog documentation with completed user stories up to US-74 / Issue #188 and defined US-75 to US-77 for future sprints.
+### Team A (Catalog Ingestion & BGG Resolution Specialist):
+1. **Subtitle & Expansion Isolation Engine (`src/utils/feed_parser.ts`):**
+   - Detects colons (`:`) and hyphens (`-`) in product titles during feed ingestion to isolate un-indexed expansion titles (e.g. *"Catan: Exploradores y Piratas"*) and prevent mis-attribution to base game pages.
+2. **Automated BGG Resolution Worker (`src/utils/bgg_resolution_worker.ts`):**
+   - Background worker resolving auto-created pseudo-games (`bgg_id >= 8,000,000`) via BGG XMLAPI2, downloading high-res cover art, and re-linking `store_games` rows.
+
+### Team B (Merchant Portal & Diagnostics Specialist):
+1. **Interactive Merchant Feed Inspector (`src/components/MerchantFeedInspector.tsx`):**
+   - Live feed diagnostic debugger on `/merchant/dashboard` categorizing store items into recognized games, excluded non-boardgame items (sleeves, paints), and price/URL warnings.
+2. **Merchant Outbound Click Analytics (`src/components/MerchantClickAnalytics.tsx`):**
+   - Outbound referral traffic charts, top-performing game breakdown, and automated monthly CPC/CPA invoice summary generator with CSV export.
 
 ---
 
 ## 3. Four-Tier Verification Gate 🧪
-* **Full Verification (`npm run verify`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 40 unit/integration test suites passed (109 tests passed).
+* **Full Verification (`npm run verify`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 44 unit/integration test suites passed (127 tests passed).
 
 ---
 
 ## 4. Next Steps 🚀
-1. Proceed with user feedback or next backlog feature.
+1. Proceed with user feedback or next backlog milestone.

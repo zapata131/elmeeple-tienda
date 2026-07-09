@@ -42,8 +42,12 @@ export function cleanBoardGameTitle(title: string): string {
   // Remove common store/retailer suffixes and publisher labels
   const SUFFIXES_TO_REMOVE = [
     'en español', 'en espanol', 'español', 'espanol',
-    'en inglés', 'en ingles', 'inglés', 'ingles', 'english edition',
-    'juego de mesa', 'juego de cartas', 'juego',
+    'en inglés', 'en ingles', 'inglés', 'ingles', 'english edition', 'spanish edition',
+    'juego de mesa', 'juego de cartas', 'juego de tablero', 'juego de rol', 'board game',
+    'primera edición', 'segunda edición', 'tercera edición', 'cuarta edición', 'quinta edición', 'sexta edición', 'séptima edición', 'octava edición', 'novena edición', 'décima edición',
+    '1ª edición', '2ª edición', '3ª edición', '4ª edición', '5ª edición', '6ª edición', '7ª edición', '8ª edición', '9ª edición', '10ª edición',
+    '1st edition', '2nd edition', '3rd edition', '4th edition', '5th edition', '6th edition', '7th edition', '8th edition', '9th edition', '10th edition',
+    'edición', 'edicion', 'edition',
     'devir', 'asmodee', 'maldito games', 'ravensburger', 'hasbro'
   ];
   
@@ -312,13 +316,13 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[],
   // Limit to verified catalog games (bgg_id < 8,000,000) to avoid Supabase 1000 rows pagination limits
   const { data: cachedGames, error: cacheErr } = await supabase
     .from('bgg_games_cache')
-    .select('bgg_id, name, ean')
+    .select('bgg_id, name, ean, alternate_names')
     .lt('bgg_id', 8000000);
   
   if (cacheErr) {
     console.error('[syncStoreCatalog] Failed to pre-load games cache:', cacheErr.message);
   }
-  const gamesList: Array<{ bgg_id: number; name: string; ean: string | null }> = cachedGames || [];
+  const gamesList: Array<{ bgg_id: number; name: string; ean: string | null; alternate_names?: string[] | null }> = cachedGames || [];
   const { data: baseStores } = await supabase.from('stores').select('*').eq('id', storeId);
   const baseStore = baseStores?.[0] || null;
   const { data: baseRates } = await supabase.from('shipping_rates').select('*').eq('store_id', storeId);
@@ -348,41 +352,75 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[],
       matchedGame = gamesList.find((g) => g.ean === item.ean) || null;
     }
 
-    // 2. Fallback to case-insensitive name match
+    // 2. Fallback to case-insensitive name match & subtitle isolation engine
     if (!matchedGame && item.title) {
-      // Clean title from common suffixes or editions details
       const cleanTitle = cleanBoardGameTitle(item.title);
-      matchedGame = gamesList.find((g) => g.name.toLowerCase() === cleanTitle.toLowerCase()) || null;
+
+      // Check exact canonical or pre-indexed alternate_names match
+      matchedGame = gamesList.find((g) => {
+        if (g.name.toLowerCase() === cleanTitle.toLowerCase()) return true;
+        if (g.alternate_names && Array.isArray(g.alternate_names)) {
+          return g.alternate_names.some((alt) => alt.toLowerCase() === cleanTitle.toLowerCase());
+        }
+        return false;
+      }) || null;
+
       if (!matchedGame) {
-        const escapeReg = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // Strict Sub-Title & Colon/Hyphen Delimited Expansion Isolation Engine:
+        // Detect colons and hyphens after base game root titles. If root matches a base game,
+        // but full title is not a pre-indexed alias, isolate to prevent mis-attribution.
+        let isIsolatedSubtitle = false;
+        const delimiterRegex = /[:\-–—]/g;
+        let delimMatch: RegExpExecArray | null;
 
-        matchedGame = gamesList.find((g) => {
-          const cacheName = g.name.toLowerCase();
-          const cleanLower = cleanTitle.toLowerCase();
-          
-          let hasInclusion = false;
-          try {
-            const cacheReg = new RegExp(`\\b${escapeReg(cacheName)}\\b`, 'i');
-            const cleanReg = new RegExp(`\\b${escapeReg(cleanLower)}\\b`, 'i');
-            hasInclusion = cacheReg.test(cleanLower) || cleanReg.test(cacheName);
-          } catch {
-            hasInclusion = cacheName.includes(cleanLower) || cleanLower.includes(cacheName);
-          }
-          
-          if (!hasInclusion) return false;
+        while ((delimMatch = delimiterRegex.exec(cleanTitle)) !== null) {
+          const prefix = cleanTitle.substring(0, delimMatch.index).trim();
+          if (prefix.length < 2) continue;
 
-          for (const word of EXCLUSION_EDITION_WORDS) {
-            const cleanHasWord = cleanLower.includes(word);
-            const cacheHasWord = cacheName.includes(word);
-            if (cleanHasWord && !cacheHasWord) {
-              return false;
+          const matchingBase = gamesList.find((g) => {
+            if (g.name.toLowerCase() === prefix.toLowerCase()) return true;
+            if (g.alternate_names && Array.isArray(g.alternate_names)) {
+              return g.alternate_names.some((alt) => alt.toLowerCase() === prefix.toLowerCase());
             }
+            return false;
+          });
+
+          if (matchingBase) {
+            isIsolatedSubtitle = true;
+            break;
           }
-          return true;
-        }) || null;
+        }
+
+        if (!isIsolatedSubtitle) {
+          const escapeReg = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+          matchedGame = gamesList.find((g) => {
+            const cacheName = g.name.toLowerCase();
+            const cleanLower = cleanTitle.toLowerCase();
+            
+            let hasInclusion = false;
+            try {
+              const cacheReg = new RegExp(`\\b${escapeReg(cacheName)}\\b`, "i");
+              const cleanReg = new RegExp(`\\b${escapeReg(cleanLower)}\\b`, "i");
+              hasInclusion = cacheReg.test(cleanLower) || cleanReg.test(cacheName);
+            } catch {
+              hasInclusion = cacheName.includes(cleanLower) || cleanLower.includes(cacheName);
+            }
+            
+            if (!hasInclusion) return false;
+
+            for (const word of EXCLUSION_EDITION_WORDS) {
+              const cleanHasWord = cleanLower.includes(word);
+              const cacheHasWord = cacheName.includes(word);
+              if (cleanHasWord && !cacheHasWord) {
+                return false;
+              }
+            }
+            return true;
+          }) || null;
+        }
       }
     }
-
     // 3. Auto-create game page entry in bgg_games_cache for unique unmatched XML feed items AND enqueue for BGG metadata enrichment
     let isAutoCreated = false;
     const isExcludedFromAutoCreation = EXCLUSION_EDITION_WORDS.some((word) => 

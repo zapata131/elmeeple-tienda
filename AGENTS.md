@@ -9,6 +9,8 @@ This document defines the AI agent specializations, development execution workfl
 You must execute this checklist on **every single turn** before completing your work and responding to the user:
 
 ### Pre-Flight Actions (Start of Turn)
+*   **Polish & Refine Priority:** Always prioritize polishing, simplifying, and perfecting existing codebase features rather than adding new ones or creating unnecessary UI bloat.
+*   **Mandatory Sprint Alignment Gate:** Before initiating ANY new sprint, creating feature branches, or picking up backlog issues, you **MUST** first stop and explicitly ask the user for confirmation on whether the proposed issues remain relevant or if they prefer to work on other priorities/refinements instead.
 *   **Backlog & Persona Gate (Pre-Flight):** When receiving a feature request, bug report, or sprint planning prompt, you **MUST** immediately audit the request against the Three-Point Compliance Filter (Persona Atomicity, Scope Atomicity, Agile Syntax). Never begin coding or create a compound backlog item. If multiple personas or features are detected, proactively divide them or launch the `backlog_auditor` skill before proceeding.
 *   **Verify Active Backlog:** Review the conversation context. If a new feature, bug, or improvement is discussed, **immediately** create a GitHub Issue using the `gh` CLI *before* writing any production code.
 *   **User Story Mandate:** Every issue created on GitHub must include a comprehensive User Story in the description using the classic Agile framework: `As a [Role], I want [Feature], So that [Benefit/Value]`.

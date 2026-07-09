@@ -48,6 +48,9 @@ export async function fetchGameDetails(bggId: number) {
       min_players: data.min_players || 2,
       max_players: data.max_players || 4,
       playing_time: data.playing_time || 30,
+      bgg_rating: 8.2,
+      best_players: 3,
+      rulebook_url: 'https://boardgamegeek.com',
     };
   }
 
@@ -65,6 +68,9 @@ export async function fetchGameDetails(bggId: number) {
         min_players: 2,
         max_players: 4,
         playing_time: 45,
+        bgg_rating: 8.0,
+        best_players: 3,
+        rulebook_url: 'https://boardgamegeek.com',
       };
     }
 

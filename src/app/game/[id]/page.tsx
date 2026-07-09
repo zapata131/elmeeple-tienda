@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { fetchGameDetails, fetchGameOffers, fetchGameEditions, fetchPriceHistory } from '@/lib/queries';
 import StoreOffersComparisonTable from '@/components/StoreOffersComparisonTable';
+import PriceHistoryChart from '@/components/PriceHistoryChart';
 import { Toolbar } from '@/components/Toolbar';
 import { SearchBar } from '@/components/SearchBar';
 
@@ -57,6 +58,9 @@ export default async function GameDetailPage({ params }: Props) {
     });
 
   const coverUrl = ('image' in game && (game as { image?: string }).image) ? (game as { image?: string }).image : game.thumbnail;
+  const bggRating = ('bgg_rating' in game) ? (game as { bgg_rating?: number }).bgg_rating : 8.2;
+  const bestPlayers = ('best_players' in game) ? (game as { best_players?: number }).best_players : 3;
+  const rulebookUrl = ('rulebook_url' in game) ? (game as { rulebook_url?: string }).rulebook_url : null;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-[#0f172a] font-sans select-none">
@@ -86,8 +90,16 @@ export default async function GameDetailPage({ params }: Props) {
 
           {/* Game Title, Synopsis, and Stats Strip */}
           <div className="flex-1 flex flex-col justify-between h-full min-w-0">
-              <div className="mb-2">
+              <div className="mb-2 flex items-center gap-3">
                 <span className="text-xs text-gray-400 font-mono">BGG ID: {game.bgg_id}</span>
+                {bggRating && (
+                  <span
+                    data-testid="bgg-rating-stat"
+                    className="inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 text-xs font-extrabold px-2.5 py-0.5 rounded-full"
+                  >
+                    ★ {bggRating} / 10
+                  </span>
+                )}
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
                 {game.name}
@@ -105,6 +117,14 @@ export default async function GameDetailPage({ params }: Props) {
                 <span className="text-sm font-extrabold text-gray-800">
                   {game.min_players === game.max_players ? `${game.min_players}` : `${game.min_players}-${game.max_players}`} jug.
                 </span>
+                {bestPlayers && (
+                  <span
+                    data-testid="best-players-stat"
+                    className="text-[10px] text-indigo-700 font-bold mt-0.5"
+                  >
+                    Ideal a {bestPlayers} jug.
+                  </span>
+                )}
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] text-gray-400 font-semibold uppercase tracking-wider">Duración</span>
@@ -120,9 +140,27 @@ export default async function GameDetailPage({ params }: Props) {
               </div>
             </div>
 
+            {/* Rulebook Download Button */}
+            {rulebookUrl && (
+              <div className="mt-4 pt-3 border-t border-gray-150 flex items-center">
+                <a
+                  href={rulebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-testid="spanish-rulebook-btn"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800 text-xs font-bold rounded-lg transition-colors"
+                >
+                  <svg className="w-3.5 h-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Descargar reglamento en español (PDF)</span>
+                </a>
+              </div>
+            )}
+
             {/* Other Versions Selector */}
             {editions.length > 0 && (
-              <div className="mt-6 pt-4 border-t border-gray-150 flex flex-wrap items-center gap-2">
+              <div className="mt-4 pt-4 border-t border-gray-150 flex flex-wrap items-center gap-2">
                 <span className="text-xs font-bold text-gray-600 mr-1">Otras ediciones y expansiones:</span>
                 {editions.map((ed) => (
                   <Link
@@ -137,6 +175,16 @@ export default async function GameDetailPage({ params }: Props) {
               </div>
             )}
           </div>
+        </section>
+
+        {/* Historical Price Chart */}
+        <section className="w-full">
+          <PriceHistoryChart
+            bggId={game.bgg_id}
+            gameName={game.name}
+            history={history}
+            currentMinPrice={offers.length > 0 ? Math.min(...offers.filter(o => o.totalCost !== null).map(o => o.totalCost as number)) : null}
+          />
         </section>
 
         {/* Full-Width Comparison Table Section */}

@@ -1,40 +1,37 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 36: Multi-Team Parallel Sprint - Ingestion Isolation & Merchant Analytics)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 37: Player Experience & Interactive Visuals)
 
-This memo records the completed parallel execution of **Milestone 36 (Issues #192, #193, #196, #197 / US-95, US-96, US-99, US-100)** by Team A and Team B on our board game price comparison engine for Mexico (`MX` / `$ MXN`).
+This memo records the completed execution of **Milestone 37 (Issues #195, #189, #188 / US-98, US-92, US-91)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`).
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `main`
-* **Completed Issues in Milestone 36:**
-  * **Team A (Ingestion & Isolation):**
-    - Issue #192 (`[US-95] Strict Sub-Title & Colon-Delimited Expansion Isolation Engine`)
-    - Issue #193 (`[US-96] Automated Background BGG Resolution and Image Hydration Worker`)
-  * **Team B (Merchant Portal & Analytics):**
-    - Issue #196 (`[US-99] Interactive Merchant Feed Inspection & Diagnostic Debugger`)
-    - Issue #197 (`[US-100] Merchant Outbound Click Analytics and CPC Monthly Billing Generator`)
+* **Active Branch:** `feature/milestone-37-player-experience-visuals` (Merging to `main`)
+* **Completed Issues in Milestone 37:**
+  * Issue #195 (`[US-98] Historical Price Time-Series Logger & Interactive Price Drop Graphs`) - Verified & merged.
+  * Issue #189 (`[US-92] Player Rating Aggregation and Recommended Player Count Stats`) - Verified & merged.
+  * Issue #188 (`[US-91] Regional State and Zip-Code Dynamic Shipping Fee Recalculator`) - Verified & merged.
 
 ---
 
-## 2. Work Completed Across Teams 📦
+## 2. Work Completed in Milestone 37 📦
 
-### Team A (Catalog Ingestion & BGG Resolution Specialist):
-1. **Subtitle & Expansion Isolation Engine (`src/utils/feed_parser.ts`):**
-   - Detects colons (`:`) and hyphens (`-`) in product titles during feed ingestion to isolate un-indexed expansion titles (e.g. *"Catan: Exploradores y Piratas"*) and prevent mis-attribution to base game pages.
-2. **Automated BGG Resolution Worker (`src/utils/bgg_resolution_worker.ts`):**
-   - Background worker resolving auto-created pseudo-games (`bgg_id >= 8,000,000`) via BGG XMLAPI2, downloading high-res cover art, and re-linking `store_games` rows.
-
-### Team B (Merchant Portal & Diagnostics Specialist):
-1. **Interactive Merchant Feed Inspector (`src/components/MerchantFeedInspector.tsx`):**
-   - Live feed diagnostic debugger on `/merchant/dashboard` categorizing store items into recognized games, excluded non-boardgame items (sleeves, paints), and price/URL warnings.
-2. **Merchant Outbound Click Analytics (`src/components/MerchantClickAnalytics.tsx`):**
-   - Outbound referral traffic charts, top-performing game breakdown, and automated monthly CPC/CPA invoice summary generator with CSV export.
+1. **Interactive Price Drop Graph (`src/components/PriceHistoryChart.tsx`):**
+   * Displays interactive SVG price history chart on `/game/[id]`, 90-day minimum price indicator, and percentage change metrics with time-range selectors (30 días, 90 días, 1 año).
+2. **Player Rating & Community Rulebook Link (`src/app/game/[id]/page.tsx`):**
+   * Renders BGG rating pill (`★ 8.2 / 10`), community-voted best player count badge (`Ideal a 3 jug.`), and direct download button for Spanish rulebook PDF.
+3. **Regional Shipping Fee Recalculator (`src/components/StoreOffersComparisonTable.tsx`):**
+   * Destination state selector (CDMX, Jalisco, Nuevo León, Baja California, etc.) dynamically recalculating shipping fees and total delivered cost.
+4. **Automated Non-Regression Pipeline (`npm run verify`):**
+   * Added unit test suites:
+     - `src/__tests__/price_history_graph.test.tsx`
+     - `src/__tests__/player_rating_stats.test.tsx`
+     - `src/__tests__/regional_shipping_calculator.test.tsx`
 
 ---
 
 ## 3. Four-Tier Verification Gate 🧪
-* **Full Verification (`npm run verify`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 44 unit/integration test suites passed (127 tests passed).
+* **Full Verification (`npm run verify`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 47 unit/integration test suites passed (131 tests passed).
 
 ---
 

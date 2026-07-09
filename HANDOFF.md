@@ -1,34 +1,31 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 34: Automated Store Offer URL & Product Title Cross-Matching Worker)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 35: All-Time Lowest Price Badge & Historical Summary Banner)
 
-This memo records the completed execution of **Milestone 34 (Issue #188 / US-74)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), implementing an automated URL & Product Title Cross-Matching Audit Worker (`src/utils/url_product_audit_worker.ts`), a dedicated API route (`/api/admin/audit-urls`), and a 39-suite test pipeline (`src/__tests__/url_product_audit_worker.test.ts`).
+This memo records the completed execution of **Milestone 35 (Issue #199 / US-75)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), implementing an all-time lowest price summary banner in `StoreOffersComparisonTable.tsx` and an automated TDD test suite (`src/__tests__/all_time_lowest_badge.test.tsx`).
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `main`
-* **Completed Issue in Milestone 34:**
-  * Issue #188 (`[US-74] Automated Store Offer URL & Product Title Cross-Matching Worker`) - Verified & merged.
+* **Active Branch:** `feature/issue-199-all-time-lowest-price-badge` (Merging to `main`)
+* **Completed Issue in Milestone 35:**
+  * Issue #199 (`[US-75] All-Time Lowest Price Badge & Historical Price Trend Summary`) - Verified & merged.
 
 ---
 
-## 2. Work Completed in Issue #188 📦
+## 2. Work Completed in Issue #199 📦
 
-1. **Automated URL & Product Title Cross-Matching Worker (`src/utils/url_product_audit_worker.ts`):**
-   * Performs 2-stage verification on store offer URLs:
-     - **Stage 1 (HTTP Link Health):** Validates HTTP 200/301 status and detects 404/500 broken links.
-     - **Stage 2 (Shopify Product JSON & Title Cross-Matching):** Fetches canonical `product.title` via `.json` endpoints to verify that the store page actually matches the target game and is not an expansion/accessory mis-attributed to a base game.
-   * **Auto-Healing:** Automatically purges 404 broken links or mis-attributed expansion/accessory offers from `store_games`.
-2. **Admin API Route (`src/app/api/admin/audit-urls/route.ts`):**
-   * Provides an on-demand endpoint (`/api/admin/audit-urls`) to execute URL & title cross-matching audits across database store offer rows.
-3. **Automated Non-Regression Suite (`src/__tests__/url_product_audit_worker.test.ts`):**
-   * Added to `npm run test` and `npm run verify` to test URL health checks, title mismatch detection, and expansion mis-attribution prevention.
+1. **Historical Price Summary Banner (`src/components/StoreOffersComparisonTable.tsx`):**
+   * Displays a sentence-case historical minimum price banner (`data-testid="historical-price-summary-banner"`) in the header of the store comparison table.
+   * Highlights active all-time lowest price deals with a prominent badge (`¡Récord mínimo histórico activo!`).
+2. **Automated TDD Test Suite (`src/__tests__/all_time_lowest_badge.test.tsx`):**
+   * Added to `npm run test` and `npm run verify` to test historical summary banner rendering and all-time low badge conditions.
+3. **Backlog Keepup (`backlog_user_stories.md`):**
+   * Updated backlog documentation with completed user stories up to US-74 / Issue #188 and defined US-75 to US-77 for future sprints.
 
 ---
 
 ## 3. Four-Tier Verification Gate 🧪
-* **Full Verification (`npm run verify`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 39 unit/integration test suites passed (107 tests passed).
-* **Automated Replay (`npm run test:e2e`):** 100% passing Playwright E2E suites (4/4 suites passed across desktop and mobile viewports).
+* **Full Verification (`npm run verify`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 40 unit/integration test suites passed (109 tests passed).
 
 ---
 

@@ -136,6 +136,22 @@ export default function StoreOffersComparisonTable({
             Desglose 3 partes: Precio artículo + Envío = Coste total ($ MXN)
           </p>
         </div>
+        {historicalMinPrice != null && (
+          <div
+            data-testid="historical-price-summary-banner"
+            className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#73D8D4]/15 border border-[#73D8D4]/40 text-[#1a5d5a] rounded-lg text-xs font-extrabold shadow-2xs"
+          >
+            <svg className="w-4 h-4 text-[#2B8C88] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+            <span>★ Mínimo histórico registrado: ${historicalMinPrice.toFixed(2)} MXN</span>
+            {minCurrentCost !== null && minCurrentCost <= historicalMinPrice * 1.01 && (
+              <span className="ml-1 px-2 py-0.5 bg-rose-100 text-rose-800 border border-rose-300 rounded text-[11px] font-extrabold">
+                ¡Récord mínimo histórico activo!
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Comparison Table */}

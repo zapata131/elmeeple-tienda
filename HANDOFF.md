@@ -1,27 +1,24 @@
-# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 32: Root-Cause Audit & Systemic Backlog Issues)
+# Handoff Sprint Memo: MeeplePrecios 🇲🇽 (Milestone 33: Roll Games Concordia Real URL & Language Alignment)
 
-This memo records the completed root-cause audit on **MeeplePrecios**, certifying our systemic fixes to feed ingestion, language detection, and catalog audit workers, and detailing newly opened GitHub issues to address remaining root-cause automation.
+This memo records the completed execution of **Milestone 33 (Issue #187 / US-73)** on our board game price comparison engine for Mexico (`MX` / `$ MXN`), updating Roll Games' offer under Concordia (`/game/124742`) to its real store URL (`https://rollgames.mx/products/concordia`), price (`$1,675.00 MXN`), and verified Spanish edition (`Español (ES)`).
 
 ---
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
 * **Active Branch:** `main`
-* **Created Backlog Issues for Root-Cause Automation:**
-  * **Issue #185:** `[US-88] Systemic Colon-Delimited & Subtitle Expansion Exclusion Engine`
-  * **Issue #186:** `[US-89] Automated Pseudo-Game BGG Resolution & Offer Re-Linking Worker`
+* **Completed Issue in Milestone 33:**
+  * Issue #187 (`[US-73] Roll Games Concordia Real URL & Language Alignment`) - Verified & merged.
 
 ---
 
-## 2. Work & Root-Cause Fixes Completed 📦
+## 2. Work Completed in Issue #33 📦
 
-1. **Language Detection Engine Enhancement (`src/utils/feed_parser.ts`):**
-   * Enhanced `detectLanguage()` with word boundary regexes (`/\benglish\b/i`, `/\binglés\b/i`, `/\bingles\b/i`, `/\beng\b/i`, `/\bus import\b/i`) and English-exclusive publisher keywords (*Rio Grande Games, Z-Man Games, Stonemaier, Bezier, Oink Games, Fantasy Flight Games, Days of Wonder*).
-   * Certified that English edition titles (`Concordia (English)`, `Dune Imperium English Edition`, `Catan (US Import)`) automatically map to `language: 'en'`.
-2. **Automated Catalog Audit Worker (`src/utils/catalog_audit_worker.ts`):**
-   * Background worker (`auditDatabaseCatalogIntegrity()`) scans `store_games` and automatically unlinks mismatched expansion/accessory offers (`niebla`, `dragones`, `salsa`, `caja nido`, `playmat`).
-3. **Automated Non-Regression Suite (`src/__tests__/catalog_matching_integrity.test.ts`):**
-   * Ensures that base game comparison pages only receive verified base game offers and blocks non-boardgame auto-creation.
+1. **Roll Games Real Product URL & Edition Linkage:**
+   * Replaced test offer URL with Roll Games' actual product page: `https://rollgames.mx/products/concordia`.
+   * Updated price (`$1,675.00 MXN`) and edition language (`es` / `Español (ES)`).
+2. **Concordia Comparison Table Certification (`/game/124742`):**
+   * Verified that all three Mexican stores (Bundaba, Con T de Tlacuache, Roll Games) display real URLs and correct Spanish edition badges.
 
 ---
 
@@ -32,5 +29,4 @@ This memo records the completed root-cause audit on **MeeplePrecios**, certifyin
 ---
 
 ## 4. Next Steps 🚀
-1. Execute **Issue #185** (`[US-88] Systemic Colon-Delimited & Subtitle Expansion Exclusion Engine`).
-2. Execute **Issue #186** (`[US-89] Automated Pseudo-Game BGG Resolution & Offer Re-Linking Worker`).
+1. Proceed with user feedback or next backlog feature.

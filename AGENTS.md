@@ -190,6 +190,10 @@ graph TD
         2. **Systemic Engine & Rule Fix:** Update the feed ingestion engine (`feed_parser.ts`), pre-indexed BGG catalog (`MOCK_GAMES`), and automated audit worker (`catalog_audit_worker.ts`) to permanently handle the pattern.
         3. **Non-Regression Test & Audit:** Add test cases to `src/__tests__/catalog_matching_integrity.test.ts` to ensure the fix does not drop valid offers or mis-assign other games, and run `npm run verify` to certify 100% green build.
 
+### 5.17 Spin-Off Game Variant Catalog Isolation & Auto-Creation (US-102)
+*   **Spin-Off Variant Leaks vs Base Game Price Tables:** Standalone spin-off variants (e.g. *Spot It! Catan*, *Dobble Catan*) share brand roots with base games (*Catan*), causing naive title matchers to link spin-off store offers to base game comparison pages while discarding spin-offs from search.
+    *   *Convention:* Include spin-off keywords (`'spot it'`, `'spot-it'`, `'dobble'`) in `EXCLUSION_EDITION_WORDS` and `EXPANSION_AND_ACCESSORY_WORDS` to prevent matching base game entries, but explicitly preserve them in `NON_GAME_EXCLUSION_WORDS` during auto-creation so that spin-offs generate distinct catalog entries (`bgg_games_cache`) and pages independently.
+
 ---
 
 ## 6. Four-Tier Testing Standards & Browser Automation

@@ -328,9 +328,12 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[],
   const { data: baseRates } = await supabase.from('shipping_rates').select('*').eq('store_id', storeId);
   const knownEditionStores = new Set<string>([storeId]);
 
+  const SPINOFF_GAME_WORDS = ['spot it', 'spot-it', 'dobble'];
+
   const EXCLUSION_EDITION_WORDS = [
     'expansion', 'expansión', 'exp', 'expa', 'ampliacion', 'ampliación', 'escenario', 'viaje', 'travel',
     'junior', 'duelo', 'duel', 'extension', 'extensión', 'pack', 'set', 'scenario',
+    'spot it', 'spot-it', 'dobble',
     'plus', '3d', 'aniversario', 'anniversary', 'big box', 'bigbox', 'deluxe', 'especial', 'special',
     'cazadores', 'recolectores', 'constructores', 'catedrales', 'posadas', 'dragones', 'hadas', 'torre', 'abadía', 'abadias', 'niebla', 'salsa', 'barcos',
     'puzzle', 'rompecabezas',
@@ -342,6 +345,10 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[],
     'promo', 'promos', 'addon', 'add-on', 'upgrade', 'upgrade pack', 'artbook', 'art book', 'soundtrack', 'playera', 't-shirt', 'poster',
     'beetle', 'model', 'kit', 'figura', 'figure', 'toy', 'juguete', 'hot wheels', 'funko', 'gundam', 'gunpla', 'plamo', 'replica', 'réplica', 'statue', 'estatua', 'plush', 'peluche'
   ];
+
+  const NON_GAME_EXCLUSION_WORDS = EXCLUSION_EDITION_WORDS.filter(
+    (word) => !SPINOFF_GAME_WORDS.includes(word)
+  );
 
   for (const item of items) {
     stats.processed++;
@@ -423,7 +430,7 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[],
     }
     // 3. Auto-create game page entry in bgg_games_cache for unique unmatched XML feed items AND enqueue for BGG metadata enrichment
     let isAutoCreated = false;
-    const isExcludedFromAutoCreation = EXCLUSION_EDITION_WORDS.some((word) => 
+    const isExcludedFromAutoCreation = NON_GAME_EXCLUSION_WORDS.some((word) => 
       item.title.toLowerCase().includes(word)
     );
 

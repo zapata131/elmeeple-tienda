@@ -84,6 +84,20 @@ describe('US-70: Automated Catalog Matching & Expansion Integrity Safeguards', (
       // None of these expansions/accessories should match base games!
       expect(res.matched).toBe(0);
     }, 15000);
+
+    it('isolates spin-off game variants (Spot It! Catan) from base game Catan and auto-creates distinct game entry', async () => {
+      const feedItems = [
+        { title: 'Spot It! Catan', link: 'https://store.com/spot-it-catan', price: 350, stock: 5, ean: null, language: 'es' },
+      ];
+
+      const res = await syncStoreCatalog('store-1', feedItems, mockSupabase);
+      expect(res.processed).toBe(1);
+      // Should NOT match base game Catan (bgg_id: 13) directly!
+      expect(res.matched).toBe(0);
+      // Should be queued and auto-created as a distinct game entry!
+      expect(res.unmatched).toBe(1);
+      expect(res.queued).toBe(1);
+    }, 15000);
   });
 });
 

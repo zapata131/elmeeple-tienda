@@ -8,6 +8,7 @@ const supabase = createSupabaseClient(supabaseUrl, supabaseRoleKey);
 export const EXPANSION_AND_ACCESSORY_WORDS = [
   'expansion', 'expansión', 'exp', 'expa', 'ampliacion', 'ampliación', 'escenario', 'viaje', 'travel',
   'junior', 'duelo', 'duel', 'extension', 'extensión', 'pack', 'set', 'scenario',
+  'spot it', 'spot-it', 'dobble',
   'cazadores', 'recolectores', 'constructores', 'catedrales', 'posadas', 'dragones', 'hadas', 'torre', 'abadía', 'abadias', 'niebla', 'salsa', 'barcos',
   'puzzle', 'rompecabezas', 'pegamento',
   'nesting', 'nesting box', 'caja nido', 'organizer', 'organizador', 'inserto', 'insert', 'folded space',
@@ -32,7 +33,8 @@ export interface AuditReport {
  * 1. Purges mismatched store offers on base games that contain expansion/accessory keywords in their URL or title.
  * 2. Purges unverified auto-created entries (bgg_id >= 8,000,000) containing exclusion keywords.
  */
-export async function auditDatabaseCatalogIntegrity(): Promise<AuditReport> {
+export async function auditDatabaseCatalogIntegrity(customClient?: unknown): Promise<AuditReport> {
+  const client = (customClient || supabase) as typeof supabase;
   const report: AuditReport = {
     mismatchedOffersDeleted: 0,
     autoCreatedExclusionsPurged: 0,
@@ -42,7 +44,7 @@ export async function auditDatabaseCatalogIntegrity(): Promise<AuditReport> {
 
   try {
     // 1. Audit store_games linked to verified base games (bgg_id < 8,000,000)
-    const { data: verifiedGames } = await supabase
+    const { data: verifiedGames } = await client
       .from('bgg_games_cache')
       .select('bgg_id, name')
       .lt('bgg_id', 8000000);
@@ -52,7 +54,7 @@ export async function auditDatabaseCatalogIntegrity(): Promise<AuditReport> {
       verifiedMap.set(g.bgg_id, g.name.toLowerCase());
     }
 
-    const { data: allOffers } = await supabase
+    const { data: allOffers } = await client
       .from('store_games')
       .select('id, bgg_id, store_product_url')
       .lt('bgg_id', 8000000);
@@ -74,13 +76,13 @@ export async function auditDatabaseCatalogIntegrity(): Promise<AuditReport> {
     if (mismatchedIds.length > 0) {
       for (let i = 0; i < mismatchedIds.length; i += 200) {
         const batch = mismatchedIds.slice(i, i + 200);
-        await supabase.from('store_games').delete().in('id', batch);
+        await client.from('store_games').delete().in('id', batch);
       }
       report.mismatchedOffersDeleted = mismatchedIds.length;
     }
 
     // 2. Audit auto-created bgg_games_cache entries (bgg_id >= 8,000,000)
-    const { data: autoGames } = await supabase
+    const { data: autoGames } = await client
       .from('bgg_games_cache')
       .select('bgg_id, name')
       .gte('bgg_id', 8000000);
@@ -100,13 +102,13 @@ export async function auditDatabaseCatalogIntegrity(): Promise<AuditReport> {
     if (autoPurgeIds.length > 0) {
       for (let i = 0; i < autoPurgeIds.length; i += 200) {
         const batch = autoPurgeIds.slice(i, i + 200);
-        await supabase.from('store_games').delete().in('bgg_id', batch);
-        await supabase.from('bgg_games_cache').delete().in('bgg_id', batch);
+        await client.from('store_games').delete().in('bgg_id', batch);
+        await client.from('bgg_games_cache').delete().in('bgg_id', batch);
       }
       report.autoCreatedExclusionsPurged = autoPurgeIds.length;
     }
 
-    const { count } = await supabase.from('stores').select('*', { count: 'exact', head: true });
+    const { count } = await client.from('stores').select('*', { count: 'exact', head: true });
     report.storesAudited = count || 0;
   } catch (err) {
     console.error('[Catalog Audit Worker] Error during catalog audit:', err);

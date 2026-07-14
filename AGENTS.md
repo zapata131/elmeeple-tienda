@@ -194,6 +194,14 @@ graph TD
 *   **Spin-Off Variant Leaks vs Base Game Price Tables:** Standalone spin-off variants (e.g. *Spot It! Catan*, *Dobble Catan*) share brand roots with base games (*Catan*), causing naive title matchers to link spin-off store offers to base game comparison pages while discarding spin-offs from search.
     *   *Convention:* Include spin-off keywords (`'spot it'`, `'spot-it'`, `'dobble'`) in `EXCLUSION_EDITION_WORDS` and `EXPANSION_AND_ACCESSORY_WORDS` to prevent matching base game entries, but explicitly preserve them in `NON_GAME_EXCLUSION_WORDS` during auto-creation so that spin-offs generate distinct catalog entries (`bgg_games_cache`) and pages independently.
 
+### 5.18 4-Tier Waterfall Ingestion Engine, Barcode Registries & Mapping Memory (US-103 to US-107)
+*   **Tiered Ingestion Pipeline:** Always execute product feed matching via the 4-tier waterfall engine (`waterfall_matching_engine.ts`):
+    1. **Tier 1 (Barcode Registry):** Deterministic match via `game_barcodes` table (100% confidence).
+    2. **Tier 2 (SKU / URL Memory):** Historical match via `merchant_product_mappings` table (100% confidence).
+    3. **Tier 3 (Tokenized Fuzzy Matcher + Subtitle Isolator):** Weighted scoring combining Jaro-Winkler, Token Overlap, and Levenshtein distance ($\ge 0.92$ auto-publish).
+    4. **Tier 4 (Human Moderation Queue & Portal):** Medium-confidence items ($0.70 \dots 0.91$) routed to Admin Staging Queue (`/admin/queue`) and Merchant Mapping Portal (`/merchant/dashboard`).
+*   **Permanent Human Re-Mapping Memory:** Whenever an Admin or Merchant approves or re-maps an unmatched item in Tier 4, the system must write the `(store_id, merchant_sku, bgg_id)` tuple into `merchant_product_mappings`. This guarantees that future daily feed re-syncs inherit the human decision at Tier 2 automatically without requiring repeated manual interventions.
+
 ---
 
 ## 6. Four-Tier Testing Standards & Browser Automation

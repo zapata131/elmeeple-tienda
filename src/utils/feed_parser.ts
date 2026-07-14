@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { fetch as undiciFetch } from 'undici';
+import { matchFeedItemWaterfall, GameBarcodeItem, MerchantMappingItem } from './waterfall_matching_engine';
 
 function getFetch(): typeof fetch {
   if (typeof globalThis.fetch !== 'undefined') {
@@ -30,7 +31,20 @@ interface StoreGameInsertRow {
   price: number;
   stock: number;
   edition_language: string;
+  match_confidence?: number;
+  match_tier?: number;
   last_updated_at: string;
+}
+
+interface QueueInsertRow {
+  store_id: string;
+  ean: string | null;
+  title: string;
+  store_product_url: string;
+  status: string;
+  match_confidence?: number;
+  suggested_bgg_id?: number | null;
+  created_at: string;
 }
 
 export function cleanBoardGameTitle(title: string): string {
@@ -323,6 +337,14 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[],
     console.error('[syncStoreCatalog] Failed to pre-load games cache:', cacheErr.message);
   }
   const gamesList: Array<{ bgg_id: number; name: string; ean: string | null; alternate_names?: string[] | null }> = cachedGames || [];
+
+  // US-103 & US-104: Pre-load game_barcodes and merchant_product_mappings for Tier 1 and Tier 2 matching
+  const { data: barcodeData } = await supabase.from('game_barcodes').select('*');
+  const gameBarcodes: GameBarcodeItem[] = barcodeData || [];
+
+  const { data: mappingData } = await supabase.from('merchant_product_mappings').select('*').eq('store_id', storeId);
+  const merchantMappings: MerchantMappingItem[] = mappingData || [];
+
   const { data: baseStores } = await supabase.from('stores').select('*').eq('id', storeId);
   const baseStore = baseStores?.[0] || null;
   const { data: baseRates } = await supabase.from('shipping_rates').select('*').eq('store_id', storeId);
@@ -353,17 +375,24 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[],
   for (const item of items) {
     stats.processed++;
     let matchedGame = null;
+    const cleanTitle = item.title ? cleanBoardGameTitle(item.title) : '';
 
-    // 1. Match by EAN barcode first
-    if (item.ean) {
-      matchedGame = gamesList.find((g) => g.ean === item.ean) || null;
-    }
+    // US-105: Execute 4-Tier Waterfall Feed Matching Engine
+    const waterfallRes = await matchFeedItemWaterfall(
+      { storeId, title: item.title, ean: item.ean, link: item.link },
+      gamesList,
+      gameBarcodes,
+      merchantMappings
+    );
 
-    // 2. Fallback to case-insensitive name match & subtitle isolation engine
-    if (!matchedGame && item.title) {
-      const cleanTitle = cleanBoardGameTitle(item.title);
-
-      // Check exact canonical or pre-indexed alternate_names match
+    if (waterfallRes.bgg_id) {
+      matchedGame = gamesList.find((g) => g.bgg_id === waterfallRes.bgg_id) || {
+        bgg_id: waterfallRes.bgg_id,
+        name: waterfallRes.matched_name || item.title,
+        ean: null,
+      };
+    } else if (cleanTitle) {
+      // Legacy fallback check for exact name or isolated subtitles
       matchedGame = gamesList.find((g) => {
         if (g.name.toLowerCase() === cleanTitle.toLowerCase()) return true;
         if (g.alternate_names && Array.isArray(g.alternate_names)) {
@@ -536,12 +565,15 @@ export async function syncStoreCatalog(storeId: string, items: ParsedFeedItem[],
     } else {
       stats.unmatched++;
       stats.queued++;
+      const isMediumConfidence = waterfallRes.confidence >= 0.70 && waterfallRes.confidence < 0.92;
       queueBuffer.push({
         store_id: storeId,
         ean: item.ean || null,
         title: item.title || 'Unknown Title',
         store_product_url: item.link || '',
-        status: 'pending',
+        status: isMediumConfidence ? 'staged' : 'pending',
+        match_confidence: waterfallRes.confidence,
+        suggested_bgg_id: waterfallRes.suggested_bgg_id || null,
         created_at: new Date().toISOString(),
       });
     }

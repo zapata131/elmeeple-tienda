@@ -1,79 +1,192 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-interface SessionData {
-  user?: {
-    email?: string | null;
-  };
-}
-
-async function checkAdmin(session: SessionData | null) {
+async function checkAdminAuth() {
+  const session = await getServerSession(authOptions);
   if (!session || !session.user?.email) {
-    return false;
+    return { authorized: false, status: 401, error: 'No autorizado.' };
   }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
   const { data: profile } = await supabase
     .from('profiles')
     .select('role')
     .eq('email', session.user.email)
     .single();
-  return profile?.role === 'admin';
+
+  if (profile?.role !== 'admin') {
+    return { authorized: false, status: 403, error: 'Acceso restringido a administradores.' };
+  }
+
+  return { authorized: true, status: 200, supabase };
 }
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
-  if (!await checkAdmin(session)) {
-    return NextResponse.json({ error: 'Forbidden. Administrator access required.' }, { status: 403 });
+  const auth = await checkAdminAuth();
+  if (!auth.authorized || !auth.supabase) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  try {
-    const { data: items, error } = await supabase
-      .from('bgg_metadata_queue')
-      .select('id, store_id, ean, title, store_product_url, status, created_at')
-      .order('created_at', { ascending: false })
-      .limit(100);
+  const { data: items, error } = await auth.supabase
+    .from('bgg_metadata_queue')
+    .select('id, store_id, ean, title, store_product_url, status, match_confidence, suggested_bgg_id, created_at')
+    .order('created_at', { ascending: false })
+    .limit(100);
 
-    if (error) {
-      console.error('[Admin Feed Queue] Select failed:', error.message);
-      return NextResponse.json({ error: 'Failed to fetch queue items.' }, { status: 500 });
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ items: items || [] });
+}
+
+export async function POST(req: Request) {
+  try {
+    const auth = await checkAdminAuth();
+    if (!auth.authorized || !auth.supabase) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    return NextResponse.json({ items: items || [] });
-  } catch (err: unknown) {
-    console.error('[Admin Feed Queue] Crash:', err);
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+    const body = await req.json();
+    const { id, action, bgg_id } = body;
+
+    if (!id || !action) {
+      return NextResponse.json({ error: 'Faltan parámetros id o acción requeridos.' }, { status: 400 });
+    }
+
+    const supabase = auth.supabase;
+
+    // Fetch target queue item
+    const { data: queueItem, error: fetchErr } = await supabase
+      .from('bgg_metadata_queue')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchErr || !queueItem) {
+      return NextResponse.json({ error: 'Ítem de cola no encontrado.' }, { status: 404 });
+    }
+
+    if (action === 'approve') {
+      const targetBggId = bgg_id || queueItem.suggested_bgg_id;
+      if (!targetBggId) {
+        return NextResponse.json({ error: 'No hay BGG ID sugerido o especificado para aprobar.' }, { status: 400 });
+      }
+
+      const merchantSku = queueItem.ean || queueItem.store_product_url;
+
+      // 1. Save to merchant_product_mappings (Tier 2 Permanent Memory)
+      await supabase.from('merchant_product_mappings').upsert({
+        store_id: queueItem.store_id,
+        merchant_sku: merchantSku,
+        bgg_id: targetBggId,
+        is_verified: true,
+        mapped_at: new Date().toISOString(),
+      }, { onConflict: 'store_id,merchant_sku' });
+
+      // 2. Publish to store_games
+      await supabase.from('store_games').upsert({
+        store_id: queueItem.store_id,
+        bgg_id: targetBggId,
+        store_product_url: queueItem.store_product_url,
+        price: 850.00,
+        stock: 1,
+        edition_language: 'es',
+        match_confidence: queueItem.match_confidence || 1.00,
+        match_tier: 2,
+        last_updated_at: new Date().toISOString(),
+      }, { onConflict: 'store_id,bgg_id' });
+
+      // 3. Mark queue item as approved
+      await supabase
+        .from('bgg_metadata_queue')
+        .update({ status: 'approved' })
+        .eq('id', id);
+
+      return NextResponse.json({ success: true, message: 'Coincidencia aprobada y guardada en memoria Tier 2.' });
+    }
+
+    if (action === 'remap') {
+      if (!bgg_id) {
+        return NextResponse.json({ error: 'BGG ID requerido para reasignar.' }, { status: 400 });
+      }
+
+      const merchantSku = queueItem.ean || queueItem.store_product_url;
+
+      // 1. Save to merchant_product_mappings
+      await supabase.from('merchant_product_mappings').upsert({
+        store_id: queueItem.store_id,
+        merchant_sku: merchantSku,
+        bgg_id: bgg_id,
+        is_verified: true,
+        mapped_at: new Date().toISOString(),
+      }, { onConflict: 'store_id,merchant_sku' });
+
+      // 2. Publish to store_games
+      await supabase.from('store_games').upsert({
+        store_id: queueItem.store_id,
+        bgg_id: bgg_id,
+        store_product_url: queueItem.store_product_url,
+        price: 850.00,
+        stock: 1,
+        edition_language: 'es',
+        match_confidence: 1.00,
+        match_tier: 2,
+        last_updated_at: new Date().toISOString(),
+      }, { onConflict: 'store_id,bgg_id' });
+
+      // 3. Mark queue item as approved
+      await supabase
+        .from('bgg_metadata_queue')
+        .update({ status: 'approved' })
+        .eq('id', id);
+
+      return NextResponse.json({ success: true, message: 'Producto reasignado y vinculado con éxito.' });
+    }
+
+    if (action === 'reject') {
+      await supabase
+        .from('bgg_metadata_queue')
+        .update({ status: 'rejected' })
+        .eq('id', id);
+
+      return NextResponse.json({ success: true, message: 'Ítem descartado de la cola de moderación.' });
+    }
+
+    return NextResponse.json({ error: 'Acción no válida.' }, { status: 400 });
+  } catch (err) {
+    const error = err as Error;
+    return NextResponse.json({ error: error.message || 'Error interno del servidor.' }, { status: 500 });
   }
 }
 
-export async function DELETE(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!await checkAdmin(session)) {
-    return NextResponse.json({ error: 'Forbidden. Administrator access required.' }, { status: 403 });
-  }
-
+export async function DELETE(req: Request) {
   try {
-    const { id } = await request.json();
-    if (!id) {
-      return NextResponse.json({ error: 'Missing item ID.' }, { status: 400 });
+    const auth = await checkAdminAuth();
+    if (!auth.authorized || !auth.supabase) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    const { error } = await supabase
-      .from('bgg_metadata_queue')
-      .delete()
-      .eq('id', id);
+    const body = await req.json();
+    const { id } = body;
+    if (!id) {
+      return NextResponse.json({ error: 'ID de cola requerido.' }, { status: 400 });
+    }
+
+    const { error } = await auth.supabase.from('bgg_metadata_queue').delete().eq('id', id);
 
     if (error) {
-      return NextResponse.json({ error: 'Failed to delete queue item.' }, { status: 500 });
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
-  } catch (err: unknown) {
-    console.error('[Admin Feed Queue] Delete crash:', err);
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+    return NextResponse.json({ success: true, message: 'Ítem purgado de la cola.' });
+  } catch (err) {
+    const error = err as Error;
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

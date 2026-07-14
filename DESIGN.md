@@ -18,17 +18,22 @@ By standardizing pricing strictly in **Mexican Pesos ($ MXN)** and computing fla
 ### 2.2 Partners & Merchants (Socios & Tiendas) 📦
 * **Profile:** Independent tabletop store owners in Mexico (e.g., El Duende CDMX, La Caravana Gamelab, Dungeoneers México, Devir México).
 * **Goal:** Increase online sales without manual listing maintenance.
-* **Solution:** Self-serve onboarding (`/merchant/dashboard`, `/merchant/onboard`) where stores register their contact details, flat domestic shipping rates in MXN, and Google Shopping XML product feed URLs for automated daily inventory syncing.
+* **Solution:** Self-serve onboarding (`/merchant/dashboard`, `/merchant/onboard`, `/merchant/shipping`) where stores register their contact details, flat domestic shipping rates in MXN, and Google Shopping XML product feed URLs for automated daily inventory syncing with self-service SKU mapping tools.
 
 ---
 
-## 3. Commercial MVP Feature Scope ⚡
+## 3. Commercial MVP & Enterprise Precision Feature Scope ⚡
 
 * **Unified Homepage Discovery (`/`):** Streamlined front page featuring predictive smart search (`SearchBar`) and live world board game trends imported from BGG Hotness (`Tendencias BGG`).
 * **Full-Width Hero Comparative UI (`/game/[id]`):** Displays high-resolution box art (`<image>`) from BGG, clear typographic game stats, and side-by-side store comparison offers sorted by total cost (`Precio artículo + Envío = Coste total ($ MXN)`).
+* **4-Tier Waterfall Ingestion Engine (US-103 to US-105):**
+  - **Tier 1 (Deterministic Barcode Registry):** EAN/GTIN barcode lookup in `public.game_barcodes` (100% confidence).
+  - **Tier 2 (Historical SKU Memory):** Persistent lookup in `public.merchant_product_mappings` (100% confidence).
+  - **Tier 3 (Tokenized Fuzzy Match & Subtitle Isolator):** Weighted similarity metric score ($\ge 0.92$ auto-publish).
+  - **Tier 4 (Moderation Queue & Human Override):** Medium-confidence items ($0.70 \dots 0.91$) routed to Admin Staging Queue or Merchant Portal.
+* **Admin Staging & Moderation Queue UI (`/admin/queue`) (US-106):** Single-click approval, re-mapping, and rejection panel for medium-confidence feed items.
+* **Merchant Self-Service Mapping Portal (`/merchant/dashboard`) (US-107):** Self-service UI for store owners to view unmatched feed items and bind them to canonical BGG IDs.
 * **Direct Affiliate Checkout Redirects (`/api/redirect`):** One-click redirect appending standard UTM tracking parameters (`?ref=meepleprecios`) and recording click events for merchant reconciliation.
-* **Self-Serve Merchant Portal (`/merchant/dashboard`, `/merchant/onboard`, `/merchant/shipping`):** Portal for store partners to register storefronts, configure flat shipping fees in MXN, and monitor XML feed health.
-* **Platform Admin Control Panel (`/admin/dashboard`, `/admin/queue`):** Centralized administration portal for store verification and feed diagnostics.
 
 ---
 
@@ -47,7 +52,7 @@ We adhere to a minimalist, premium design aesthetic tailored for high legibility
 
 ### 4.2 Wise Strategic Emoji Guidance 💡
 * **Policy:** We adhere to **Wise Strategic Emoji Usage**. Emojis (e.g., 🇲🇽, 🎲, ⭐, 📦, ⚡) may be used thoughtfully across headings and documentation to add warmth and visual anchors without cluttering functional data tables.
-* **Sentence Case Governance:** All headings, buttons, and table headers follow sentence case per Google style guidelines (e.g., *Comparativa de ofertas por tienda*, *★ Tienda recomendada*).
+* **Sentence Case Governance:** All headings, buttons, and table headers follow sentence case per Google style guidelines (e.g., *Comparativa de ofertas por tienda*, *★ Tienda recomendada*, *Moderación y estaging de catálogo*).
 
 ---
 
@@ -58,7 +63,10 @@ We adhere to a minimalist, premium design aesthetic tailored for high legibility
   * `stores`: Merchant details, XML feed URL, feed health metrics, and verification flags.
   * `shipping_rates`: Flat domestic delivery costs and free shipping thresholds in MXN.
   * `bgg_games_cache`: Board game metadata (title, thumbnail, high-res image, description, complexity weight, player counts).
-  * `store_games`: Intermediate inventory table linking stores and games with base price ($ MXN), stock status, and edition language.
+  * `game_barcodes`: Multi-barcode GTIN/EAN registry mapping barcodes to BGG IDs and language editions.
+  * `merchant_product_mappings`: Historical merchant SKU and URL mapping memory table.
+  * `store_games`: Intermediate inventory table linking stores and games with base price ($ MXN), stock status, edition language, match confidence, and match tier.
+  * `bgg_metadata_queue`: Feed staging queue for un-indexed items and medium-confidence matches ($0.70 \dots 0.91$).
   * `clicks`: Outbound affiliate referral click log.
 
 ---
@@ -66,5 +74,5 @@ We adhere to a minimalist, premium design aesthetic tailored for high legibility
 ## 6. Verification & Automated Testing Gate 🧪
 
 Every feature branch must pass our rigorous verification pipeline before merging into `main`:
-1. **Serial Jest Unit Tests:** `npm run test -- --runInBand --forceExit` verifying calculation helpers, RLS rules, and sentence-case style compliance.
-2. **Playwright E2E Walkthroughs:** `npm run test:e2e` simulating live buyer searches and merchant portal navigation across desktop and mobile viewports.
+1. **Serial Jest Unit Tests:** `npm run test -- --runInBand --forceExit` verifying 4-tier waterfall matching, barcode registries, SKU memory, RLS rules, and sentence-case style compliance.
+2. **Playwright E2E Walkthroughs:** `npm run test:e2e` simulating buyer searches, admin staging moderation queue workflows, and merchant self-service mapping portal navigation across desktop and mobile viewports.

@@ -8,6 +8,7 @@ import { MerchantAnalyticsCharts, ClickLogItem } from '@/components/MerchantAnal
 import { MerchantFeaturedDealsPanel } from '@/components/MerchantFeaturedDealsPanel';
 import { MerchantFeedInspector } from '@/components/MerchantFeedInspector';
 import { MerchantClickAnalytics, ClickRecord } from '@/components/MerchantClickAnalytics';
+import { MerchantMappingPortal, UnmatchedFeedItem } from '@/components/MerchantMappingPortal';
 import Link from 'next/link';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
@@ -90,6 +91,16 @@ export default async function MerchantDashboardPage() {
         { id: 'deal-default-3', bgg_id: 167791, game_name: 'Terraforming Mars', price: 54.95, stock: 4, is_featured: false },
       ];
 
+  // US-107: Fetch unmatched feed items for Merchant Self-Service Mapping Portal
+  const { data: queueData } = await supabase
+    .from('bgg_metadata_queue')
+    .select('id, store_id, ean, title, store_product_url, status, created_at')
+    .eq('store_id', store.id)
+    .order('created_at', { ascending: false });
+
+  const rawQueue = (queueData || []) as UnmatchedFeedItem[];
+  const unmatchedItems = rawQueue.filter((item) => item.status === 'pending' || item.status === 'staged');
+
   const ctrRatio = clicksCount > 0 ? '4.2%' : '0.0%';
 
   return (
@@ -165,7 +176,10 @@ export default async function MerchantDashboardPage() {
 
         </div>
 
-        {/* Sponsored Featured Store Placements Panel (US-41) */}
+        {/* US-107: Merchant Self-Service Feed Mapping Portal */}
+        <MerchantMappingPortal storeId={store.id} initialItems={unmatchedItems} />
+
+        {/* US-[#41]: Sponsored Featured Store Placements Panel */}
         <MerchantFeaturedDealsPanel storeId={store.id} initialDeals={initialDeals} />
 
         {/* US-99: Interactive Merchant Feed Inspection & Diagnostic Debugger */}

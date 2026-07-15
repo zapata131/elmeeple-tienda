@@ -518,8 +518,13 @@ timeline
 
 When executing tasks on this project, an autonomous AI agent MUST:
 1. **STRICT LEGACY FOLDER ISOLATION:** Never inspect, read, search (`grep`, `view_file`), copy, or peek into the `legacy/` directory under any circumstances. All implementation details MUST be derived exclusively from `MASTER_SPECIFICATION.md`.
-2. Audit the prompt against the Three-Point Compliance Filter (Persona Atomicity, Scope Atomicity, Agile Syntax).
-3. Create a dedicated feature branch matching the active issue.
+2. **WORKSPACE SKILLS COMPLIANCE:** Actively invoke and follow the 5 specialized skills in `.agents/skills/`:
+   - `backlog_auditor`: Use when planning backlogs or user stories (enforce Three-Point Compliance Filter).
+   - `github_issue_solve`: Use when starting an issue (create feature branch `feature/issue-<num>-<title>` and write TDD plan).
+   - `ux_expert`: Use when designing UI components (enforce Google sentence case, brand tokens, and `role="switch"`).
+   - `github_issue_complete`: Use when completing features (run `npm run verify`, commit, open PR, merge into `main`).
+   - `document_sync`: Use after merging features to synchronize `HANDOFF.md`, `DESIGN.md`, `AGENTS.md`, and `MASTER_SPECIFICATION.md`.
+3. Create a dedicated feature branch matching the active issue (`git checkout -b feature/issue-<num>-<title>`).
 4. Write tests first (TDD), implement minimal code to pass them, and enforce Google sentence case.
 5. Run full verification gates (`npm run verify`) before merging into `main`.
 6. Keep living documentation (`HANDOFF.md`, `DESIGN.md`, `AGENTS.md`, `MASTER_SPECIFICATION.md`) updated in real-time.

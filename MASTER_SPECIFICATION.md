@@ -1,7 +1,7 @@
 # Master specification and ground-up implementation blueprint: MeeplePrecios 🇲🇽
 
 > [!IMPORTANT]
-> **Specification Purpose:** This document is the definitive, self-contained master blueprint for constructing **MeeplePrecios**, Mexico's board game price comparison engine, from the ground up. It contains the complete technical architecture, environment variables, Supabase DDL scripts, RLS policies, indexing strategy, REST API contracts, 4-tier waterfall ingestion algorithms, feed parsing gotchas, UI design system tokens, page route maps, and AI agent execution rules. An engineer or autonomous AI agent can build the entire system from scratch using this blueprint without architectural drift or cataloguing errors.
+> **Specification Purpose:** This document is the definitive, self-contained master blueprint for constructing **MeeplePrecios**, Mexico's board game price comparison engine, from the ground up. It contains the complete technical architecture, environment variables, directory file map, TypeScript data interfaces, Supabase DDL scripts, RLS policies, indexing strategy, REST API contracts, feed parsing algorithms, affiliate redirect mechanics, UI design system tokens, page route maps, and AI agent execution rules. An engineer or autonomous AI agent can build the entire system from scratch using this blueprint without architectural drift or cataloguing errors.
 
 ---
 
@@ -81,7 +81,7 @@ Every feature in the platform is decomposed into single-persona, single-feature 
 
 ---
 
-## 4. Technical stack architecture & environment variables 🛠️
+## 4. Technical stack architecture & repository structure 🛠️
 
 ```mermaid
 flowchart TD
@@ -140,6 +140,131 @@ CRON_SECRET=your-secure-cron-secret-token
 
 # Feature Flags
 NEXT_PUBLIC_ENABLE_SPONSORED_DEALS=false
+```
+
+### 4.2 Repository directory tree & file layout
+```none
+elmeeple-stores/
+├── .agents/                    # Agent skills & living rules
+│   └── skills/
+├── e2e/                        # Playwright E2E integration tests
+│   └── waterfall_matching_and_portals.spec.ts
+├── src/
+│   ├── app/                    # Next.js 16 App Router pages & API routes
+│   │   ├── admin/
+│   │   │   ├── dashboard/page.tsx
+│   │   │   └── queue/page.tsx
+│   │   ├── api/
+│   │   │   ├── admin/feed-queue/route.ts
+│   │   │   ├── auth/[...nextauth]/route.ts
+│   │   │   ├── cron/
+│   │   │   │   ├── audit-urls/route.ts
+│   │   │   │   ├── process-bgg-queue/route.ts
+│   │   │   │   └── sync-feeds/route.ts
+│   │   │   ├── merchant/
+│   │   │   │   ├── featured/route.ts
+│   │   │   │   ├── mapping/route.ts
+│   │   │   │   └── shipping/route.ts
+│   │   │   ├── redirect/route.ts
+│   │   │   └── search/route.ts
+│   │   ├── game/[id]/page.tsx
+│   │   ├── login/page.tsx
+│   │   ├── merchant/
+│   │   │   ├── dashboard/page.tsx
+│   │   │   ├── diagnostics/page.tsx
+│   │   │   ├── onboard/page.tsx
+│   │   │   └── shipping/page.tsx
+│   │   ├── search/page.tsx
+│   │   ├── store/[id]/page.tsx
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components/             # Reusable UI components
+│   │   ├── AdminGamesCatalogTable.tsx
+│   │   ├── AdminQueueMonitor.tsx
+│   │   ├── AdminStoreList.tsx
+│   │   ├── MerchantAnalyticsCharts.tsx
+│   │   ├── MerchantClickAnalytics.tsx
+│   │   ├── MerchantFeaturedDealsPanel.tsx
+│   │   ├── MerchantFeedInspector.tsx
+│   │   ├── MerchantMappingPortal.tsx
+│   │   ├── RegionalStoreToggle.tsx
+│   │   ├── SearchBar.tsx
+│   │   ├── StoreOffersComparisonTable.tsx
+│   │   └── Toolbar.tsx
+│   ├── lib/                    # Supabase server/client connectors & queries
+│   │   ├── queries.ts
+│   │   ├── supabaseClient.ts
+│   │   └── supabaseServer.ts
+│   ├── types/                  # TypeScript Data Interfaces
+│   │   └── index.ts
+│   └── utils/                  # Core engines, workers & parsers
+│       ├── bgg_resolution_worker.ts
+│       ├── feed_parser.ts
+│       ├── local_file_cache.ts
+│       ├── mockData.ts
+│       ├── real_feed_data.ts
+│       ├── url_product_audit_worker.ts
+│       └── waterfall_matching_engine.ts
+├── jest.config.ts
+├── next.config.ts
+├── package.json
+├── playwright.config.ts
+└── tsconfig.json
+```
+
+### 4.3 Core TypeScript data interfaces (`src/types/index.ts`)
+```ts
+export interface Store {
+  id: string;
+  name: string;
+  logo_url?: string | null;
+  country: string;
+  is_domestic: boolean;
+  rating?: number;
+  review_count?: number;
+  feed_url?: string | null;
+  feed_type?: 'google_xml' | 'shopify_json';
+  feed_status?: 'pending' | 'success' | 'failed';
+  shipping_rates?: ShippingRate[];
+}
+
+export interface ShippingRate {
+  id?: string;
+  store_id: string;
+  destination_country: string;
+  flat_rate: number;
+  free_shipping_threshold?: number | null;
+}
+
+export interface BggGame {
+  bgg_id: number;
+  name: string;
+  alternate_names?: string[];
+  thumbnail?: string | null;
+  image?: string | null;
+  description?: string | null;
+  weight?: number | null;
+  min_players?: number | null;
+  max_players?: number | null;
+  playing_time?: number | null;
+  base_price_eur?: number | null;
+  ean?: string | null;
+  item_type?: 'boardgame' | 'expansion' | 'accessory';
+}
+
+export interface StoreGameOffer {
+  id: string;
+  store_id: string;
+  bgg_id: number;
+  store_product_url: string;
+  price: number;
+  stock: number;
+  edition_language: 'es' | 'en' | 'multi';
+  is_featured: boolean;
+  match_confidence: number;
+  match_tier: number;
+  stores?: Store;
+}
 ```
 
 ---
@@ -305,7 +430,7 @@ CREATE POLICY "Allow public insert on clicks" ON public.clicks FOR INSERT WITH C
 
 ---
 
-## 7. The 4-tier waterfall ingestion engine algorithms ⚙️
+## 7. The 4-tier waterfall ingestion & affiliate engines ⚙️
 
 ### 7.1 Title sanitization algorithm (`cleanBoardGameTitle`)
 ```ts
@@ -313,7 +438,6 @@ export function cleanBoardGameTitle(rawTitle: string): string {
   if (!rawTitle) return '';
   let title = rawTitle.toLowerCase();
 
-  // Strip common Mexican feed noise terms
   const noisePatterns = [
     /juego de mesa/gi, /edición especial/gi, /edición en español/gi,
     /edicion espanol/gi, /en español/gi, /ingles/gi, /inglés/gi,
@@ -324,7 +448,6 @@ export function cleanBoardGameTitle(rawTitle: string): string {
     title = title.replace(pattern, '');
   }
 
-  // Remove non-alphanumeric symbols except spaces
   title = title.replace(/[^\w\s\u00C0-\u024F]/gi, ' ');
   return title.replace(/\s+/g, ' ').trim();
 }
@@ -345,6 +468,17 @@ export function detectLanguage(title: string, description: string = ''): 'es' | 
 $$\text{Score} = (0.5 \times \text{JaroWinkler}) + (0.3 \times \text{TokenOverlap}) + (0.2 \times \text{Levenshtein})$$
 
 Exclusion keyword penalty: If title contains standalone word boundaries for `/\bfundas?\b/i`, `/\bprimer\b/i`, `/\bpuzzles?\b/i`, `/\bsleeves?\b/i`, `/\bexpansion\b/i` not present in catalog game title, apply `-0.35` penalty.
+
+### 7.4 Multi-format feed parsers (Shopify JSON & Google Atom XML)
+- **Shopify JSON Ingestion:** Fetches `/products.json?limit=250&page=N` up to 100 pages, extracting `id`, `sku`, `barcode`, `price`, `available`, `images`.
+- **Google Atom XML Ingestion:** Parses `<item>` or `<entry>`, extracting `<title>`, `<link>`, `<g:gtin>`, `<g:price>`, `<g:availability>`.
+
+### 7.5 Outbound affiliate redirect engine (`/api/redirect`)
+When a user clicks **Ir a la tienda**:
+1. Extracts `offer_id`, `store_id`, `url`.
+2. Asynchronously logs an outbound click row to `public.clicks`.
+3. Appends UTM tracking query params (`?utm_source=meepleprecios&utm_medium=affiliate&utm_campaign=price_comparison`).
+4. Responds with HTTP `302 Found` redirecting the browser to the merchant's target product page.
 
 ---
 

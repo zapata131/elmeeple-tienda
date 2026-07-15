@@ -1,4 +1,4 @@
-# Master Specification and Ground-Up Implementation Blueprint: MeeplePrecios 🇲🇽
+# Master specification and ground-up implementation blueprint: MeeplePrecios 🇲🇽
 
 > [!IMPORTANT]
 > **Specification Purpose:** This document is the definitive blueprint for constructing **MeeplePrecios**, Mexico's board game price comparison engine, from the ground up. It defines the technical stack, database DDL, user stories, ingestion algorithms, UI design tokens, and AI agent skills required to build a production-ready system with zero architectural drift or cataloguing errors.
@@ -44,7 +44,7 @@
   3. Verify new merchant registrations and manage sponsored placement flags.
   4. Trigger automated catalog audits (`/api/admin/audit-urls`) to purge broken links and mis-attributed expansions.
 
-### 2.4 Persona 4: The autonomous AI developer (Agent Persona)
+### 2.4 Persona 4: The autonomous AI developer (Agent persona)
 * **Primary Goals:**
   1. Execute feature requests using test-driven development (TDD), atomic user stories, and single-persona branch isolation.
   2. Enforce Google sentence case governance, brand visual tokens, and tactile switch components.
@@ -56,7 +56,7 @@
 
 Every feature in the platform is decomposed into single-persona, single-feature Agile User Stories:
 
-### Epic A: Discovery and comparison (Player Persona)
+### Epic A: Discovery and comparison (Player persona)
 - **[US-01] Homepage Search and Hotness:** `As a Player, I want to search for board games on the homepage or view live BGG Hotness trends, so that I can quickly locate games available in Mexico.`
 - **[US-02] Hero Comparative UI:** `As a Player, I want to see a full-width box art header, typographic stats, and a 3-part price comparison table on /game/[id], so that I can evaluate total delivered costs at a glance.`
 - **[US-03] Explicit Language Badges:** `As a Player, I want store offers to display clear language badges (Español (ES), Inglés (EN), Multilingüe (MULTI)), so that I don't accidentally buy a game in a language I don't want.`
@@ -64,13 +64,13 @@ Every feature in the platform is decomposed into single-persona, single-feature 
 - **[US-05] (Deprecated / Single-Market Scope Lock):** `Domestic store filter removed because MeeplePrecios is locked strictly to Mexico (MX / $ MXN), making all participating stores domestic Mexican shops by default.`
 - **[US-102] Spin-Off Game Variant Cataloging:** `As a Player, I want spin-off variants like Spot It! Catan or Dobble Catan to be cataloged as distinct game entries rather than merged into base game pages, so that I can view accurate price comparisons for both base games and spin-offs independently.`
 
-### Epic B: Merchant self-serve portal (Merchant Persona)
+### Epic B: Merchant self-serve portal (Merchant persona)
 - **[US-06] Merchant Onboarding:** `As a Store Owner, I want to register my storefront name, logo, and XML/JSON feed URL on /merchant/onboard, so that my inventory is automatically listed on MeeplePrecios.`
 - **[US-07] Shipping Rate Matrix:** `As a Store Owner, I want to set my flat-rate domestic shipping fee and free shipping threshold in MXN, so that player total cost calculations are accurate.`
-- **[US-08] Sponsored Placement Toggles (Future Work / Feature-Flagged: `NEXT_PUBLIC_ENABLE_SPONSORED_DEALS=false`):** `As a Store Owner, I want to toggle sponsored featuring for my store on /merchant/dashboard after launch, so that my offers appear at the top of comparison tables with a "★ Tienda recomendada" badge once client onboarding reaches scale.`
+- **[US-08] Sponsored Placement Toggles (Feature-Flagged: `NEXT_PUBLIC_ENABLE_SPONSORED_DEALS=false`):** `As a Store Owner, I want to toggle sponsored featuring for my store on /merchant/dashboard after launch, so that my offers appear at the top of comparison tables with a "★ Tienda recomendada" badge once client onboarding reaches scale.`
 - **[US-107] Merchant Self-Service Feed Mapping Portal:** `As a Store Owner, I want a self-service product mapping portal on /merchant/dashboard to view unmatched feed items and bind them to BGG IDs, so that I can maximize my catalog coverage on MeeplePrecios.`
 
-### Epic C: Ingestion, barcode registry & catalog integrity (Developer / Admin Persona)
+### Epic C: Ingestion, barcode registry & catalog integrity (Developer / Admin persona)
 - **[US-09] Multi-Format Feed Processing:** `As a Developer, I want feed ingestion to parse both Shopify JSON and Google Shopping XML feeds, so that all Mexican stores can be integrated without custom scrapers.`
 - **[US-10] Automated Catalog Audit Worker:** `As a Developer, I want a background audit worker to scan store_games for HTTP 404 links and expansion/accessory mis-attributions, so that base game pages remain 100% clean.`
 - **[US-11] BGG Pseudo-Game Resolution:** `As a Developer, I want auto-created games (bgg_id >= 8,000,000) to automatically resolve their real BGG ID via BGG XMLAPI2, so that buyers never see empty or broken game pages.`
@@ -133,7 +133,7 @@ flowchart TD
 
 ## 5. Complete database DDL and RLS specification 🗄️
 
-### 5.1 Entity-Relationship (ER) diagram
+### 5.1 Entity-relationship (ER) diagram
 
 ```mermaid
 erDiagram
@@ -199,6 +199,8 @@ erDiagram
         integer stock
         string edition_language
         boolean is_featured
+        numeric match_confidence
+        integer match_tier
     }
 
     clicks {
@@ -318,7 +320,7 @@ CREATE TABLE IF NOT EXISTS public.clicks (
 );
 ```
 
-### 5.3 Row Level Security (RLS) policies
+### 5.3 Row level security (RLS) policies
 
 ```sql
 ALTER TABLE public.stores ENABLE ROW LEVEL SECURITY;
@@ -359,24 +361,24 @@ flowchart TD
     T4 --> SaveMemory["Save SKU Mapping to merchant_product_mappings<br/>(Permanent Tier 2 Memory)"]
 ```
 
-### 6.1 Tier 1: EAN / GTIN / UPC Barcode Matcher
+### 6.1 Tier 1: EAN / GTIN / UPC barcode matcher
 - Queries `<g:gtin>` or `variant.barcode` against `public.game_barcodes`.
 - Deterministic, 100% accurate, bypasses string ambiguities completely.
 
-### 6.2 Tier 2: Historical Merchant SKU Mapping Memory
+### 6.2 Tier 2: Historical merchant SKU mapping memory
 - Queries `(store_id, merchant_sku)` against `public.merchant_product_mappings`.
 - Persists human admin and merchant manual override decisions permanently across daily automated feed re-syncs.
 
-### 6.3 Tier 3: Tokenized Fuzzy Matching & Subtitle Isolator
+### 6.3 Tier 3: Tokenized fuzzy matching & subtitle isolator
 - Calculates token overlap and string similarity:
   $$\text{Score} = (0.5 \times \text{JaroWinkler}) + (0.3 \times \text{TokenOverlap}) + (0.2 \times \text{Levenshtein})$$
-- Evaluates tokenized exclusion penalties (`-1.00` if feed title contains standalone spin-off keywords like `"spot it"`, `"dobble"`, `"junior"` when evaluating base games).
+- Evaluates tokenized exclusion penalties (`-0.35` if feed title contains standalone spin-off keywords like `"spot it"`, `"dobble"`, `"junior"` when evaluating base games).
 - **Threshold Routing:**
   - $\text{Score} \ge 0.92$: Auto-publish to comparison table.
   - $0.70 \le \text{Score} < 0.92$: Route to **Admin Staging Queue** (`/admin/queue`).
   - $\text{Score} < 0.70$: Auto-create distinct game entry if valid game, or reject if accessory.
 
-### 6.4 Tier 4: Human Override & Merchant Self-Service Portal
+### 6.4 Tier 4: Human override & merchant self-service portal
 - **Admin Staging Queue (`/admin/queue`):** One-click approval or manual search re-mapping for medium-confidence items.
 - **Merchant Self-Service Portal (`/merchant/dashboard`):** Allows store owners to view unmatched feed products and bind them directly to BGG IDs.
 - **Permanent Memory Persistence:** Any Tier 4 manual link writes a row to `public.merchant_product_mappings` (Tier 2), guaranteeing future feed syncs retain the human decision.
@@ -470,7 +472,7 @@ timeline
         Sprint 6 : Playwright E2E Suite : CI/CD Gate : npm run verify
     section Phase 4: Enterprise Precision
         Sprint 7 : Multi-Barcode Registry : Merchant SKU Memory Table : US-103 & US-104
-        Sprint 8 : 4-Tier Matching Engine : Admin Staging Queue : Merchant Self-Mapping Portal
+        Sprint 8 : 4-Tier Matching Engine : Admin Staging Queue : Merchant Self-Mapping Portal : US-105 to US-107
 ```
 
 ---

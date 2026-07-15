@@ -1,7 +1,7 @@
 # Master specification and ground-up implementation blueprint: MeeplePrecios 🇲🇽
 
 > [!IMPORTANT]
-> **Specification Purpose:** This document is the definitive, self-contained master blueprint for constructing **MeeplePrecios**, Mexico's board game price comparison engine, from the ground up. It contains the complete technical architecture, environment variables, directory file map, TypeScript data interfaces, Supabase DDL scripts, RLS policies, indexing strategy, REST API contracts, feed parsing algorithms, affiliate redirect mechanics, UI design system tokens, page route maps, and AI agent execution rules. An engineer or autonomous AI agent can build the entire system from scratch using this blueprint without architectural drift or cataloguing errors.
+> **Specification Purpose:** This document is the definitive, pure functional blueprint for constructing **MeeplePrecios**, Mexico's board game price comparison engine, from the ground up. It defines the commercial requirements, database schemas, Row-Level Security (RLS) policies, REST API contracts, 4-tier waterfall matching algorithms, UI design system tokens, and acceptance criteria. It focuses strictly on *what* the system must achieve, giving any future developer or AI agent complete freedom to choose their preferred file organization, framework structure, and component architecture.
 
 ---
 
@@ -25,7 +25,7 @@
   2. Differentiate between Spanish (`ES`) and English (`EN`) editions.
   3. Ensure that clicking an offer leads directly to the merchant product page without broken links or expansion mis-attributions.
 * **Key User Journey:**
-  `Homepage (Search / BGG Hotness) -> Game Detail Page (/game/[id]) -> Compare Total Delivered Costs -> Click "Ir a la tienda" -> Affiliate Checkout Redirect (/api/redirect)`
+  `Homepage (Search / BGG Hotness) -> Game Detail Page -> Compare Total Delivered Costs -> Click "Ir a la tienda" -> Affiliate Checkout Redirect`
 
 ### 2.2 Persona 2: The independent store partner (Merchant / Socio)
 * **Demographics:** Owners and e-commerce managers of independent Mexican tabletop shops.
@@ -35,20 +35,20 @@
   3. Access a self-service SKU mapping portal to map unmatched feed products directly to BGG IDs.
   4. Feature store deals (sponsored placements) to gain top visibility on high-demand games.
 * **Key User Journey:**
-  `Merchant Portal (/merchant/onboard) -> Register Store & Flat Shipping Rates in MXN -> Submit Feed URL -> Map Unmatched SKUs (/merchant/dashboard) -> View Diagnostics`
+  `Merchant Portal -> Register Store & Flat Shipping Rates in MXN -> Submit Feed URL -> Map Unmatched SKUs -> View Diagnostics`
 
 ### 2.3 Persona 3: The platform administrator (Admin)
 * **Primary Goals:**
   1. Monitor merchant feed health, failed fetch logs, and un-indexed BoardGameGeek (BGG) queue items.
-  2. Review medium-confidence feed items in the **Admin Staging Queue** (`/admin/queue`) and approve/re-map candidates with live BGG autocomplete.
+  2. Review medium-confidence feed items in the **Admin Staging Queue** and approve/re-map candidates with live BGG autocomplete.
   3. Verify new merchant registrations and manage sponsored placement flags.
-  4. Trigger automated catalog audits (`/api/cron/audit-urls`) to purge broken links and mis-attributed expansions.
+  4. Trigger automated catalog audits to purge broken links and mis-attributed expansions.
 
 ### 2.4 Persona 4: The autonomous AI developer (Agent persona)
 * **Primary Goals:**
   1. Execute feature requests using test-driven development (TDD), atomic user stories, and single-persona branch isolation.
   2. Enforce Google sentence case governance, brand visual tokens, and tactile switch components.
-  3. Run the four-tier verification gate (`npm run verify`) before merging pull requests into `main`.
+  3. Run full verification gates (`npm run verify`) before merging pull requests.
 
 ---
 
@@ -81,138 +81,57 @@ Every feature in the platform is decomposed into single-persona, single-feature 
 
 ---
 
-## 4. Technical stack architecture & repository structure 🛠️
+## 4. System architecture & data contract specification 🛠️
 
 ```mermaid
 flowchart TD
-    subgraph Frontend["Presentation Layer (Next.js 16 App Router)"]
-        React["React 19 Server / Client Components"]
-        Tailwind["Tailwind CSS v4 & Brand Tokens"]
-        TS["TypeScript 5 (Strict Mode)"]
+    subgraph Frontend["Presentation Layer"]
+        UI["User Interface Components"]
+        Theme["Brand Tokens & Styling"]
     end
 
-    subgraph CoreEngine["4-Tier Matching Engine & Business Logic"]
+    subgraph CoreEngine["4-Tier Matching Engine & Core Services"]
         Tier1["Tier 1: EAN / GTIN Barcode Matcher"]
         Tier2["Tier 2: Historical SKU Memory Lookup"]
         Tier3["Tier 3: Tokenized Fuzzy Match & Subtitle Isolator"]
         Tier4["Tier 4: Staging Queue & Merchant Override Portal"]
         FeedParser["Multi-Format Feed Parser<br/>(Shopify JSON & Google Atom XML)"]
-        LanguageDetector["Language & Publisher Engine<br/>(ES, EN, MULTI Badging)"]
-        AuditWorker["Automated Catalog Audit Worker<br/>(HTTP Health Check & Title Match)"]
-        RedirectEngine["Outbound Affiliate Redirect Engine<br/>(/api/redirect)"]
+        LanguageDetector["Language & Publisher Engine"]
+        AuditWorker["Automated Catalog Audit Worker"]
+        RedirectEngine["Outbound Affiliate Redirect Engine"]
     end
 
-    subgraph DataLayer["Persistence Layer (Supabase / PostgreSQL)"]
-        StoresDB[("stores Table<br/>(Merchant Details & Feed Status)")]
-        ShippingDB[("shipping_rates Table<br/>(Flat Domestic Rates in MXN)")]
-        BggCache[("bgg_games_cache Table<br/>(BGG Metadata & Box Art)")]
-        GameBarcodes[("game_barcodes Table<br/>(EAN/GTIN/UPC Multi-Barcode Registry)")]
-        MerchantMappings[("merchant_product_mappings Table<br/>(Historical SKU Memory)")]
-        StoreGames[("store_games Table<br/>(Inventory, Stock & Prices)")]
-        ClicksLog[("clicks Table<br/>(Affiliate Conversion Tracking)")]
-        QueueDB[("bgg_metadata_queue Table<br/>(Staging Queue Items)")]
+    subgraph DataLayer["Persistence Layer (PostgreSQL / Supabase)"]
+        StoresDB[("stores Table")]
+        ShippingDB[("shipping_rates Table")]
+        BggCache[("bgg_games_cache Table")]
+        GameBarcodes[("game_barcodes Table")]
+        MerchantMappings[("merchant_product_mappings Table")]
+        StoreGames[("store_games Table")]
+        ClicksLog[("clicks Table")]
+        QueueDB[("bgg_metadata_queue Table")]
     end
 
-    subgraph VerificationGate["Testing & Quality Assurance Gate"]
-        Jest["Serial Jest Unit Tests (--runInBand)"]
-        Playwright["Playwright E2E Browser Suite"]
-        Eslint["ESLint & TypeScript Verification"]
-    end
-
-    Frontend -->|Queries & Directives| CoreEngine
+    Frontend -->|Queries & Actions| CoreEngine
     CoreEngine -->|Reads / Writes| DataLayer
-    CoreEngine -->|Verified By| VerificationGate
 ```
 
-### 4.1 Required environment variables (`.env.local`)
+### 4.1 Required environment configuration
 ```ini
-# Supabase Configuration
+# Database Configuration
 NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
-# NextAuth Configuration
+# Authentication Configuration
 NEXTAUTH_SECRET=fallback-secret-for-development-and-tests
 NEXTAUTH_URL=http://localhost:3001
 
 # Cron Authorization Secret
 CRON_SECRET=your-secure-cron-secret-token
-
-# Feature Flags
-NEXT_PUBLIC_ENABLE_SPONSORED_DEALS=false
 ```
 
-### 4.2 Repository directory tree & file layout
-```none
-elmeeple-stores/
-├── .agents/                    # Agent skills & living rules
-│   └── skills/
-├── e2e/                        # Playwright E2E integration tests
-│   └── waterfall_matching_and_portals.spec.ts
-├── src/
-│   ├── app/                    # Next.js 16 App Router pages & API routes
-│   │   ├── admin/
-│   │   │   ├── dashboard/page.tsx
-│   │   │   └── queue/page.tsx
-│   │   ├── api/
-│   │   │   ├── admin/feed-queue/route.ts
-│   │   │   ├── auth/[...nextauth]/route.ts
-│   │   │   ├── cron/
-│   │   │   │   ├── audit-urls/route.ts
-│   │   │   │   ├── process-bgg-queue/route.ts
-│   │   │   │   └── sync-feeds/route.ts
-│   │   │   ├── merchant/
-│   │   │   │   ├── featured/route.ts
-│   │   │   │   ├── mapping/route.ts
-│   │   │   │   └── shipping/route.ts
-│   │   │   ├── redirect/route.ts
-│   │   │   └── search/route.ts
-│   │   ├── game/[id]/page.tsx
-│   │   ├── login/page.tsx
-│   │   ├── merchant/
-│   │   │   ├── dashboard/page.tsx
-│   │   │   ├── diagnostics/page.tsx
-│   │   │   ├── onboard/page.tsx
-│   │   │   └── shipping/page.tsx
-│   │   ├── search/page.tsx
-│   │   ├── store/[id]/page.tsx
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   ├── components/             # Reusable UI components
-│   │   ├── AdminGamesCatalogTable.tsx
-│   │   ├── AdminQueueMonitor.tsx
-│   │   ├── AdminStoreList.tsx
-│   │   ├── MerchantAnalyticsCharts.tsx
-│   │   ├── MerchantClickAnalytics.tsx
-│   │   ├── MerchantFeaturedDealsPanel.tsx
-│   │   ├── MerchantFeedInspector.tsx
-│   │   ├── MerchantMappingPortal.tsx
-│   │   ├── RegionalStoreToggle.tsx
-│   │   ├── SearchBar.tsx
-│   │   ├── StoreOffersComparisonTable.tsx
-│   │   └── Toolbar.tsx
-│   ├── lib/                    # Supabase server/client connectors & queries
-│   │   ├── queries.ts
-│   │   ├── supabaseClient.ts
-│   │   └── supabaseServer.ts
-│   ├── types/                  # TypeScript Data Interfaces
-│   │   └── index.ts
-│   └── utils/                  # Core engines, workers & parsers
-│       ├── bgg_resolution_worker.ts
-│       ├── feed_parser.ts
-│       ├── local_file_cache.ts
-│       ├── mockData.ts
-│       ├── real_feed_data.ts
-│       ├── url_product_audit_worker.ts
-│       └── waterfall_matching_engine.ts
-├── jest.config.ts
-├── next.config.ts
-├── package.json
-├── playwright.config.ts
-└── tsconfig.json
-```
-
-### 4.3 Core TypeScript data interfaces (`src/types/index.ts`)
+### 4.2 Core data contracts
 ```ts
 export interface Store {
   id: string;
@@ -225,7 +144,6 @@ export interface Store {
   feed_url?: string | null;
   feed_type?: 'google_xml' | 'shopify_json';
   feed_status?: 'pending' | 'success' | 'failed';
-  shipping_rates?: ShippingRate[];
 }
 
 export interface ShippingRate {
@@ -263,13 +181,12 @@ export interface StoreGameOffer {
   is_featured: boolean;
   match_confidence: number;
   match_tier: number;
-  stores?: Store;
 }
 ```
 
 ---
 
-## 5. Complete database DDL, indexing & RLS specification 🗄️
+## 5. Database DDL, indexing & RLS specification 🗄️
 
 ### 5.1 Production SQL DDL specification
 
@@ -470,7 +387,7 @@ $$\text{Score} = (0.5 \times \text{JaroWinkler}) + (0.3 \times \text{TokenOverla
 Exclusion keyword penalty: If title contains standalone word boundaries for `/\bfundas?\b/i`, `/\bprimer\b/i`, `/\bpuzzles?\b/i`, `/\bsleeves?\b/i`, `/\bexpansion\b/i` not present in catalog game title, apply `-0.35` penalty.
 
 ### 7.4 Multi-format feed parsers (Shopify JSON & Google Atom XML)
-- **Shopify JSON Ingestion:** Fetches `/products.json?limit=250&page=N` up to 100 pages, extracting `id`, `sku`, `barcode`, `price`, `available`, `images`.
+- **Shopify JSON Ingestion:** Fetches `/products.json?limit=250&page=N` up to 100 pages, extracting `title`, `vendor`, `variants` (`id`, `sku`, `barcode`, `price`, `available`), `images`.
 - **Google Atom XML Ingestion:** Parses `<item>` or `<entry>`, extracting `<title>`, `<link>`, `<g:gtin>`, `<g:price>`, `<g:availability>`.
 
 ### 7.5 Outbound affiliate redirect engine (`/api/redirect`)
@@ -494,7 +411,7 @@ Executing individual SQL queries in large loops causes timeouts during feed sync
 
 ### 8.3 Disk cache fallback
 When remote crawls fail or return 0 items due to status 429 rate-limiting:
-- **Rule:** Load existing store offers from disk cache (`loadLocalCatalogCache`) and upsert them to database to preserve comparison table continuity.
+- **Rule:** Load existing store offers from disk cache and upsert them to database to preserve comparison table continuity.
 
 ### 8.4 BGG XMLAPI2 rate-limiting & pseudo-game resolution
 When resolving auto-created games (`bgg_id >= 8,000,000`):
@@ -529,41 +446,40 @@ All boolean toggles (for example, Domestic Store Toggle `onlyDomestic`) MUST use
 
 ---
 
-## 10. Complete application page routes & UI map 🗺️
+## 10. Functional page views & acceptance criteria 🗺️
 
-| Route Path | Description | Key Components & Links |
+| Page View | Core Functionality | Functional Acceptance Criteria |
 | :--- | :--- | :--- |
-| `/` | Homepage & Game Discovery | `Toolbar`, `SearchBar`, BGG Hotness Cards, Footer Links (`/merchant/onboard`, `/merchant/dashboard`, `/admin/dashboard`, `/admin/queue`) |
-| `/game/[id]` | Hero Comparative Details | Full-width cover art header, typographic stats, `StoreOffersComparisonTable` (3-part total cost calculation & affiliate redirects) |
-| `/search` | Dedicated Search Results | `Toolbar`, `SearchBar`, paginated game result grid linking to `/game/[id]` |
-| `/store/[id]` | Merchant Store Profile | Store details, official website button (`/api/redirect`), catalog inventory table |
-| `/login` | Persona Switcher | Quick login buttons for Admin (`/admin/dashboard`), Merchant (`/merchant/dashboard`), and Player (`/`) |
-| `/merchant/onboard` | Store Registration | Onboarding form submitting XML/JSON feed URL & shipping rates |
-| `/merchant/dashboard` | Merchant Self-Service | Feed status, KPI cards, `<MerchantMappingPortal>`, `<MerchantFeaturedDealsPanel>`, shipping link (`/merchant/shipping`), diagnostics link (`/merchant/diagnostics`) |
-| `/merchant/shipping` | Shipping Rates Matrix | Domestic flat-rate shipping & free threshold configuration in MXN |
-| `/merchant/diagnostics` | Feed Sync Diagnostics | Real-time XML/JSON feed validation & raw payload inspection |
-| `/admin/dashboard` | Admin Catalog Audit | Store verification table, indexed BGG games catalog, link to `/admin/queue` |
-| `/admin/queue` | Admin Staging Queue | `<AdminQueueMonitor>` displaying staged items ($0.70 \dots 0.91$), suggested game thumbnails, one-click approval, and live BGG search autocomplete |
-| `/api/redirect` | Outbound Affiliate Engine | Logs click event to `public.clicks` with UTM tracking and redirects buyer to store product page |
+| **Homepage** | Search & BGG Hotness Trends | Predictive search input + grid/carousel of trending games available in Mexican shops. |
+| **Game Detail** | Delivered Price Comparison | Full-width box art header, typographic stats, language badges, and 3-part price table ($\text{Base} + \text{Shipping} = \text{Total Cost}$). |
+| **Search Results** | Product Search Results | Paginated list of catalog games matching query. |
+| **Store Profile** | Merchant Store Profile | Store description, rating, flat shipping fee display, official website link, and store inventory list. |
+| **Login** | Persona Switcher | Authentication form with role-based access for Admin, Merchant, and Player. |
+| **Merchant Onboarding** | Store Registration | Registration form for store name, logo URL, XML/JSON feed URL, and flat domestic shipping rate in MXN. |
+| **Merchant Dashboard** | Self-Service Portal | Feed status diagnostic metrics, unmatched feed item binding portal, shipping rate configuration link, and click analytics. |
+| **Merchant Shipping** | Shipping Rate Matrix | Configuration matrix for domestic flat-rate shipping fee and free shipping threshold in MXN. |
+| **Merchant Diagnostics**| Feed Validation | Feed parser validator showing last sync time, item counts, and parsing errors. |
+| **Admin Dashboard** | Catalog & Merchant Management| Store verification list, BGG games catalog browser, and moderation queue link. |
+| **Admin Queue** | Staging & Moderation Queue | Interactive queue listing medium-confidence matches ($0.70 \dots 0.91$) with suggested game thumbnails, one-click approval, and live BGG autocomplete. |
 
 ---
 
-## 11. Four-tier verification and quality assurance gate 🧪
+## 11. Verification and quality assurance gate 🧪
 
 ```bash
-# 1. Type Check & ESLint
-npx tsc --noEmit && npm run lint
+# 1. Type Check & Lint
+npm run lint
 
 # 2. Production Build Check
 npm run build
 
-# 3. Serial Jest Unit & Integration Test Suite
-npm run test -- --runInBand --forceExit
+# 3. Unit & Integration Test Suite
+npm run test
 
-# 4. Playwright E2E Browser Test Suite
+# 4. End-to-End Browser Test Suite
 npm run test:e2e
 
-# 5. Master Verification Meta-Command
+# 5. Master Verification Gate
 npm run verify
 ```
 
@@ -575,26 +491,26 @@ npm run verify
 timeline
     title MeeplePrecios Ground-Up Development Timeline
     section Phase 1: Core Foundation
-        Sprint 1 : Next.js 16 Setup : Supabase RLS DDL : Seed MOCK_GAMES
+        Sprint 1 : Database Setup : Supabase RLS DDL : Seed Initial Games
         Sprint 2 : Ingestion Engine : Language & Publisher Engine : Feed Parsers
     section Phase 2: Integrity & UI
         Sprint 3 : URL & Title Audit Worker : Auto-Healing Cron : API Route
-        Sprint 4 : Full-Width Hero UI : Predictive SearchBar : Store Comparison Table
+        Sprint 4 : Comparative UI : Predictive SearchBar : Store Comparison Table
     section Phase 3: Commercial MVP
         Sprint 5 : Merchant Dashboard : Self-Serve Onboarding : Affiliate Redirects
-        Sprint 6 : Playwright E2E Suite : CI/CD Gate : npm run verify
+        Sprint 6 : E2E Browser Suite : CI/CD Gate : Verification Meta-Command
     section Phase 4: Enterprise Precision
-        Sprint 7 : Multi-Barcode Registry : Merchant SKU Memory Table : US-103 & US-104
-        Sprint 8 : 4-Tier Matching Engine : Admin Staging Queue : Merchant Self-Mapping Portal : US-105 to US-107
+        Sprint 7 : Multi-Barcode Registry : Merchant SKU Memory Table : Barcode Engine
+        Sprint 8 : 4-Tier Matching Engine : Admin Staging Queue : Merchant Self-Mapping Portal
 ```
 
 ---
 
 ## 13. Autonomous AI agent operating guide 🤖
 
-When executing tasks on this codebase, an autonomous AI agent MUST:
-1. Audit the user prompt against the Three-Point Compliance Filter (Persona Atomicity, Scope Atomicity, Agile Syntax).
-2. Create a dedicated feature branch matching the active issue (`git checkout -b feature/issue-<num>-<title>`).
+When executing tasks on this project, an autonomous AI agent MUST:
+1. Audit the prompt against the Three-Point Compliance Filter (Persona Atomicity, Scope Atomicity, Agile Syntax).
+2. Create a dedicated feature branch matching the active issue.
 3. Write tests first (TDD), implement minimal code to pass them, and enforce Google sentence case.
-4. Run the four-tier verification gate (`npm run verify`) before merging into `main`.
+4. Run full verification gates (`npm run verify`) before merging into `main`.
 5. Keep living documentation (`HANDOFF.md`, `DESIGN.md`, `AGENTS.md`, `MASTER_SPECIFICATION.md`) updated in real-time.

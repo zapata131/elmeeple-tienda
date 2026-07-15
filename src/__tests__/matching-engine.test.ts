@@ -56,7 +56,7 @@ describe('Matching Engine Algorithms (US-10, US-11, US-12, US-13)', () => {
   describe('4-Tier Waterfall Matcher (Section 7.4)', () => {
     it('Tier 1: Should match deterministically by GTIN/EAN barcode', async () => {
       const result = await matchProductToCatalog({
-        storeId: 'store-duende-01',
+        storeId: 'store-ficha-01',
         title: 'Catan Edición Desconocida',
         barcode: '8435407624108', // EAN for Catan
         sku: 'UNKNOWN-SKU',
@@ -69,7 +69,7 @@ describe('Matching Engine Algorithms (US-10, US-11, US-12, US-13)', () => {
 
     it('Tier 2: Should match by Historical Merchant SKU Memory', async () => {
       const result = await matchProductToCatalog({
-        storeId: 'store-duende-01',
+        storeId: 'store-ficha-01',
         title: 'Título no coincidente',
         sku: 'DEV-CATAN-ES', // Mapped to 13 in seed data
       });
@@ -81,7 +81,7 @@ describe('Matching Engine Algorithms (US-10, US-11, US-12, US-13)', () => {
 
     it('Tier 3: Should auto-publish high confidence tokenized fuzzy matches (score >= 0.92)', async () => {
       const result = await matchProductToCatalog({
-        storeId: 'store-quantum-04',
+        storeId: 'store-quantum-05',
         title: 'Carcassonne Juego Base',
         sku: 'CARC-NEW',
       });
@@ -94,7 +94,7 @@ describe('Matching Engine Algorithms (US-10, US-11, US-12, US-13)', () => {
 
     it('Tier 3/4: Should route medium or low confidence items to bgg_metadata_queue', async () => {
       const result = await matchProductToCatalog({
-        storeId: 'store-caravana-02',
+        storeId: 'store-mundomeeple-02',
         title: 'Super Extraño Juego De Mesa No Catalogado 2026',
         sku: 'UNKNOWN-999',
       });

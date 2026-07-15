@@ -18,6 +18,7 @@
 - **Core 4-Tier Matching & Feed Engine:**
   - `src/lib/engine/matching-engine.ts`: Title sanitizer, language detector, composite similarity score math, 4-tier waterfall matcher.
   - `src/lib/engine/feed-parser.ts`: Shopify JSON and Google Shopping XML feed parsers with batch processing.
+  - `MASTER_SPECIFICATION.md` (Sections 7.6 & 7.7): Registry of 7 live HTTP-validated Mexican store Atom XML & Shopify JSON feeds, plus category-specific collection feed filtering strategy (`/collections/juegos-de-mesa/all.atom`).
 - **REST API Routes:**
   - `src/app/api/search/route.ts`
   - `src/app/api/redirect/route.ts`

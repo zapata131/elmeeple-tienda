@@ -77,7 +77,7 @@ export default function MerchantOnboardPage() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ej. La Caravana Gamelab CDMX"
+              placeholder="Ej. Ficha y Dado CDMX"
               className="w-full px-4 py-2.5 rounded-xl border border-gray-300 text-sm focus:ring-2 focus:ring-[#8367C7] focus:outline-none"
             />
           </div>

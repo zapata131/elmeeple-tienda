@@ -17,7 +17,7 @@ describe('REST API Contracts (Section 6)', () => {
   });
 
   it('/api/redirect should record click and return 302 redirect with UTM parameters', async () => {
-    const req = new NextRequest('http://localhost:3001/api/redirect?store_id=store-duende-01&bgg_id=13&url=https://elduendecdmx.com/products/catan');
+    const req = new NextRequest('http://localhost:3001/api/redirect?store_id=store-ficha-01&bgg_id=13&url=https://fichaydado.com/products/catan');
     const res = await redirectHandler(req);
     expect(res.status).toBe(302);
     const location = res.headers.get('location');
@@ -30,7 +30,7 @@ describe('REST API Contracts (Section 6)', () => {
     const req = new NextRequest('http://localhost:3001/api/merchant/shipping', {
       method: 'POST',
       body: JSON.stringify({
-        store_id: 'store-duende-01',
+        store_id: 'store-ficha-01',
         flat_rate: 110.00,
         free_shipping_threshold: 1300.00,
       }),

@@ -59,13 +59,13 @@ export const SearchBar: React.FC<{ initialQuery?: string }> = ({ initialQuery = 
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Buscar por título (ej. Catan, Carcassonne, Wingspan)..."
-          className="w-full px-5 py-4 pl-12 pr-28 rounded-2xl bg-white/90 shadow-lg border border-[#8367C7]/30 text-[#3A3A3A] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8367C7] text-base transition-all"
+          placeholder="Buscar por juego (ej. Catan, Wingspan)..."
+          className="w-full px-4 py-3 pl-10 pr-24 rounded-xl bg-white border border-gray-300 text-[#3A3A3A] placeholder-gray-400 focus:outline-none focus:border-[#8367C7] text-sm transition-all shadow-xs"
         />
-        <span className="absolute left-4 text-xl text-gray-400">🔍</span>
+        <span className="absolute left-3 text-sm text-gray-400">🔍</span>
         <button
           type="submit"
-          className="absolute right-2 px-5 py-2.5 rounded-xl bg-[#8367C7] text-white text-sm font-semibold hover:bg-[#8367C7]/90 shadow-md transition-all"
+          className="absolute right-1.5 px-4 py-1.5 rounded-lg bg-[#8367C7] text-white text-xs font-medium hover:bg-[#8367C7]/90 transition-all"
         >
           Buscar
         </button>

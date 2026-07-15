@@ -8,7 +8,7 @@
 ## 1. Executive summary and core purpose 🎲
 
 ### 1.1 Commercial vision
-**MeeplePrecios** is the primary tabletop price comparison engine for Mexico (`MX` / `$ MXN`). The platform aggregates real-time inventory, pricing, and shipping data from independent Mexican board game e-commerce stores (for example, *El Duende CDMX, La Caravana Gamelab, Dungeoneers México, Roll Games, Con T de Tlacuache, Quantum Boardgames, Alfa y Delta, Bundaba*).
+**MeeplePrecios** is the primary tabletop price comparison engine for Mexico (`MX` / `$ MXN`). The platform aggregates real-time inventory, pricing, and shipping data from independent Mexican board game e-commerce stores (for example, *Ficha y Dado, Mundo Meeple Store, Roll Games, Con T de Tlacuache, Quantum Boardgames, Alfa y Delta, Bundaba*).
 
 ### 1.2 Core value proposition
 - **For Players:** Eliminates price and stock fragmentation by providing a single portal that ranks store offers by **3-part total delivered cost** ($\text{Base Price} + \text{Shipping} = \text{Total Cost (\$ MXN)}$) with explicit language and edition badges (`Español (ES)`, `Inglés (EN)`, `Multilingüe (MULTI)`).
@@ -402,6 +402,34 @@ When a user clicks **Ir a la tienda**:
 2. Asynchronously logs an outbound click row to `public.clicks`.
 3. Appends UTM tracking query params (`?utm_source=meepleprecios&utm_medium=affiliate&utm_campaign=price_comparison`).
 4. Responds with HTTP `302 Found` redirecting the browser to the merchant's target product page.
+
+### 7.6 Verified store XML & JSON feed registry (Mexican stores 🇲🇽)
+
+| Store Name | Country | Atom / XML Feed Endpoint | Shopify JSON Feed Endpoint | Base Website | Validation Status |
+| :--- | :---: | :--- | :--- | :--- | :---: |
+| **Ficha y Dado** | 🇲🇽 MX | `https://fichaydado.com/collections/all.atom` | `https://fichaydado.com/products.json` | `https://fichaydado.com` | 🟢 Live Validated |
+| **Mundo Meeple Store** | 🇲🇽 MX | `https://mundomeeplestore.com/collections/all.atom` | `https://mundomeeplestore.com/products.json` | `https://mundomeeplestore.com` | 🟢 Live Validated |
+| **Roll Games** | 🇲🇽 MX | `https://rollgames.mx/collections/all.atom` | `https://rollgames.mx/products.json` | `https://rollgames.mx` | 🟢 Live Validated |
+| **Con T de Tlacuache** | 🇲🇽 MX | `https://tdetlacuache.com/collections/all.atom` | `https://tdetlacuache.com/products.json` | `https://tdetlacuache.com` | 🟢 Live Validated |
+| **Quantum Boardgames** | 🇲🇽 MX | `https://quantumboardgames.com/collections/all.atom` | `https://quantumboardgames.com/products.json` | `https://quantumboardgames.com` | 🟢 Live Validated |
+| **Alfa y Delta** | 🇲🇽 MX | `https://alfaydelta.com/collections/all.atom` | `https://alfaydelta.com/products.json` | `https://alfaydelta.com` | 🟢 Live Validated |
+| **Bundaba** | 🇲🇽 MX | `https://bundaba.com.mx/collections/all.atom` | `https://bundaba.com.mx/products.json` | `https://bundaba.com.mx` | 🟢 Live Validated |
+
+### 7.7 Direct collection-filtered XML feed strategy (Excluding accessories & expansions)
+
+To directly fetch feed items containing **only base games** without custom server-side parsing or noise from accessories, sleeves, or TCG cards:
+
+1. **Category-Specific Shopify Atom Feeds (`/collections/<handle>/all.atom`):**
+   Shopify automatically generates dedicated RSS/Atom XML feeds for individual collections. By targeting the base game collection handle instead of `all`:
+   - `https://<store-domain>/collections/juegos-de-mesa/all.atom` (Base Board Games only)
+   - `https://<store-domain>/collections/juegos-base/all.atom`
+   - *Result:* Items belonging exclusively to the targeted collection are returned in XML, excluding `/collections/accesorios`, `/collections/expansiones`, and `/collections/fundas`.
+
+2. **Category-Specific Shopify JSON Feeds (`/collections/<handle>/products.json`):**
+   - `https://<store-domain>/collections/juegos-de-mesa/products.json`
+
+3. **Google Shopping XML Feed Filtering (`g:google_product_category`):**
+   - For custom XML/Google Shopping feeds, filter items where `<g:google_product_category>` matches `Toys & Games > Games > Board Games` (Category ID `3781`) or where `<g:product_type>` contains `Juegos de Mesa > Base`.
 
 ---
 

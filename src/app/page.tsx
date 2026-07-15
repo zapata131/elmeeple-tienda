@@ -21,44 +21,42 @@ export default function HomePage() {
   });
 
   return (
-    <div className="space-y-16">
-      {/* Hero Section */}
-      <section className="relative text-center py-12 px-4 sm:px-6 rounded-3xl bg-gradient-to-b from-white/80 to-white/40 border border-[#8367C7]/20 shadow-sm overflow-hidden">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-[#FF9E8A]/30 text-rose-950">
-            🎲 Comparador oficial de precios en México
-          </span>
+    <div className="space-y-16 py-4">
+      {/* Minimal Hero Section */}
+      <section className="text-center py-10 px-4 sm:px-6 max-w-2xl mx-auto space-y-4">
+        <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white border border-gray-200 text-gray-600">
+          Comparador de precios en México
+        </span>
 
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-[#3A3A3A] tracking-tight leading-tight">
-            Encuentra el mejor precio entregado para tu próximo juego de mesa
-          </h1>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#3A3A3A] tracking-tight leading-tight">
+          Compara precios de juegos de mesa
+        </h1>
 
-          <p className="text-base text-gray-600">
-            Compara precios de tiendas mexicanas independientes incluyendo envío a domicilio en Pesos Mexicanos ($ MXN).
-          </p>
+        <p className="text-sm text-gray-500 max-w-lg mx-auto">
+          Encuentra el menor costo entregado con envío a domicilio en pesos mexicanos ($ MXN).
+        </p>
 
-          <div className="pt-2">
-            <SearchBar />
-          </div>
+        <div className="pt-2">
+          <SearchBar />
         </div>
       </section>
 
-      {/* BGG Hotness Trends Section (US-01) */}
-      <section className="space-y-6">
-        <div className="flex items-center justify-between">
+      {/* Popular Games Catalog */}
+      <section className="space-y-4 max-w-6xl mx-auto">
+        <div className="flex items-center justify-between border-b border-gray-200 pb-3">
           <div>
-            <h2 className="text-2xl font-bold text-[#3A3A3A]">Tendencias populares en México</h2>
-            <p className="text-xs text-gray-500 mt-1">Los juegos más buscados en el catálogo de tiendas socias</p>
+            <h2 className="text-lg font-bold text-[#3A3A3A]">Juegos populares</h2>
+            <p className="text-xs text-gray-500">Catálogo disponible en tiendas mexicanas</p>
           </div>
           <Link
             href="/search"
-            className="text-xs font-bold text-[#8367C7] hover:underline flex items-center gap-1"
+            className="text-xs font-semibold text-[#8367C7] hover:underline"
           >
-            Ver catálogo completo ➔
+            Ver todo ➔
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {enrichedGames.map((game) => (
             <GameCard key={game.bgg_id} game={game} />
           ))}
@@ -66,37 +64,35 @@ export default function HomePage() {
       </section>
 
       {/* Partner Stores Grid */}
-      <section className="p-8 rounded-3xl bg-white border border-gray-200 shadow-sm space-y-6">
-        <div className="text-center max-w-xl mx-auto space-y-2">
-          <h2 className="text-xl font-bold text-[#3A3A3A]">Tiendas socias en México</h2>
-          <p className="text-xs text-gray-500">
-            Sincronizamos inventarios de tiendas independientes de CDMX, Guadalajara y toda la República Mexicana.
-          </p>
+      <section className="p-6 rounded-2xl bg-white border border-gray-200/80 space-y-4 max-w-6xl mx-auto">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+          <h2 className="text-base font-bold text-[#3A3A3A]">Tiendas asociadas</h2>
+          <span className="text-xs text-gray-400">Sincronización automática de inventario</span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {stores.map((store) => (
             <Link
               key={store.id}
               href={`/store/${store.id}`}
-              className="p-4 rounded-2xl bg-[#F5F0E9]/50 hover:bg-[#F5F0E9] border border-gray-200 transition-all text-center flex flex-col items-center gap-2 group"
+              className="p-3 rounded-xl bg-[#F5F0E9]/40 hover:bg-[#F5F0E9] border border-gray-200/60 transition-all text-center flex flex-col items-center gap-1.5 group"
             >
               {store.logo_url ? (
                 <img
                   src={store.logo_url}
                   alt={store.name}
-                  className="w-12 h-12 rounded-xl object-cover border border-gray-300 group-hover:scale-105 transition-transform"
+                  className="w-10 h-10 rounded-lg object-cover border border-gray-200 group-hover:scale-105 transition-transform"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-xl bg-[#8367C7] text-white flex items-center justify-center font-bold text-lg">
+                <div className="w-10 h-10 rounded-lg bg-[#3A3A3A] text-white flex items-center justify-center font-bold text-sm">
                   {store.name.charAt(0)}
                 </div>
               )}
-              <span className="text-xs font-bold text-[#3A3A3A] group-hover:text-[#8367C7] transition-colors">
+              <span className="text-xs font-semibold text-[#3A3A3A] group-hover:text-[#8367C7] transition-colors">
                 {store.name}
               </span>
-              <span className="text-[10px] text-emerald-700 font-medium">
-                ★ {store.rating?.toFixed(2)} ({store.review_count} reseñas)
+              <span className="text-[10px] text-gray-500">
+                ★ {store.rating?.toFixed(2)}
               </span>
             </Link>
           ))}

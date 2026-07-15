@@ -487,7 +487,10 @@ npm run test
 # 4. End-to-End Browser Test Suite
 npm run test:e2e
 
-# 5. Master Verification Gate
+# 5. DevTools for Agents Visual & Interactive Audit (chrome-devtools / browser_subagent)
+# Audit live browser endpoints on http://localhost:3001, capture screenshots, check console logs
+
+# 6. Master Verification Gate
 npm run verify
 ```
 

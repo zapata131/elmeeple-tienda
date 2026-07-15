@@ -59,3 +59,11 @@ When delegating tasks or operating in subagent mode, adhere strictly to the foll
 2. **Database Write Sequence Integrity:** Always flush new parent game entries to `bgg_games_cache` *before* inserting dependent child rows into `store_games` to avoid foreign key violations.
 3. **Buffered Batch Upserts:** Execute database write operations in memory buffers of up to 500 records rather than individual SQL queries in large loops.
 4. **Offline & Rate-Limit Fallbacks:** Ensure queries and parsers fall back gracefully to local disk cache or mock catalog when third-party API fetches fail or return status 429 rate limits.
+
+---
+
+## 5. DevTools for Agents Testing Directives (`chrome-devtools`)
+
+1. **Live Browser Testing:** Use `browser_subagent` or `chrome-devtools` MCP tools (`navigate_page`, `click`, `type_text`, `take_screenshot`, `list_console_messages`, `list_network_requests`) to visually and interactively audit all user journeys on `http://localhost:3001`.
+2. **NPM Registry Policy:** Always use `https://registry.npmjs.org/` for all npm operations to avoid HTTP 403 errors with `chrome-devtools-mcp`.
+3. **Visual & Console Audit Gate:** Before completing features, capture page screenshots, verify responsive layout rendering, and inspect `list_console_messages` to guarantee zero uncaught React hydration warnings or JS console errors.

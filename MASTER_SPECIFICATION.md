@@ -1,7 +1,7 @@
 # Master specification and ground-up implementation blueprint: MeeplePrecios 🇲🇽
 
 > [!IMPORTANT]
-> **Specification Purpose:** This document is the definitive, self-contained master blueprint for constructing **MeeplePrecios**, Mexico's board game price comparison engine, from the ground up. It contains the complete technical architecture, Supabase DDL scripts, RLS policies, 4-tier waterfall ingestion algorithms, feed parsing gotchas, UI design system tokens, page route maps, and AI agent execution rules. An engineer or autonomous AI agent can build the entire system from scratch using this blueprint without architectural drift or cataloguing errors.
+> **Specification Purpose:** This document is the definitive, self-contained master blueprint for constructing **MeeplePrecios**, Mexico's board game price comparison engine, from the ground up. It contains the complete technical architecture, environment variables, Supabase DDL scripts, RLS policies, indexing strategy, REST API contracts, 4-tier waterfall ingestion algorithms, feed parsing gotchas, UI design system tokens, page route maps, and AI agent execution rules. An engineer or autonomous AI agent can build the entire system from scratch using this blueprint without architectural drift or cataloguing errors.
 
 ---
 
@@ -40,9 +40,9 @@
 ### 2.3 Persona 3: The platform administrator (Admin)
 * **Primary Goals:**
   1. Monitor merchant feed health, failed fetch logs, and un-indexed BoardGameGeek (BGG) queue items.
-  2. Review medium-confidence feed items in the **Admin Staging Queue** (`/admin/queue`) and approve/re-map candidates with one click.
+  2. Review medium-confidence feed items in the **Admin Staging Queue** (`/admin/queue`) and approve/re-map candidates with live BGG autocomplete.
   3. Verify new merchant registrations and manage sponsored placement flags.
-  4. Trigger automated catalog audits (`/api/admin/audit-urls`) to purge broken links and mis-attributed expansions.
+  4. Trigger automated catalog audits (`/api/cron/audit-urls`) to purge broken links and mis-attributed expansions.
 
 ### 2.4 Persona 4: The autonomous AI developer (Agent persona)
 * **Primary Goals:**
@@ -81,7 +81,7 @@ Every feature in the platform is decomposed into single-persona, single-feature 
 
 ---
 
-## 4. Technical stack architecture 🛠️
+## 4. Technical stack architecture & environment variables 🛠️
 
 ```mermaid
 flowchart TD
@@ -124,111 +124,29 @@ flowchart TD
     CoreEngine -->|Verified By| VerificationGate
 ```
 
-- **Framework:** Next.js 16 (App Router) using React 19 and TypeScript 5 (Strict Mode).
-- **Styling and Design System:** Tailwind CSS v4 + Vanilla CSS custom properties (`Blanco roto #F5F0E9`, `Carbón #3A3A3A`, `Malva #8367C7`, `Turquesa #73D8D4`, `Coral #FF9E8A`).
-- **Database and Auth:** Supabase (PostgreSQL) with Row-Level Security (RLS) policies and NextAuth.js (JWT strategy).
-- **HTTP Client and Parsing:** `undici` and native `fetch` with `AbortSignal.timeout(3000)`.
-- **Testing Gate:** Serial Jest with JSDOM (`npm run test -- --runInBand --forceExit`) and Playwright E2E (`npm run test:e2e`).
+### 4.1 Required environment variables (`.env.local`)
+```ini
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+
+# NextAuth Configuration
+NEXTAUTH_SECRET=fallback-secret-for-development-and-tests
+NEXTAUTH_URL=http://localhost:3001
+
+# Cron Authorization Secret
+CRON_SECRET=your-secure-cron-secret-token
+
+# Feature Flags
+NEXT_PUBLIC_ENABLE_SPONSORED_DEALS=false
+```
 
 ---
 
-## 5. Complete database DDL and RLS specification 🗄️
+## 5. Complete database DDL, indexing & RLS specification 🗄️
 
-### 5.1 Entity-relationship (ER) diagram
-
-```mermaid
-erDiagram
-    stores ||--o{ shipping_rates : "has flat rates"
-    stores ||--o{ store_games : "lists inventory"
-    stores ||--o{ merchant_product_mappings : "defines SKU overrides"
-    stores ||--o{ bgg_metadata_queue : "submits queue items"
-    bgg_games_cache ||--o{ store_games : "matched to"
-    bgg_games_cache ||--o{ game_barcodes : "indexed by EANs"
-    bgg_games_cache ||--o{ merchant_product_mappings : "mapped to"
-    stores ||--o{ clicks : "tracks outbound clicks"
-    bgg_games_cache ||--o{ clicks : "tracks clicked game"
-
-    stores {
-        uuid id PK
-        string name
-        string logo_url
-        string country
-        boolean is_domestic
-        string feed_url
-        string feed_type
-        string feed_status
-    }
-
-    shipping_rates {
-        uuid id PK
-        uuid store_id FK
-        string destination_country
-        numeric flat_rate
-        numeric free_shipping_threshold
-    }
-
-    bgg_games_cache {
-        integer bgg_id PK
-        string name
-        string thumbnail
-        string image
-        string description
-        numeric weight
-        string item_type
-    }
-
-    game_barcodes {
-        uuid id PK
-        string barcode
-        integer bgg_id FK
-        string edition_language
-        string publisher_name
-    }
-
-    merchant_product_mappings {
-        uuid id PK
-        uuid store_id FK
-        string merchant_sku
-        integer bgg_id FK
-        boolean is_verified
-        timestamptz mapped_at
-    }
-
-    store_games {
-        uuid id PK
-        uuid store_id FK
-        integer bgg_id FK
-        string store_product_url
-        numeric price
-        integer stock
-        string edition_language
-        boolean is_featured
-        numeric match_confidence
-        integer match_tier
-    }
-
-    clicks {
-        uuid id PK
-        uuid store_id FK
-        integer bgg_id FK
-        string store_product_url
-        timestamptz clicked_at
-    }
-
-    bgg_metadata_queue {
-        uuid id PK
-        uuid store_id FK
-        string ean
-        string title
-        string store_product_url
-        string status
-        numeric match_confidence
-        integer suggested_bgg_id
-        timestamptz created_at
-    }
-```
-
-### 5.2 Production SQL DDL specification
+### 5.1 Production SQL DDL specification
 
 ```sql
 -- Table 1: Merchant Stores
@@ -286,7 +204,6 @@ CREATE TABLE IF NOT EXISTS public.game_barcodes (
   publisher_name TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_game_barcodes_barcode ON public.game_barcodes(barcode);
 
 -- Table 5: Merchant SKU Mapping Memory (Tier 2)
 CREATE TABLE IF NOT EXISTS public.merchant_product_mappings (
@@ -336,9 +253,17 @@ CREATE TABLE IF NOT EXISTS public.bgg_metadata_queue (
   suggested_bgg_id INTEGER REFERENCES public.bgg_games_cache(bgg_id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Performance Indexing Strategy
+CREATE INDEX IF NOT EXISTS idx_game_barcodes_barcode ON public.game_barcodes(barcode);
+CREATE INDEX IF NOT EXISTS idx_merchant_product_mappings_lookup ON public.merchant_product_mappings(store_id, merchant_sku);
+CREATE INDEX IF NOT EXISTS idx_store_games_bgg_id ON public.store_games(bgg_id);
+CREATE INDEX IF NOT EXISTS idx_store_games_store_id ON public.store_games(store_id);
+CREATE INDEX IF NOT EXISTS idx_bgg_metadata_queue_status ON public.bgg_metadata_queue(status);
+CREATE INDEX IF NOT EXISTS idx_clicks_store_id ON public.clicks(store_id);
 ```
 
-### 5.3 Row level security (RLS) policies
+### 5.2 Row level security (RLS) policies
 
 ```sql
 ALTER TABLE public.stores ENABLE ROW LEVEL SECURITY;
@@ -362,74 +287,90 @@ CREATE POLICY "Allow public insert on clicks" ON public.clicks FOR INSERT WITH C
 
 ---
 
-## 6. The 4-tier waterfall ingestion and matching engine ⚙️
+## 6. Complete REST API contract inventory 🔌
 
-```mermaid
-flowchart TD
-    Item["Incoming Merchant Feed Item"] --> T1{"Tier 1: EAN/GTIN Match?"}
-    T1 -- Yes --> Match1["Match Found (Confidence: 1.00, Tier: 1)<br/>Auto-Publish Offer to store_games"]
-    T1 -- No --> T2{"Tier 2: Historical SKU Memory Match?"}
-    T2 -- Yes --> Match2["Match Found (Confidence: 1.00, Tier: 2)<br/>Auto-Publish Offer to store_games"]
-    T2 -- No --> T3["Tier 3: Tokenized Fuzzy Matcher & Subtitle Isolator"]
-    T3 --> ScoreEval{"Score Evaluation"}
-    ScoreEval -- "Score >= 0.92" --> Match3["High Confidence Auto-Match<br/>Auto-Publish Offer to store_games"]
-    ScoreEval -- "0.70 <= Score < 0.92" --> Staging["Medium Confidence Match<br/>Route to bgg_metadata_queue (status='staged')"]
-    ScoreEval -- "Score < 0.70" --> SpinOffCheck{"Spin-off or New Game?"}
-    SpinOffCheck -- Valid Game --> AutoCreate["Auto-Create Distinct BGG Entry (bgg_id >= 8,000,000)<br/>Enqueue BGG Resolution"]
-    SpinOffCheck -- Accessory/Non-Game --> Reject["Reject Non-Boardgame Item"]
-    Staging --> T4["Tier 4: Human Override Panel (/admin/queue or /merchant/dashboard)"]
-    T4 --> SaveMemory["Save SKU Mapping to merchant_product_mappings<br/>(Permanent Tier 2 Memory)"]
-```
-
-### 6.1 Tier 1: EAN / GTIN / UPC barcode matcher
-- Queries product GTIN (`<g:gtin>` or `variant.barcode`) against `public.game_barcodes`.
-- 100% deterministic, confidence 1.00, Tier 1 match.
-
-### 6.2 Tier 2: Historical merchant SKU mapping memory
-- Queries `(store_id, merchant_sku)` against `public.merchant_product_mappings`.
-- Persists manual admin and merchant mapping overrides across daily automated feed re-syncs.
-
-### 6.3 Tier 3: Tokenized fuzzy matching & subtitle isolator
-- Sanitizes feed title via `cleanBoardGameTitle(title)`:
-  - Strips noise terms (`juego de mesa`, `edición especial`, `espanol`, `preventa`, `original`).
-  - Uses standalone word boundaries for exclusion keywords (`/\bfundas?\b/i`, `/\bprimer\b/i`, `/\bpuzzles?\b/i`, `/\bsleeves?\b/i`, `/\bexpansion\b/i`). Prevents false positives on Spanish words like *fundamentales* or *primeros*.
-- Composite similarity score formula:
-  $$\text{Score} = (0.5 \times \text{JaroWinkler}) + (0.3 \times \text{TokenOverlap}) + (0.2 \times \text{Levenshtein})$$
-- Applies penalty `-0.35` if feed title contains expansion/spin-off words not present in the catalog title.
-- **Threshold Routing:**
-  - $\text{Score} \ge 0.92$: Auto-publish to `store_games`.
-  - $0.70 \le \text{Score} < 0.92$: Route to `bgg_metadata_queue` (`status = 'staged'`).
-  - $\text{Score} < 0.70$: Auto-create distinct game entry if valid game, or reject if accessory.
-
-### 6.4 Tier 4: Human override & merchant self-service portal
-- **Admin Staging Queue (`/admin/queue`):** One-click approval, BGG search autocomplete, and rejection.
-- **Merchant Self-Service Portal (`/merchant/dashboard`):** Allows store owners to map unmatched products.
-- **Permanent Memory Persistence:** Any Tier 4 manual mapping writes a row to `public.merchant_product_mappings` (Tier 2 memory).
+| Endpoint Path | Method | Auth Scope | Payload / Parameters | Success Response (200/201) |
+| :--- | :--- | :--- | :--- | :--- |
+| `/api/search` | `GET` | Public | `?q=query_string` | `{ games: [...], stores: [...] }` |
+| `/api/redirect` | `GET` | Public | `?offer_id=uuid&url=http...` | HTTP 302 Redirect to merchant URL with UTM tags |
+| `/api/admin/feed-queue` | `GET` | Admin | None | `{ items: [ QueueItem, ... ] }` |
+| `/api/admin/feed-queue` | `POST` | Admin | `{ id, action: 'approve'/'remap'/'reject', bgg_id }` | `{ success: true, message: '...' }` |
+| `/api/merchant/mapping` | `GET` | Merchant | `?store_id=uuid` | `{ items: [ UnmatchedItem, ... ] }` |
+| `/api/merchant/mapping` | `POST` | Merchant | `{ store_id, merchant_sku, bgg_id }` | `{ success: true, mapped_bgg_id: ... }` |
+| `/api/merchant/shipping` | `POST` | Merchant | `{ store_id, flat_rate, free_shipping_threshold }` | `{ success: true }` |
+| `/api/merchant/featured` | `POST` | Merchant | `{ store_id, offer_id, is_featured }` | `{ success: true, is_featured: boolean }` |
+| `/api/cron/sync-feeds` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <CRON_SECRET>` | `{ success: true, stores_processed: N, total_offers: M }` |
+| `/api/cron/process-bgg-queue` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <CRON_SECRET>` | `{ processed: N, resolved: M }` |
+| `/api/cron/audit-urls` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <CRON_SECRET>` | `{ audited: N, broken_links: M, misattributions: K }` |
 
 ---
 
-## 7. Feed processing, database sequencing & testing gotchas ⚡
+## 7. The 4-tier waterfall ingestion engine algorithms ⚙️
 
-### 7.1 Database write sequence integrity
+### 7.1 Title sanitization algorithm (`cleanBoardGameTitle`)
+```ts
+export function cleanBoardGameTitle(rawTitle: string): string {
+  if (!rawTitle) return '';
+  let title = rawTitle.toLowerCase();
+
+  // Strip common Mexican feed noise terms
+  const noisePatterns = [
+    /juego de mesa/gi, /edición especial/gi, /edición en español/gi,
+    /edicion espanol/gi, /en español/gi, /ingles/gi, /inglés/gi,
+    /preventa/gi, /nuevo/gi, /original/gi, /devir/gi, /asmodee/gi
+  ];
+
+  for (const pattern of noisePatterns) {
+    title = title.replace(pattern, '');
+  }
+
+  // Remove non-alphanumeric symbols except spaces
+  title = title.replace(/[^\w\s\u00C0-\u024F]/gi, ' ');
+  return title.replace(/\s+/g, ' ').trim();
+}
+```
+
+### 7.2 Language detection algorithm (`detectLanguage`)
+```ts
+export function detectLanguage(title: string, description: string = ''): 'es' | 'en' | 'multi' {
+  const text = `${title} ${description}`.toLowerCase();
+  
+  if (/\b(multilingüe|multilenguaje|multi-language)\b/i.test(text)) return 'multi';
+  if (/\b(inglés|ingles|english|en)\b/i.test(text) && !/\b(español|espanol)\b/i.test(text)) return 'en';
+  return 'es'; // Default to Spanish for Mexican store feeds
+}
+```
+
+### 7.3 Composite similarity score math
+$$\text{Score} = (0.5 \times \text{JaroWinkler}) + (0.3 \times \text{TokenOverlap}) + (0.2 \times \text{Levenshtein})$$
+
+Exclusion keyword penalty: If title contains standalone word boundaries for `/\bfundas?\b/i`, `/\bprimer\b/i`, `/\bpuzzles?\b/i`, `/\bsleeves?\b/i`, `/\bexpansion\b/i` not present in catalog game title, apply `-0.35` penalty.
+
+---
+
+## 8. Feed processing, database sequencing & testing gotchas ⚡
+
+### 8.1 Database write sequence integrity
 Inserting `store_games` rows referencing parent `bgg_id`s before parent rows exist in `bgg_games_cache` causes foreign key violations.
 - **Rule:** Always flush new parent game entries to `bgg_games_cache` *before* inserting rows into `store_games`.
 
-### 7.2 Buffered batch upserts
+### 8.2 Buffered batch upserts
 Executing individual SQL queries in large loops causes timeouts during feed syncs.
 - **Rule:** Buffer discovered games in memory (`newGamesToUpsert`) and execute bulk upserts in batches of up to 500 records.
 
-### 7.3 Disk cache fallback
+### 8.3 Disk cache fallback
 When remote crawls fail or return 0 items due to status 429 rate-limiting:
 - **Rule:** Load existing store offers from disk cache (`loadLocalCatalogCache`) and upsert them to database to preserve comparison table continuity.
 
-### 7.4 Test isolation & serial Jest execution
-- **Rule:** Always run Jest in serial mode (`npm run test -- --runInBand --forceExit`) to prevent JSDOM memory bloat. Wrap disk cache file writes in `process.env.NODE_ENV !== 'test'` checks.
+### 8.4 BGG XMLAPI2 rate-limiting & pseudo-game resolution
+When resolving auto-created games (`bgg_id >= 8,000,000`):
+- **Rule:** Throttle requests with `delayMs = 1200` between consecutive XMLAPI2 fetches to avoid HTTP 429 rate limits.
 
 ---
 
-## 8. UI design system and token specification 🎨
+## 9. UI design system and token specification 🎨
 
-### 8.1 Color palette
+### 9.1 Color palette
 | Purpose | Color Name | Hex Code | Tailwind / CSS Class |
 | :--- | :--- | :--- | :--- |
 | Base / Background | Blanco roto | `#F5F0E9` | `bg-[#F5F0E9]` |
@@ -438,10 +379,10 @@ When remote crawls fail or return 0 items due to status 429 rate-limiting:
 | Secondary Accent / Badges | Turquesa pastel | `#73D8D4` | `bg-[#73D8D4]/20 text-[#2B8C88]` |
 | Price Highlights | Coral deslavado | `#FF9E8A` | `bg-[#FF9E8A]/25 text-rose-950` |
 
-### 8.2 Google sentence case governance
+### 9.2 Google sentence case governance
 All headings (`h1`, `h2`, `h3`), buttons, and table labels MUST strictly follow sentence case (for example, *Comparativa de ofertas por tienda*, *★ Tienda recomendada*, *Mejor precio actual*).
 
-### 8.3 Tactile switch component standard (`role="switch"`)
+### 9.3 Tactile switch component standard (`role="switch"`)
 All boolean toggles (for example, Domestic Store Toggle `onlyDomestic`) MUST use accessible switch controls:
 ```tsx
 <input 
@@ -454,7 +395,7 @@ All boolean toggles (for example, Domestic Store Toggle `onlyDomestic`) MUST use
 
 ---
 
-## 9. Complete application page routes & UI map 🗺️
+## 10. Complete application page routes & UI map 🗺️
 
 | Route Path | Description | Key Components & Links |
 | :--- | :--- | :--- |
@@ -473,7 +414,7 @@ All boolean toggles (for example, Domestic Store Toggle `onlyDomestic`) MUST use
 
 ---
 
-## 10. Four-tier verification and quality assurance gate 🧪
+## 11. Four-tier verification and quality assurance gate 🧪
 
 ```bash
 # 1. Type Check & ESLint
@@ -494,7 +435,7 @@ npm run verify
 
 ---
 
-## 11. Ground-up execution roadmap (Sprint Sequence) 🚀
+## 12. Ground-up execution roadmap (Sprint Sequence) 🚀
 
 ```mermaid
 timeline
@@ -505,7 +446,7 @@ timeline
     section Phase 2: Integrity & UI
         Sprint 3 : URL & Title Audit Worker : Auto-Healing Cron : API Route
         Sprint 4 : Full-Width Hero UI : Predictive SearchBar : Store Comparison Table
-    section Phase 5: Commercial MVP
+    section Phase 3: Commercial MVP
         Sprint 5 : Merchant Dashboard : Self-Serve Onboarding : Affiliate Redirects
         Sprint 6 : Playwright E2E Suite : CI/CD Gate : npm run verify
     section Phase 4: Enterprise Precision
@@ -515,7 +456,7 @@ timeline
 
 ---
 
-## 12. Autonomous AI agent operating guide 🤖
+## 13. Autonomous AI agent operating guide 🤖
 
 When executing tasks on this codebase, an autonomous AI agent MUST:
 1. Audit the user prompt against the Three-Point Compliance Filter (Persona Atomicity, Scope Atomicity, Agile Syntax).

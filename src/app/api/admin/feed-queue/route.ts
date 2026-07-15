@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
 import { createClient } from '@supabase/supabase-js';
+import { enrichQueueItems } from '@/utils/waterfall_matching_engine';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key';
@@ -50,7 +51,8 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ items: items || [] });
+  const enrichedItems = await enrichQueueItems(items || [], auth.supabase);
+  return NextResponse.json({ items: enrichedItems });
 }
 
 export async function POST(req: Request) {

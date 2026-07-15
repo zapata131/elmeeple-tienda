@@ -106,16 +106,10 @@ export default async function AdminDashboardPage() {
           
           <div className="flex items-center gap-3 flex-wrap">
             <Link
-              href="/admin/feed-queue"
-              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-4 py-2 rounded-lg transition-colors border border-gray-300 shadow-2xs"
-            >
-              Cola Feeds
-            </Link>
-            <Link
-              href="/admin/currency"
+              href="/admin/queue"
               className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm"
             >
-              Gestor FX
+              Cola de moderación
             </Link>
             <Link
               href="/"

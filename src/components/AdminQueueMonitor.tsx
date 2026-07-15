@@ -11,6 +11,8 @@ export interface QueueItem {
   status: string;
   match_confidence?: number | null;
   suggested_bgg_id?: number | null;
+  suggested_game_name?: string | null;
+  suggested_game_thumbnail?: string | null;
   created_at: string;
 }
 
@@ -25,6 +27,25 @@ export function AdminQueueMonitor({ initialItems }: Props) {
   const [successMsg, setSuccessMsg] = useState('');
   const [activeRemapId, setActiveRemapId] = useState<string | null>(null);
   const [remapBggIdInput, setRemapBggIdInput] = useState('');
+  const [searchResults, setSearchResults] = useState<Array<{ bgg_id: number; name: string; thumbnail?: string }>>([]);
+
+  const handleSearchInputChange = async (val: string) => {
+    setRemapBggIdInput(val);
+    if (!val || val.trim().length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(val)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setSearchResults(data.games || []);
+      }
+    } catch {
+      // Ignore search error
+    }
+  };
 
   const handleApprove = async (id: string, suggestedBggId?: number | null) => {
     setLoadingId(id);
@@ -40,22 +61,22 @@ export function AdminQueueMonitor({ initialItems }: Props) {
 
       if (res.ok) {
         setItems((prev) => prev.filter((item) => item.id !== id));
-        setSuccessMsg('Coincidencia aprobada y vinculada a la memoria permanente.');
+        setSuccessMsg('Coincidencia aprobada correctamente y guardada en memoria.');
       } else {
         const data = await res.json();
-        setErrorMsg(data.error || 'Error al aprobar la coincidencia.');
+        setErrorMsg(data.error || 'Error al aprobar coincidencia.');
       }
     } catch {
-      setErrorMsg('Error de red al intentar aprobar.');
+      setErrorMsg('Error de red al aprobar.');
     } finally {
       setLoadingId(null);
     }
   };
 
-  const handleRemapSubmit = async (id: string) => {
-    const bggId = parseInt(remapBggIdInput.trim(), 10);
-    if (isNaN(bggId)) {
-      setErrorMsg('Ingresa un BGG ID válido.');
+  const handleRemapSubmit = async (id: string, overrideBggId?: number) => {
+    const targetId = overrideBggId || parseInt(remapBggIdInput.trim(), 10);
+    if (!targetId || isNaN(targetId)) {
+      setErrorMsg('Por favor ingrese un ID de BGG válido o seleccione un juego.');
       return;
     }
 
@@ -67,17 +88,18 @@ export function AdminQueueMonitor({ initialItems }: Props) {
       const res = await fetch('/api/admin/feed-queue', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, action: 'remap', bgg_id: bggId }),
+        body: JSON.stringify({ id, action: 'remap', bgg_id: targetId }),
       });
 
       if (res.ok) {
         setItems((prev) => prev.filter((item) => item.id !== id));
-        setSuccessMsg(`Producto reasignado con éxito al juego BGG #${bggId}.`);
         setActiveRemapId(null);
         setRemapBggIdInput('');
+        setSearchResults([]);
+        setSuccessMsg(`Juego mapeado a BGG #${targetId} correctamente.`);
       } else {
         const data = await res.json();
-        setErrorMsg(data.error || 'Error al reasignar el producto.');
+        setErrorMsg(data.error || 'Error al reasignar juego.');
       }
     } catch {
       setErrorMsg('Error de red al reasignar.');
@@ -220,24 +242,39 @@ export function AdminQueueMonitor({ initialItems }: Props) {
                       </a>
                     </td>
                     <td className="px-6 py-4">
-                      {confidencePct !== null ? (
-                        <div className="flex items-center gap-2">
-                          <span className={`text-xs font-extrabold px-2.5 py-1 rounded-lg border ${
-                            confidencePct >= 80
-                              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                              : 'bg-amber-50 text-amber-800 border-amber-200'
-                          }`}>
-                            {confidencePct}% coincidencia
-                          </span>
-                          {item.suggested_bgg_id && (
-                            <span className="text-xs text-gray-500 font-medium">
-                              BGG #{item.suggested_bgg_id}
+                      <div className="flex flex-col gap-1">
+                        {confidencePct !== null && (
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-lg border ${
+                              confidencePct >= 80
+                                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                : 'bg-amber-50 text-amber-800 border-amber-200'
+                            }`}>
+                              {confidencePct}% coincidencia
                             </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-gray-400">Sin sugerencia</span>
-                      )}
+                            {item.suggested_bgg_id && (
+                              <span className="text-xs text-gray-500 font-medium">
+                                BGG #{item.suggested_bgg_id}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {item.suggested_game_name && (
+                          <div className="flex items-center gap-2 mt-1">
+                            {item.suggested_game_thumbnail && (
+                              <img
+                                src={item.suggested_game_thumbnail}
+                                alt={item.suggested_game_name}
+                                className="w-7 h-7 object-cover rounded-md border border-gray-200 shadow-2xs"
+                              />
+                            )}
+                            <span className="text-xs font-bold text-gray-900">{item.suggested_game_name}</span>
+                          </div>
+                        )}
+                        {!confidencePct && !item.suggested_game_name && (
+                          <span className="text-xs text-gray-400">Sin sugerencia</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 font-mono text-xs text-gray-600">
                       {item.ean || 'N/A'}
@@ -253,27 +290,51 @@ export function AdminQueueMonitor({ initialItems }: Props) {
                     </td>
                     <td className="px-6 py-4 text-right">
                       {activeRemapId === item.id ? (
-                        <div className="flex items-center justify-end gap-2">
-                          <input
-                            type="text"
-                            placeholder="Buscar juego en BGG..."
-                            value={remapBggIdInput}
-                            onChange={(e) => setRemapBggIdInput(e.target.value)}
-                            className="text-xs border border-gray-300 rounded-lg px-2.5 py-1.5 w-36 focus:outline-none focus:ring-2 focus:ring-[#8367C7]"
-                          />
-                          <button
-                            onClick={() => handleRemapSubmit(item.id)}
-                            disabled={loadingId === item.id}
-                            className="bg-[#8367C7] hover:bg-[#7256b6] text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shadow-sm disabled:opacity-50"
-                          >
-                            Guardar
-                          </button>
-                          <button
-                            onClick={() => setActiveRemapId(null)}
-                            className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1.5"
-                          >
-                            Cancelar
-                          </button>
+                        <div className="flex flex-col items-end gap-2 relative">
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              placeholder="Buscar juego en BGG..."
+                              value={remapBggIdInput}
+                              onChange={(e) => handleSearchInputChange(e.target.value)}
+                              className="text-xs border border-gray-300 rounded-lg px-2.5 py-1.5 w-56 focus:outline-none focus:ring-2 focus:ring-[#8367C7]"
+                            />
+                            <button
+                              onClick={() => handleRemapSubmit(item.id)}
+                              disabled={loadingId === item.id}
+                              className="bg-[#8367C7] hover:bg-[#7256b6] text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shadow-sm disabled:opacity-50"
+                            >
+                              Guardar
+                            </button>
+                            <button
+                              onClick={() => {
+                                setActiveRemapId(null);
+                                setSearchResults([]);
+                              }}
+                              className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1.5"
+                            >
+                              Cancelar
+                            </button>
+                          </div>
+                          {searchResults.length > 0 && (
+                            <div className="absolute top-10 right-0 z-20 w-72 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto divide-y divide-gray-100">
+                              {searchResults.map((game) => (
+                                <button
+                                  key={game.bgg_id}
+                                  onClick={() => handleRemapSubmit(item.id, game.bgg_id)}
+                                  className="w-full text-left px-3 py-2 hover:bg-indigo-50 flex items-center justify-between transition-colors"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    {game.thumbnail && (
+                                      <img src={game.thumbnail} alt={game.name} className="w-6 h-6 object-cover rounded" />
+                                    )}
+                                    <span className="text-xs font-bold text-gray-900 truncate">{game.name}</span>
+                                  </div>
+                                  <span className="text-[10px] font-mono text-indigo-600 font-bold">#{game.bgg_id}</span>
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <div className="flex items-center justify-end gap-2">

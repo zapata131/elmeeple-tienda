@@ -116,18 +116,24 @@ export default async function MerchantDashboardPage() {
             <h1 className="text-xl font-bold text-gray-900">{store.name}</h1>
             <span className="text-xs text-gray-500 font-semibold">Panel de Control del Socio</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link
               href="/merchant/shipping"
-              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg transition-colors shadow-sm"
+              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-2 rounded-lg transition-colors shadow-sm"
             >
-              Matriz de Envíos
+              Matriz de envíos
+            </Link>
+            <Link
+              href="/merchant/diagnostics"
+              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-3 py-2 rounded-lg transition-colors border border-gray-300 shadow-2xs"
+            >
+              Diagnósticos
             </Link>
             <Link
               href="/"
               className="text-xs font-semibold text-gray-600 hover:text-gray-900"
             >
-              Back to Home
+              Regresar al inicio
             </Link>
           </div>
         </div>

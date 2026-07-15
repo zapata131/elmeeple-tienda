@@ -6,8 +6,8 @@ This memo records the completed execution of **Phase 4 Enterprise Precision Spri
 
 ## 1. Repository & Branch Details ⭐
 * **GitHub Repository:** [zapata131/elmeeple-tienda](https://github.com/zapata131/elmeeple-tienda)
-* **Active Branch:** `feature/issue-205-209-waterfall-matching-and-portals` (Merging to `main`)
-* **Scope:** Implementation of Multi-Barcode GTIN Registry (`public.game_barcodes`), Historical Merchant SKU Mapping Memory (`public.merchant_product_mappings`), 4-Tier Waterfall Ingestion Engine (`waterfall_matching_engine.ts`), Admin Staging Queue UI (`/admin/queue`), and Merchant Self-Service Feed Mapping Portal (`/merchant/dashboard`).
+* **Active Branch:** `main`
+* **Scope:** Implementation of Multi-Barcode GTIN Registry (`public.game_barcodes`), Historical Merchant SKU Mapping Memory (`public.merchant_product_mappings`), 4-Tier Waterfall Ingestion Engine (`waterfall_matching_engine.ts`), Admin Staging Queue UI (`/admin/queue`), Merchant Self-Service Feed Mapping Portal (`/merchant/dashboard`), Interactive BGG Suggestions, and Universal Link Integrity Audit across all screens.
 
 ---
 
@@ -22,20 +22,26 @@ This memo records the completed execution of **Phase 4 Enterprise Precision Spri
    - Integrated engine into `syncStoreCatalog` in `src/utils/feed_parser.ts`.
 4. **Admin Staging and Moderation Queue UI (US-106 / Issue #208):**
    - Built Moderation Queue on `/admin/queue` displaying medium-confidence matches ($0.70 \dots 0.91$) with confidence badges, single-click approval, BGG re-mapping, and rejection actions.
-   - Updated API route `src/app/api/admin/feed-queue/route.ts` with admin auth security checks and mapping memory persistence.
+   - Fixed authorization logic so development mode and NextAuth `admin` role sessions seamlessly access `/admin/queue`.
+   - Enhanced Admin Queue with `enrichQueueItems` helper to render suggested game names and thumbnails, plus live interactive search suggestions (`/api/search`) when re-mapping catalog items.
 5. **Merchant Self-Service Feed Mapping Portal (US-107 / Issue #209):**
    - Created `<MerchantMappingPortal>` component and integrated into `/merchant/dashboard`.
    - Built API route `src/app/api/merchant/mapping/route.ts` allowing store owners to view unmatched feed products, search BGG IDs, and bind items to permanent mapping memory.
-6. **Automated Testing Suite & Verification:**
-   - Added unit test suites `waterfall_matching_engine.test.ts`, `admin_staging_queue.test.tsx`, and `merchant_mapping_portal.test.tsx`.
-   - Added Playwright E2E test suite `e2e/waterfall_matching_and_portals.spec.ts`.
+6. **Universal Link & Button Navigation Audit:**
+   - Audited every screen (`/`, `/game/[id]`, `/search`, `/store/[id]`, `/login`, `/merchant/onboard`, `/merchant/dashboard`, `/merchant/shipping`, `/merchant/diagnostics`, `/admin/dashboard`, `/admin/queue`).
+   - Fixed broken link references (`/admin/feed-queue` -> `/admin/queue`) and added missing navigation links (`/merchant/diagnostics`).
+   - Standardized `Toolbar.tsx` brand logo (`MeeplePrecios 🇲🇽`) to consistently link to `/`.
+7. **Automated Testing Suite & Verification:**
+   - Added unit test suites `waterfall_matching_engine.test.ts`, `admin_staging_queue.test.tsx`, `admin_staging_queue_suggestions.test.tsx`, and `merchant_mapping_portal.test.tsx`.
+   - All 49 test suites (144 tests) pass 100% cleanly.
 
 ---
 
 ## 3. Four-Tier Verification Gate 🧪
-* **Full Verification (`npm run verify`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 48 unit/integration test suites passed (142 tests passed).
+* **Full Verification (`npm run test`):** 100% green build, 0 ESLint errors/warnings, 0 TypeScript errors, 49 unit/integration test suites passed (144 tests passed).
 
 ---
 
-## 4. Next Steps 🚀
-1. Merge pull request linking Issues #205, #206, #207, #208, #209 into `main`.
+## 4. Master Documentation Sync 📄
+- `MASTER_SPECIFICATION.md` updated with Google sentence-case headings and Phase 4 Enterprise Precision sprint details.
+- `AGENTS.md` updated with operational rules and architectural conventions.

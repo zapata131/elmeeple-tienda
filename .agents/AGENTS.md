@@ -3,16 +3,18 @@
 ## MANDATORY AGENT PRIMITIVES & CONSTRAINTS
 
 > [!CAUTION]
-> **STRICT LEGACY DIRECTORY ISOLATION MANDATE:**
-> AI agents MUST NOT inspect, read, search (`grep`, `view_file`, `list_dir`), copy, import, or peek into the `legacy/` directory under ANY circumstances. The `legacy/` folder is strictly quarantined and off-limits. All functional requirements, database DDL scripts, RLS policies, algorithms, API contracts, design system tokens, and acceptance criteria MUST be derived exclusively from `MASTER_SPECIFICATION.md` at the root of the workspace.
+> **STRICT LEGACY DIRECTORY & DEPRECATED GITHUB ISSUE ISOLATION MANDATE:**
+> 1. AI agents MUST NOT inspect, read, search (`grep`, `view_file`, `list_dir`), copy, import, or peek into the `legacy/` directory under ANY circumstances. The `legacy/` folder is strictly quarantined and off-limits.
+> 2. All previous GitHub issue numbers (e.g. Issues #1 through #209) are DEPRECATED and MUST NOT be referenced, reused, or cited. Features MUST be referenced exclusively by the canonical User Story index (`US-01` through `US-14`) defined in `MASTER_SPECIFICATION.md`.
 
 ---
 
 ## 1. Ground-Up Execution Rules
 1. **Single Source of Truth:** `MASTER_SPECIFICATION.md` is the sole specification for all features, schemas, and UI design rules.
-2. **Implementation Autonomy:** Agents have complete freedom to choose framework abstractions, file structures, and component modularity when building from scratch.
-3. **Google Sentence Case Governance:** All user-facing titles, headings (`h1`, `h2`, `h3`), table labels, and action buttons MUST strictly use sentence case.
-4. **Test-Driven Verification:** Always run unit tests (`npm run test`) and full verification gates (`npm run verify`) before submitting changes.
+2. **Canonical User Story Branch Naming:** Create feature branches using canonical User Story tags (`feature/us-01-homepage-search`, `feature/us-02-hero-comparative-ui`, etc.).
+3. **Implementation Autonomy:** Agents have complete freedom to choose framework abstractions, file structures, and component modularity when building from scratch.
+4. **Google Sentence Case Governance:** All user-facing titles, headings (`h1`, `h2`, `h3`), table labels, and action buttons MUST strictly use sentence case.
+5. **Test-Driven Verification:** Always run unit tests (`npm run test`) and full verification gates (`npm run verify`) before submitting changes.
 
 ---
 
@@ -22,19 +24,19 @@ When performing specialized tasks, agents MUST check and follow the instructions
 
 ### 1. `backlog_auditor` (`.agents/skills/backlog_auditor/SKILL.md`)
 - **When to trigger:** Automatically when reviewing user requirements, planning sprint backlogs, or creating user stories.
-- **Directives:** Enforce the Atomic User Story Mandate (Single Persona, Single Feature, Testable Acceptance Criteria) and the Three-Point Compliance Filter before work begins.
+- **Directives:** Enforce the Atomic User Story Mandate (Single Persona, Single Feature, Testable Acceptance Criteria) and the Three-Point Compliance Filter against `MASTER_SPECIFICATION.md` (US-01 through US-14).
 
 ### 2. `github_issue_solve` (`.agents/skills/github_issue_solve/SKILL.md`)
-- **When to trigger:** When starting work on a new issue or feature.
-- **Directives:** Analyze the issue, assign the assignee, create an isolated feature branch (`feature/issue-<num>-<title>`), and draft a step-by-step TDD plan before writing code.
+- **When to trigger:** When starting work on a new feature.
+- **Directives:** Analyze the canonical user story, create an isolated feature branch (`feature/us-<num>-<title>`), and draft a step-by-step TDD plan before writing code.
 
 ### 3. `ux_expert` (`.agents/skills/ux_expert/SKILL.md`)
 - **When to trigger:** When creating, editing, or auditing user interface components, pages, or styling.
 - **Directives:** Audit layouts against cognitive psychology laws, enforce Google sentence case, verify tactile switch components (`role="switch"`), and strictly apply MeeplePrecios brand visual tokens (`Blanco roto #F5F0E9`, `Carbón #3A3A3A`, `Malva #8367C7`, `Turquesa #73D8D4`, `Coral #FF9E8A`).
 
 ### 4. `github_issue_complete` (`.agents/skills/github_issue_complete/SKILL.md`)
-- **When to trigger:** When finishing work on an issue or preparing a pull request.
-- **Directives:** Execute the four-tier verification gate (`npm run verify`), commit with conventional commits, push to GitHub, open a PR linking the issue, update handoffs, and merge into `main`.
+- **When to trigger:** When finishing work on a feature or preparing a pull request.
+- **Directives:** Execute the verification gate (`npm run verify`), commit with conventional commits, push to GitHub, open a PR linking the canonical user story, update handoffs, and merge into `main`.
 
 ### 5. `document_sync` (`.agents/skills/document_sync/SKILL.md`)
 - **When to trigger:** After merging features or refactoring codebase architecture.
@@ -46,9 +48,9 @@ When performing specialized tasks, agents MUST check and follow the instructions
 
 When delegating tasks or operating in subagent mode, adhere strictly to the following 4 personas:
 
-1. **The Architect:** Drafts TDD execution plans and issue breakdowns against `MASTER_SPECIFICATION.md`. Does NOT write production code directly.
+1. **The Architect:** Drafts TDD execution plans and feature breakdowns against `MASTER_SPECIFICATION.md`. Does NOT write production code directly.
 2. **The UX Expert:** Audits layouts, typography, Google sentence case, and tactile switch accessibility using `.agents/skills/ux_expert/SKILL.md`.
-3. **The Builder:** Writes tests first (TDD), implements minimal production code on isolated feature branches (`feature/issue-<num>-<title>`).
+3. **The Builder:** Writes tests first (TDD), implements minimal production code on isolated feature branches (`feature/us-<num>-<title>`).
 4. **The Reviewer:** Runs `npm run verify` and Playwright E2E suites, opens PRs (`gh pr create`), and merges into `main` (`gh pr merge`).
 
 ---

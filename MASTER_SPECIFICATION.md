@@ -517,8 +517,9 @@ timeline
 ## 13. Autonomous AI agent operating guide 🤖
 
 When executing tasks on this project, an autonomous AI agent MUST:
-1. Audit the prompt against the Three-Point Compliance Filter (Persona Atomicity, Scope Atomicity, Agile Syntax).
-2. Create a dedicated feature branch matching the active issue.
-3. Write tests first (TDD), implement minimal code to pass them, and enforce Google sentence case.
-4. Run full verification gates (`npm run verify`) before merging into `main`.
-5. Keep living documentation (`HANDOFF.md`, `DESIGN.md`, `AGENTS.md`, `MASTER_SPECIFICATION.md`) updated in real-time.
+1. **STRICT LEGACY FOLDER ISOLATION:** Never inspect, read, search (`grep`, `view_file`), copy, or peek into the `legacy/` directory under any circumstances. All implementation details MUST be derived exclusively from `MASTER_SPECIFICATION.md`.
+2. Audit the prompt against the Three-Point Compliance Filter (Persona Atomicity, Scope Atomicity, Agile Syntax).
+3. Create a dedicated feature branch matching the active issue.
+4. Write tests first (TDD), implement minimal code to pass them, and enforce Google sentence case.
+5. Run full verification gates (`npm run verify`) before merging into `main`.
+6. Keep living documentation (`HANDOFF.md`, `DESIGN.md`, `AGENTS.md`, `MASTER_SPECIFICATION.md`) updated in real-time.

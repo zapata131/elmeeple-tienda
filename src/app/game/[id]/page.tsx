@@ -9,7 +9,8 @@ interface GameDetailPageProps {
 }
 
 export default async function GameDetailPage({ params }: GameDetailPageProps) {
-  const { id } = await params;
+  const resolvedParams = await Promise.resolve(params);
+  const { id } = resolvedParams;
   const bggId = parseInt(id, 10);
 
   if (isNaN(bggId)) {

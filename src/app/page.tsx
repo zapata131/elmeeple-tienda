@@ -66,12 +66,20 @@ export default function HomePage() {
       {/* Partner Stores Grid */}
       <section className="p-6 rounded-2xl bg-white border border-gray-200/80 space-y-4 max-w-6xl mx-auto">
         <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-          <h2 className="text-base font-bold text-[#3A3A3A]">Tiendas asociadas</h2>
-          <span className="text-xs text-gray-400">Sincronización automática de inventario</span>
+          <div>
+            <h2 className="text-base font-bold text-[#3A3A3A]">Tiendas asociadas ({stores.length})</h2>
+            <p className="text-xs text-gray-500">Sincronización automática de inventario en tiendas mexicanas</p>
+          </div>
+          <Link
+            href="/admin/diagnostics"
+            className="text-xs font-semibold text-[#8367C7] hover:underline"
+          >
+            Ver catálogo completo ➔
+          </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {stores.map((store) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {stores.slice(0, 12).map((store) => (
             <Link
               key={store.id}
               href={`/store/${store.id}`}
@@ -88,7 +96,7 @@ export default function HomePage() {
                   {store.name.charAt(0)}
                 </div>
               )}
-              <span className="text-xs font-semibold text-[#3A3A3A] group-hover:text-[#8367C7] transition-colors">
+              <span className="text-xs font-semibold text-[#3A3A3A] group-hover:text-[#8367C7] transition-colors line-clamp-1">
                 {store.name}
               </span>
               <span className="text-[10px] text-gray-500">

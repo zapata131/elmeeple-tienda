@@ -1,8 +1,9 @@
 # MeeplePrecios 🇲🇽 - Sprint Handoff Memo
 
 ## 📍 Current Status Summary
-- **Active Branch:** `feature/us-05-cataloging-and-foundation`
-- **Progress:** 100% Complete for Phases 1, 2, 3, 4, 5.
+- **Active Branch:** `feature/us-15-independent-ingestion-and-queue-rls`
+- **Active Sprint:** Phase 5: Independent Ingestion & Multi-Tenant Moderation (US-15 through US-19).
+- **Progress:** Sprint Initialization & Architectural Planning 100% Complete.
 - **Unit & Integration Tests:** 18/18 Passed (Vitest: 100% green).
 - **ESLint & Type Check:** 0 warnings, 0 errors.
 - **Production Build:** `npm run build` succeeds (18/18 static & dynamic routes compiled).
@@ -10,30 +11,25 @@
 
 ---
 
-## 📂 Key Created Implementation Files
-- **Database Schema & Seeding:**
-  - `supabase/migrations/20260715000000_initial_schema.sql`: PostgreSQL DDL DML, indexes, and RLS policies.
-  - `src/types/index.ts`: TypeScript data models matching `MASTER_SPECIFICATION.md`.
-  - `src/lib/db/seed-data.ts` & `src/lib/db/mock-db.ts`: Pre-seeded catalog data and in-memory mock database service.
-- **Core 4-Tier Matching & Feed Engine:**
-  - `src/lib/engine/matching-engine.ts`: Title sanitizer, language detector, composite similarity score math, 4-tier waterfall matcher.
-  - `src/lib/engine/feed-parser.ts`: Shopify JSON and Google Shopping XML feed parsers with batch processing.
-  - `MASTER_SPECIFICATION.md` (Sections 7.6 & 7.7): Registry of 7 live HTTP-validated Mexican store Atom XML & Shopify JSON feeds, plus category-specific collection feed filtering strategy (`/collections/juegos-de-mesa/all.atom`).
-- **REST API Routes:**
-  - `src/app/api/search/route.ts`
-  - `src/app/api/redirect/route.ts`
-  - `src/app/api/merchant/shipping/route.ts`
-  - `src/app/api/merchant/mapping/route.ts`
-  - `src/app/api/merchant/featured/route.ts`
-  - `src/app/api/merchant/onboard/route.ts`
-  - `src/app/api/admin/feed-queue/route.ts`
-  - `src/app/api/cron/sync-feeds/route.ts`
-- **Presentation Layer & UI Components:**
-  - `src/components/Header.tsx`, `src/components/Footer.tsx`, `src/components/SearchBar.tsx`, `src/components/PriceComparisonTable.tsx`, `src/components/GameCard.tsx`, `src/components/LanguageBadge.tsx`, `src/components/TactileSwitch.tsx`.
-  - `src/app/page.tsx`, `src/app/game/[id]/page.tsx`, `src/app/search/page.tsx`, `src/app/store/[id]/page.tsx`, `src/app/merchant/onboard/page.tsx`, `src/app/merchant/dashboard/page.tsx`, `src/app/merchant/shipping/page.tsx`, `src/app/admin/queue/page.tsx`, `src/app/login/page.tsx`.
+## 📂 Key Created & Planned Implementation Files
+- **Database Schema & Data Models:**
+  - `supabase/migrations/20260715000000_initial_schema.sql`: PostgreSQL DDL DML, `public.internal_games`, `public.feed_item_queue` DDL and RLS policies.
+  - `src/types/index.ts`: TypeScript data models matching `MASTER_SPECIFICATION.md` (US-15 through US-19).
+  - `src/lib/db/seed-data.ts` & `src/lib/db/mock-db.ts`: Seed catalog data, candidate suggestions, and in-memory mock database service.
+- **Core 4-Tier Matching & Ingestion Engine:**
+  - `src/lib/engine/matching-engine.ts`: Title sanitizer, language detector, non-game feed classifier (US-16), base vs expansion classifier (US-17), candidate suggestion engine (US-18), composite similarity score math, 4-tier waterfall matcher.
+  - `src/lib/engine/feed-parser.ts`: Shopify JSON and Google Shopping XML feed parsers with XML image extraction and batch processing.
+  - `MASTER_SPECIFICATION.md` (Sections 3, 4, 5, 7.8-7.10, 12): Canonical User Stories US-15 through US-19.
+  - `DESIGN.md`: Visual tokens, database tables, and RLS queue matrix.
+- **Presentation Layer & Queue Interfaces:**
+  - `src/app/admin/queue/page.tsx`: Cross-store admin moderation queue UI.
+  - `src/app/merchant/dashboard/page.tsx`: Store-isolated merchant candidate suggestion queue UI.
+  - `src/app/api/admin/feed-queue/route.ts`: RLS-scoped feed queue API endpoint.
 
 ---
 
-## 🧪 Testing Results
+## 🧪 Testing Results & Verification Strategy
 - `npm run test`: 18 passing unit & integration tests across matching engine, feed parser, and REST API routes.
 - `npm run verify`: Passed (Lint + Vitest + Build).
+- **Targeted Sprint Suite:** Adding tests for `isBoardGameFeedItem`, `classifyGameType`, `generateCandidateSuggestions`, and RLS policy verification.
+

@@ -68,14 +68,19 @@
 - **[US-06] Merchant Onboarding:** `As a Store Owner, I want to register my storefront name, logo, and XML/JSON feed URL on /merchant/onboard, so that my inventory is automatically listed on MeeplePrecios.`
 - **[US-07] Shipping Rate Matrix:** `As a Store Owner, I want to set my flat-rate domestic shipping fee and free shipping threshold in MXN, so that player total cost calculations are accurate.`
 - **[US-08] Sponsored Placement Toggles:** `As a Store Owner, I want to toggle sponsored featuring for my store on /merchant/dashboard, so that my offers appear at the top of comparison tables with a "★ Tienda recomendada" badge.`
-- **[US-09] Merchant Self-Service Feed Mapping Portal:** `As a Store Owner, I want a self-service product mapping portal on /merchant/dashboard to view unmatched feed items and bind them to BGG IDs, so that I can maximize my catalog coverage on MeeplePrecios.`
+- **[US-09] Merchant Self-Service Feed Mapping Portal:** `As a Store Owner, I want a self-service product mapping portal on /merchant/dashboard to view unmatched feed items and bind them to canonical game IDs, so that I can maximize my catalog coverage on MeeplePrecios.`
+- **[US-18] Store-Isolated Candidate Suggestion Staging Queue:** `As a Store Owner, I want to see a list of top candidate game suggestions for my store's unmatched feed items on /merchant/dashboard and bind them with one click, so that I can quickly resolve feed ambiguities for my own storefront.`
 
 ### Epic C: Ingestion, barcode registry & catalog integrity (Developer / Admin persona)
 - **[US-10] Multi-Format Feed Processing:** `As a Developer, I want feed ingestion to parse both Shopify JSON and Google Shopping XML feeds, so that all Mexican stores can be integrated without custom scrapers.`
 - **[US-11] EAN/GTIN Multi-Barcode Registry Table:** `As a Developer, I want a dedicated EAN/GTIN multi-barcode registry table (public.game_barcodes) linking barcodes to game editions and canonical BGG IDs, so that feed ingestion achieves 100% deterministic matching without string ambiguities.`
 - **[US-12] Historical Merchant SKU Mapping Memory Table:** `As a Developer, I want a historical merchant SKU mapping memory table (public.merchant_product_mappings), so that manual merchant and admin re-mappings permanently persist across daily automated feed re-syncs.`
 - **[US-13] 4-Tier Waterfall Feed Matching Engine:** `As a Developer, I want a 4-tier waterfall matching engine (EAN Barcode -> SKU Memory -> Tokenized Fuzzy Match -> Manual Queue) with confidence scoring (>=0.92 auto-publish, 0.70-0.91 queue), so that product ingestion operates with 99.9% accuracy.`
-- **[US-14] Admin Staging and Moderation Queue UI:** `As an Admin, I want a staging queue UI on /admin/queue for medium-confidence feed items (confidence 0.70 to 0.91), so that I can review, approve, or re-map uncertain catalog matches with live BGG autocomplete.`
+- **[US-14] Admin Staging and Moderation Queue UI:** `As an Admin, I want a staging queue UI on /admin/queue for medium-confidence feed items (confidence 0.70 to 0.91), so that I can review, approve, or re-map uncertain catalog matches across all stores.`
+- **[US-15] Independent Internal Game Catalog & XML Media Persistence:** `As a Developer, I want an internal master game catalog table (public.internal_games) that extracts and persists game metadata, box art images, and media directly from store XML/JSON feeds independently of third-party BGG APIs, so that catalog integrity is self-contained and resilient.`
+- **[US-16] Automated Non-Game Feed Classifier:** `As a Developer, I want an automated XML/JSON feed classifier to identify and exclude non-game merchandise (sleeves, playmats, dice, TCG booster packs, deck boxes) during ingestion before matching, so that non-game noise never pollutes the comparison engine.`
+- **[US-17] Base Game & Expansion Entity Classification:** `As a Developer, I want XML feed items to be automatically classified as either base games or expansions and linked to parent game entities during ingestion, so that base games and expansion offers are cataloged cleanly.`
+- **[US-19] Multi-Tenant Store & Admin Queue Authorization (RLS):** `As a Developer, I want Supabase RLS policies and API access controls on the staging queue to restrict store owners to their own store's pending queue items while granting admins full cross-store queue moderation capabilities, so that store data privacy and administrative control are enforced.`
 
 ---
 
@@ -285,16 +290,35 @@ CREATE TABLE IF NOT EXISTS public.clicks (
   clicked_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Table 8: Admin & BGG Staging Queue
-CREATE TABLE IF NOT EXISTS public.bgg_metadata_queue (
+-- Table 8: Independent Internal Master Games Catalog (BGG-Independent Entity Store) [US-15]
+CREATE TABLE IF NOT EXISTS public.internal_games (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  alternate_titles TEXT[] DEFAULT '{}',
+  description TEXT,
+  image_url TEXT,
+  min_players INTEGER CHECK (min_players >= 1),
+  max_players INTEGER CHECK (max_players >= min_players),
+  playing_time INTEGER CHECK (playing_time >= 0),
+  weight NUMERIC(3,2) CHECK (weight >= 0.00 AND weight <= 5.00),
+  ean TEXT,
+  item_type TEXT DEFAULT 'boardgame' CHECK (item_type IN ('boardgame', 'expansion', 'accessory')),
+  parent_game_id UUID REFERENCES public.internal_games(id) ON DELETE SET NULL,
+  is_verified BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Table 9: Multi-Candidate Staging Queue (Multi-Tenant Store & Admin Queue) [US-18, US-19]
+CREATE TABLE IF NOT EXISTS public.feed_item_queue (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
   ean TEXT,
   title TEXT NOT NULL,
   store_product_url TEXT NOT NULL,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'staged', 'resolved', 'rejected')),
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
   match_confidence NUMERIC(3,2) DEFAULT 0.00 CHECK (match_confidence >= 0.00 AND match_confidence <= 1.00),
-  suggested_bgg_id INTEGER REFERENCES public.bgg_games_cache(bgg_id) ON DELETE SET NULL,
+  suggested_candidates JSONB DEFAULT '[]'::jsonb, -- Array of [{ game_id, name, confidence_score, image_url }]
+  resolved_game_id UUID REFERENCES public.internal_games(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -306,12 +330,33 @@ CREATE INDEX IF NOT EXISTS idx_game_barcodes_barcode ON public.game_barcodes(bar
 CREATE INDEX IF NOT EXISTS idx_merchant_product_mappings_lookup ON public.merchant_product_mappings(store_id, merchant_sku);
 CREATE INDEX IF NOT EXISTS idx_store_games_bgg_id ON public.store_games(bgg_id);
 CREATE INDEX IF NOT EXISTS idx_store_games_store_id ON public.store_games(store_id);
-CREATE INDEX IF NOT EXISTS idx_bgg_metadata_queue_status ON public.bgg_metadata_queue(status);
+CREATE INDEX IF NOT EXISTS idx_internal_games_ean ON public.internal_games(ean);
+CREATE INDEX IF NOT EXISTS idx_internal_games_parent_id ON public.internal_games(parent_game_id);
+CREATE INDEX IF NOT EXISTS idx_feed_item_queue_store_status ON public.feed_item_queue(store_id, status);
 CREATE INDEX IF NOT EXISTS idx_clicks_store_clicked_at ON public.clicks(store_id, clicked_at DESC);
 CREATE INDEX IF NOT EXISTS idx_clicks_bgg_id ON public.clicks(bgg_id);
 ```
 
 ### 5.2 Row level security (RLS) policies
+
+```sql
+-- Enable RLS on multi-tenant queue
+ALTER TABLE public.feed_item_queue ENABLE ROW LEVEL SECURITY;
+
+-- Policy 1: Store owners can only view & update their own store's pending queue items [US-19]
+CREATE POLICY store_owner_queue_isolation ON public.feed_item_queue
+  FOR ALL
+  USING (
+    store_id = (SELECT store_id FROM public.store_users WHERE user_id = auth.uid())
+  );
+
+-- Policy 2: Admins can view & moderate all queues across all stores [US-19]
+CREATE POLICY admin_full_queue_access ON public.feed_item_queue
+  FOR ALL
+  USING (
+    EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin')
+  );
+```
 
 ```sql
 ALTER TABLE public.stores ENABLE ROW LEVEL SECURITY;
@@ -431,6 +476,28 @@ To directly fetch feed items containing **only base games** without custom serve
 3. **Google Shopping XML Feed Filtering (`g:google_product_category`):**
    - For custom XML/Google Shopping feeds, filter items where `<g:google_product_category>` matches `Toys & Games > Games > Board Games` (Category ID `3781`) or where `<g:product_type>` contains `Juegos de Mesa > Base`.
 
+### 7.8 Automated non-game feed classifier (Sleeves, TCGs & accessories exclusion) [US-16]
+
+Before feed items enter the 4-tier matching engine, they pass through an automated non-game classifier (`isBoardGameFeedItem`):
+- **Exclusion Criteria:** If an item title, category path, or feed type matches non-game keywords (`fundas`, `sleeves`, `playmat`, `caja protectora`, `booster pack`, `sobre de mejora`, `dado`, `cargador`, `album`), it is flagged as `is_game = false` and discarded from offer indexing.
+- **Image Extraction & Local Persistence:** For valid game items, the parser extracts `<g:image_link>` or `images[0].src` from the store XML/JSON and persists it directly into `public.internal_games.image_url` independently of third-party APIs.
+
+### 7.9 Base game vs. expansion entity classifier [US-17]
+
+The feed ingestion pipeline evaluates feed titles and tags to categorize valid game items:
+- **Base Game Classification (`item_type = 'boardgame'`):** Assigned when title contains standalone base game naming without expansion markers.
+- **Expansion Classification (`item_type = 'expansion'`):** Assigned when title contains expansion markers (`expansión`, `expansion`, `extension`, `añadido`, `pack de escenario`).
+- **Parent Game Linking:** Expansions are automatically linked to their parent base game entity in `public.internal_games` via `parent_game_id`.
+
+### 7.10 Multi-candidate suggestion engine & store/admin queue authorization matrix [US-18, US-19]
+
+When a feed item's matching confidence is below auto-publish threshold ($\text{score} < 0.92$), it is routed to the staging queue (`public.feed_item_queue`):
+1. **Candidate Generator:** The engine computes similarity scores against the internal games catalog (`public.internal_games`) and attaches a JSONB array of up to 5 top candidate suggestions (`suggested_candidates: [{ game_id, name, confidence_score, image_url }]`).
+2. **Multi-Tenant Queue Authorization Matrix (RLS & Access Control):**
+   - **Store Owners (Merchants):** Can view and resolve **ONLY** their own store's pending queue items on `/merchant/dashboard` (`WHERE store_id = auth.jwt() -> store_id`).
+   - **Admins:** Can view, filter, and resolve **ALL** pending queue items across all stores on `/admin/queue` (`WHERE role = 'admin'`).
+3. **One-Click Binding Resolution:** Selecting a candidate suggestion binds the feed SKU to `public.merchant_product_mappings`, creates the active offer row in `public.store_games`, and marks the queue item as `approved`.
+
 ---
 
 ## 8. Feed processing, database sequencing & testing gotchas ⚡
@@ -539,6 +606,9 @@ timeline
     section Phase 4: Enterprise Precision
         Sprint 7 : Multi-Barcode Registry : Merchant SKU Memory Table : Barcode Engine
         Sprint 8 : 4-Tier Matching Engine : Admin Staging Queue : Merchant Self-Mapping Portal
+    section Phase 5: Independent Ingestion & Multi-Tenant Moderation
+        Sprint 9 : Internal Games Catalog (US-15) : Non-Game Feed Classifier (US-16) : Base vs Expansion Classifier (US-17)
+        Sprint 10 : Candidate Suggestion Engine (US-18) : Multi-Tenant Store & Admin Queue RLS (US-19)
 ```
 
 ---

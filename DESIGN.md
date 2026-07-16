@@ -40,3 +40,11 @@
 - **Tier 4:** Multi-Tenant Staging Queue Authorization (US-19):
   - Stores access strictly their own queue items (`WHERE store_id = auth.jwt() -> store_id`).
   - Admins access cross-store queue items (`WHERE role = 'admin'`).
+
+---
+
+## 🛠️ Phase 6: Catalog Audit, Resilience & Health Diagnostics Architecture
+- **Automated URL & Redirect Audit Worker (`/api/cron/audit-urls`) [US-20]:** Periodically pings store product URLs, detects HTTP 404/500/broken links, updates offer health status, and auto-quarantines dead offers.
+- **Automated BGG Metadata Hydration Worker (`/api/cron/process-bgg-queue`) [US-21]:** Asynchronously fetches missing BGG metadata (player counts, weight, high-res covers) for internal games with 1200ms rate limiting.
+- **Admin Catalog Health & Feed Diagnostics Dashboard (`/admin/diagnostics`) [US-22]:** Interactive admin view displaying real-time feed error rates, total catalog offers, dead link counts, and manual feed re-sync controls.
+

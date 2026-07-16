@@ -82,6 +82,11 @@
 - **[US-17] Base Game & Expansion Entity Classification:** `As a Developer, I want XML feed items to be automatically classified as either base games or expansions and linked to parent game entities during ingestion, so that base games and expansion offers are cataloged cleanly.`
 - **[US-19] Multi-Tenant Store & Admin Queue Authorization (RLS):** `As a Developer, I want Supabase RLS policies and API access controls on the staging queue to restrict store owners to their own store's pending queue items while granting admins full cross-store queue moderation capabilities, so that store data privacy and administrative control are enforced.`
 
+### Epic D: Automated catalog auditing, resilience & admin health monitoring (Developer / Admin persona)
+- **[US-20] Automated Catalog Broken Link & Redirect Audit Worker:** `As an Admin, I want an automated background audit route on /api/cron/audit-urls to periodically verify store product URLs, detect broken links or HTTP 404/500 errors, and flag or un-list inactive store offers, so that players never encounter dead links.`
+- **[US-21] Automated BGG Metadata Hydration Worker:** `As a Developer, I want a background sync route on /api/cron/process-bgg-queue to throttled-fetch missing BGG metadata, weight, player counts, and high-res cover images for internal catalog items, so that game pages stay enriched with complete specifications.`
+- **[US-22] Admin Catalog Health & Feed Diagnostics Dashboard:** `As an Admin, I want a comprehensive catalog health and feed sync diagnostics dashboard on /admin/diagnostics displaying feed error rates, total active offers, broken link counts, and manual feed re-sync triggers, so that platform stability and store feed integrity can be monitored in real time.`
+
 ---
 
 ## 4. System architecture & data contract specification 🛠️
@@ -609,6 +614,9 @@ timeline
     section Phase 5: Independent Ingestion & Multi-Tenant Moderation
         Sprint 9 : Internal Games Catalog (US-15) : Non-Game Feed Classifier (US-16) : Base vs Expansion Classifier (US-17)
         Sprint 10 : Candidate Suggestion Engine (US-18) : Multi-Tenant Store & Admin Queue RLS (US-19)
+    section Phase 6: Catalog Audit, Resilience & Health Diagnostics
+        Sprint 11 : Automated URL Audit Worker (US-20) : BGG Metadata Hydration Worker (US-21)
+        Sprint 12 : Admin Health & Diagnostics Dashboard (US-22)
 ```
 
 ---

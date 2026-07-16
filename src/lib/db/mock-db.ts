@@ -269,6 +269,75 @@ class MockDatabase {
     return true;
   }
 
+  private autoAuditEnabled = true;
+  private autoHydrationEnabled = true;
+
+  // Audit & Diagnostics Settings
+  getAutoAuditEnabled(): boolean {
+    return this.autoAuditEnabled;
+  }
+
+  setAutoAuditEnabled(enabled: boolean): boolean {
+    this.autoAuditEnabled = enabled;
+    return this.autoAuditEnabled;
+  }
+
+  getAutoHydrationEnabled(): boolean {
+    return this.autoHydrationEnabled;
+  }
+
+  setAutoHydrationEnabled(enabled: boolean): boolean {
+    this.autoHydrationEnabled = enabled;
+    return this.autoHydrationEnabled;
+  }
+
+  markOfferBroken(offerId: string, isBroken: boolean, status: 'healthy' | 'broken' | 'quarantined' = 'broken'): boolean {
+    const offer = this.offers.find(o => o.id === offerId);
+    if (!offer) return false;
+    offer.is_broken = isBroken;
+    offer.health_status = status;
+    offer.last_audited_at = new Date().toISOString();
+    if (isBroken) {
+      offer.stock = 0;
+    }
+    return true;
+  }
+
+  getDiagnostics() {
+    const totalOffers = this.offers.length;
+    const brokenOffers = this.offers.filter(o => o.is_broken === true).length;
+    const activeOffers = this.offers.filter(o => o.stock > 0 && !o.is_broken).length;
+    const totalStores = this.stores.length;
+    const failedStores = this.stores.filter(s => s.feed_status === 'failed').length;
+    const feedErrorRate = totalStores > 0 ? Number(((failedStores / totalStores) * 100).toFixed(1)) : 0;
+
+    const storesStatus = this.stores.map(store => {
+      const storeOffers = this.offers.filter(o => o.store_id === store.id);
+      const brokenStoreOffers = storeOffers.filter(o => o.is_broken).length;
+      return {
+        id: store.id,
+        name: store.name,
+        feed_type: store.feed_type || 'shopify_json',
+        feed_status: store.feed_status || 'success',
+        feed_last_processed_count: store.feed_last_processed_count || storeOffers.length,
+        feed_last_matched_count: store.feed_last_matched_count || storeOffers.length,
+        broken_offers_count: brokenStoreOffers,
+      };
+    });
+
+    return {
+      total_offers: totalOffers,
+      active_offers: activeOffers,
+      broken_offers: brokenOffers,
+      total_stores: totalStores,
+      feed_error_rate: feedErrorRate,
+      auto_audit_enabled: this.autoAuditEnabled,
+      auto_hydration_enabled: this.autoHydrationEnabled,
+      stores_status: storesStatus,
+      last_updated_at: new Date().toISOString(),
+    };
+  }
+
   // Click Analytics
   logClick(storeId: string, bggId: number, url: string) {
     const click = {
@@ -288,3 +357,4 @@ class MockDatabase {
 }
 
 export const db = new MockDatabase();
+

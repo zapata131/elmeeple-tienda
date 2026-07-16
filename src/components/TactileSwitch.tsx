@@ -12,8 +12,17 @@ export const TactileSwitch: React.FC<TactileSwitchProps> = ({ id, checked, onCha
 
   return (
     <div
+      role="switch"
+      aria-checked={checked}
+      tabIndex={0}
       onClick={() => onChange(!checked)}
-      className="inline-flex items-center gap-3 cursor-pointer select-none"
+      onKeyDown={(e) => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          onChange(!checked);
+        }
+      }}
+      className="inline-flex items-center gap-3 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-[#8367C7]/40 rounded-full"
     >
       <div className="relative">
         <input

@@ -69,6 +69,9 @@ export interface StoreGameOffer {
   is_featured: boolean;
   match_confidence: number;
   match_tier: number;
+  is_broken?: boolean;
+  health_status?: 'healthy' | 'broken' | 'redirected' | 'quarantined';
+  last_audited_at?: string;
   last_updated_at?: string;
   store?: Store;
   shipping_rate?: ShippingRate;

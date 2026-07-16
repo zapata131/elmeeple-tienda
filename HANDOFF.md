@@ -3,30 +3,33 @@
 ## 📍 Current Status Summary
 - **Active Branch:** `feature/us-20-catalog-audit-and-diagnostics`
 - **Active Sprint:** Phase 6: Catalog Audit, Resilience & Health Diagnostics (US-20, US-21, US-22).
-- **Sprint 11 Objective:** Implement Automated URL & Redirect Audit Worker (`/api/cron/audit-urls`) [US-20] and Automated BGG Metadata Hydration Worker (`/api/cron/process-bgg-queue`) [US-21].
-- **Progress:** Architectural Planning & TDD Execution Strategy Complete.
-- **Unit & Integration Tests:** 18/18 Passed (Vitest: 100% green).
+- **Progress:** 100% Complete for Phase 6 (Sprint 11 & Sprint 12).
+- **Unit & Integration Tests:** 33/33 Passed across 6 test suites (Vitest: 100% green).
 - **ESLint & Type Check:** 0 warnings, 0 errors.
-- **Production Build:** `npm run build` succeeds (18/18 static & dynamic routes compiled).
+- **Production Build:** `npm run build` succeeds (22/22 static & dynamic routes compiled).
 - **Verification Gate:** `npm run verify` passes 100%.
 
 ---
 
-## 📂 Key Created & Planned Implementation Files
-- **Sprint 11 Architectural Deliverables:**
-  - `src/app/api/cron/audit-urls/route.ts`: Background worker route to ping merchant product URLs, detect HTTP 404/500/broken links, update offer health status, and quarantine dead offers.
-  - `src/app/api/cron/process-bgg-queue/route.ts`: Background worker route to throttled-fetch missing BGG metadata (weight, player counts, high-res images) for internal catalog items.
-  - `src/lib/engine/audit-worker.ts`: URL health verification engine with concurrency control and HTTP status code classifier.
-  - `src/lib/engine/bgg-hydrator.ts`: Rate-limited BGG metadata hydration engine (1200ms delay throttling).
-- **Sprint 12 Planned Deliverables:**
-  - `src/app/admin/diagnostics/page.tsx`: Interactive admin health dashboard displaying feed error rates, total active offers, dead link counts, and manual feed re-sync triggers.
-- **Test Specs to be Created (TDD):**
-  - `src/__tests__/audit-worker.test.ts`: Unit tests for URL verification, status code classification, and broken link handling.
-  - `src/__tests__/bgg-hydrator.test.ts`: Unit tests for throttled metadata hydration and rate-limit fallbacks.
+## 📂 Key Created Implementation Files
+- **US-20 (Automated Catalog Broken Link Audit Worker):**
+  - `src/lib/engine/audit-worker.ts`: URL verification engine with concurrency control, HTTP 404/500 status code classification, offer quarantine mechanism, and offline timeout resiliency.
+  - `src/app/api/cron/audit-urls/route.ts`: Background worker API route verifying `Bearer CRON_SECRET`.
+  - `src/__tests__/audit-worker.test.ts`: Unit test suite (6 passing tests).
+- **US-21 (Automated BGG Metadata Hydration Worker):**
+  - `src/lib/engine/bgg-hydrator.ts`: Rate-limited BGG metadata hydration engine enforcing mandatory 1200ms delay throttling.
+  - `src/app/api/cron/process-bgg-queue/route.ts`: Background queue processor API route verifying `Bearer CRON_SECRET`.
+  - `src/__tests__/bgg-hydrator.test.ts`: Unit test suite (5 passing tests).
+- **US-22 (Admin Catalog Health & Feed Diagnostics Dashboard):**
+  - `src/app/admin/diagnostics/page.tsx`: Interactive admin health dashboard displaying real-time metrics, store feed status table, manual trigger controls, and tactile switches (`role="switch"`, `aria-checked`).
+  - `src/app/api/admin/diagnostics/route.ts`: Diagnostics data endpoint and action dispatcher.
+  - `src/__tests__/diagnostics.test.ts`: Unit test suite (4 passing tests).
+- **Components & Design System:**
+  - `src/components/TactileSwitch.tsx`: Enhanced accessible switch component with keyboard navigation and ARIA switch roles.
 
 ---
 
-## 🧪 Testing Results & Verification Strategy
-- `npm run test`: 18 passing unit & integration tests across matching engine, feed parser, and REST API routes.
+## 🧪 Testing & Audit Results
+- `npm run test`: 33 passing unit & integration tests across 6 test suites.
 - `npm run verify`: Passed (Lint + Vitest + Build).
-- **Builder TDD Instructions:** Write unit test suites in `src/__tests__/audit-worker.test.ts` and `src/__tests__/bgg-hydrator.test.ts` BEFORE implementing production worker logic.
+- **DevTools Browser Audit:** Live browser audit on `http://localhost:3001/admin/diagnostics` verified zero React hydration warnings, zero console errors, full Google sentence case compliance, and functioning interactive action buttons.

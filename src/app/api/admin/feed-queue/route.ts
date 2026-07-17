@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 
 export async function GET() {
   const items = db.getQueueItems();

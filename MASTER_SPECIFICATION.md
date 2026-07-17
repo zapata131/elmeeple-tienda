@@ -14,6 +14,12 @@
 - **For Players:** Eliminates price and stock fragmentation by providing a single portal that ranks store offers by **3-part total delivered cost** ($\text{Base Price} + \text{Shipping} = \text{Total Cost (\$ MXN)}$) with explicit language and edition badges (`Español (ES)`, `Inglés (EN)`, `Multilingüe (MULTI)`).
 - **For Store Owners (Merchants):** Drives high-intent organic and affiliate checkout traffic without manual listing maintenance by automatically syncing Google Shopping XML and Shopify JSON feeds, backed by self-service mapping override tools.
 
+### 1.3 Mandatory engineering & debugging directive: Root cause diagnosis
+> [!IMPORTANT]
+> **Root Cause Diagnosis & Communication Mandate:** Every time an issue, bug, broken link, or failing route is reported, developers and AI agents MUST NOT apply superficial patches, hide errors, or return fallback placeholders. The system implementation MUST resolve the fundamental root cause and explicitly document:
+> 1. **Why the issue occurred:** Trace the upstream data provider, schema mismatch, or parsing flaw.
+> 2. **How the fix resolves it:** Implement a systematic, robust code solution that prevents recurrence.
+
 ---
 
 ## 2. Target personas and user journeys 👥
@@ -63,6 +69,7 @@
 - **[US-03] Explicit Language Badges:** `As a Player, I want store offers to display clear language badges (Español (ES), Inglés (EN), Multilingüe (MULTI)), so that I don't accidentally buy a game in a language I don't want.`
 - **[US-04] Direct Affiliate Checkout:** `As a Player, I want clicking "Ir a la tienda" to redirect me to the store's exact product page with UTM tracking, so that I can complete my purchase immediately.`
 - **[US-05] Spin-Off Game Variant Cataloging:** `As a Player, I want spin-off variants like Spot It! Catan or Dobble Catan to be cataloged as distinct game entries rather than merged into base game pages, so that I can view accurate price comparisons for both base games and spin-offs independently.`
+- **[US-25] BGG Top 10 & Most Searched Tabbed Landing UI:** `As a Player, I want tabbed switching on the homepage between the BGG Top 10 games and the most searched games in Mexico, so that I can discover top-rated global titles and trending local tabletop games effortlessly.`
 
 ### Epic B: Merchant self-serve portal (Merchant persona)
 - **[US-06] Merchant Onboarding:** `As a Store Owner, I want to register my storefront name, logo, and XML/JSON feed URL on /merchant/onboard, so that my inventory is automatically listed on MeeplePrecios.`
@@ -71,6 +78,7 @@
 - **[US-09] Merchant Self-Service Feed Mapping Portal:** `As a Store Owner, I want a self-service product mapping portal on /merchant/dashboard to view unmatched feed items and bind them to canonical game IDs, so that I can maximize my catalog coverage on MeeplePrecios.`
 - **[US-18] Store-Isolated Candidate Suggestion Staging Queue:** `As a Store Owner, I want to see a list of top candidate game suggestions for my store's unmatched feed items on /merchant/dashboard and bind them with one click, so that I can quickly resolve feed ambiguities for my own storefront.`
 - **[US-23] Extended Mexican Tabletop Store Directory Expansion:** `As a Player, I want MeeplePrecios to aggregate offers from 50+ verified Mexican tabletop stores (including Geeky Stuff, 2 Tomatoes MX, Amukiri, Avalon Store, Catito Games, Demon Juegos, Día D Juegos, Eximia Games, GameSmart, Hobbiton Games, La Casa de la Educadora, La Mazmorra, Meeple Planet, Otter Space, Tablerazo, etc.), so that I have 100% complete coverage of board game pricing and stock across Mexico.`
+- **[US-26] Automated Store Feed Ingestion & Merchant Admin Portal:** `As an Admin and Store Owner, I want an admin store settings portal on /admin/stores to manage store logos, flat shipping rates, free shipping thresholds, and feed URLs, view live ingestion data and mismatch statistics, and trigger real-time multi-route feed ingestion across all 51 stores, so that the platform displays 100% live real data with store brand logos.`
 
 ### Epic C: Ingestion, barcode registry & catalog integrity (Developer / Admin persona)
 - **[US-10] Multi-Format Feed Processing:** `As a Developer, I want feed ingestion to parse both Shopify JSON and Google Shopping XML feeds, so that all Mexican stores can be integrated without custom scrapers.`

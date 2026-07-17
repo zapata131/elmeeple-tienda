@@ -1,28 +1,30 @@
 import React from 'react';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 import { SearchBar } from '@/components/SearchBar';
-import { GameCard } from '@/components/GameCard';
+import { HomeTabbedCatalog } from '@/components/HomeTabbedCatalog';
 import Link from 'next/link';
+import { BggGame } from '@/types';
+
+function enrichGame(game: BggGame) {
+  const offers = db.getOffersForGame(game.bgg_id);
+  const sortedOffers = offers.sort((a, b) => a.total_delivered_cost - b.total_delivered_cost);
+  const lowestPrice = sortedOffers.length > 0 ? sortedOffers[0].total_delivered_cost : undefined;
+
+  return {
+    ...game,
+    lowest_price: lowestPrice,
+    offer_count: offers.length,
+  };
+}
 
 export default function HomePage() {
-  const games = db.getBggGames();
+  const top10Games = db.getBggTop10().map(enrichGame);
+  const mostSearchedGames = db.getMostSearchedGames().map(enrichGame);
   const stores = db.getStores();
-
-  const enrichedGames = games.map(game => {
-    const offers = db.getOffersForGame(game.bgg_id);
-    const sortedOffers = offers.sort((a, b) => a.total_delivered_cost - b.total_delivered_cost);
-    const lowestPrice = sortedOffers.length > 0 ? sortedOffers[0].total_delivered_cost : undefined;
-
-    return {
-      ...game,
-      lowest_price: lowestPrice,
-      offer_count: offers.length,
-    };
-  });
 
   return (
     <div className="space-y-16 py-4">
-      {/* Minimal Hero Section */}
+      {/* Hero Section */}
       <section className="text-center py-10 px-4 sm:px-6 max-w-2xl mx-auto space-y-4">
         <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white border border-gray-200 text-gray-600">
           Comparador de precios en México
@@ -41,27 +43,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Popular Games Catalog */}
-      <section className="space-y-4 max-w-6xl mx-auto">
-        <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-          <div>
-            <h2 className="text-lg font-bold text-[#3A3A3A]">Juegos populares</h2>
-            <p className="text-xs text-gray-500">Catálogo disponible en tiendas mexicanas</p>
-          </div>
-          <Link
-            href="/search"
-            className="text-xs font-semibold text-[#8367C7] hover:underline"
-          >
-            Ver todo ➔
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {enrichedGames.map((game) => (
-            <GameCard key={game.bgg_id} game={game} />
-          ))}
-        </div>
-      </section>
+      {/* Tabbed Catalog Section: BGG Top 10 & Most Searched (US-25) */}
+      <HomeTabbedCatalog
+        bggTop10Games={top10Games}
+        mostSearchedGames={mostSearchedGames}
+      />
 
       {/* Partner Stores Grid */}
       <section className="p-6 rounded-2xl bg-white border border-gray-200/80 space-y-4 max-w-6xl mx-auto">

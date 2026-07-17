@@ -1,5 +1,5 @@
 import React from 'react';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 import { SearchBar } from '@/components/SearchBar';
 import { GameCard } from '@/components/GameCard';
 

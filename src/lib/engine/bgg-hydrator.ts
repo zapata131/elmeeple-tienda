@@ -1,4 +1,4 @@
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 import { BggGame } from '@/types';
 
 export type CustomBggFetcher = (bggId: number) => Promise<Partial<BggGame> | null>;

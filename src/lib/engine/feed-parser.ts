@@ -1,5 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 import { matchProductToCatalog, detectLanguage } from './matching-engine';
 
 export interface FeedProduct {

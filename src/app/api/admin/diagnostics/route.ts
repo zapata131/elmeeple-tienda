@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 import { runCatalogAudit } from '@/lib/engine/audit-worker';
 import { processBggQueue } from '@/lib/engine/bgg-hydrator';
 

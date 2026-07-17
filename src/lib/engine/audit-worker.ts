@@ -1,4 +1,4 @@
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 
 export interface AuditFetcherResult {
   status: number;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 import { GET as redirectHandler } from '@/app/api/redirect/route';
 import { NextRequest } from 'next/server';
 

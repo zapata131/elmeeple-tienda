@@ -1,4 +1,4 @@
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 
 export function cleanBoardGameTitle(rawTitle: string): string {
   if (!rawTitle) return '';
@@ -176,8 +176,20 @@ export interface MatchResult {
   shouldQueue: boolean;
 }
 
+export function classifyFeedItemType(title: string): 'boardgame' | 'expansion' | 'accessory' {
+  const t = title.toLowerCase();
+  if (/\b(expansión|expansion|ampliación|ampliacion|extension|extensión)\b/i.test(t)) {
+    return 'expansion';
+  }
+  if (/\b(sleeves?|fundas?|inserto|dice|monedas|playmat|playmats|deck box|tokens?)\b/i.test(t)) {
+    return 'accessory';
+  }
+  return 'boardgame';
+}
+
 export async function matchProductToCatalog(product: ProductInput): Promise<MatchResult> {
   const { storeId, title, sku, barcode } = product;
+  const feedItemType = classifyFeedItemType(title);
 
   // Tier 1: GTIN/EAN Barcode Matcher
   if (barcode && barcode.trim()) {
@@ -209,6 +221,7 @@ export async function matchProductToCatalog(product: ProductInput): Promise<Matc
   const games = db.getBggGames();
   let highestScore = 0;
   let bestGameId: number | null = null;
+  let matchedGameType: 'boardgame' | 'expansion' | 'accessory' | 'pseudo_game' | undefined = undefined;
 
   for (const game of games) {
     // Check primary title score
@@ -216,6 +229,7 @@ export async function matchProductToCatalog(product: ProductInput): Promise<Matc
     if (primaryScore > highestScore) {
       highestScore = primaryScore;
       bestGameId = game.bgg_id;
+      matchedGameType = game.item_type;
     }
 
     // Check alternate names
@@ -225,13 +239,17 @@ export async function matchProductToCatalog(product: ProductInput): Promise<Matc
         if (altScore > highestScore) {
           highestScore = altScore;
           bestGameId = game.bgg_id;
+          matchedGameType = game.item_type;
         }
       }
     }
   }
 
+  // Entity Type Parity Guard: If feed item is expansion but matched game is base game, require staging queue review
+  const isTypeMismatch = feedItemType === 'expansion' && matchedGameType === 'boardgame';
+
   // Threshold decision tree
-  if (highestScore >= 0.92 && bestGameId !== null) {
+  if (highestScore >= 0.92 && bestGameId !== null && !isTypeMismatch) {
     return {
       matchedBggId: bestGameId,
       matchTier: 3,

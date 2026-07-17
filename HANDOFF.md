@@ -1,25 +1,24 @@
 # MeeplePrecios 🇲🇽 - Sprint Handoff Memo
 
 ## 📍 Current Status Summary
-- **Active Branch:** `feature/us-24-multi-route-feed-fallback`
-- **Active Sprint:** US-24 Multi-Route Shopify Feed Fallback Engine (`/products.json` & `/collections/juegos-de-mesa/all.atom`).
-- **Progress:** 100% Complete for US-24 (Fallback Engine & Multi-Route Parser Active).
-- **Unit & Integration Tests:** 41/41 Passed across 9 test suites (Vitest: 100% green).
-- **ESLint & Type Check:** 0 warnings, 0 errors.
-- **Production Build:** `npm run build` succeeds (22/22 static & dynamic routes compiled).
-- **Verification Gate:** `npm run verify` passes 100%.
+- **Active User Stories:**
+  1. `[US-26] Real Store Brand Logos & Automated Feed Ingestion`
+  2. `[US-17 & US-05] Systemic Base Game vs Expansion Isolation`
+- **GitHub Issues:** [#211](https://github.com/zapata131/elmeeple-stores/issues/211), [#212](https://github.com/zapata131/elmeeple-stores/issues/212)
+- **Progress:** 100% Complete & DevTools QA Verified.
 
 ---
 
-## 📂 Key Created & Modified Implementation Files
-- **US-24 Multi-Route Feed Fallback Engine:**
-  - `src/lib/engine/feed-parser.ts`: Implemented `fetchWithMultiRouteFallback` to automatically query candidate routes (`/collections/all.atom`, `/products.json?limit=250`, and `/collections/juegos-de-mesa/all.atom`) when primary routes fail or return non-XML data.
-  - `src/__tests__/multi-route-feed-parser.test.ts`: TDD unit test suite verifying JSON payload parsing and route fallback execution (2 passing tests).
-  - `src/scripts/validate-feeds.ts`: Multi-route network validation script across all 51 stores.
-  - `MASTER_SPECIFICATION.md`: Added canonical **[US-24] Multi-Route Shopify Feed Fallback Engine**.
+## 🖼️ Real Store Brand Logo Mapping (100% 51 Stores)
+- Mapped 100% of store brand logos across all 51 stores in `INITIAL_STORES` ([seed-data.ts](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/src/lib/db/seed-data.ts)):
+  - **Custom Store CDN Brand Logos**: Alfa y Delta, Hobby Guild, Bundaba, La Casa de la Educadora, La Mazmorra, Mandrake Juegos, Kúkara Games, Jugador Inicial, Chocita Juegos, Tamandúa Juegos, Tablero Ninja, Wontolla Games, Yellow Rabbit, Vijoan Games, Ingenioz.
+  - **High-Res 128x128 Domain Favicon Service**: All remaining Mexican store domains.
+- Rendered next to merchant offer names in comparison tables, store directory grids, and search cards—matching brettspielpreise.de layout.
 
 ---
 
 ## 🧪 Testing & Verification Results
-- `npm run test`: 41 passing unit & integration tests across 9 test suites.
-- `npm run verify`: Passed (Lint + Vitest + Build).
+- **Vitest Unit & Integration Tests:** 53/53 Passed across 13 test suites (100% green).
+- **ESLint & Type Check:** 0 warnings, 0 errors.
+- **Production Build:** `npm run build` succeeds (24/24 static & dynamic routes compiled).
+- **Verification Gate:** `npm run verify` passes 100%.

@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react';
 import { CalculatedOffer } from '@/types';
-import { LanguageBadge } from './LanguageBadge';
-import { TactileSwitch } from './TactileSwitch';
 
 interface PriceComparisonTableProps {
   bggId: number;
@@ -11,15 +9,9 @@ interface PriceComparisonTableProps {
 }
 
 export const PriceComparisonTable: React.FC<PriceComparisonTableProps> = ({ bggId, offers }) => {
-  const [isDomesticOnly, setIsDomesticOnly] = useState(false);
   const [sortBy, setSortBy] = useState<'total' | 'price'>('total');
 
-  const filteredOffers = offers.filter((offer) => {
-    if (isDomesticOnly && !offer.is_domestic) return false;
-    return true;
-  });
-
-  const sortedOffers = [...filteredOffers].sort((a, b) => {
+  const sortedOffers = [...offers].sort((a, b) => {
     // Sponsored featured offers always appear at top if sorting by total
     if (a.is_featured && !b.is_featured) return -1;
     if (!a.is_featured && b.is_featured) return 1;
@@ -50,25 +42,16 @@ export const PriceComparisonTable: React.FC<PriceComparisonTableProps> = ({ bggI
           </p>
         </div>
 
-        <div className="flex items-center gap-6">
-          <TactileSwitch
-            id="domestic-filter"
-            checked={isDomesticOnly}
-            onChange={setIsDomesticOnly}
-            label="Solo tiendas nacionales"
-          />
-
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-gray-500 font-medium">Ordenar por:</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'total' | 'price')}
-              className="px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-[#3A3A3A] text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#8367C7]"
-            >
-              <option value="total">Costo total entregado</option>
-              <option value="price">Precio base</option>
-            </select>
-          </div>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-500 font-medium">Ordenar por:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as 'total' | 'price')}
+            className="px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-[#3A3A3A] text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#8367C7]"
+          >
+            <option value="total">Costo total entregado</option>
+            <option value="price">Precio base</option>
+          </select>
         </div>
       </div>
 
@@ -78,7 +61,6 @@ export const PriceComparisonTable: React.FC<PriceComparisonTableProps> = ({ bggI
           <thead>
             <tr className="border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500 bg-gray-50/50">
               <th className="py-3.5 px-4 sm:px-6 font-semibold">Tienda</th>
-              <th className="py-3.5 px-4 font-semibold">Edición</th>
               <th className="py-3.5 px-4 font-semibold text-right">Precio base</th>
               <th className="py-3.5 px-4 font-semibold text-right">Envío estimado</th>
               <th className="py-3.5 px-4 font-semibold text-right">Costo total entregado</th>
@@ -124,11 +106,6 @@ export const PriceComparisonTable: React.FC<PriceComparisonTableProps> = ({ bggI
                         </span>
                       </div>
                     </div>
-                  </td>
-
-                  {/* Language Badge */}
-                  <td className="py-4 px-4">
-                    <LanguageBadge language={offer.edition_language} />
                   </td>
 
                   {/* Base Price */}

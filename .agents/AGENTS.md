@@ -3,9 +3,10 @@
 ## MANDATORY AGENT PRIMITIVES & CONSTRAINTS
 
 > [!CAUTION]
-> **STRICT LEGACY DIRECTORY & DEPRECATED GITHUB ISSUE ISOLATION MANDATE:**
+> **STRICT LEGACY DIRECTORY, DEPRECATED GITHUB ISSUE ISOLATION & ROOT CAUSE DIAGNOSIS MANDATE:**
 > 1. AI agents MUST NOT inspect, read, search (`grep`, `view_file`, `list_dir`), copy, import, or peek into the `legacy/` directory under ANY circumstances. The `legacy/` folder is strictly quarantined and off-limits.
-> 2. All previous GitHub issue numbers (e.g. Issues #1 through #209) are DEPRECATED and MUST NOT be referenced, reused, or cited. Features MUST be referenced exclusively by the canonical User Story index (`US-01` through `US-14`) defined in `MASTER_SPECIFICATION.md`.
+> 2. All previous GitHub issue numbers (e.g. Issues #1 through #209) are DEPRECATED and MUST NOT be referenced, reused, or cited. Features MUST be referenced exclusively by the canonical User Story index (`US-01` through `US-25`) defined in `MASTER_SPECIFICATION.md`.
+> 3. **MANDATORY ROOT CAUSE DIAGNOSIS & EXPLANATION DIRECTIVE:** Whenever the user reports a bug, failure, or unexpected behavior, agents MUST NOT perform superficial patches. Agents MUST identify and resolve the underlying root cause, and explicitly explain in the response: (a) Why the issue was happening, and (b) How the code fix systematically resolves it.
 
 ---
 
@@ -15,6 +16,7 @@
 3. **Implementation Autonomy:** Agents have complete freedom to choose framework abstractions, file structures, and component modularity when building from scratch.
 4. **Google Sentence Case Governance:** All user-facing titles, headings (`h1`, `h2`, `h3`), table labels, and action buttons MUST strictly use sentence case.
 5. **Test-Driven Verification:** Always run unit tests (`npm run test`) and full verification gates (`npm run verify`) before submitting changes.
+6. **Root Cause Diagnosis & Communication:** Whenever an issue or bug is reported, always identify and resolve the fundamental root cause, explicitly explaining in your response why it occurred and how your solution fixes it.
 
 ---
 
@@ -66,6 +68,10 @@ When delegating tasks or operating in subagent mode, adhere strictly to the foll
 
 ## 5. DevTools for Agents Testing Directives (`chrome-devtools`)
 
-1. **Live Browser Testing:** Use `browser_subagent` or `chrome-devtools` MCP tools (`navigate_page`, `click`, `type_text`, `take_screenshot`, `list_console_messages`, `list_network_requests`) to visually and interactively audit all user journeys on `http://localhost:3001`.
-2. **NPM Registry Policy:** Always use `https://registry.npmjs.org/` for all npm operations to avoid HTTP 403 errors with `chrome-devtools-mcp`.
-3. **Visual & Console Audit Gate:** Before completing features, capture page screenshots, verify responsive layout rendering, and inspect `list_console_messages` to guarantee zero uncaught React hydration warnings or JS console errors.
+> [!CAUTION]
+> **MANDATORY DEVTOOLS FOR AGENTS BROWSER QA DIRECTIVE:**
+> 1. **Compulsory Browser Verification:** AI agents MUST ALWAYS use `browser_subagent` or `chrome-devtools` MCP tools (`navigate_page`, `click`, `type_text`, `take_screenshot`, `list_console_messages`, `list_network_requests`) to visually and interactively audit all features on `http://localhost:3001` before declaring any task resolved.
+> 2. **Related Feature Testing:** Whenever working on a specific feature, agents MUST test that feature AND all related navigation flows/pages (e.g., Homepage -> Search -> Game Detail Page -> Merchant/Admin Portal) using live browser DevTools.
+> 3. **Troubleshooting Mandate:** If opening a URL or browser tool fails initially, agents MUST troubleshoot and resolve the browser/server issue until live interactive testing succeeds.
+> 4. **NPM Registry Policy:** Always use `https://registry.npmjs.org/` for all npm operations to avoid HTTP 403 errors with `chrome-devtools-mcp`.
+> 5. **Visual & Console Audit Gate:** Capture page screenshots, verify responsive layout rendering, inspect console messages, and ensure zero uncaught React hydration warnings or JS errors exist.

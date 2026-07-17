@@ -36,6 +36,8 @@ export interface BggGame {
   playing_time?: number | null;
   base_price_eur?: number | null;
   ean?: string | null;
+  bgg_rank?: number | null;
+  search_count?: number | null;
   item_type?: 'boardgame' | 'expansion' | 'accessory' | 'pseudo_game';
   last_updated_at?: string;
 }

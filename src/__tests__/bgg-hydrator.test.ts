@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { hydrateBggMetadata, processBggQueue } from '@/lib/engine/bgg-hydrator';
 import { GET as processBggCronHandler, POST as processBggCronPostHandler } from '@/app/api/cron/process-bgg-queue/route';
 import { NextRequest } from 'next/server';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 
 describe('US-21: Automated BGG Metadata Hydration Worker', () => {
   beforeEach(() => {

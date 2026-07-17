@@ -5,7 +5,7 @@ import {
   calculateSimilarityScore,
   matchProductToCatalog,
 } from '@/lib/engine/matching-engine';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 
 describe('Matching Engine Algorithms (US-10, US-11, US-12, US-13)', () => {
   describe('cleanBoardGameTitle (Section 7.1)', () => {

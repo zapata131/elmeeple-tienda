@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 import Link from 'next/link';
 
 interface StoreProfilePageProps {

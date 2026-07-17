@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { verifyOfferUrl, runCatalogAudit } from '@/lib/engine/audit-worker';
 import { GET as auditCronHandler, POST as auditCronPostHandler } from '@/app/api/cron/audit-urls/route';
 import { NextRequest } from 'next/server';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 
 describe('US-20: Automated Catalog Broken Link & Redirect Audit Worker', () => {
   beforeEach(() => {

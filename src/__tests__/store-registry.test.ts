@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { INITIAL_STORES, INITIAL_SHIPPING_RATES } from '@/lib/db/seed-data';
-import { db } from '@/lib/db/mock-db';
+import { db } from '@/lib/db/db';
 
 describe('US-23 Extended Mexican Tabletop Store Directory Registry', () => {
   it('should register 51 total Mexican board game stores', () => {

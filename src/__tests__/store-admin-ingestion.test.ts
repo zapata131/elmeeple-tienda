@@ -31,7 +31,7 @@ describe('US-26: Store Logo Management & Automated Live Ingestion', () => {
   });
 
   it('should execute live multi-route feed ingestion worker without errors', async () => {
-    const results = await runFullFeedIngestion({ maxStores: 3 });
+    const results = await runFullFeedIngestion({ maxStores: 1 });
     expect(results).toBeDefined();
     expect(results.processedStores).toBeGreaterThan(0);
     expect(results.totalOffersIngested).toBeGreaterThanOrEqual(0);

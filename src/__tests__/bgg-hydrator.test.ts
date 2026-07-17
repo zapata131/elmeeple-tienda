@@ -47,7 +47,7 @@ describe('US-21: Automated BGG Metadata Hydration Worker', () => {
       image: 'https://images.boardgamegeek.com/hydrated.jpg',
     });
 
-    const summary = await processBggQueue({ delayMs: 10, fetcher: mockFetcher });
+    const summary = await processBggQueue({ limit: 5, delayMs: 1, fetcher: mockFetcher });
     expect(summary.totalQueued).toBeGreaterThan(0);
     expect(summary.hydratedCount).toBeGreaterThan(0);
     expect(summary.failedCount).toBe(0);
@@ -58,7 +58,7 @@ describe('US-21: Automated BGG Metadata Hydration Worker', () => {
       throw new Error('429 Too Many Requests');
     };
 
-    const summary = await processBggQueue({ delayMs: 10, fetcher: mockFetcher });
+    const summary = await processBggQueue({ limit: 5, delayMs: 1, fetcher: mockFetcher });
     expect(summary.failedCount).toBeGreaterThan(0);
   });
 

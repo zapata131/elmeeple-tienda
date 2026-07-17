@@ -121,36 +121,47 @@ export async function fetchWithMultiRouteFallback(
 
   for (const route of candidateRoutes) {
     try {
-      const res = await customFetch(route, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-          'Accept': 'application/atom+xml, application/xml, text/xml, application/json, */*',
-        },
-      });
+      const allPaginatedItems: FeedProduct[] = [];
 
-      if (!res.ok) continue;
+      for (let page = 1; page <= 10; page++) {
+        const paginatedRoute = page === 1 ? route : (route.includes('?') ? `${route}&page=${page}` : `${route}?page=${page}`);
+        const res = await customFetch(paginatedRoute, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Accept': 'application/atom+xml, application/xml, text/xml, application/json, */*',
+          },
+        });
 
-      const bodyText = await res.text();
+        if (!res.ok) break;
 
-      // Check if XML feed
-      if (bodyText.includes('<feed') || bodyText.includes('<entry') || bodyText.includes('<rss')) {
-        const xmlProducts = parseGoogleXmlFeed(bodyText);
-        if (xmlProducts.length > 0) {
-          return { ok: true, usedRoute: route, items: xmlProducts };
+        const bodyText = await res.text();
+        let pageItems: FeedProduct[] = [];
+
+        // Check if XML feed
+        if (bodyText.includes('<feed') || bodyText.includes('<entry') || bodyText.includes('<rss')) {
+          pageItems = parseGoogleXmlFeed(bodyText);
+        } else {
+          // Check if JSON feed
+          try {
+            const jsonData = JSON.parse(bodyText);
+            if (Array.isArray(jsonData.products)) {
+              pageItems = parseShopifyJsonFeed(jsonData, baseUrl);
+            }
+          } catch {}
         }
+
+        if (pageItems.length === 0) break;
+
+        // Stop pagination if server returns duplicate first product (indicating non-paginated endpoint)
+        if (page > 1 && allPaginatedItems.length > 0 && pageItems[0].productUrl === allPaginatedItems[0].productUrl) {
+          break;
+        }
+
+        allPaginatedItems.push(...pageItems);
       }
 
-      // Check if JSON feed
-      try {
-        const jsonData = JSON.parse(bodyText);
-        if (Array.isArray(jsonData.products) && jsonData.products.length > 0) {
-          const jsonProducts = parseShopifyJsonFeed(jsonData, baseUrl);
-          if (jsonProducts.length > 0) {
-            return { ok: true, usedRoute: route, items: jsonProducts };
-          }
-        }
-      } catch {
-        // Not JSON
+      if (allPaginatedItems.length > 0) {
+        return { ok: true, usedRoute: route, items: allPaginatedItems };
       }
     } catch {
       // Ignore and try next candidate route in fallback chain

@@ -36,22 +36,55 @@ export async function runFullFeedIngestion(options: IngestionOptions = {}): Prom
       const baseUrl = store.feed_url.replace(/\/collections\/.*$/, '');
       let feedItems: FeedProduct[] = [];
 
-      // Route 1: Try Shopify /products.json
+      // Route 1: Multi-Page Shopify /products.json pagination
       try {
-        const jsonRes = await fetch(`${baseUrl}/products.json?limit=250`);
-        if (jsonRes.ok) {
-          const jsonData = await jsonRes.json();
-          feedItems = parseShopifyJsonFeed(jsonData, baseUrl);
+        for (let page = 1; page <= 10; page++) {
+          const jsonRes = await fetch(`${baseUrl}/products.json?limit=250&page=${page}`, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+              'Accept': 'application/json, text/plain, */*'
+            }
+          });
+
+          if (jsonRes.ok) {
+            const jsonData = await jsonRes.json();
+            const pageItems = parseShopifyJsonFeed(jsonData, baseUrl);
+            if (pageItems.length === 0) break;
+
+            if (page > 1 && feedItems.length > 0 && pageItems[0].productUrl === feedItems[0].productUrl) {
+              break;
+            }
+            feedItems.push(...pageItems);
+          } else {
+            break;
+          }
         }
       } catch (e) {}
 
-      // Route 2: Fallback to Google XML feed if JSON returned no items
+      // Route 2: Multi-Page Google Atom XML feed pagination (/collections/all.atom?page=N)
       if (feedItems.length === 0) {
         try {
-          const xmlRes = await fetch(store.feed_url);
-          if (xmlRes.ok) {
-            const xmlText = await xmlRes.text();
-            feedItems = parseGoogleXmlFeed(xmlText);
+          for (let page = 1; page <= 10; page++) {
+            const xmlUrl = page === 1 ? store.feed_url : (store.feed_url.includes('?') ? `${store.feed_url}&page=${page}` : `${store.feed_url}?page=${page}`);
+            const xmlRes = await fetch(xmlUrl, {
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+                'Accept': 'application/atom+xml, application/xml, text/xml, */*'
+              }
+            });
+
+            if (xmlRes.ok) {
+              const xmlText = await xmlRes.text();
+              const pageItems = parseGoogleXmlFeed(xmlText);
+              if (pageItems.length === 0) break;
+
+              if (page > 1 && feedItems.length > 0 && pageItems[0].productUrl === feedItems[0].productUrl) {
+                break;
+              }
+              feedItems.push(...pageItems);
+            } else {
+              break;
+            }
           }
         } catch (e) {}
       }

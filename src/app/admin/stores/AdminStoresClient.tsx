@@ -100,6 +100,32 @@ export const AdminStoresClient: React.FC<AdminStoresClientProps> = ({
     }
   };
 
+  const [enriching, setEnriching] = useState<boolean>(false);
+
+  const handleEnrichImages = async () => {
+    setEnriching(true);
+    setMessage('Buscando y enriqueciendo imágenes HD desde BoardGameGeek...');
+
+    try {
+      const res = await fetch('/api/admin/enrich-images', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ limit: 30 }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMessage(`Enriquecimiento finalizado: ${data.enriched_count || 0} imágenes HD actualizadas.`);
+      } else {
+        setMessage(`Error al enriquecer imágenes: ${data.error}`);
+      }
+    } catch (e) {
+      setMessage('Error de conexión al enriquecer imágenes.');
+    } finally {
+      setEnriching(false);
+    }
+  };
+
   const handleInputChange = (id: string, field: keyof StoreAdminData, value: any) => {
     setStores(prev =>
       prev.map(s => (s.id === id ? { ...s, [field]: value } : s))
@@ -122,7 +148,16 @@ export const AdminStoresClient: React.FC<AdminStoresClientProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={handleEnrichImages}
+            disabled={enriching}
+            className="px-4 py-2.5 rounded-xl bg-[#73D8D4] hover:bg-[#5EC2BE] text-[#3A3A3A] font-bold text-xs shadow-sm disabled:opacity-50 transition-all flex items-center gap-2"
+          >
+            {enriching ? 'Enriqueciendo imágenes HD...' : 'Enriquecer imágenes HD 🎨'}
+          </button>
+
           <button
             type="button"
             onClick={handleTriggerIngestion}

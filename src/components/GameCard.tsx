@@ -7,6 +7,9 @@ interface GameCardProps {
 }
 
 export const GameCard: React.FC<GameCardProps> = ({ game }) => {
+  const defaultFallback = '/images/game-placeholder.svg';
+  const [imgSrc, setImgSrc] = React.useState<string>(game.image || game.thumbnail || defaultFallback);
+
   return (
     <Link
       href={`/game/${game.bgg_id}`}
@@ -14,8 +17,9 @@ export const GameCard: React.FC<GameCardProps> = ({ game }) => {
     >
       <div className="relative aspect-square w-full bg-[#F5F0E9]/60 overflow-hidden p-2">
         <img
-          src={game.image || game.thumbnail || 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=400&h=400&fit=crop'}
+          src={imgSrc}
           alt={game.name}
+          onError={() => setImgSrc(defaultFallback)}
           className="w-full h-full object-contain rounded-lg group-hover:scale-102 transition-transform duration-200"
         />
         {game.item_type === 'expansion' && (

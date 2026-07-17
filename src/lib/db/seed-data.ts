@@ -938,8 +938,8 @@ export const INITIAL_BGG_GAMES: BggGame[] = [
       "Catan Cities & Knights",
       "Catan Ciudades & Caballeros Expansión"
     ],
-    "thumbnail": "https://images.unsplash.com/photo-1563941402622-4e7a488bcc57?w=300&h=300&fit=crop",
-    "image": "https://images.unsplash.com/photo-1563941402622-4e7a488bcc57?w=800&h=600&fit=crop",
+    "thumbnail": "/images/game-placeholder.svg",
+    "image": "/images/game-placeholder.svg",
     "description": "Expansión mayor para Catan que añade caballeros, bárbados e infraestructura de desarrollo de ciudades.",
     "weight": 2.9,
     "min_players": 3,
@@ -9590,8 +9590,8 @@ export const INITIAL_BGG_GAMES: BggGame[] = [
   {
     "bgg_id": 900627,
     "name": "Wonderland's War: Duel",
-    "thumbnail": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=300&h=300&fit=crop",
-    "image": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&h=600&fit=crop",
+    "thumbnail": "/images/game-placeholder.svg",
+    "image": "/images/game-placeholder.svg",
     "description": "Juego de mesa Wonderland's War: Duel disponible en tiendas mexicanas.",
     "min_players": 2,
     "max_players": 4,
@@ -9660,8 +9660,8 @@ export const INITIAL_BGG_GAMES: BggGame[] = [
   {
     "bgg_id": 900632,
     "name": "Mountain Goats Legacy",
-    "thumbnail": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=300&h=300&fit=crop",
-    "image": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&h=600&fit=crop",
+    "thumbnail": "/images/game-placeholder.svg",
+    "image": "/images/game-placeholder.svg",
     "description": "Juego de mesa Mountain Goats Legacy disponible en tiendas mexicanas.",
     "min_players": 2,
     "max_players": 4,
@@ -9688,8 +9688,8 @@ export const INITIAL_BGG_GAMES: BggGame[] = [
   {
     "bgg_id": 900634,
     "name": "Jibber Jabble",
-    "thumbnail": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=300&h=300&fit=crop",
-    "image": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&h=600&fit=crop",
+    "thumbnail": "/images/game-placeholder.svg",
+    "image": "/images/game-placeholder.svg",
     "description": "Juego de mesa Jibber Jabble disponible en tiendas mexicanas.",
     "min_players": 2,
     "max_players": 4,

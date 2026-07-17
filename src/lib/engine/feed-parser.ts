@@ -102,6 +102,64 @@ export function parseGoogleXmlFeed(xmlString: string): FeedProduct[] {
   return products;
 }
 
+export async function fetchWithMultiRouteFallback(
+  primaryFeedUrl: string,
+  customFetch: typeof fetch = fetch
+): Promise<{ ok: boolean; usedRoute: string; items: FeedProduct[]; error?: string }> {
+  const urlObj = new URL(primaryFeedUrl);
+  const baseUrl = `${urlObj.protocol}//${urlObj.host}`;
+
+  // Multi-route fallback chain:
+  // 1. Primary Atom XML (/collections/all.atom)
+  // 2. Public Shopify JSON API (/products.json?limit=250)
+  // 3. Category Atom XML (/collections/juegos-de-mesa/all.atom)
+  const candidateRoutes = [
+    primaryFeedUrl,
+    `${baseUrl}/products.json?limit=250`,
+    `${baseUrl}/collections/juegos-de-mesa/all.atom`,
+  ];
+
+  for (const route of candidateRoutes) {
+    try {
+      const res = await customFetch(route, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+          'Accept': 'application/atom+xml, application/xml, text/xml, application/json, */*',
+        },
+      });
+
+      if (!res.ok) continue;
+
+      const bodyText = await res.text();
+
+      // Check if XML feed
+      if (bodyText.includes('<feed') || bodyText.includes('<entry') || bodyText.includes('<rss')) {
+        const xmlProducts = parseGoogleXmlFeed(bodyText);
+        if (xmlProducts.length > 0) {
+          return { ok: true, usedRoute: route, items: xmlProducts };
+        }
+      }
+
+      // Check if JSON feed
+      try {
+        const jsonData = JSON.parse(bodyText);
+        if (Array.isArray(jsonData.products) && jsonData.products.length > 0) {
+          const jsonProducts = parseShopifyJsonFeed(jsonData, baseUrl);
+          if (jsonProducts.length > 0) {
+            return { ok: true, usedRoute: route, items: jsonProducts };
+          }
+        }
+      } catch {
+        // Not JSON
+      }
+    } catch {
+      // Ignore and try next candidate route in fallback chain
+    }
+  }
+
+  return { ok: false, usedRoute: primaryFeedUrl, items: [], error: 'All candidate routes failed or blocked' };
+}
+
 export async function processStoreFeedBatch(storeId: string, products: FeedProduct[]): Promise<{
   processedCount: number;
   matchedCount: number;

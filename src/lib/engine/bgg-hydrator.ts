@@ -54,10 +54,12 @@ export async function hydrateBggMetadata(
 }
 
 export async function processBggQueue(options?: {
+  limit?: number;
   delayMs?: number;
   fetcher?: CustomBggFetcher;
 }) {
   const delayMs = options?.delayMs ?? 1200; // Default 1200ms rate-limit throttling
+  const limit = options?.limit ?? 10;
   const allGames = db.getBggGames();
 
   // Filter games missing key metadata (weight, player counts, image)
@@ -65,12 +67,13 @@ export async function processBggQueue(options?: {
     (g) => g.weight == null || g.min_players == null || g.image == null
   );
 
+  const batchToProcess = incompleteGames.slice(0, limit);
   const totalQueued = incompleteGames.length;
   let hydratedCount = 0;
   let failedCount = 0;
 
-  for (let i = 0; i < incompleteGames.length; i++) {
-    const game = incompleteGames[i];
+  for (let i = 0; i < batchToProcess.length; i++) {
+    const game = batchToProcess[i];
     try {
       await hydrateBggMetadata(game.bgg_id, options?.fetcher);
       hydratedCount++;
@@ -79,7 +82,7 @@ export async function processBggQueue(options?: {
     }
 
     // Apply rate-limit delay between fetches (except after the last item)
-    if (i < incompleteGames.length - 1 && delayMs > 0) {
+    if (i < batchToProcess.length - 1 && delayMs > 0) {
       await sleep(delayMs);
     }
   }

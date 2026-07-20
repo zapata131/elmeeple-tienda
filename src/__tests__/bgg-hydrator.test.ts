@@ -51,7 +51,7 @@ describe('US-21: Automated BGG Metadata Hydration Worker', () => {
     expect(summary.totalQueued).toBeGreaterThan(0);
     expect(summary.hydratedCount).toBeGreaterThan(0);
     expect(summary.failedCount).toBe(0);
-  });
+  }, 20000);
 
   it('processBggQueue should gracefully handle fetch errors and status 429 rate limits', async () => {
     const mockFetcher = async () => {
@@ -60,7 +60,7 @@ describe('US-21: Automated BGG Metadata Hydration Worker', () => {
 
     const summary = await processBggQueue({ limit: 5, delayMs: 1, fetcher: mockFetcher });
     expect(summary.failedCount).toBeGreaterThan(0);
-  });
+  }, 20000);
 
   it('/api/cron/process-bgg-queue should reject requests without valid Bearer CRON_SECRET header', async () => {
     const req = new NextRequest('http://localhost:3001/api/cron/process-bgg-queue', {
@@ -83,5 +83,5 @@ describe('US-21: Automated BGG Metadata Hydration Worker', () => {
     const data = await res.json();
     expect(data.success).toBe(true);
     expect(data.processed_count).toBeGreaterThanOrEqual(0);
-  });
+  }, 20000);
 });

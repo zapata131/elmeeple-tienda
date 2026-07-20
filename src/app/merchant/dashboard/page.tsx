@@ -3,12 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { Store, QueueItem, StoreGameOffer } from '@/types';
 import Link from 'next/link';
+import Image from 'next/image';
+
+interface ExtendedOffer extends StoreGameOffer {
+  game_name?: string;
+  game_thumbnail?: string;
+}
 
 export default function MerchantDashboardPage() {
   const [stores, setStores] = useState<Store[]>([]);
   const [selectedStoreId, setSelectedStoreId] = useState<string>('');
   const [unmatchedItems, setUnmatchedItems] = useState<QueueItem[]>([]);
-  const [offers, setOffers] = useState<StoreGameOffer[]>([]);
+  const [offers, setOffers] = useState<ExtendedOffer[]>([]);
   const [mappingInput, setMappingInput] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -48,12 +54,17 @@ export default function MerchantDashboardPage() {
         if (resSearch.ok) {
           const data = await resSearch.json();
           const allGames = data.games || [];
-          const storeOffersList: StoreGameOffer[] = [];
+          const storeOffersList: ExtendedOffer[] = [];
+          
           allGames.forEach((g: any) => {
             if (g.offers) {
               g.offers.forEach((o: any) => {
                 if (o.store_id === selectedStoreId) {
-                  storeOffersList.push(o);
+                  storeOffersList.push({
+                    ...o,
+                    game_name: g.name,
+                    game_thumbnail: g.thumbnail || g.image,
+                  });
                 }
               });
             }
@@ -68,6 +79,9 @@ export default function MerchantDashboardPage() {
   }, [selectedStoreId]);
 
   const activeStore = stores.find((s) => s.id === selectedStoreId);
+  const storeBaseUrl = activeStore?.feed_url
+    ? activeStore.feed_url.replace(/\/collections\/.*$/, '')
+    : 'https://tienda-demo.com';
 
   const handleMapSku = async (queueItem: QueueItem) => {
     const bggId = mappingInput[queueItem.id];
@@ -90,7 +104,7 @@ export default function MerchantDashboardPage() {
         setTimeout(() => setFeedback(null), 3000);
       }
     } catch {
-      setFeedback('Error al vincular el producto.');
+      setFeedback('Error al vincular el producto con el ID de BGG.');
     }
   };
 
@@ -126,7 +140,7 @@ export default function MerchantDashboardPage() {
         <div>
           <h1 className="text-3xl font-extrabold text-[#3A3A3A]">Portal de autoservicio para tiendas</h1>
           <p className="text-xs text-gray-500 mt-1">
-            Administra el estado de tu feed de productos, mapeo manual de SKUs y ofertas destacadas.
+            Administra el estado de tu feed de productos, mapeo manual de SKUs a BGG ID y ofertas destacadas.
           </p>
         </div>
 
@@ -153,7 +167,15 @@ export default function MerchantDashboardPage() {
       )}
 
       {/* Feed Diagnostics & Quick Actions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
+          <span className="text-xs font-bold text-gray-400 uppercase">URL de tu tienda (No editable)</span>
+          <div className="text-sm font-mono font-bold text-[#3A3A3A] truncate bg-gray-50 p-2 rounded-lg border border-gray-200" title={storeBaseUrl}>
+            {storeBaseUrl}
+          </div>
+          <p className="text-[11px] text-gray-400">Dominio registrado en la plataforma</p>
+        </div>
+
         <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-2">
           <span className="text-xs font-bold text-gray-400 uppercase">Estado del feed</span>
           <div className="flex items-center gap-2">
@@ -191,12 +213,33 @@ export default function MerchantDashboardPage() {
         </div>
       </div>
 
+      {/* SKU vs BGG ID Clarification Banner */}
+      <div className="p-5 rounded-2xl bg-[#F5F0E9] border border-[#8367C7]/20 text-xs text-[#3A3A3A] space-y-2">
+        <div className="flex items-center gap-2 font-bold text-[#8367C7] text-sm">
+          <span>💡 ¿Cuál es la diferencia entre SKU y BGG ID?</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          <div>
+            <span className="font-bold text-[#3A3A3A]">1. SKU del producto en tu tienda (Código EAN o Interno):</span>
+            <p className="text-gray-600 mt-0.5">
+              Es la clave de inventario interna que usas en tu tienda e-commerce o sistema ERP (ej. <code className="bg-white px-1 py-0.5 rounded font-mono text-[11px]">SKU-CATAN-ES</code> o código EAN/UPC <code className="bg-white px-1 py-0.5 rounded font-mono text-[11px]">8435407621458</code>).
+            </p>
+          </div>
+          <div>
+            <span className="font-bold text-[#8367C7]">2. BGG ID (BoardGameGeek ID):</span>
+            <p className="text-gray-600 mt-0.5">
+              Es la clave única oficial del juego en la base de datos de BoardGameGeek (ej. <code className="bg-white px-1 py-0.5 rounded font-mono text-[11px]">13</code> para <i>Catan</i>, <code className="bg-white px-1 py-0.5 rounded font-mono text-[11px]">23080</code> para <i>Azul</i>). Si tu producto no se vinculó automáticamente, ingresa aquí su <b>BGG ID</b>.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Unmatched Products Mapping Portal (US-09) */}
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-bold text-[#3A3A3A]">Productos no vinculados en tu feed</h2>
           <p className="text-xs text-gray-500">
-            Mapea manualmente estos títulos ingresando su BGG ID para publicar tus ofertas en MeeplePrecios.
+            Vincula el SKU de tu producto al <b>BGG ID (ID de BoardGameGeek)</b> del juego correspondiente para publicar tus ofertas en MeeplePrecios.
           </p>
         </div>
 
@@ -209,17 +252,17 @@ export default function MerchantDashboardPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-gray-200 text-xs uppercase text-gray-500 bg-gray-50">
-                  <th className="py-3.5 px-6 font-semibold">Título en tienda</th>
-                  <th className="py-3.5 px-4 font-semibold">EAN / SKU</th>
-                  <th className="py-3.5 px-4 font-semibold">Confianza</th>
-                  <th className="py-3.5 px-6 font-semibold">BGG ID para vincular</th>
+                  <th className="py-3.5 px-6 font-semibold">Título en tu tienda</th>
+                  <th className="py-3.5 px-4 font-semibold">SKU del producto (EAN / Código interno)</th>
+                  <th className="py-3.5 px-4 font-semibold">Confianza de coincidencia</th>
+                  <th className="py-3.5 px-6 font-semibold">BGG ID (ID de BoardGameGeek)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm">
                 {unmatchedItems.map((item) => (
                   <tr key={item.id} className="hover:bg-[#F5F0E9]/30">
                     <td className="py-4 px-6 font-semibold text-[#3A3A3A]">{item.title}</td>
-                    <td className="py-4 px-4 text-xs font-mono text-gray-500">{item.ean || 'N/A'}</td>
+                    <td className="py-4 px-4 text-xs font-mono text-gray-500">{item.ean || 'Sin SKU asignado'}</td>
                     <td className="py-4 px-4 text-xs">
                       <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">
                         {(item.match_confidence * 100).toFixed(0)}%
@@ -229,19 +272,19 @@ export default function MerchantDashboardPage() {
                       <div className="flex items-center gap-2">
                         <input
                           type="number"
-                          placeholder="Ej. 13"
+                          placeholder="Ej. 13 (BGG ID)"
                           value={mappingInput[item.id] || ''}
                           onChange={(e) =>
                             setMappingInput({ ...mappingInput, [item.id]: e.target.value })
                           }
-                          className="w-28 px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-mono focus:ring-1 focus:ring-[#8367C7] focus:outline-none"
+                          className="w-36 px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-mono focus:ring-1 focus:ring-[#8367C7] focus:outline-none"
                         />
                         <button
                           type="button"
                           onClick={() => handleMapSku(item)}
                           className="px-3 py-1.5 rounded-lg bg-[#8367C7] text-white text-xs font-bold hover:bg-[#8367C7]/90 transition-colors"
                         >
-                          Vincular SKU
+                          Vincular con BGG ID
                         </button>
                       </div>
                     </td>
@@ -253,12 +296,12 @@ export default function MerchantDashboardPage() {
         </div>
       </section>
 
-      {/* Sponsored Placement Toggle (US-08) */}
+      {/* Sponsored Placement & Product Link Management (US-08) */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold text-[#3A3A3A]">Gestión de ofertas destacadas</h2>
+          <h2 className="text-xl font-bold text-[#3A3A3A]">Gestión de ofertas publicadas y enlaces de productos</h2>
           <p className="text-xs text-gray-500">
-            Activa el distintivo "★ Tienda recomendada" para dar máxima visibilidad a tus mejores ofertas.
+            Revisa el juego en catálogo al que está vinculada cada oferta, la URL exacta de tu producto y activa el distintivo "★ Tienda recomendada".
           </p>
         </div>
 
@@ -271,18 +314,59 @@ export default function MerchantDashboardPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-gray-200 text-xs uppercase text-gray-500 bg-gray-50">
-                  <th className="py-3.5 px-6 font-semibold">Oferta</th>
+                  <th className="py-3.5 px-6 font-semibold">Juego en catálogo MeeplePrecios</th>
+                  <th className="py-3.5 px-6 font-semibold">URL del producto en tu tienda (No editable)</th>
                   <th className="py-3.5 px-4 font-semibold text-right">Precio base</th>
                   <th className="py-3.5 px-6 text-center font-semibold">Posición destacada</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm">
-                {offers.map((offer) => (
-                  <tr key={offer.id} className="hover:bg-[#F5F0E9]/30">
-                    <td className="py-4 px-6 font-bold text-[#3A3A3A]">
-                      <a href={offer.store_product_url} target="_blank" rel="noreferrer" className="hover:text-[#8367C7]">
-                        Ver producto en tu tienda ↗
-                      </a>
+                {offers.map((offer, idx) => (
+                  <tr key={`${offer.id}-${idx}`} className="hover:bg-[#F5F0E9]/30">
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-3">
+                        {offer.game_thumbnail && (
+                          <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-gray-200 shrink-0">
+                            <Image
+                              src={offer.game_thumbnail}
+                              alt={offer.game_name || 'Juego'}
+                              fill
+                              unoptimized
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <div>
+                          <Link
+                            href={`/game/${offer.bgg_id}`}
+                            className="font-bold text-[#3A3A3A] hover:text-[#8367C7] transition-colors"
+                          >
+                            {offer.game_name || `Juego BGG ID ${offer.bgg_id}`}
+                          </Link>
+                          <span className="block text-[11px] font-mono text-gray-400">
+                            BGG ID: {offer.bgg_id}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-2 max-w-md">
+                        <input
+                          type="text"
+                          readOnly
+                          value={offer.store_product_url}
+                          className="w-full px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 text-xs font-mono text-gray-600 truncate focus:outline-none"
+                        />
+                        <a
+                          href={offer.store_product_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="p-1.5 rounded-lg bg-[#8367C7]/10 text-[#8367C7] hover:bg-[#8367C7]/20 text-xs font-bold shrink-0 transition-colors"
+                          title="Abrir enlace de producto en tu tienda"
+                        >
+                          ↗
+                        </a>
+                      </div>
                     </td>
                     <td className="py-4 px-4 text-right font-bold text-[#8367C7]">
                       ${offer.price.toFixed(2)} MXN

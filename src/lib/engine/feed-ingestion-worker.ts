@@ -38,7 +38,8 @@ export async function runFullFeedIngestion(options: IngestionOptions = {}): Prom
 
       // Route 1: Multi-Page Shopify /products.json pagination
       try {
-        for (let page = 1; page <= 10; page++) {
+        for (let page = 1; page <= 50; page++) {
+          if (page > 1) await new Promise(r => setTimeout(r, 200));
           const jsonRes = await fetch(`${baseUrl}/products.json?limit=250&page=${page}`, {
             headers: {
               'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -64,7 +65,7 @@ export async function runFullFeedIngestion(options: IngestionOptions = {}): Prom
       // Route 2: Multi-Page Google Atom XML feed pagination (/collections/all.atom?page=N)
       if (feedItems.length === 0) {
         try {
-          for (let page = 1; page <= 10; page++) {
+          for (let page = 1; page <= 50; page++) {
             const xmlUrl = page === 1 ? store.feed_url : (store.feed_url.includes('?') ? `${store.feed_url}&page=${page}` : `${store.feed_url}?page=${page}`);
             const xmlRes = await fetch(xmlUrl, {
               headers: {
@@ -161,6 +162,7 @@ export async function runFullFeedIngestion(options: IngestionOptions = {}): Prom
       } as any);
 
       processedStores++;
+      console.log(`[Ingestion Progress ${processedStores}/${stores.length}] ${store.name}: ${feedItems.length} parsed -> ${matchedCount} offers matched`);
     } catch (e: any) {
       errors.push({
         storeId: store.id,

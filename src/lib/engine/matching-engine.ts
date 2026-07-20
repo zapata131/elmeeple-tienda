@@ -219,11 +219,47 @@ export async function matchProductToCatalog(product: ProductInput): Promise<Matc
 
   // Tier 3: Tokenized Fuzzy Matcher across BGG Games Cache
   const games = db.getBggGames();
+  const cleanTitle = cleanBoardGameTitle(title);
+
+  // Short-circuit: Exact cleaned title match
+  if (cleanTitle) {
+    for (const game of games) {
+      if (cleanBoardGameTitle(game.name) === cleanTitle) {
+        return {
+          matchedBggId: game.bgg_id,
+          matchTier: 3,
+          confidence: 1.00,
+          shouldQueue: false,
+        };
+      }
+      if (game.alternate_names) {
+        for (const alt of game.alternate_names) {
+          if (cleanBoardGameTitle(alt) === cleanTitle) {
+            return {
+              matchedBggId: game.bgg_id,
+              matchTier: 3,
+              confidence: 1.00,
+              shouldQueue: false,
+            };
+          }
+        }
+      }
+    }
+  }
+
   let highestScore = 0;
   let bestGameId: number | null = null;
   let matchedGameType: 'boardgame' | 'expansion' | 'accessory' | 'pseudo_game' | undefined = undefined;
 
+  const firstToken = cleanTitle.split(' ')[0];
+
   for (const game of games) {
+    const cleanGameName = cleanBoardGameTitle(game.name);
+    // Skip candidate if first token doesn't match and title isn't a substring
+    if (firstToken && firstToken.length > 2 && !cleanGameName.includes(firstToken) && !cleanTitle.includes(cleanGameName.slice(0, 4))) {
+      continue;
+    }
+
     // Check primary title score
     const primaryScore = calculateSimilarityScore(title, game.name);
     if (primaryScore > highestScore) {

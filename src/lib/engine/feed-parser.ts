@@ -123,7 +123,7 @@ export async function fetchWithMultiRouteFallback(
     try {
       const allPaginatedItems: FeedProduct[] = [];
 
-      for (let page = 1; page <= 10; page++) {
+      for (let page = 1; page <= 50; page++) {
         const paginatedRoute = page === 1 ? route : (route.includes('?') ? `${route}&page=${page}` : `${route}?page=${page}`);
         const res = await customFetch(paginatedRoute, {
           headers: {

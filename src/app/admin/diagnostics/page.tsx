@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { TactileSwitch } from '@/components/TactileSwitch';
 
 interface StoreDiagnosticsStatus {
@@ -249,7 +250,25 @@ export default function AdminDiagnosticsPage() {
             <tbody className="divide-y divide-gray-100 text-xs text-[#3A3A3A]">
               {diagnostics?.stores_status.map((store) => (
                 <tr key={store.id} className="hover:bg-gray-50/60 transition-colors">
-                  <td className="py-3.5 px-4 font-bold">{store.name}</td>
+                  <td className="py-3.5 px-4">
+                    <div className="flex flex-col">
+                      <Link
+                        href={`/admin/stores?store_id=${store.id}`}
+                        className="font-bold text-[#3A3A3A] hover:text-[#8367C7] transition-colors flex items-center gap-1.5"
+                        title="Ir a administración de esta tienda"
+                      >
+                        {store.name}
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 font-mono text-gray-500 hover:bg-[#8367C7]/10 hover:text-[#8367C7]">⚙️ Admin</span>
+                      </Link>
+                      <Link
+                        href={`/store/${store.id}`}
+                        target="_blank"
+                        className="text-[10px] text-[#8367C7] hover:underline font-medium mt-0.5"
+                      >
+                        Ver portal público ↗
+                      </Link>
+                    </div>
+                  </td>
                   <td className="py-3.5 px-4">
                     <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-gray-100 text-gray-600">
                       {store.feed_type === 'shopify_json' ? 'Shopify JSON' : 'Google Atom XML'}
@@ -282,14 +301,22 @@ export default function AdminDiagnosticsPage() {
                     {store.broken_offers_count}
                   </td>
                   <td className="py-3.5 px-4 text-center">
-                    <button
-                      type="button"
-                      disabled={isProcessing}
-                      onClick={() => handleAction('trigger_resync')}
-                      className="px-3 py-1 rounded-lg bg-[#8367C7]/10 text-[#8367C7] hover:bg-[#8367C7]/20 font-bold text-[11px] disabled:opacity-50 transition-all"
-                    >
-                      Re-sincronizar
-                    </button>
+                    <div className="flex items-center justify-center gap-2">
+                      <Link
+                        href={`/admin/stores?store_id=${store.id}`}
+                        className="px-2.5 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-[#3A3A3A] font-bold text-[11px] transition-all"
+                      >
+                        Administrar tienda ⚙️
+                      </Link>
+                      <button
+                        type="button"
+                        disabled={isProcessing}
+                        onClick={() => handleAction('trigger_resync')}
+                        className="px-2.5 py-1 rounded-lg bg-[#8367C7]/10 text-[#8367C7] hover:bg-[#8367C7]/20 font-bold text-[11px] disabled:opacity-50 transition-all"
+                      >
+                        Re-sincronizar
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

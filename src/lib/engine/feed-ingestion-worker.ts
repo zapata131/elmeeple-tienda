@@ -107,13 +107,13 @@ export async function runFullFeedIngestion(options: IngestionOptions = {}): Prom
 
         let targetBggId: number | null = match.matchedBggId;
 
-        // Auto-create catalog game if no BGG game match exists yet
-        if (!targetBggId || match.confidence < 0.90) {
+        // Auto-create catalog game if no BGG game match exists yet (confidence >= 0.92)
+        if (!targetBggId || match.confidence < 0.92) {
           const cleanName = cleanBoardGameTitle(item.title) || item.title;
-          const existing = db.searchBggGames(cleanName);
+          const exactMatch = db.getBggGames().find(g => cleanBoardGameTitle(g.name) === cleanName);
 
-          if (existing.length > 0) {
-            targetBggId = existing[0].bgg_id;
+          if (exactMatch) {
+            targetBggId = exactMatch.bgg_id;
           } else {
             const pseudoBggId = 900000 + db.getBggGames().length + 1;
             const newGame = db.upsertBggGame({
@@ -134,8 +134,9 @@ export async function runFullFeedIngestion(options: IngestionOptions = {}): Prom
         }
 
         if (targetBggId) {
+          const urlSlug = item.productUrl.split('/').pop()?.split('?')[0].replace(/[^\w-]/g, '').slice(0, 35) || 'item';
           const offer: StoreGameOffer = {
-            id: `offer-live-${store.id}-${targetBggId}`,
+            id: `offer-live-${store.id}-${urlSlug}`,
             store_id: store.id,
             bgg_id: targetBggId,
             store_product_url: item.productUrl,

@@ -150,12 +150,21 @@ export function calculateSimilarityScore(feedTitle: string, catalogTitle: string
   let score = 0.5 * jaroWinkler + 0.3 * tokenOverlap + 0.2 * levSimilarity;
 
   // Exclusion Keyword Penalty
-  const penaltyRegex = /\b(fundas?|primer|puzzles?|sleeves?|expansion)\b/i;
+  const penaltyRegex = /\b(fundas?|primer|puzzles?|sleeves?|expansion|expansión|energías|energias|viaje|duelo|rivales|junior|plus|legacy|big box|dice|cartas|roll|write|3d|aniversario|anniversary)\b/i;
   const feedHasPenaltyKeyword = penaltyRegex.test(feedTitle);
   const catalogHasPenaltyKeyword = penaltyRegex.test(catalogTitle);
 
   if (feedHasPenaltyKeyword && !catalogHasPenaltyKeyword) {
-    score -= 0.35;
+    score -= 0.40;
+  }
+
+  // Token Length Imbalance Penalty: If feed title has extra distinct words not present in catalog title
+  const feedTokens = cleanFeed.split(' ').filter(t => t.length > 2);
+  const catTokens = cleanCat.split(' ').filter(t => t.length > 2);
+  const unmappedFeedTokens = feedTokens.filter(t => !catTokens.includes(t));
+
+  if (unmappedFeedTokens.length >= 1 && catTokens.length <= 2) {
+    score -= 0.25;
   }
 
   return Math.max(0, Math.min(1.0, Number(score.toFixed(3))));

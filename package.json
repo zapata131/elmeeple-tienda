@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "verify": "npm run lint && npm run test && NEXT_BUILD_DIR=.next-build next build && rm -rf .next-build"
+    "verify": "npm run lint && npm run test && next build"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

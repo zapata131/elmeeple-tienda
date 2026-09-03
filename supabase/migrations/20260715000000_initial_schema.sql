@@ -256,3 +256,4 @@ CREATE POLICY admin_full_queue_access ON public.feed_item_queue
   USING (
     (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
   );
+

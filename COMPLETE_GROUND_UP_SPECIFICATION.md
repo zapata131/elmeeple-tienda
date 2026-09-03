@@ -403,6 +403,9 @@ NEXTAUTH_URL=http://localhost:3001
 
 # Scheduled Cron Security Key
 CRON_SECRET=your-secure-cron-secret-token
+
+# BoardGameGeek XMLAPI2 Configuration
+BGG_API_KEY=your-bgg-xml-api-key
 ```
 
 ---

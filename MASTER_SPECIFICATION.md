@@ -151,6 +151,9 @@ NEXTAUTH_URL=http://localhost:3001
 
 # Cron Authorization Secret
 CRON_SECRET=your-secure-cron-secret-token
+
+# BoardGameGeek XMLAPI2 Configuration
+BGG_API_KEY=your-bgg-xml-api-key
 ```
 
 ### 4.2 Core data contracts

@@ -132,16 +132,22 @@ When bootstrapping this project from an empty directory, create the following di
     │   │   ├── cron/
     │   │   │   ├── audit-urls/route.ts         # Periodic dead-link audit worker
     │   │   │   ├── process-bgg-queue/route.ts  # Throttled BGG metadata hydration worker
-    │   │   │   └── sync-feeds/route.ts         # Daily scheduled feed sync worker
+    │   │   │   ├── sync-feeds/route.ts         # Master feed sync dispatcher
+    │   │   │   └── sync-worker/route.ts        # Chunked ingestion batch worker
+    │   │   ├── games/
+    │   │   │   └── [slug]/route.ts             # Canonical game & offers JSON endpoint
     │   │   ├── merchant/
+    │   │   │   ├── featured/route.ts           # Sponsored placement toggle API
     │   │   │   ├── mapping/route.ts            # SKU mapping API
     │   │   │   ├── onboard/route.ts            # Store registration API
     │   │   │   ├── queue/route.ts              # Store-isolated staging queue API
     │   │   │   └── shipping/route.ts           # Flat shipping matrix API
+    │   │   ├── offers/
+    │   │   │   └── verify/route.ts             # Dynamic Stale Price Shield verification API
     │   │   ├── redirect/route.ts               # Outbound affiliate redirect & click logger
     │   │   └── search/route.ts                 # Predictive search endpoint
     │   ├── game/
-    │   │   └── [id]/page.tsx                   # Game detail page & 3-part price comparison table
+    │   │   └── [slug]/page.tsx                 # Game detail page & 3-part price comparison table
     │   ├── login/page.tsx                      # Role switcher (Player / Merchant / Admin)
     │   ├── merchant/
     │   │   ├── dashboard/page.tsx              # Merchant portal & SKU self-mapping UI
@@ -567,7 +573,7 @@ At the conclusion of every feature or bug fix:
 
 ### Epic A: Discovery & Comparison (Player Persona)
 * **[US-01] Homepage Search and Hotness:** *As a Player, I want to search for board games on the homepage or view live BGG Hotness trends, so that I can quickly locate games available in Mexico.*
-* **[US-02] Hero Comparative UI:** *As a Player, I want to see a full-width box art header, typographic stats, and a 3-part price comparison table on `/game/[id]`, so that I can evaluate total delivered costs at a glance.*
+* **[US-02] Hero Comparative UI:** *As a Player, I want to see a full-width box art header, typographic stats, and a 3-part price comparison table on `/game/[slug]`, so that I can evaluate total delivered costs at a glance.*
 * **[US-03] Explicit Language Badges:** *As a Player, I want store offers to display clear language badges (`Español (ES)`, `Inglés (EN)`, `Multilingüe (MULTI)`), so that I don't accidentally buy a game in a language I don't want.*
 * **[US-04] Direct Affiliate Checkout:** *As a Player, I want clicking "Ir a la tienda" to redirect me to the store's exact product page with UTM tracking, so that I can complete my purchase immediately.*
 * **[US-05] Spin-Off Game Variant Cataloging:** *As a Player, I want spin-off variants like Spot It! Catan or Dobble Catan to be cataloged as distinct game entries rather than merged into base game pages, so that I can view accurate price comparisons for both base games and spin-offs independently.*
@@ -628,6 +634,7 @@ CREATE TABLE IF NOT EXISTS public.stores (
   feed_last_processed_count INTEGER DEFAULT 0,
   feed_last_matched_count INTEGER DEFAULT 0,
   feed_last_synced_at TIMESTAMPTZ,
+  promo_code TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -748,16 +755,32 @@ CREATE TABLE IF NOT EXISTS public.bgg_sync_queue (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Table 10: Ingestion Batch Jobs (Serverless Chunking State Machine)
+CREATE TABLE IF NOT EXISTS public.ingestion_jobs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
+  items_processed INTEGER DEFAULT 0,
+  items_matched INTEGER DEFAULT 0,
+  error_log TEXT,
+  started_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Performance Indexes
 CREATE INDEX IF NOT EXISTS idx_catalog_games_slug ON public.catalog_games(slug);
 CREATE INDEX IF NOT EXISTS idx_catalog_games_bgg_id ON public.catalog_games(bgg_id);
 CREATE INDEX IF NOT EXISTS idx_catalog_games_title_trgm ON public.catalog_games USING GIN(title gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_catalog_games_alternate_names ON public.catalog_games USING GIN(alternate_titles);
 CREATE INDEX IF NOT EXISTS idx_game_barcodes_barcode ON public.game_barcodes(barcode);
 CREATE INDEX IF NOT EXISTS idx_merchant_mappings_sku ON public.merchant_product_mappings(store_id, merchant_sku);
 CREATE INDEX IF NOT EXISTS idx_store_offers_lookup ON public.store_offers(game_id, is_active);
 CREATE INDEX IF NOT EXISTS idx_store_offers_store ON public.store_offers(store_id);
 CREATE INDEX IF NOT EXISTS idx_feed_queue_lookup ON public.feed_item_queue(store_id, status);
 CREATE INDEX IF NOT EXISTS idx_clicks_store_date ON public.clicks(store_id, clicked_at DESC);
+CREATE INDEX IF NOT EXISTS idx_clicks_game_id ON public.clicks(game_id);
+CREATE INDEX IF NOT EXISTS idx_ingestion_jobs_status ON public.ingestion_jobs(status, created_at);
 
 -- Enable RLS
 ALTER TABLE public.stores ENABLE ROW LEVEL SECURITY;
@@ -769,6 +792,7 @@ ALTER TABLE public.store_offers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.feed_item_queue ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.clicks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bgg_sync_queue ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ingestion_jobs ENABLE ROW LEVEL SECURITY;
 
 -- Public Read Policies
 CREATE POLICY "Public Read Stores" ON public.stores FOR SELECT USING (true);
@@ -980,7 +1004,8 @@ export async function fetchWithMultiRouteFallback(storeDomain: string, primaryFe
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `/api/search` | `GET` | Public | `?q=catan&limit=20` | `{ games: CatalogGame[], total: number }` | Trigram predictive catalog search |
 | `/api/games/[slug]` | `GET` | Public | None | `{ game: CatalogGame, offers: CalculatedOffer[] }` | Game detail & 3-part price breakdown |
-| `/api/redirect` | `GET` | Public | `?offer_id=uuid&url=https...` | HTTP 302 Found (Destination with UTMs) | Logs click and redirects to merchant |
+| `/api/redirect` | `GET` | Public | `?offer_id=uuid&url=https...` | HTTP 302 Found (Destination with UTMs) | Logs click and redirects to merchant (<100ms non-blocking) |
+| `/api/offers/verify` | `GET` / `POST` | Public / Edge | `?offer_id=UUID` | `{ verified: boolean, price: number, stock: number, updated: boolean }` | Dynamic Stale Price Shield background verification |
 | `/api/merchant/onboard` | `POST` | Merchant | `{ name, website_url, feed_url, flat_rate, free_shipping_threshold }` | `{ success: true, store_id: UUID }` | Self-serve merchant onboarding |
 | `/api/merchant/queue` | `GET` | Merchant | `?store_id=UUID` | `{ items: QueueItem[] }` | Store-isolated pending queue items |
 | `/api/merchant/queue/resolve` | `POST` | Merchant | `{ queue_id, action: 'approve'\|'remap'\|'reject', game_id }` | `{ success: true }` | Maps SKU, persists memory, activates offer |
@@ -988,7 +1013,8 @@ export async function fetchWithMultiRouteFallback(storeDomain: string, primaryFe
 | `/api/admin/stores` | `POST` | Admin | `{ action: 'sync_all' \| 'sync_store', store_id }` | `{ processed: number, matched: number }` | Real-time multi-route feed ingestion trigger |
 | `/api/admin/feed-queue` | `GET` | Admin | `?status=pending&page=1` | `{ items: QueueItem[], total: number }` | Cross-store moderation staging queue |
 | `/api/admin/diagnostics` | `GET` | Admin | None | `{ error_rate: number, dead_links: number, total_offers: number }` | Platform health diagnostics metrics |
-| `/api/cron/sync-feeds` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <SECRET>` | `{ success: true, processed: number }` | Daily scheduled store feed synchronization |
+| `/api/cron/sync-feeds` | `POST` | `CRON_SECRET` | `?batch_size=3` & `Bearer <SECRET>` | `{ success: true, enqueued_jobs: N, processed: number }` | Serverless chunked store feed synchronization |
+| `/api/cron/sync-worker` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <SECRET>` | `{ processed_job_id: UUID, items_matched: number }` | Processes pending chunked ingestion jobs |
 | `/api/cron/process-bgg-queue`| `POST` | `CRON_SECRET` | Header `Authorization: Bearer <SECRET>` | `{ hydrated: number, errors: number }` | Throttled background BGG enrichment worker |
 | `/api/cron/audit-urls` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <SECRET>` | `{ audited: number, quarantined: number }` | Periodic HTTP 404/500 dead link quarantine worker |
 
@@ -1061,6 +1087,43 @@ export function LanguageBadge({ language }: { language: 'es' | 'en' | 'multi' })
 }
 ```
 
+## 11.5 Modern Web Standards Architecture (Modern Web Guidance Integration)
+
+To deliver native performance without bloated third-party JavaScript dependencies, MeeplePrecios implements Baseline modern web standards:
+
+### 11.5.1 Fluid Page Transitions (View Transitions API)
+When navigating from a game card on the homepage (`/`) or search results to `/game/[slug]`, the box art thumbnail seamlessly morphs into the full-bleed hero banner using native `document.startViewTransition()`:
+```css
+.game-thumbnail {
+  view-transition-name: game-hero-art;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+```
+
+### 11.5.2 Sub-Second LCP & Resource Prioritization
+- The game detail page hero box art specifies `fetchpriority="high"`, AVIF/WebP automatic next-gen format negotiation, and `decoding="async"`.
+- Off-screen carousel thumbnails and merchant brand logos specify native `loading="lazy"`.
+
+### 11.5.3 Native HTML Overlays (Popover API & `<dialog>`)
+- Merchant SKU mapping dialogs on `/merchant/dashboard` use native HTML `<dialog>` with `.showModal()`, eliminating external modal packages.
+- Filter dropdowns and promo code tooltips use the native HTML `popover` attribute (`popover="auto"`), getting automatic top-layer rendering, backdrop styling, and `Esc` key dismissal for free.
+
+### 11.5.4 Responsive Component Layouts via CSS Container Queries
+The 3-part price comparison offer card uses `@container (min-width: ...)` queries and `:has()` rather than viewport `@media` breakpoints:
+- In wide containers: expands into a 4-column comparative table row (Merchant, Edition Badge, Base + Shipping Math, Affiliate CTA).
+- In narrow containers (mobile drawer / compact sidebar): smoothly folds into a stacked mobile card.
+
+### 11.5.5 Modern Accessible Form Validation
+- Form fields on `/merchant/onboard` and `/merchant/shipping` use `:user-valid` and `:user-invalid` pseudo-classes to avoid premature validation errors before user input.
+- Numeric pricing inputs specify `inputmode="numeric"`.
+- Domestic shipping toggles implement `role="switch"` and `aria-checked`.
+
 ---
 
 # 12. Architectural Post-Mortem & Critical Engineering Lessons
@@ -1075,8 +1138,11 @@ Every design decision in this blueprint resolves a real failure mode from previo
 | **Supabase Connection Timeouts** | Looping through 50 feeds and executing 1 SQL query per item caused connection exhaustion. | Buffered batch upserts: memory chunks of 200–500 records executed via `INSERT ... ON CONFLICT DO UPDATE`. |
 | **Shopify Cloudflare 403 Blocks** | Crawlers fetching `/collections/all.atom` hit bot protection and Cloudflare challenges. | 3-Tier Multi-Route Fallback: prioritize public `/products.json?limit=250` before Atom XML. |
 | **BGG HTTP 429 IP Bans** | Ingestion workers made inline BGG XMLAPI2 API calls during feed syncs. | Asynchronous `bgg_sync_queue` drained by a dedicated cron worker with $\ge 1,200\text{ ms}$ delay. |
-| **Dead Links & Ghost Stock** | Store merchants deleted products or changed URL handles, breaking affiliate clicks. | Automated URL audit worker (`/api/cron/audit-urls`) soft-quarantines dead offers (`is_active = false`). |
 | **TypeScript Build Pollution** | Build scripts creating temporary build folders inserted `.next-build` paths into `tsconfig.json`. | Clean `next build` command preserving `tsconfig.json` immutability. |
+| **Serverless Ingestion Timeouts** | Monolithic 51-store sequential loop hits serverless limits (10-60s). | Serverless Chunking State Machine with `ingestion_jobs` and micro-batch triggers (`?batch_size=3`). |
+| **Flash Sale Stale Prices** | Periodic 12-24h sync leads to stale pricing and stockouts during Mexican sales (*Buen Fin*). | Dynamic Stale Price Shield: non-blocking client-side background freshness check (`/api/offers/verify`). |
+| **Localized Spanish Title Divergence** | Translated titles (*Ticket to Ride* vs *Aventureros al Tren*) yield 0 token overlap. | GIN Trigram index on `catalog_games(alternate_titles)` for sub-second multilingual matching. |
+| **Affiliate Integration Resistance in Mexico** | Independent Mexican board game stores lack formal affiliate tracking platforms. | Zero-Friction Merchant Model: clean UTM tags + direct coupon codes (`promo_code`) + sponsored toggles (`is_featured`). |
 
 ---
 

@@ -44,10 +44,10 @@ You must keep our technical documentation updated in real-time by invoking the `
     ```
 2.  **Formulate a Conventional Commit Message**:
     *   Use conventional commit syntax (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`).
-    *   Include the issue number in the commit summary or footer.
+    *   Include the canonical user story tag (e.g. `us-02`) in the commit scope.
     *   Example commit message:
         ```bash
-        git commit -m "feat: implement store packaging reviews and vibe badges (closes #22)"
+        git commit -m "feat(us-02): implement 3-part delivered cost table on game detail page"
         ```
 3.  **Push to Remote**: Push the branch to the origin repository:
     ```bash

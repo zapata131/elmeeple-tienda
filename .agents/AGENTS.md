@@ -5,7 +5,7 @@
 > [!CAUTION]
 > **STRICT LEGACY DIRECTORY, DEPRECATED GITHUB ISSUE ISOLATION & ROOT CAUSE DIAGNOSIS MANDATE:**
 > 1. AI agents MUST NOT inspect, read, search (`grep`, `view_file`, `list_dir`), copy, import, or peek into the `legacy/` directory under ANY circumstances. The `legacy/` folder is strictly quarantined and off-limits.
-> 2. All previous GitHub issue numbers (e.g. Issues #1 through #209) are DEPRECATED and MUST NOT be referenced, reused, or cited. Features MUST be referenced exclusively by the canonical User Story index (`US-01` through `US-25`) defined in `MASTER_SPECIFICATION.md`.
+> 2. All previous GitHub issue numbers (e.g. Issues #1 through #209) are DEPRECATED and MUST NOT be referenced, reused, or cited. Features MUST be referenced exclusively by the canonical User Story index (`US-01` through `US-26`) defined in `MASTER_SPECIFICATION.md`.
 > 3. **MANDATORY ROOT CAUSE DIAGNOSIS & EXPLANATION DIRECTIVE:** Whenever the user reports a bug, failure, or unexpected behavior, agents MUST NOT perform superficial patches. Agents MUST identify and resolve the underlying root cause, and explicitly explain in the response: (a) Why the issue was happening, and (b) How the code fix systematically resolves it.
 
 ---
@@ -26,7 +26,7 @@ When performing specialized tasks, agents MUST check and follow the instructions
 
 ### 1. `backlog_auditor` (`.agents/skills/backlog_auditor/SKILL.md`)
 - **When to trigger:** Automatically when reviewing user requirements, planning sprint backlogs, or creating user stories.
-- **Directives:** Enforce the Atomic User Story Mandate (Single Persona, Single Feature, Testable Acceptance Criteria) and the Three-Point Compliance Filter against `MASTER_SPECIFICATION.md` (US-01 through US-14).
+- **Directives:** Enforce the Atomic User Story Mandate (Single Persona, Single Feature, Testable Acceptance Criteria) and the Three-Point Compliance Filter against `MASTER_SPECIFICATION.md` (US-01 through US-26).
 
 ### 2. `github_issue_solve` (`.agents/skills/github_issue_solve/SKILL.md`)
 - **When to trigger:** When starting work on a new feature.
@@ -60,7 +60,7 @@ When delegating tasks or operating in subagent mode, adhere strictly to the foll
 ## 4. Critical Engineering Directives
 
 1. **Test-Driven Development (TDD):** Write unit tests in `src/__tests__/` BEFORE writing production implementation code. Never write production code without a failing test first.
-2. **Database Write Sequence Integrity:** Always flush new parent game entries to `bgg_games_cache` *before* inserting dependent child rows into `store_games` to avoid foreign key violations.
+2. **Database Write Sequence Integrity:** Always flush new parent game entries to `catalog_games` *before* inserting dependent child rows into `store_offers` to avoid foreign key violations.
 3. **Buffered Batch Upserts:** Execute database write operations in memory buffers of up to 500 records rather than individual SQL queries in large loops.
 4. **Offline & Rate-Limit Fallbacks:** Ensure queries and parsers fall back gracefully to local disk cache or mock catalog when third-party API fetches fail or return status 429 rate limits.
 

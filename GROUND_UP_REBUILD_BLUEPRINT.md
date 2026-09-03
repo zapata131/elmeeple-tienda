@@ -84,6 +84,19 @@ As an Engineering Lead, a successful rebuild requires ruthlessly dissecting past
 * **What went wrong previously:** Running custom build scripts that set temporary directories caused Next.js to append `.next-build/types/**/*.ts` to `tsconfig.json`. When deleted, IDEs threw dozens of orphaned type errors.
 * **The Best Version Resolution:** Clean, standard Next.js build lifecycle (`next build`), keeping `tsconfig.json` immutable.
 
+### 2.8 Critique 8: Multi-Repo & Microservice Fragmentation vs. Lean Monolith
+* **What went wrong previously:** Splitting frontends and backends across separate services creates serialization overhead, duplicate TypeScript contracts, and complex deployment coordination.
+* **The Best Version Resolution:** **The Lean Full-Stack TypeScript Monolith.** Next.js 15+ App Router with React Server Components (direct DB reads), Server Actions (form mutations), Route Handlers (cron workers/redirects), and Supabase PostgreSQL. Single language, single repository, zero API serialization boilerplate.
+
+### 2.9 Critique 9: Heavy JavaScript Bundle Bloat vs. Modern Baseline Web Standards
+* **What went wrong previously:** Pulling in heavy npm packages (Framer Motion for page morphs, external modal libraries, custom viewport JS listeners) inflated client bundles by over 300KB and degraded Core Web Vitals.
+* **The Best Version Resolution:** **Adhere Strictly to Modern Web Guidance & Baseline Standards.**
+  - Native **View Transitions API** (`view-transition-name: game-hero-art`) for cross-page box art morphing.
+  - Native HTML **`<dialog>` and `popover` API** for zero-dependency modals and filter dropdowns.
+  - CSS **Container Queries (`@container`) and `:has()`** for self-adaptive 3-part price comparison cards.
+  - Native **`fetchpriority="high"`**, AVIF/WebP, and Next.js Image for sub-second Largest Contentful Paint (LCP).
+  - Modern form pseudo-classes (`:user-valid`, `:user-invalid`) and accessible switches (`role="switch"`).
+
 ---
 
 ## 3. Production Database Architecture & Data Contracts 🗄️
@@ -175,6 +188,7 @@ CREATE TABLE IF NOT EXISTS public.stores (
   feed_last_processed_count INTEGER DEFAULT 0,
   feed_last_matched_count INTEGER DEFAULT 0,
   feed_last_synced_at TIMESTAMPTZ,
+  promo_code TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -295,16 +309,32 @@ CREATE TABLE IF NOT EXISTS public.bgg_sync_queue (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 10. Ingestion Batch Jobs (Serverless Chunking State Machine)
+CREATE TABLE IF NOT EXISTS public.ingestion_jobs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
+  items_processed INTEGER DEFAULT 0,
+  items_matched INTEGER DEFAULT 0,
+  error_log TEXT,
+  started_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Performance Indexes
 CREATE INDEX IF NOT EXISTS idx_catalog_games_slug ON public.catalog_games(slug);
 CREATE INDEX IF NOT EXISTS idx_catalog_games_bgg_id ON public.catalog_games(bgg_id);
 CREATE INDEX IF NOT EXISTS idx_catalog_games_title_trgm ON public.catalog_games USING GIN(title gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_catalog_games_alternate_names ON public.catalog_games USING GIN(alternate_titles);
 CREATE INDEX IF NOT EXISTS idx_game_barcodes_barcode ON public.game_barcodes(barcode);
 CREATE INDEX IF NOT EXISTS idx_merchant_mappings_sku ON public.merchant_product_mappings(store_id, merchant_sku);
 CREATE INDEX IF NOT EXISTS idx_store_offers_lookup ON public.store_offers(game_id, is_active);
 CREATE INDEX IF NOT EXISTS idx_store_offers_store ON public.store_offers(store_id);
 CREATE INDEX IF NOT EXISTS idx_feed_queue_lookup ON public.feed_item_queue(store_id, status);
 CREATE INDEX IF NOT EXISTS idx_clicks_store_date ON public.clicks(store_id, clicked_at DESC);
+CREATE INDEX IF NOT EXISTS idx_clicks_game_id ON public.clicks(game_id);
+CREATE INDEX IF NOT EXISTS idx_ingestion_jobs_status ON public.ingestion_jobs(status, created_at);
 ```
 
 ### 3.2 Row Level Security (RLS) Policies
@@ -320,6 +350,7 @@ ALTER TABLE public.store_offers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.feed_item_queue ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.clicks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.bgg_sync_queue ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ingestion_jobs ENABLE ROW LEVEL SECURITY;
 
 -- Public Read Policies
 CREATE POLICY "Public Read Stores" ON public.stores FOR SELECT USING (true);
@@ -327,6 +358,8 @@ CREATE POLICY "Public Read Shipping" ON public.shipping_rates FOR SELECT USING (
 CREATE POLICY "Public Read Catalog" ON public.catalog_games FOR SELECT USING (true);
 CREATE POLICY "Public Read Barcodes" ON public.game_barcodes FOR SELECT USING (true);
 CREATE POLICY "Public Read Offers" ON public.store_offers FOR SELECT USING (is_active = true);
+CREATE POLICY "Public Read Mappings" ON public.merchant_product_mappings FOR SELECT USING (true);
+CREATE POLICY "Public Read Sync Queue" ON public.bgg_sync_queue FOR SELECT USING (true);
 
 -- Public Insert for Clicks
 CREATE POLICY "Public Click Insertion" ON public.clicks FOR INSERT WITH CHECK (true);
@@ -346,6 +379,28 @@ CREATE POLICY "Admin Full Queue Access" ON public.feed_item_queue
     (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
   );
 ```
+
+### 3.3 3-Party Consensus Architectural Invariants ⚖️
+
+Through a rigorous 3-party adversarial examination (Systems Architect vs. Mexican Tabletop Merchant vs. Tabletop Gamer & UX Purist), the following 5 systemic invariants are codified into the architecture:
+
+1. **Unified Autonomous Catalog Law (`catalog_games` UUID + SEO Slug):**
+   - Primary key is ALWAYS `id UUID DEFAULT gen_random_uuid()`.
+   - `bgg_id` is an optional lookup attribute, preventing foreign key failures on independent Mexican tabletop games.
+   - User-facing routes use clean, canonical SEO slugs (`/game/[slug]`, e.g. `/game/catan`).
+2. **Serverless Cursor-Based Chunked Ingestion State Machine:**
+   - Ingestion jobs are enqueued into `public.ingestion_jobs`.
+   - The master cron invokes `/api/cron/sync-feeds?batch_size=3`, which processes 3 stores per invocation ordered by `feed_last_synced_at ASC NULLS FIRST` to eliminate serverless execution timeouts.
+3. **Dynamic Stale Price Shield (Non-Blocking Freshness Check):**
+   - Outbound clicks (`/api/redirect`) remain sub-100ms with zero synchronous blocking pings.
+   - On `/game/[slug]`, if an offer is older than 6 hours, an asynchronous client-side background call triggers `/api/offers/verify?offer_id=...` to re-verify price and stock without blocking UX.
+4. **Localized Spanish Title & Alternate Name Trigram Resolution:**
+   - GIN Trigram index (`idx_catalog_games_alternate_names`) on `catalog_games(alternate_titles)` enables sub-second fuzzy matching for translated titles (e.g. *Ticket to Ride* vs *Aventureros al Tren*).
+   - Game identity (`game_id`) and edition language (`edition_language: 'es' | 'en' | 'multi'`) remain decoupled.
+5. **Zero-Friction Mexican Merchant Monetization & Tracking:**
+   - Universal clean UTM tagging (`utm_source=meepleprecios&utm_medium=affiliate`) with click logging in `public.clicks`.
+   - Direct store promo codes (`public.stores.promo_code`, e.g., `MEEPLE5` or `MEEPLE10`) rendered directly in comparison rows for immediate player savings.
+   - Flat-fee sponsored store toggles (`is_featured = true`) granting top-tier `★ Tienda recomendada` placement.
 
 ---
 

@@ -46,6 +46,21 @@
 
 ---
 
+## 🏗️ Modern Tech Stack & Web Standards
+
+- **Framework:** Next.js 15+ (App Router, React 19, TypeScript) with React Server Components and Server Actions.
+- **Database & Auth:** Supabase (PostgreSQL 15+) with `pg_trgm` fuzzy search, `pgcrypto`, and Row-Level Security (RLS).
+- **Styling:** Tailwind CSS v4 configured with official brand tokens.
+- **Testing & QA:** Vitest (unit tests), Playwright (E2E browser tests), Chrome DevTools MCP (visual QA).
+- **Modern Web Standards:**
+  - **View Transitions API:** Morphing box art thumbnails across navigations with zero external animation bloat.
+  - **Sub-Second LCP:** `fetchpriority="high"`, AVIF/WebP next-gen formats, native `loading="lazy"`.
+  - **Native Overlays:** Zero-dependency HTML `<dialog>` and `popover` API for modals and filter dropdowns.
+  - **Adaptive Components:** CSS `@container` queries and `:has()` for responsive 3-part price comparison cards.
+  - **Accessible Forms:** Modern `:user-valid` validation states, `inputmode="numeric"`, and accessible switches.
+
+---
+
 ## 🚀 Quick Start & Installation
 
 ```bash
@@ -75,9 +90,11 @@ The complete PostgreSQL DDL migrations are located at:
 Tables include:
 - `public.stores`
 - `public.shipping_rates`
-- `public.bgg_games_cache`
+- `public.catalog_games`
 - `public.game_barcodes`
 - `public.merchant_product_mappings`
-- `public.store_games`
+- `public.store_offers`
 - `public.clicks`
-- `public.bgg_metadata_queue`
+- `public.feed_item_queue`
+- `public.bgg_sync_queue`
+- `public.ingestion_jobs`

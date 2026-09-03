@@ -2,28 +2,21 @@
 
 ## 📍 Current Status Summary
 - **Active Branch:** `main`
-- **Specification Audit, Tech Stack & Modern Web Standards Codification:** COMPLETED.
-  - **Lean Full-Stack TypeScript Tech Stack Codified:** Unified on Next.js 15+ (App Router, React 19, TypeScript), Supabase (PostgreSQL 15+, `pg_trgm`, RLS), Tailwind CSS v4, Vitest, Playwright, and Chrome DevTools MCP. Eliminates multi-service fragmentation, Docker overhead, and API serialization layers.
-  - **Modern Web Guidance Standards Codified:**
-    1. *Native View Transitions API:* `document.startViewTransition()` with `view-transition-name: game-hero-art` for cross-page box art morphing without external animation dependencies.
-    2. *Sub-Second LCP & Resource Prioritization:* Next.js Image with `fetchpriority="high"`, AVIF/WebP negotiation, and native `loading="lazy"`.
-    3. *Native HTML Overlays:* HTML `<dialog>` with `.showModal()` and native `popover` API for zero-dependency modals and filter dropdowns.
-    4. *Self-Adaptive Container Queries:* CSS `@container` queries and `:has()` for responsive 3-part price comparison cards.
-    5. *Modern Form Standards:* `:user-valid` pseudo-classes, `inputmode="numeric"`, and accessible switches (`role="switch"`).
-  - **Schema Divergence Reconciled:** All documentation uniformly defines the canonical 10-table architecture centered on `public.catalog_games` (UUID PK, `slug` UK, optional indexed `bgg_id`) and `public.store_offers`.
-  - **3-Party Adversarial Consensus Codified:** Integrated autonomous catalog law, cursor chunking ingestion, non-blocking stale price shield, localized trigram aliases, and zero-friction merchant promo codes.
-- **Master Documentation:** 100% SYNCHRONIZED & MONOLITHIC.
-  - [`MASTER_SPECIFICATION.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/MASTER_SPECIFICATION.md)
-  - [`DESIGN.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md)
-  - [`GROUND_UP_REBUILD_BLUEPRINT.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/GROUND_UP_REBUILD_BLUEPRINT.md)
-  - [`COMPLETE_GROUND_UP_SPECIFICATION.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/COMPLETE_GROUND_UP_SPECIFICATION.md)
-  - [`README.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/README.md)
-- **Active Sprint Task:** Clean Slate Verified, Remote Database Reset Verified & Live Connected.
-  - **Remote Database Reset:** Verified against `https://mhjaadsdzbnwwaotcvnr.supabase.co`. All 10 canonical tables (`catalog_games`, `stores`, `shipping_rates`, `store_offers`, etc.) exist, legacy tables (`bgg_games_cache`, `store_games`) are confirmed dropped, and RLS public read policies return HTTP 200 OK.
-  - **Environment Configuration:** [`.env.local`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.env.local) configured with the live project URL and publishable key (gitignored). [`.env.example`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.env.example) tracked.
-  - **Supabase CLI Initialized:** [`supabase/config.toml`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/supabase/config.toml) generated and committed.
-- **Testing & Verification Gate:** Live REST API tested and validated; working tree is 100% clean on `main`.
-- **Clear Next Steps:**
-  1. Initialize Next.js 15+ App Router dependencies in `package.json` (`next`, `react`, `react-dom`, `@supabase/supabase-js`, `tailwindcss`, `vitest`, `@playwright/test`).
-  2. Setup `tsconfig.json`, `next.config.mjs`, `postcss.config.mjs`, and Tailwind CSS v4 tokens.
-  3. Author initial TDD unit tests for title sanitization and 4-tier waterfall matching engine math.
+- **Project Milestone:** **Project 0: Core Tabletop Comparison MVP (COMPLETED & VERIFIED).**
+  - **Sprints 1–6 Delivered:**
+    1. *Sprint 1 (Project Setup & Toolchain):* Next.js 15+ (App Router, React 19, TypeScript), Supabase PostgreSQL client (`src/lib/supabase/client.ts`, `server.ts`), Tailwind CSS, and Vitest configured.
+    2. *Sprint 2 (Feed Ingestion Engine & Classifiers):* Shopify JSON and Atom XML parsers with 3-route fallback ladder (`src/lib/engine/feed-parser.ts`), non-game accessory filters (`isBoardGameFeedItem`), and entity classifiers (`classifyFeedItemType`).
+    3. *Sprint 3 (4-Tier Waterfall Matching Engine):* Title cleaner, Jaro-Winkler + Token Overlap + Levenshtein composite similarity scoring, subtitle penalties, barcode and SKU memory lookups (`src/lib/engine/matching-engine.ts`).
+    4. *Sprint 4 (Core Data Repository & Verified Seed Catalog):* `src/lib/db/db.ts` with offline fallback resilience and 18 live verified Mexican board game offers across 5 stores (*Bundaba, Roll Games, Ficha y Dado, Alfa y Delta, Quantum Boardgames*).
+    5. *Sprint 5 (Homepage Discovery & Predictive Search):* Debounced predictive search bar (`SearchBar.tsx`), tabbed UI between **Más buscados en México** and **Top 10 BoardGameGeek** (`US-25`), View Transitions, and Google sentence case governance (`src/app/page.tsx`).
+    6. *Sprint 6 (Game Detail View & 3-Part Delivered Cost Table):* `/game/[slug]` with box art header, typographic metadata chips, spin-off variant banners (`US-05`), accessible tactile switch (`role="switch"`), 3-part price comparison table (`PriceTable.tsx`), and outbound affiliate redirect engine (`/api/redirect`).
+- **Product & URL Integrity Gate:** 100% VERIFIED & GREEN.
+  - Every single store offer URL was tested with live HTTP GET requests in `src/__tests__/url-integrity.test.ts`. All 18 URLs returned HTTP 200 OK and matching product HTML titles.
+- **Chrome DevTools MCP Browser QA:** 100% VERIFIED & CLEAN.
+  - Interactive browser testing executed on `http://localhost:3001` via CDP remote debugging.
+  - Zero React hydration warnings, zero console errors, full-page screenshots captured (`homepage_qa.png`, `game_detail_qa.png`).
+- **Master Verification Gate:** `npm run verify` passed with code 0 (ESLint clean, 29/29 Vitest tests passing, production build succeeded).
+- **Clear Next Steps (Project 1: Merchant Self-Serve & Mapping Ecosystem):**
+  1. Implement `/merchant/onboard` self-serve registration form (`US-06`).
+  2. Implement `/merchant/shipping` flat domestic shipping & free shipping threshold configuration matrix (`US-07`).
+  3. Implement `/merchant/dashboard` self-service SKU mapping portal (`US-09`) and sponsored store toggle (`US-08`).

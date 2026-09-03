@@ -1,6 +1,8 @@
 # Master specification and ground-up implementation blueprint: MeeplePrecios 🇲🇽
 
 > [!IMPORTANT]
+> **Monolithic All-in-One Ground-Up Blueprint:** For the complete, 100% self-contained engineering blueprint containing all schemas, configurations, agent skills, matching math, 51-store registry, and 12-sprint execution guide, see [COMPLETE_GROUND_UP_SPECIFICATION.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/COMPLETE_GROUND_UP_SPECIFICATION.md) and [GROUND_UP_REBUILD_BLUEPRINT.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/GROUND_UP_REBUILD_BLUEPRINT.md).
+>
 > **Specification Purpose:** This document is the definitive, pure functional blueprint for constructing **MeeplePrecios**, Mexico's board game price comparison engine, from the ground up. It defines the commercial requirements, database schemas, Row-Level Security (RLS) policies, REST API contracts, 4-tier waterfall matching algorithms, UI design system tokens, and acceptance criteria. It focuses strictly on *what* the system must achieve, giving any future developer or AI agent complete freedom to choose their preferred file organization, framework structure, and component architecture.
 
 ---

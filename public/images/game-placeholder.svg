@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
-  <rect width="400" height="400" fill="#F5F0E9" rx="24"/>
-  <rect x="120" y="100" width="160" height="200" fill="#8367C7" rx="16" opacity="0.15"/>
-  <path d="M200 130 L260 170 L260 250 L200 290 L140 250 L140 170 Z" stroke="#8367C7" stroke-width="8" fill="none" stroke-linejoin="round"/>
-  <circle cx="200" cy="200" r="24" fill="#73D8D4"/>
-  <text x="200" y="330" font-family="sans-serif" font-size="16" font-weight="bold" fill="#3A3A3A" text-anchor="middle">MeeplePrecios 🇲🇽</text>
-  <text x="200" y="352" font-family="sans-serif" font-size="12" fill="#888888" text-anchor="middle">Portada no disponible</text>
-</svg>

@@ -25,6 +25,15 @@ In Mexican tabletop e-commerce, **ranking by list price alone is deceptive**. Do
 $$\text{Total Delivered Cost} = \text{Base Item Price} + \begin{cases} 0 & \text{if } \text{Base Price} \ge \text{Free Shipping Threshold} \\ \text{Flat Domestic Shipping Fee} & \text{otherwise} \end{cases}$$
 All comparison tables, sorting algorithms, and deal badges MUST rank offers strictly by this formula.
 
+### 1.4 Modular Architecture: Core MVP vs. Discrete Extension Projects
+MeeplePrecios is divided into a standalone **Core MVP (Project 0)** and **5 discrete extension projects**:
+1. **Project 0: Core Tabletop Comparison MVP (The Foundation):** Canonical catalog, initial feed ingestion, core 4-tier matching engine, homepage predictive search, Top 10 BGG / Trending MX tabs, game detail page with 3-part price breakdown, and outbound affiliate redirect (`US-01` to `US-05`, `US-10` to `US-13`, `US-15` to `US-17`, `US-25`).
+2. **Project 1: Merchant Self-Serve & Mapping Ecosystem (Extension Alpha):** Store onboarding, flat shipping configuration, self-service SKU mapping portal, and sponsored placement flags (`US-06` to `US-09`, `US-18`).
+3. **Project 2: Multi-Tenant Staging & Moderation Queue (Extension Beta):** Staging queue RLS, cross-store admin queue UI, top 5 candidate suggestions, and one-click approvals (`US-14`, `US-19`).
+4. **Project 3: Scaled 51-Store Ingestion & Fallbacks (Extension Gamma):** 3-tier multi-route fallback engine (`/products.json` $\to$ category XML $\to$ global XML), 51-store tabletop directory, store logo sync, and live ingestion triggers (`US-23`, `US-24`, `US-26`).
+5. **Project 4: Catalog Resilience, URL Audit & Diagnostics (Extension Delta):** Background URL 404 audit worker, throttled BGG metadata hydration worker ($\ge 1,200\text{ ms}$ delay), and admin catalog health dashboard (`US-20`, `US-21`, `US-22`).
+6. **Project 5: Tabletop Intelligence & Mobile Experience (Extension Epsilon):** Price drop alerts, historical price charts, mobile camera barcode scanner PWA, and merchant conversion analytics.
+
 ---
 
 ## 2. Engineering Post-Mortem: Questioning Past Decisions & Critical Lessons 🔍

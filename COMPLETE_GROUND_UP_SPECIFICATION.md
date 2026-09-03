@@ -49,6 +49,40 @@ $$\text{Base Price} + \text{Shipping} = \text{Total Cost (\$ MXN)}$$
 
 ---
 
+## 1.5 Modular Architecture: Core MVP vs. Discrete Extension Projects
+
+To guarantee focused velocity and clean software architecture, MeeplePrecios is decomposed into an autonomous **Core MVP (Project 0)** and **five discrete, decoupled extension projects** that plug directly on top of the MVP:
+
+```mermaid
+flowchart TD
+    MVP["Project 0: Core Tabletop Comparison MVP<br/>(Discovery, Comparative Table, Ingestion, 3-Part Pricing)"]
+    
+    Ext1["Project 1: Merchant Self-Serve Portal<br/>(Onboarding, Shipping Matrix, SKU Self-Mapping)"]
+    Ext2["Project 2: Multi-Tenant Staging Queue<br/>(AI Candidate Suggestions, Admin Moderation, RLS)"]
+    Ext3["Project 3: Scaled 51-Store Ingestion<br/>(Multi-Route Fallback Ladder, Logos, Auto-Ingestion)"]
+    Ext4["Project 4: Catalog Resilience & Diagnostics<br/>(URL 404 Audit Cron, BGG Hydration Worker, Health Dashboard)"]
+    Ext5["Project 5: Tabletop Intelligence & Mobile<br/>(Price Drop Alerts, History Charts, Barcode Scanner PWA)"]
+
+    MVP --> Ext1
+    MVP --> Ext2
+    MVP --> Ext3
+    MVP --> Ext4
+    MVP --> Ext5
+```
+
+### Breakdown of Projects & User Stories:
+
+| Project Package | Target Persona | Scope & Canonical User Stories | Autonomous Deliverables |
+| :--- | :--- | :--- | :--- |
+| **Project 0: Core Tabletop Comparison MVP (The Foundation)** | Player & Casual Merchant | `US-01`, `US-02`, `US-03`, `US-04`, `US-05`, `US-10`, `US-11`, `US-12`, `US-13` ($\ge 0.92$), `US-15`, `US-16`, `US-17`, `US-25` | 1. Database schema (`catalog_games`, `stores`, `shipping_rates`, `store_offers`, `game_barcodes`).<br/>2. Feed parsers for initial stores.<br/>3. Core 4-tier matching engine & non-game filter.<br/>4. Homepage search + Top 10 BGG / Trending MX tabs.<br/>5. Game detail view with 3-part delivered price comparison table.<br/>6. Direct affiliate redirect (`/api/redirect`) with UTM tracking. |
+| **Project 1: Merchant Self-Serve & Mapping Ecosystem (Extension Alpha)** | Store Owner (Merchant) | `US-06`, `US-07`, `US-08`, `US-09`, `US-18` | 1. `/merchant/onboard` registration view.<br/>2. `/merchant/shipping` flat rate & threshold matrix.<br/>3. `/merchant/dashboard` self-serve SKU mapping portal.<br/>4. Sponsored store featuring toggles (`★ Tienda recomendada`).<br/>5. Store-isolated candidate suggestions. |
+| **Project 2: Multi-Tenant Staging & Moderation Queue (Extension Beta)** | Admin & Store Owner | `US-14`, `US-19` | 1. `feed_item_queue` table with multi-tenant Supabase RLS.<br/>2. `/admin/queue` moderation interface.<br/>3. Top 5 candidate suggestion generator for items scoring $0.70 \dots 0.91$.<br/>4. One-click approval with SKU memory persistence. |
+| **Project 3: Scaled 51-Store Ingestion & Fallbacks (Extension Gamma)** | Developer & Admin | `US-23`, `US-24`, `US-26` | 1. 3-tier multi-route fallback engine (`/products.json` $\to$ category XML $\to$ global XML).<br/>2. Full 51-store tabletop directory ingestion.<br/>3. `/admin/stores` store management view with live sync triggers and brand logos. |
+| **Project 4: Catalog Resilience, URL Audit & Diagnostics (Extension Delta)** | Admin & Developer | `US-20`, `US-21`, `US-22` | 1. `/api/cron/audit-urls` dead link quarantine worker.<br/>2. `/api/cron/process-bgg-queue` throttled BGG hydration worker ($\ge 1,200\text{ ms}$ delay).<br/>3. `/admin/diagnostics` catalog health dashboard. |
+| **Project 5: Tabletop Intelligence & Mobile Experience (Extension Epsilon)** | Player & Merchant | *Future Commercial Enhancements* | 1. Historical price tracking charts on `/game/[slug]`.<br/>2. Email price drop notifications.<br/>3. Mobile camera barcode scanner PWA for in-store physical shopping.<br/>4. Merchant conversion rate & click-through analytics. |
+
+---
+
 # 2. Master File Tree & Project Structure
 
 When bootstrapping this project from an empty directory, create the following directory structure:
@@ -1142,3 +1176,4 @@ This executes:
 6. [ ] "Solo tiendas nacionales" tactile switch toggles offers cleanly with accessible `role="switch"`.
 7. [ ] Outbound click to merchant redirects with UTM parameters and logs to `public.clicks`.
 8. [ ] Merchant and Admin portals render with 100% sentence case headings and buttons.
+

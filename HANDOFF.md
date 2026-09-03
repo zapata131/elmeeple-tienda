@@ -18,12 +18,12 @@
   - [`GROUND_UP_REBUILD_BLUEPRINT.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/GROUND_UP_REBUILD_BLUEPRINT.md)
   - [`COMPLETE_GROUND_UP_SPECIFICATION.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/COMPLETE_GROUND_UP_SPECIFICATION.md)
   - [`README.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/README.md)
-- **Active Sprint Task:** Clean Slate Verified & Remote Database Reset Completed.
-  - **Remote Database Reset:** Executed [`supabase/migrations/20260715000000_initial_schema.sql`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/supabase/migrations/20260715000000_initial_schema.sql) remotely, establishing the 10 canonical tables, trigram indexes, and RLS policies on a completely clean database instance.
-  - **Local Clean Slate:** Working tree is 100% clean with specifications, agent guidelines, migration DDL, and tracked [`.env.example`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.env.example).
-- **Testing & Verification Gate:** Documentation verified and cross-referenced; database schemas and contracts aligned 100% with `MASTER_SPECIFICATION.md`.
+- **Active Sprint Task:** Clean Slate Verified, Remote Database Reset Verified & Live Connected.
+  - **Remote Database Reset:** Verified against `https://mhjaadsdzbnwwaotcvnr.supabase.co`. All 10 canonical tables (`catalog_games`, `stores`, `shipping_rates`, `store_offers`, etc.) exist, legacy tables (`bgg_games_cache`, `store_games`) are confirmed dropped, and RLS public read policies return HTTP 200 OK.
+  - **Environment Configuration:** [`.env.local`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.env.local) configured with the live project URL and publishable key (gitignored). [`.env.example`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/.env.example) tracked.
+  - **Supabase CLI Initialized:** [`supabase/config.toml`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/supabase/config.toml) generated and committed.
+- **Testing & Verification Gate:** Live REST API tested and validated; working tree is 100% clean on `main`.
 - **Clear Next Steps:**
-  1. Add project credentials into local `.env.local` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`).
-  2. Initialize Next.js 15+ App Router dependencies in `package.json` (`next`, `react`, `react-dom`, `@supabase/supabase-js`, `tailwindcss`, `vitest`, `@playwright/test`).
-  3. Setup `tsconfig.json`, `next.config.mjs`, `postcss.config.mjs`, and Tailwind CSS v4 tokens.
-  4. Author initial TDD unit tests for title sanitization and 4-tier waterfall matching engine math.
+  1. Initialize Next.js 15+ App Router dependencies in `package.json` (`next`, `react`, `react-dom`, `@supabase/supabase-js`, `tailwindcss`, `vitest`, `@playwright/test`).
+  2. Setup `tsconfig.json`, `next.config.mjs`, `postcss.config.mjs`, and Tailwind CSS v4 tokens.
+  3. Author initial TDD unit tests for title sanitization and 4-tier waterfall matching engine math.

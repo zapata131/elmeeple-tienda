@@ -68,7 +68,6 @@ export class TabletopDatabase {
 
   async getOffersForGame(gameId: string): Promise<CalculatedOffer[]> {
     const stores = await this.getStores();
-    const shippingRates = await this.getShippingRates();
 
     let rawOffers: StoreOffer[] = [];
     try {
@@ -92,38 +91,24 @@ export class TabletopDatabase {
       const store = stores.find(s => s.id === offer.store_id);
       if (!store) continue;
 
-      const shipping = shippingRates.find(sr => sr.store_id === offer.store_id);
-      const flatRate = shipping ? shipping.flat_rate : 120.0;
-      const threshold = shipping ? shipping.free_shipping_threshold : null;
-
-      const isFreeShipping = threshold !== null && offer.price >= threshold;
-      const shippingCost = isFreeShipping ? 0 : flatRate;
-      const totalDeliveredCost = offer.price + shippingCost;
-
       calculated.push({
         ...offer,
         store,
-        shipping: {
-          flat_rate: flatRate,
-          free_shipping_threshold: threshold,
-          shipping_cost: shippingCost,
-          is_free_shipping: isFreeShipping,
-        },
-        total_delivered_cost: totalDeliveredCost,
+        total_delivered_cost: offer.price,
         is_best_price: false,
       });
     }
 
-    // Sort strictly by 3-Part Total Delivered Cost Law (Base + Shipping)
+    // Sort strictly by store item price (with featured store priority)
     calculated.sort((a, b) => {
       if (a.is_featured && !b.is_featured) return -1;
       if (!a.is_featured && b.is_featured) return 1;
-      return a.total_delivered_cost - b.total_delivered_cost;
+      return a.price - b.price;
     });
 
     if (calculated.length > 0) {
-      // Best price goes to lowest total delivered cost
-      const lowest = [...calculated].sort((a, b) => a.total_delivered_cost - b.total_delivered_cost)[0];
+      // Best price goes to lowest store price
+      const lowest = [...calculated].sort((a, b) => a.price - b.price)[0];
       lowest.is_best_price = true;
     }
 

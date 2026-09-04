@@ -12,13 +12,12 @@
     6. *Sprint 6 (Game Detail View & 3-Part Delivered Cost Table):* `/game/[slug]` with box art header, typographic metadata chips, spin-off variant banners (`US-05`), accessible tactile switch (`role="switch"`), 3-part price comparison table (`PriceTable.tsx`), and outbound affiliate redirect engine (`/api/redirect`).
 - **Master Documentation:** 100% SYNCHRONIZED & MONOLITHIC.
   - [`MASTER_SPECIFICATION.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/MASTER_SPECIFICATION.md) (Now the all-in-one authoritative single source of truth, incorporating the entirety of the Ground-Up Rebuild Blueprint and the Complete Ground-Up Engineering Specification into one unified master document).
-  - [`DESIGN.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md)
-  - [`README.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/README.md)
+- **Pricing Model Adjustment:** Excluded automated shipping fee additions from price comparison tables and homepage cards per user directive. Offers are now ranked and compared strictly by store item price. Manual shipping configuration will be implemented via an admin panel in a subsequent sprint.
 - **Chrome DevTools MCP Browser QA:** 100% VERIFIED & CLEAN.
   - Interactive browser testing executed on `http://localhost:3001` via CDP remote debugging.
-  - Zero React hydration warnings, zero console errors, full-page screenshots captured (`homepage_qa.png`, `game_detail_qa.png`).
+  - Zero React hydration warnings, zero console errors, full-page screenshots captured (`homepage_no_shipping.png`, `game_detail_no_shipping.png`).
 - **Master Verification Gate:** `npm run verify` passed with code 0 (ESLint clean, 29/29 Vitest tests passing, production build succeeded).
 - **Clear Next Steps (Project 1: Merchant Self-Serve & Mapping Ecosystem):**
   1. Implement `/merchant/onboard` self-serve registration form (`US-06`).
-  2. Implement `/merchant/shipping` flat domestic shipping & free shipping threshold configuration matrix (`US-07`).
+  2. Implement manual shop shipping fee editor in admin panel (`US-07`).
   3. Implement `/merchant/dashboard` self-service SKU mapping portal (`US-09`) and sponsored store toggle (`US-08`).

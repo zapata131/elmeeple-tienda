@@ -36,8 +36,8 @@ describe('Sprint 4: URL Integrity & 3-Part Delivered Cost Math Gate', () => {
     }
   }, 40000); // Allow sufficient network timeout for live checks
 
-  it('should calculate 3-part delivered cost strictly according to the law', async () => {
-    // Flamecraft has multiple offers with different shipping rules
+  it('should return store offers with valid positive prices without shipping cost addition', async () => {
+    // Flamecraft has multiple offers across stores
     const flamecraft = INITIAL_GAMES.find(g => g.slug === 'flamecraft');
     expect(flamecraft).toBeDefined();
 
@@ -45,13 +45,8 @@ describe('Sprint 4: URL Integrity & 3-Part Delivered Cost Math Gate', () => {
     expect(offers.length).toBeGreaterThan(0);
 
     for (const o of offers) {
-      const expectedShipping =
-        o.shipping.free_shipping_threshold !== null && o.price >= o.shipping.free_shipping_threshold
-          ? 0
-          : o.shipping.flat_rate;
-
-      expect(o.shipping.shipping_cost).toBe(expectedShipping);
-      expect(o.total_delivered_cost).toBe(o.price + expectedShipping);
+      expect(o.price).toBeGreaterThan(0);
+      expect(o.total_delivered_cost).toBe(o.price);
     }
   });
 });

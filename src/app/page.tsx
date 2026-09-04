@@ -30,7 +30,7 @@ export default function HomePage() {
                 const offerData = await offerRes.json();
                 const offers: CalculatedOffer[] = offerData.offers || [];
                 if (offers.length > 0) {
-                  const minPrice = Math.min(...offers.map(o => o.total_delivered_cost));
+                  const minPrice = Math.min(...offers.map(o => o.price));
                   priceMap[g.id] = minPrice;
                 }
               }
@@ -68,11 +68,11 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-black text-[#3A3A3A] tracking-tight leading-tight">
-            Compara precios de juegos de mesa con costo de envío real
+            Compara precios de juegos de mesa en México
           </h1>
 
           <p className="text-base sm:text-lg text-stone-600 max-w-2xl mx-auto">
-            Calculamos automáticamente el costo total entregado en tu domicilio sumando precio base y paquetería de tiendas mexicanas verificadas.
+            Encuentra las mejores ofertas y disponibilidad en tiempo real de tiendas mexicanas verificadas.
           </p>
 
           <div className="pt-2 max-w-xl mx-auto">

@@ -23,7 +23,7 @@ export function PriceTable({ offers }: PriceTableProps) {
             Comparativa de ofertas por tienda
           </h2>
           <p className="text-xs md:text-sm text-stone-500 mt-0.5">
-            Precios actualizados en tiempo real ordenados por costo total entregado en México.
+            Precios actualizados en tiempo real ordenados por precio en tienda.
           </p>
         </div>
         <TactileSwitch
@@ -94,31 +94,13 @@ export function PriceTable({ offers }: PriceTableProps) {
                   </div>
                 </div>
 
-                {/* 3-Part Delivered Cost Breakdown */}
-                <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-start md:justify-center gap-2 sm:gap-6 text-xs md:text-sm text-stone-600">
-                  <div>
-                    <span className="text-stone-400 block text-[11px]">Precio base</span>
-                    <span className="font-semibold text-stone-800 text-sm">
-                      ${offer.price.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
-                    </span>
-                  </div>
-                  <span className="hidden sm:inline text-stone-300 text-lg">+</span>
-                  <div>
-                    <span className="text-stone-400 block text-[11px]">Envío nacional</span>
-                    <span className="font-semibold text-stone-800 text-sm">
-                      {offer.shipping.is_free_shipping ? (
-                        <span className="text-emerald-700 font-bold">¡Envío gratis!</span>
-                      ) : (
-                        `$${offer.shipping.shipping_cost.toFixed(2)} MXN`
-                      )}
-                    </span>
-                  </div>
-                  <span className="hidden sm:inline text-stone-300 text-lg">=</span>
+                {/* Store Price */}
+                <div className="flex-1 flex items-center justify-start md:justify-center">
                   <div className="p-2 sm:p-0 rounded-lg bg-stone-100/50 sm:bg-transparent">
-                    <span className="text-stone-400 block text-[11px]">Costo total entregado</span>
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-base md:text-lg font-black text-[#3A3A3A]">
-                        ${offer.total_delivered_cost.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
+                    <span className="text-stone-400 block text-[11px]">Precio en tienda</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-lg md:text-xl font-black text-[#3A3A3A]">
+                        ${offer.price.toLocaleString('es-MX', { minimumFractionDigits: 2 })} MXN
                       </span>
                       {offer.is_best_price && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FF9E8A]/30 text-rose-950 border border-[#FF9E8A]">

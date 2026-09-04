@@ -19,7 +19,7 @@ export function Footer() {
             Inicio
           </Link>
           <span className="text-stone-300">•</span>
-          <span>Ley del costo entregado</span>
+          <span>Precios verificados</span>
           <span className="text-stone-300">•</span>
           <span>© {new Date().getFullYear()} MeeplePrecios</span>
         </div>

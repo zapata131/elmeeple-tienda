@@ -90,13 +90,13 @@ export interface StoreOffer {
 
 export interface CalculatedOffer extends StoreOffer {
   store: Store;
-  shipping: {
-    flat_rate: number;
-    free_shipping_threshold: number | null;
-    shipping_cost: number;
-    is_free_shipping: boolean;
+  shipping?: {
+    flat_rate?: number;
+    free_shipping_threshold?: number | null;
+    shipping_cost?: number;
+    is_free_shipping?: boolean;
   };
-  total_delivered_cost: number;
+  total_delivered_cost?: number;
   is_best_price: boolean;
 }
 

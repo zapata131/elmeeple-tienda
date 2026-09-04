@@ -3,7 +3,7 @@
 > **Mexico's Board Game Price Comparison Engine**
 > Aggregating live inventory, pricing, and 3-part delivered shipping costs ($\text{Base Price} + \text{Shipping} = \text{Total Cost (\$ MXN)}$) across independent Mexican board game e-commerce stores.
 > 
-> 📖 **Ground-Up Rebuild Specification:** For the complete, 100% self-contained engineering blueprint to rebuild this project from scratch, see [COMPLETE_GROUND_UP_SPECIFICATION.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/COMPLETE_GROUND_UP_SPECIFICATION.md).
+> 📖 **Definitive Master Specification:** For the complete, monolithic engineering blueprint containing all schemas, configurations, agent skills, matching math, 51-store registry, and 12-sprint execution guide, see [MASTER_SPECIFICATION.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/MASTER_SPECIFICATION.md).
 
 ---
 

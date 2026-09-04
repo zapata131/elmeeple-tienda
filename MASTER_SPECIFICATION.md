@@ -1,252 +1,626 @@
-# Master specification and ground-up implementation blueprint: MeeplePrecios 🇲🇽
+# Master Specification & Definitive Ground-Up Blueprint: MeeplePrecios 🇲🇽
 
-> [!IMPORTANT]
-> **Monolithic All-in-One Ground-Up Blueprint:** For the complete, 100% self-contained engineering blueprint containing all schemas, configurations, agent skills, matching math, 51-store registry, and 12-sprint execution guide, see [COMPLETE_GROUND_UP_SPECIFICATION.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/COMPLETE_GROUND_UP_SPECIFICATION.md) and [GROUND_UP_REBUILD_BLUEPRINT.md](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/GROUND_UP_REBUILD_BLUEPRINT.md).
->
-> **Specification Purpose:** This document is the definitive, pure functional blueprint for constructing **MeeplePrecios**, Mexico's board game price comparison engine, from the ground up. It defines the commercial requirements, database schemas, Row-Level Security (RLS) policies, REST API contracts, 4-tier waterfall matching algorithms, UI design system tokens, and acceptance criteria. It focuses strictly on *what* the system must achieve, giving any future developer or AI agent complete freedom to choose their preferred file organization, framework structure, and component architecture.
+> **Document Classification:** Canonical, Monolithic System Specification & Implementation Playbook  
+> **Authority Level:** Authoritative Single Source of Truth for MeeplePrecios  
+> **Audience:** Autonomous AI Coding Agents, Senior Full-Stack Engineers & Tabletop E-commerce Integrators  
+> **Status:** 100% Comprehensive & Self-Contained. Incorporates the entirety of the Ground-Up Rebuild Blueprint and the Complete Ground-Up Engineering Specification into one unified master document.
 
----
-
-## 1. Executive summary and core purpose 🎲
-
-### 1.1 Commercial vision
-**MeeplePrecios** is the primary tabletop price comparison engine for Mexico (`MX` / `$ MXN`). The platform aggregates real-time inventory, pricing, and shipping data from independent Mexican board game e-commerce stores (for example, *Ficha y Dado, Mundo Meeple Store, Roll Games, Con T de Tlacuache, Quantum Boardgames, Alfa y Delta, Bundaba*).
-
-### 1.2 Core value proposition
-- **For Players:** Eliminates price and stock fragmentation by providing a single portal that ranks store offers by **3-part total delivered cost** ($\text{Base Price} + \text{Shipping} = \text{Total Cost (\$ MXN)}$) with explicit language and edition badges (`Español (ES)`, `Inglés (EN)`, `Multilingüe (MULTI)`).
-- **For Store Owners (Merchants):** Drives high-intent organic and affiliate checkout traffic without manual listing maintenance by automatically syncing Google Shopping XML and Shopify JSON feeds, backed by self-service mapping override tools.
-
-### 1.3 Mandatory engineering & debugging directive: Root cause diagnosis
-> [!IMPORTANT]
-> **Root Cause Diagnosis & Communication Mandate:** Every time an issue, bug, broken link, or failing route is reported, developers and AI agents MUST NOT apply superficial patches, hide errors, or return fallback placeholders. The system implementation MUST resolve the fundamental root cause and explicitly document:
-> 1. **Why the issue occurred:** Trace the upstream data provider, schema mismatch, or parsing flaw.
-> 2. **How the fix resolves it:** Implement a systematic, robust code solution that prevents recurrence.
+> **Document Type:** Monolithic, Self-Contained System Specification & Implementation Playbook  
+> **Author & Persona:** Lead Engineering Architect & Principal Product Manager  
+> **Intended Execution Model:** Autonomous AI Coding Agent / Senior Full-Stack Engineering Team  
+> **Design Philosophy:** 100% Self-Sufficient. If an engineer or agent is given **ONLY this single file** in an empty directory, they have every requirement, configuration file, architectural rule, database schema, algorithm, tool guide, and sprint roadmap required to construct MeeplePrecios from scratch.
 
 ---
 
-## 2. Target personas and user journeys 👥
-
-### 2.1 Persona 1: The Mexican board game buyer (Player / Comprador)
-* **Demographics:** Board game enthusiasts, casual gamers, and collectors across Mexico (CDMX, Guadalajara, Monterrey, Puebla).
-* **Primary Goals:**
-  1. Locate specific games in stock at the lowest total delivered cost in Mexican Pesos ($ MXN).
-  2. Differentiate between Spanish (`ES`) and English (`EN`) editions.
-  3. Ensure that clicking an offer leads directly to the merchant product page without broken links or expansion mis-attributions.
-* **Key User Journey:**
-  `Homepage (Search / BGG Hotness) -> Game Detail Page -> Compare Total Delivered Costs -> Click "Ir a la tienda" -> Affiliate Checkout Redirect`
-
-### 2.2 Persona 2: The independent store partner (Merchant / Socio)
-* **Demographics:** Owners and e-commerce managers of independent Mexican tabletop shops.
-* **Primary Goals:**
-  1. Increase online sales and customer acquisition without paying marketplace commission fees.
-  2. Keep stock and price listings in sync automatically without manual data entry.
-  3. Access a self-service SKU mapping portal to map unmatched feed products directly to BGG IDs.
-  4. Feature store deals (sponsored placements) to gain top visibility on high-demand games.
-* **Key User Journey:**
-  `Merchant Portal -> Register Store & Flat Shipping Rates in MXN -> Submit Feed URL -> Map Unmatched SKUs -> View Diagnostics`
-
-### 2.3 Persona 3: The platform administrator (Admin)
-* **Primary Goals:**
-  1. Monitor merchant feed health, failed fetch logs, and un-indexed BoardGameGeek (BGG) queue items.
-  2. Review medium-confidence feed items in the **Admin Staging Queue** and approve/re-map candidates with live BGG autocomplete.
-  3. Verify new merchant registrations and manage sponsored placement flags.
-  4. Trigger automated catalog audits to purge broken links and mis-attributed expansions.
-
-### 2.4 Persona 4: The autonomous AI developer (Agent persona)
-* **Primary Goals:**
-  1. Execute feature requests using test-driven development (TDD), atomic user stories, and single-persona branch isolation.
-  2. Enforce Google sentence case governance, brand visual tokens, and tactile switch components.
-  3. Run full verification gates (`npm run verify`) before merging pull requests.
+# Table of Contents
+1. [Executive Summary & Product Vision](#1-executive-summary--product-vision)
+2. [Master File Tree & Project Structure](#2-master-file-tree--project-structure)
+3. [Environment Configuration & Supporting Files Catalog](#3-environment-configuration--supporting-files-catalog)
+4. [DevTools for Agents & Chrome DevTools MCP Guide](#4-devtools-for-agents--chrome-devtools-mcp-guide)
+5. [Autonomous Agent Governance & Skills System (`.agents/`)](#5-autonomous-agent-governance--skills-system-agents)
+6. [Target Personas & Canonical User Stories Inventory (`US-01` to `US-26`)](#6-target-personas--canonical-user-stories-inventory-us-01-to-us-26)
+7. [Unified PostgreSQL Database Schema & Row-Level Security (RLS)](#7-unified-postgresql-database-schema--row-level-security-rls)
+8. [The 4-Tier Waterfall Matching Engine & Classifiers](#8-the-4-tier-waterfall-matching-engine--classifiers)
+9. [Multi-Route Feed Ingestion Engine & 51 Mexican Stores Registry](#9-multi-route-feed-ingestion-engine--51-mexican-stores-registry)
+10. [Complete REST API Contract Inventory](#10-complete-rest-api-contract-inventory)
+11. [Frontend Design System, Cognitive UX & Sentence Case Governance](#11-frontend-design-system-cognitive-ux--sentence-case-governance)
+12. [Architectural Post-Mortem & Critical Engineering Lessons](#12-architectural-post-mortem--critical-engineering-lessons)
+13. [12-Sprint Ground-Up Implementation Roadmap](#13-12-sprint-ground-up-implementation-roadmap)
+14. [Master Verification Gate & Quality Assurance Playbook](#14-master-verification-gate--quality-assurance-playbook)
 
 ---
 
-## 3. Comprehensive user stories inventory 📜
+# 1. Executive Summary & Product Vision
 
-> [!NOTE]
-> **Canonical User Story Index:** All previous GitHub issue numbers (e.g. Issues #1 through #209) are DEPRECATED and MUST NOT be referenced or cited. Features in this project are identified exclusively by the canonical User Story index below (`US-01` through `US-26`).
+## 1.1 The Commercial Vision
+**MeeplePrecios** is Mexico's premier board game price comparison and catalog discovery engine (`MX` / `$ MXN`). The platform eliminates pricing and inventory fragmentation across the Mexican tabletop hobby by automatically aggregating, parsing, matching, and ranking real-time inventory from 50+ verified independent Mexican tabletop stores (including *Ficha y Dado, Mundo Meeple Store, Roll Games, Con T de Tlacuache, Quantum Boardgames, Alfa y Delta, Bundaba, Geeky Stuff, Amukiri, Catito Games*).
 
-### Epic A: Discovery and comparison (Player persona)
-- **[US-01] Homepage Search and Hotness:** `As a Player, I want to search for board games on the homepage or view live BGG Hotness trends, so that I can quickly locate games available in Mexico.`
-- **[US-02] Hero Comparative UI:** `As a Player, I want to see a full-width box art header, typographic stats, and a 3-part price comparison table on /game/[slug], so that I can evaluate total delivered costs at a glance.`
-- **[US-03] Explicit Language Badges:** `As a Player, I want store offers to display clear language badges (Español (ES), Inglés (EN), Multilingüe (MULTI)), so that I don't accidentally buy a game in a language I don't want.`
-- **[US-04] Direct Affiliate Checkout:** `As a Player, I want clicking "Ir a la tienda" to redirect me to the store's exact product page with UTM tracking, so that I can complete my purchase immediately.`
-- **[US-05] Spin-Off Game Variant Cataloging:** `As a Player, I want spin-off variants like Spot It! Catan or Dobble Catan to be cataloged as distinct game entries rather than merged into base game pages, so that I can view accurate price comparisons for both base games and spin-offs independently.`
-- **[US-25] BGG Top 10 & Most Searched Tabbed Landing UI:** `As a Player, I want tabbed switching on the homepage between the BGG Top 10 games and the most searched games in Mexico, so that I can discover top-rated global titles and trending local tabletop games effortlessly.`
+## 1.2 The Core Problem
+1. **Price Dispersion:** Tabletop games in Mexico exhibit wide price swings (frequently between \$400 and \$1,200 MXN difference for the exact same title across different stores).
+2. **Deceptive List Pricing:** Stores calculate shipping differently. A game priced at \$1,100 MXN with \$150 shipping actually costs more than a store selling it at \$1,200 MXN with free shipping.
+3. **Language Confusion:** Tabletop hobbyists care deeply about whether a game is in Spanish (`ES`), English (`EN`), or Multilingual (`MULTI`). Accidental purchases of English editions cause buyer remorse.
+4. **Accessory & Expansion Mis-attribution:** Card sleeves, dice, playmats, and expansions often get mistakenly matched to base games on standard search engines.
+5. **Dead Links & Ghost Stock:** Deleted store pages lead to HTTP 404 errors and broken affiliate customer journeys.
 
-### Epic B: Merchant self-serve portal (Merchant persona)
-- **[US-06] Merchant Onboarding:** `As a Store Owner, I want to register my storefront name, logo, and XML/JSON feed URL on /merchant/onboard, so that my inventory is automatically listed on MeeplePrecios.`
-- **[US-07] Shipping Rate Matrix:** `As a Store Owner, I want to set my flat-rate domestic shipping fee and free shipping threshold in MXN, so that player total cost calculations are accurate.`
-- **[US-08] Sponsored Placement Toggles:** `As a Store Owner, I want to toggle sponsored featuring for my store on /merchant/dashboard, so that my offers appear at the top of comparison tables with a "★ Tienda recomendada" badge.`
-- **[US-09] Merchant Self-Service Feed Mapping Portal:** `As a Store Owner, I want a self-service product mapping portal on /merchant/dashboard to view unmatched feed items and bind them to canonical game IDs, so that I can maximize my catalog coverage on MeeplePrecios.`
-- **[US-18] Store-Isolated Candidate Suggestion Staging Queue:** `As a Store Owner, I want to see a list of top candidate game suggestions for my store's unmatched feed items on /merchant/dashboard and bind them with one click, so that I can quickly resolve feed ambiguities for my own storefront.`
-- **[US-23] Extended Mexican Tabletop Store Directory Expansion:** `As a Player, I want MeeplePrecios to aggregate offers from 50+ verified Mexican tabletop stores (including Geeky Stuff, 2 Tomatoes MX, Amukiri, Avalon Store, Catito Games, Demon Juegos, Día D Juegos, Eximia Games, GameSmart, Hobbiton Games, La Casa de la Educadora, La Mazmorra, Meeple Planet, Otter Space, Tablerazo, etc.), so that I have 100% complete coverage of board game pricing and stock across Mexico.`
-- **[US-26] Automated Store Feed Ingestion & Merchant Admin Portal:** `As an Admin and Store Owner, I want an admin store settings portal on /admin/stores to manage store logos, flat shipping rates, free shipping thresholds, and feed URLs, view live ingestion data and mismatch statistics, and trigger real-time multi-route feed ingestion across all 51 stores, so that the platform displays 100% live real data with store brand logos.`
+## 1.3 The Core Value Propositions
+* **For Tabletop Players (Compradores):** Rank all offers by the **3-Part Total Delivered Cost Law**, view verified language badges, and click directly to checkout.
+* **For Independent Store Owners (Socios / Merchants):** Receive high-intent organic buyer traffic with 0% commission fees, automate catalog syncs via Shopify JSON / Atom XML feeds, and override SKU matches via a self-serve portal.
+* **For Platform Administrators:** Automated URL health auditing, dead-link quarantine, throttled BGG metadata enrichment, and multi-tenant staging queue moderation.
 
-### Epic C: Ingestion, barcode registry & catalog integrity (Developer / Admin persona)
-- **[US-10] Multi-Format Feed Processing:** `As a Developer, I want feed ingestion to parse both Shopify JSON and Google Shopping XML feeds, so that all Mexican stores can be integrated without custom scrapers.`
-- **[US-11] EAN/GTIN Multi-Barcode Registry Table:** `As a Developer, I want a dedicated EAN/GTIN multi-barcode registry table (public.game_barcodes) linking barcodes to game editions and canonical game IDs, so that feed ingestion achieves 100% deterministic matching without string ambiguities.`
-- **[US-12] Historical Merchant SKU Mapping Memory Table:** `As a Developer, I want a historical merchant SKU mapping memory table (public.merchant_product_mappings), so that manual merchant and admin re-mappings permanently persist across daily automated feed re-syncs.`
-- **[US-13] 4-Tier Waterfall Feed Matching Engine:** `As a Developer, I want a 4-tier waterfall matching engine (EAN Barcode -> SKU Memory -> Tokenized Fuzzy Match -> Manual Queue) with confidence scoring (>=0.92 auto-publish, 0.70-0.91 queue), so that product ingestion operates with 99.9% accuracy.`
-- **[US-14] Admin Staging and Moderation Queue UI:** `As an Admin, I want a staging queue UI on /admin/queue for medium-confidence feed items (confidence 0.70 to 0.91), so that I can review, approve, or re-map uncertain catalog matches across all stores.`
-- **[US-15] Independent Internal Game Catalog & XML Media Persistence:** `As a Developer, I want an internal master game catalog table (public.catalog_games) that extracts and persists game metadata, box art images, and media directly from store XML/JSON feeds independently of third-party BGG APIs, so that catalog integrity is self-contained and resilient.`
-- **[US-16] Automated Non-Game Feed Classifier:** `As a Developer, I want an automated XML/JSON feed classifier to identify and exclude non-game merchandise (sleeves, playmats, dice, TCG booster packs, deck boxes) during ingestion before matching, so that non-game noise never pollutes the comparison engine.`
-- **[US-17] Base Game & Expansion Entity Classification:** `As a Developer, I want XML feed items to be automatically classified as either base games or expansions and linked to parent game entities during ingestion, so that base games and expansion offers are cataloged cleanly.`
-- **[US-19] Multi-Tenant Store & Admin Queue Authorization (RLS):** `As a Developer, I want Supabase RLS policies and API access controls on the staging queue to restrict store owners to their own store's pending queue items while granting admins full cross-store queue moderation capabilities, so that store data privacy and administrative control are enforced.`
-- **[US-24] Multi-Route Shopify Feed Fallback Engine:** `As a Developer, I want automated feed ingestion to attempt secondary multi-route fallbacks (/products.json and /collections/juegos-de-mesa/all.atom) when primary /collections/all.atom requests return HTTP 403/404 or non-XML responses, so that catalog coverage increases automatically for protected stores.`
-
-### Epic D: Automated catalog auditing, resilience & admin health monitoring (Developer / Admin persona)
-- **[US-20] Automated Catalog Broken Link & Redirect Audit Worker:** `As an Admin, I want an automated background audit route on /api/cron/audit-urls to periodically verify store product URLs, detect broken links or HTTP 404/500 errors, and flag or un-list inactive store offers, so that players never encounter dead links.`
-- **[US-21] Automated BGG Metadata Hydration Worker:** `As a Developer, I want a background sync route on /api/cron/process-bgg-queue to throttled-fetch missing BGG metadata, weight, player counts, and high-res cover images for internal catalog items, so that game pages stay enriched with complete specifications.`
-- **[US-22] Admin Catalog Health & Feed Diagnostics Dashboard:** `As an Admin, I want a comprehensive catalog health and feed sync diagnostics dashboard on /admin/diagnostics displaying feed error rates, total active offers, broken link counts, and manual feed re-sync triggers, so that platform stability and store feed integrity can be monitored in real time.`
+## 1.4 The 3-Part Delivered Cost Law
+$$\text{Total Delivered Cost} = \text{Base Item Price} + \begin{cases} 0 & \text{if } \text{Base Price} \ge \text{Free Shipping Threshold} \\ \text{Flat Domestic Shipping Fee} & \text{otherwise} \end{cases}$$
+Every offer in MeeplePrecios MUST display:
+$$\text{Base Price} + \text{Shipping} = \text{Total Cost (\$ MXN)}$$
 
 ---
 
-## 4. System architecture & data contract specification 🛠️
+## 1.5 Modular Architecture: Core MVP vs. Discrete Extension Projects
+
+To guarantee focused velocity and clean software architecture, MeeplePrecios is decomposed into an autonomous **Core MVP (Project 0)** and **five discrete, decoupled extension projects** that plug directly on top of the MVP:
 
 ```mermaid
 flowchart TD
-    subgraph Frontend["Presentation Layer"]
-        UI["User Interface Components"]
-        Theme["Brand Tokens & Styling"]
-    end
+    MVP["Project 0: Core Tabletop Comparison MVP<br/>(Discovery, Comparative Table, Ingestion, 3-Part Pricing)"]
+    
+    Ext1["Project 1: Merchant Self-Serve Portal<br/>(Onboarding, Shipping Matrix, SKU Self-Mapping)"]
+    Ext2["Project 2: Multi-Tenant Staging Queue<br/>(AI Candidate Suggestions, Admin Moderation, RLS)"]
+    Ext3["Project 3: Scaled 51-Store Ingestion<br/>(Multi-Route Fallback Ladder, Logos, Auto-Ingestion)"]
+    Ext4["Project 4: Catalog Resilience & Diagnostics<br/>(URL 404 Audit Cron, BGG Hydration Worker, Health Dashboard)"]
+    Ext5["Project 5: Tabletop Intelligence & Mobile<br/>(Price Drop Alerts, History Charts, Barcode Scanner PWA)"]
 
-    subgraph CoreEngine["4-Tier Matching Engine & Core Services"]
-        Tier1["Tier 1: EAN / GTIN Barcode Matcher"]
-        Tier2["Tier 2: Historical SKU Memory Lookup"]
-        Tier3["Tier 3: Tokenized Fuzzy Match & Subtitle Isolator"]
-        Tier4["Tier 4: Staging Queue & Merchant Override Portal"]
-        FeedParser["Multi-Format Feed Parser<br/>(Shopify JSON & Google Atom XML)"]
-        LanguageDetector["Language & Publisher Engine"]
-        AuditWorker["Automated Catalog Audit Worker"]
-        RedirectEngine["Outbound Affiliate Redirect Engine"]
-    end
-
-    subgraph DataLayer["Persistence Layer (PostgreSQL / Supabase)"]
-        StoresDB[("stores Table")]
-        ShippingDB[("shipping_rates Table")]
-        CatalogGames[("catalog_games Table")]
-        GameBarcodes[("game_barcodes Table")]
-        MerchantMappings[("merchant_product_mappings Table")]
-        StoreOffers[("store_offers Table")]
-        ClicksLog[("clicks Table")]
-        FeedQueue[("feed_item_queue Table")]
-        BggSyncQueue[("bgg_sync_queue Table")]
-        IngestionJobs[("ingestion_jobs Table")]
-    end
-
-    Frontend -->|Queries & Actions| CoreEngine
-    CoreEngine -->|Reads / Writes| DataLayer
+    MVP --> Ext1
+    MVP --> Ext2
+    MVP --> Ext3
+    MVP --> Ext4
+    MVP --> Ext5
 ```
 
-### 4.1 Required environment configuration
+### Breakdown of Projects & User Stories:
+
+| Project Package | Target Persona | Scope & Canonical User Stories | Autonomous Deliverables |
+| :--- | :--- | :--- | :--- |
+| **Project 0: Core Tabletop Comparison MVP (The Foundation)** | Player & Casual Merchant | `US-01`, `US-02`, `US-03`, `US-04`, `US-05`, `US-10`, `US-11`, `US-12`, `US-13` ($\ge 0.92$), `US-15`, `US-16`, `US-17`, `US-25` | 1. Database schema (`catalog_games`, `stores`, `shipping_rates`, `store_offers`, `game_barcodes`).<br/>2. Feed parsers for initial stores.<br/>3. Core 4-tier matching engine & non-game filter.<br/>4. Homepage search + Top 10 BGG / Trending MX tabs.<br/>5. Game detail view with 3-part delivered price comparison table.<br/>6. Direct affiliate redirect (`/api/redirect`) with UTM tracking. |
+| **Project 1: Merchant Self-Serve & Mapping Ecosystem (Extension Alpha)** | Store Owner (Merchant) | `US-06`, `US-07`, `US-08`, `US-09`, `US-18` | 1. `/merchant/onboard` registration view.<br/>2. `/merchant/shipping` flat rate & threshold matrix.<br/>3. `/merchant/dashboard` self-serve SKU mapping portal.<br/>4. Sponsored store featuring toggles (`★ Tienda recomendada`).<br/>5. Store-isolated candidate suggestions. |
+| **Project 2: Multi-Tenant Staging & Moderation Queue (Extension Beta)** | Admin & Store Owner | `US-14`, `US-19` | 1. `feed_item_queue` table with multi-tenant Supabase RLS.<br/>2. `/admin/queue` moderation interface.<br/>3. Top 5 candidate suggestion generator for items scoring $0.70 \dots 0.91$.<br/>4. One-click approval with SKU memory persistence. |
+| **Project 3: Scaled 51-Store Ingestion & Fallbacks (Extension Gamma)** | Developer & Admin | `US-23`, `US-24`, `US-26` | 1. 3-tier multi-route fallback engine (`/products.json` $\to$ category XML $\to$ global XML).<br/>2. Full 51-store tabletop directory ingestion.<br/>3. `/admin/stores` store management view with live sync triggers and brand logos. |
+| **Project 4: Catalog Resilience, URL Audit & Diagnostics (Extension Delta)** | Admin & Developer | `US-20`, `US-21`, `US-22` | 1. `/api/cron/audit-urls` dead link quarantine worker.<br/>2. `/api/cron/process-bgg-queue` throttled BGG hydration worker ($\ge 1,200\text{ ms}$ delay).<br/>3. `/admin/diagnostics` catalog health dashboard. |
+| **Project 5: Tabletop Intelligence & Mobile Experience (Extension Epsilon)** | Player & Merchant | *Future Commercial Enhancements* | 1. Historical price tracking charts on `/game/[slug]`.<br/>2. Email price drop notifications.<br/>3. Mobile camera barcode scanner PWA for in-store physical shopping.<br/>4. Merchant conversion rate & click-through analytics. |
+
+---
+
+# 2. Master File Tree & Project Structure
+
+When bootstrapping this project from an empty directory, create the following directory structure:
+
+```
+.
+├── .agents/
+│   ├── AGENTS.md                                # AI agent rules, personas, and operating constraints
+│   └── skills/
+│       ├── backlog_auditor/SKILL.md            # Enforces atomic user story criteria
+│       ├── document_sync/SKILL.md              # Synchronizes HANDOFF, DESIGN, and AGENTS docs
+│       ├── github_issue_complete/SKILL.md      # Runs verify gate, conventional commit, and merge
+│       ├── github_issue_solve/SKILL.md         # Plans TDD and isolates feature branches
+│       └── ux_expert/SKILL.md                  # Audits cognitive UX, brand tokens & sentence case
+├── .eslintrc.json                              # ESLint Next.js configuration
+├── .gitignore                                  # Git ignore definitions
+├── .env.example                                # Environment variable templates
+├── .env.local                                  # Local development secrets
+├── DESIGN.md                                   # UI tokens & database schema quick-reference
+├── HANDOFF.md                                  # Active sprint progress tracking memo
+├── MASTER_SPECIFICATION.md                     # Canonical project specification
+├── COMPLETE_GROUND_UP_SPECIFICATION.md         # THIS ALL-IN-ONE MASTER BLUEPRINT
+├── README.md                                   # Project orientation guide
+├── next.config.mjs                             # Next.js image domain and compiler configuration
+├── package.json                                # Scripts, dependencies, and engines
+├── playwright.config.ts                        # Playwright E2E configuration
+├── postcss.config.mjs                          # PostCSS Tailwind plugins
+├── tailwind.config.ts                          # Brand color tokens and responsive themes
+├── tsconfig.json                               # Strict TypeScript configuration with @/* path aliases
+├── vitest.config.ts                            # Vitest unit test configuration
+├── vitest.setup.ts                             # Vitest environment setup
+├── public/                                     # Static assets, store logos, and icons
+├── supabase/
+│   └── migrations/
+│       └── 20260715000000_initial_schema.sql  # Complete PostgreSQL DDL & RLS policies
+└── src/
+    ├── app/                                    # Next.js App Router
+    │   ├── admin/
+    │   │   ├── diagnostics/page.tsx            # Feed diagnostics & catalog health view
+    │   │   ├── queue/page.tsx                  # Staging queue moderation view
+    │   │   └── stores/page.tsx                 # Store management & ingestion triggers
+    │   ├── api/
+    │   │   ├── admin/
+    │   │   │   ├── diagnostics/route.ts        # Admin diagnostics API
+    │   │   │   ├── feed-queue/route.ts         # Cross-store queue moderation API
+    │   │   │   └── stores/route.ts             # Store settings & ingestion trigger API
+    │   │   ├── cron/
+    │   │   │   ├── audit-urls/route.ts         # Periodic dead-link audit worker
+    │   │   │   ├── process-bgg-queue/route.ts  # Throttled BGG metadata hydration worker
+    │   │   │   ├── sync-feeds/route.ts         # Master feed sync dispatcher
+    │   │   │   └── sync-worker/route.ts        # Chunked ingestion batch worker
+    │   │   ├── games/
+    │   │   │   └── [slug]/route.ts             # Canonical game & offers JSON endpoint
+    │   │   ├── merchant/
+    │   │   │   ├── featured/route.ts           # Sponsored placement toggle API
+    │   │   │   ├── mapping/route.ts            # SKU mapping API
+    │   │   │   ├── onboard/route.ts            # Store registration API
+    │   │   │   ├── queue/route.ts              # Store-isolated staging queue API
+    │   │   │   └── shipping/route.ts           # Flat shipping matrix API
+    │   │   ├── offers/
+    │   │   │   └── verify/route.ts             # Dynamic Stale Price Shield verification API
+    │   │   ├── redirect/route.ts               # Outbound affiliate redirect & click logger
+    │   │   └── search/route.ts                 # Predictive search endpoint
+    │   ├── game/
+    │   │   └── [slug]/page.tsx                 # Game detail page & 3-part price comparison table
+    │   ├── login/page.tsx                      # Role switcher (Player / Merchant / Admin)
+    │   ├── merchant/
+    │   │   ├── dashboard/page.tsx              # Merchant portal & SKU self-mapping UI
+    │   │   ├── onboard/page.tsx                # Merchant registration form
+    │   │   └── shipping/page.tsx               # Shipping matrix configuration form
+    │   ├── search/page.tsx                     # Search results page
+    │   ├── store/[id]/page.tsx                 # Store profile & catalog listing
+    │   ├── globals.css                         # Tailwind directives & custom CSS
+    │   ├── layout.tsx                          # Root layout with header, navigation & footer
+    │   └── page.tsx                            # Homepage (Hero search, Top 10 BGG & Trending MX tabs)
+    ├── components/
+    │   ├── Navbar.tsx                          # Navigation bar with branding & search
+    │   ├── Footer.tsx                          # Global footer
+    │   ├── PriceTable.tsx                      # 3-part comparative pricing table
+    │   ├── SearchBar.tsx                       # Predictive autocomplete search input
+    │   ├── TactileSwitch.tsx                   # Accessible switch toggle (`role="switch"`)
+    │   └── LanguageBadge.tsx                   # High-contrast edition badge (`ES`, `EN`, `MULTI`)
+    ├── lib/
+    │   ├── db/
+    │   │   ├── db.ts                           # Database repository abstraction
+    │   │   └── seed-data.ts                    # 51 stores, shipping rates, and initial catalog seed
+    │   ├── engine/
+    │   │   ├── audit-worker.ts                 # HTTP 404/500 link audit & auto-heal worker
+    │   │   ├── bgg-hydrator.ts                 # Throttled BGG XMLAPI2 client
+    │   │   ├── feed-ingestion-worker.ts        # Bulk multi-route ingestion worker
+    │   │   ├── feed-parser.ts                  # Shopify JSON & Atom XML parsers
+    │   │   ├── image-hydrator.ts               # High-res box art scraper
+    │   │   └── matching-engine.ts              # 4-tier waterfall matching algorithm
+    │   └── supabase/
+    │       ├── client.ts                       # Supabase client initializer
+    │       └── server.ts                       # Supabase server client with cookie handling
+    ├── types/
+    │   └── index.ts                            # Canonical TypeScript interfaces
+    └── __tests__/                              # Vitest unit and integration test suite
+```
+
+---
+
+# 3. Environment Configuration & Supporting Files Catalog
+
+Below are the exact contents for every configuration file required to initialize the project:
+
+### 3.1 `package.json`
+```json
+{
+  "name": "meeple-precios",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "verify": "npm run lint && npm run test && next build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "fast-xml-parser": "^4.5.3",
+    "lucide-react": "^0.475.0",
+    "next": "^15.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.20.1",
+    "eslint-config-next": "^15.1.7",
+    "jsdom": "^26.0.0",
+    "postcss": "^8.5.2",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.5"
+  }
+}
+```
+
+### 3.2 `tsconfig.json`
+```json
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+```
+
+### 3.3 `next.config.mjs`
+```javascript
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: 'cf.geekdo-images.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'cdn.shopify.com' },
+      { protocol: 'https', hostname: 'www.google.com' },
+      { protocol: 'https', hostname: 'fichaydado.com' },
+      { protocol: 'https', hostname: 'mundomeeplestore.com' },
+      { protocol: 'https', hostname: 'rollgames.mx' },
+      { protocol: 'https', hostname: 'tdetlacuache.com' },
+      { protocol: 'https', hostname: 'quantumboardgames.com' },
+      { protocol: 'https', hostname: 'alfaydelta.com' },
+      { protocol: 'https', hostname: 'bundaba.com.mx' },
+      { protocol: 'https', hostname: 'geekystuff.com.mx' }
+    ],
+  },
+};
+
+export default nextConfig;
+```
+
+### 3.4 `tailwind.config.ts`
+```typescript
+import type { Config } from 'tailwindcss';
+
+const config: Config = {
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        'blanco-roto': '#F5F0E9',
+        'carbon': '#3A3A3A',
+        'malva': '#8367C7',
+        'turquesa': '#73D8D4',
+        'coral': '#FF9E8A',
+      },
+    },
+  },
+  plugins: [],
+};
+export default config;
+```
+
+### 3.5 `postcss.config.mjs`
+```javascript
+/** @type {import('postcss-load-config').Config} */
+const config = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+
+export default config;
+```
+
+### 3.6 `vitest.config.ts`
+```typescript
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+export default defineConfig({
+  plugins: [react(), tsconfigPaths()],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./vitest.setup.ts'],
+    testTimeout: 20000,
+  },
+});
+```
+
+### 3.7 `vitest.setup.ts`
+```typescript
+import { afterEach } from 'vitest';
+
+afterEach(() => {
+  // Reset any test spies or DOM state
+});
+```
+
+### 3.8 `playwright.config.ts`
+```typescript
+import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './e2e',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'html',
+  use: {
+    baseURL: 'http://localhost:3001',
+    trace: 'on-first-retry',
+  },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3001',
+    reuseExistingServer: !process.env.CI,
+  },
+});
+```
+
+### 3.9 `.eslintrc.json`
+```json
+{
+  "extends": ["next/core-web-vitals", "next/typescript"]
+}
+```
+
+### 3.10 `.env.example` & `.env.local`
 ```ini
-# Database Configuration
+# Supabase Database Configuration
 NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
-# Authentication Configuration
+# Application & Authentication Secrets
 NEXTAUTH_SECRET=fallback-secret-for-development-and-tests
 NEXTAUTH_URL=http://localhost:3001
 
-# Cron Authorization Secret
+# Scheduled Cron Security Key
 CRON_SECRET=your-secure-cron-secret-token
 
 # BoardGameGeek XMLAPI2 Configuration
 BGG_API_KEY=your-bgg-xml-api-key
 ```
 
-### 4.2 Core data contracts
-```ts
-export interface Store {
-  id: string;
-  name: string;
-  slug: string;
-  logo_url?: string | null;
-  website_url: string;
-  country: string;
-  is_domestic: boolean;
-  rating?: number;
-  review_count?: number;
-  feed_url?: string | null;
-  feed_type?: 'google_xml' | 'shopify_json' | 'shopify_atom';
-  feed_status?: 'pending' | 'success' | 'failed';
-  feed_last_processed_count?: number;
-  feed_last_matched_count?: number;
-  feed_last_synced_at?: string | null;
-  promo_code?: string | null;
-}
+---
 
-export interface ShippingRate {
-  id?: string;
-  store_id: string;
-  destination_country: string;
-  flat_rate: number;
-  free_shipping_threshold?: number | null;
-}
+# 4. DevTools for Agents & Chrome DevTools MCP Guide
 
-export interface CatalogGame {
-  id: string;
-  slug: string;
-  title: string;
-  original_title?: string | null;
-  alternate_titles?: string[];
-  description?: string | null;
-  image_url?: string | null;
-  thumbnail_url?: string | null;
-  min_players?: number | null;
-  max_players?: number | null;
-  playing_time?: number | null;
-  weight?: number | null;
-  bgg_id?: number | null;
-  bgg_rank?: number | null;
-  search_popularity?: number;
-  item_type?: 'boardgame' | 'expansion' | 'accessory' | 'spinoff';
-  parent_game_id?: string | null;
-  is_verified: boolean;
-}
+> [!CAUTION]
+> **Mandatory Browser QA Policy:** Every agent or developer modifying UI, routing, or data flows MUST visually and interactively verify `http://localhost:3001` using Chrome DevTools MCP before concluding any task.
 
-export interface StoreOffer {
-  id: string;
-  store_id: string;
-  game_id: string;
-  store_product_url: string;
-  price: number;
-  stock: number;
-  edition_language: 'es' | 'en' | 'multi';
-  is_featured: boolean;
-  match_confidence: number;
-  match_tier: number;
-  is_active: boolean;
-  last_updated_at?: string;
-}
+## 4.1 What is Chrome DevTools MCP (`chrome-devtools-mcp`)?
+It is the official Model Context Protocol server developed by Google / Chrome DevTools. It connects an AI agent directly to a running instance of Chrome via Chrome DevTools Protocol (CDP), equipping the agent with 32 browser tools (`navigate_page`, `take_snapshot`, `click`, `fill`, `take_screenshot`, `list_console_messages`, `lighthouse_audit`).
 
-export interface IngestionJob {
-  id: string;
-  store_id: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  items_processed: number;
-  items_matched: number;
-  error_log?: string | null;
-  started_at?: string | null;
-  completed_at?: string | null;
-}
-```
+## 4.2 Installation & Setup
+1. **NPM Registry Directive:** Always configure npm to use the official registry to avoid HTTP 403 download errors:
+   ```bash
+   npm config set registry https://registry.npmjs.org/
+   ```
+2. **Execute Directly via NPX:**
+   ```bash
+   npx chrome-devtools-mcp@latest --help
+   ```
+3. **MCP Client Configuration JSON:**
+   To equip Claude Desktop, Cursor, Antigravity, or any MCP client:
+   ```json
+   {
+     "mcpServers": {
+       "chrome-devtools": {
+         "command": "npx",
+         "args": ["-y", "chrome-devtools-mcp@latest"]
+       }
+     }
+   }
+   ```
+4. **Connecting to a Running Chrome Instance (Alternative):**
+   - Start Chrome with remote debugging:
+     ```bash
+     # macOS:
+     /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222
+     ```
+   - Connect MCP server:
+     ```bash
+     npx chrome-devtools-mcp@latest --browser-url=http://127.0.0.1:9222
+     ```
 
-### 4.3 Recommended full-stack TypeScript tech stack
-* **Framework:** Next.js (App Router, React 19, TypeScript). Combines React Server Components (RSC) for zero-bundle server rendering with Server Actions for direct form mutations and Route Handlers for background ingestion crons and redirects.
-* **Persistence & Auth:** Supabase (Managed PostgreSQL 15+). Leverages `pg_trgm` for instant trigram fuzzy searching, `pgcrypto` for UUID generation, and Row-Level Security (RLS) for multi-tenant merchant data isolation.
-* **Styling & Design System:** Tailwind CSS v4 configured with MeeplePrecios brand tokens (`Blanco roto #F5F0E9`, `Carbón suave #3A3A3A`, `Malva suave #8367C7`, `Turquesa pastel #73D8D4`, `Coral deslavado #FF9E8A`).
-* **Testing & Verification:** Vitest for rapid ESM unit testing, Playwright for end-to-end browser journeys, and Chrome DevTools MCP for visual rendering and console audits.
+## 4.3 The 5-Step Agent Browser QA Workflow
+When testing any feature on `http://localhost:3001`:
+1. **Navigate:** Call `navigate_page({ url: "http://localhost:3001" })` or `new_page`.
+2. **Wait:** Call `wait_for({ selector: "table, h1, [role='switch']" })` to ensure React 19 hydration has completed.
+3. **Snapshot:** Call `take_snapshot({})` to inspect the semantic accessibility tree and get element `uid`s.
+4. **Interact:** Call `click({ uid: "..." })` or `type_text({ uid: "...", text: "Catan" })` to test search, tabs, filters, and modals.
+5. **Audit:**
+   - Call `take_screenshot({ filePath: "public/audit_view.png" })` to visually verify layout tokens.
+   - Call `list_console_messages({})` to ensure zero uncaught React hydration warnings or JavaScript runtime errors exist.
 
 ---
 
-## 5. Production database DDL, integrity constraints & RLS specification 🗄️
+# 5. Autonomous Agent Governance & Skills System (`.agents/`)
 
-### 5.1 Expert database design & SQL DDL
+## 5.1 The Core Directives
+1. **Quarantine Isolation:** AI agents MUST NEVER inspect, read, search (`grep`, `view_file`), copy, or import files from the `legacy/` directory under ANY circumstance.
+2. **Canonical User Story Naming:** Never reference deprecated GitHub issues (e.g. Issues #1–209). Refer exclusively to `US-01` through `US-26`.
+3. **Test-Driven Development (TDD):** Tests in `src/__tests__/` must be authored and failing before writing production code.
+4. **Google Sentence Case Governance:** All user-facing headings (`h1`, `h2`), buttons, and table headers MUST use sentence case (*e.g., Comparativa de ofertas por tienda*).
+5. **Root Cause Diagnosis Directive:** Whenever an error is addressed, the agent must document:
+   - *(a)* Why the issue happened.
+   - *(b)* How the code fix systematically prevents recurrence.
+
+## 5.2 The 4 Agent Operating Personas
+1. **The Architect:** Analyzes canonical user stories and formulates TDD plans. Does not write production code directly.
+2. **The UX Expert:** Enforces cognitive laws (Fitts, Hick, Miller), brand tokens (`#F5F0E9`, `#3A3A3A`, `#8367C7`, `#73D8D4`, `#FF9E8A`), sentence case, and `role="switch"` accessibility.
+3. **The Builder:** Writes tests first (TDD), implements minimal clean code, and ensures type safety.
+4. **The Reviewer:** Runs `npm run verify`, executes DevTools browser QA, and verifies all gates pass 100%.
+
+## 5.3 Complete Skill Definitions (`.agents/skills/`)
+
+### File: `.agents/skills/backlog_auditor/SKILL.md`
+```markdown
+---
+name: backlog_auditor
+description: "Automatically triggers when reviewing open GitHub issues, planning sprint backlogs, or decomposing user requirements. Enforces the Atomic User Story Mandate and Three-Point Compliance Filter."
+---
+
+# Skill: Backlog Auditor & Hygiene Gatekeeper
+
+When invoked or triggered during issue creation and triage, execute this workflow:
+1. **Fetch & Parse:** Dump all active backlog items via `gh issue list --state open --json number,title,body,labels` or parse local tracking documents.
+2. **Filter & Evaluate:** Check each item against:
+   - *Persona Atomicity:* Does it serve exactly one role?
+   - *Scope Atomicity:* Is it a single, independently testable feature?
+   - *Syntax Compliance:* Does it strictly follow `As a [Role], I want [Action], so that [Benefit]`?
+3. **Remediate:** Automatically split compound issues, decompose omnibus features into single-component tasks, and transform engineering chores into developer stories.
+```
+
+### File: `.agents/skills/github_issue_solve/SKILL.md`
+```markdown
+---
+name: github_issue_solve
+description: "Automated workflow for analyzing a GitHub issue, assigning the assignee, setting up the feature branch, planning the TDD execution, and commenting the plan on the issue."
+---
+
+# GitHub Issue Solve Skill: Backlog Initialization and Branching
+
+When beginning work on an atomic feature:
+1. **Validate Agile User Story:** Verify single-persona syntax: `As a [Role], I want [Feature], so that [Benefit]`.
+2. **Self-Assign:** `gh issue edit $ISSUE_NUMBER --add-assignee "@me"`.
+3. **Branch Isolation:** Create feature branch: `git checkout -b feature/us-$NUM-$SHORT_TITLE`.
+4. **TDD Planning:** Outline tests to write first, affected files, and documentation to sync.
+```
+
+### File: `.agents/skills/ux_expert/SKILL.md`
+```markdown
+---
+name: ux_expert
+description: "A specialized Product Design and UX Audit skill. Equips the AI with advanced cognitive psychology laws, premium visual design tokens, accessibility standards, and conversational copywriting playbooks to critique and refine user experiences."
+---
+
+# UX Expert Skill: Product Design and UX Audit Playbook
+
+1. **Brand Tokens Alignment:** Verify all UI elements use official tokens:
+   - Blanco Roto `#F5F0E9`, Carbón Suave `#3A3A3A`, Malva Suave `#8367C7`, Turquesa `#73D8D4`, Coral `#FF9E8A`.
+2. **Google Sentence Case Governance:** Ensure every heading, button, and table header uses sentence case.
+3. **Tactile Switch Accessibility:** All boolean filters must use `role="switch"` and `aria-checked`.
+4. **Emoji Ban:** Raw emojis are prohibited in headers, buttons, cards, and feeds; use clean SVG icons.
+5. **Touch Targets:** Mobile interactive elements must be at least 44x44px.
+```
+
+### File: `.agents/skills/github_issue_complete/SKILL.md`
+```markdown
+---
+name: github_issue_complete
+description: "Automated workflow for validating the codebase via unit and E2E tests, committing, pushing, opening a Pull Request linking the issue, updating handoffs, and merging into main."
+---
+
+# GitHub Issue Complete Skill: Verification, PR Creation, and Merging
+
+1. **Four-Tier Verification Gate:** Run `npm run verify` (lint, test, build).
+2. **Documentation Synchronization:** Update `HANDOFF.md`, `DESIGN.md`, and `AGENTS.md`.
+3. **Commit & Push:** Conventional commits (`feat:`, `fix:`, `refactor:`, `test:`).
+4. **PR Automation & Merge:** Merge into `main` after verification passes.
+```
+
+### File: `.agents/skills/document_sync/SKILL.md`
+```markdown
+---
+name: document_sync
+description: "Automated workflow for auditing and synchronizing all three living documents (HANDOFF.md, DESIGN.md, and AGENTS.md) to ensure technical schemas, sprint progress, and AI persona rules never go stale."
+---
+
+# Document Sync Skill: Workspace Documentation Hygiene
+
+At the conclusion of every feature or bug fix:
+1. **HANDOFF.md:** Document completed files, test status, and next sprint tasks.
+2. **DESIGN.md:** Document new SQL columns, API signatures, or visual tokens.
+3. **AGENTS.md:** Record hard-learned engineering lessons and conventions.
+```
+
+---
+
+# 6. Target Personas & Canonical User Stories Inventory (`US-01` to `US-26`)
+
+## 6.1 Personas
+1. **The Mexican Board Game Buyer (Player / Comprador):** Enthusiasts seeking tabletop games at the lowest total delivered price in $ MXN, differentiating between Spanish and English editions.
+2. **The Independent Tabletop Store Owner (Merchant / Socio):** E-commerce managers seeking sales growth without marketplace commissions, needing automated inventory sync and SKU mapping tools.
+3. **The Platform Administrator (Admin):** Monitors feed error rates, resolves staging queues, audits dead links, and throttles BGG metadata hydration.
+4. **The Autonomous AI Developer (Agent):** Executes tasks via atomic TDD, enforces Google sentence case, and verifies code via DevTools for Agents.
+
+## 6.2 Complete Canonical User Stories Inventory
+
+### Epic A: Discovery & Comparison (Player Persona)
+* **[US-01] Homepage Search and Hotness:** *As a Player, I want to search for board games on the homepage or view live BGG Hotness trends, so that I can quickly locate games available in Mexico.*
+* **[US-02] Hero Comparative UI:** *As a Player, I want to see a full-width box art header, typographic stats, and a 3-part price comparison table on `/game/[slug]`, so that I can evaluate total delivered costs at a glance.*
+* **[US-03] Explicit Language Badges:** *As a Player, I want store offers to display clear language badges (`Español (ES)`, `Inglés (EN)`, `Multilingüe (MULTI)`), so that I don't accidentally buy a game in a language I don't want.*
+* **[US-04] Direct Affiliate Checkout:** *As a Player, I want clicking "Ir a la tienda" to redirect me to the store's exact product page with UTM tracking, so that I can complete my purchase immediately.*
+* **[US-05] Spin-Off Game Variant Cataloging:** *As a Player, I want spin-off variants like Spot It! Catan or Dobble Catan to be cataloged as distinct game entries rather than merged into base game pages, so that I can view accurate price comparisons for both base games and spin-offs independently.*
+* **[US-25] BGG Top 10 & Most Searched Tabbed Landing UI:** *As a Player, I want tabbed switching on the homepage between the BGG Top 10 games and the most searched games in Mexico, so that I can discover top-rated global titles and trending local tabletop games effortlessly.*
+
+### Epic B: Merchant Self-Serve Portal (Merchant Persona)
+* **[US-06] Merchant Onboarding:** *As a Store Owner, I want to register my storefront name, logo, and XML/JSON feed URL on `/merchant/onboard`, so that my inventory is automatically listed on MeeplePrecios.*
+* **[US-07] Shipping Rate Matrix:** *As a Store Owner, I want to set my flat-rate domestic shipping fee and free shipping threshold in MXN, so that player total cost calculations are accurate.*
+* **[US-08] Sponsored Placement Toggles:** *As a Store Owner, I want to toggle sponsored featuring for my store on `/merchant/dashboard`, so that my offers appear at the top of comparison tables with a "★ Tienda recomendada" badge.*
+* **[US-09] Merchant Self-Service Feed Mapping Portal:** *As a Store Owner, I want a self-service product mapping portal on `/merchant/dashboard` to view unmatched feed items and bind them to canonical game IDs, so that I can maximize my catalog coverage on MeeplePrecios.*
+* **[US-18] Store-Isolated Candidate Suggestion Staging Queue:** *As a Store Owner, I want to see a list of top candidate game suggestions for my store's unmatched feed items on `/merchant/dashboard` and bind them with one click, so that I can quickly resolve feed ambiguities for my own storefront.*
+* **[US-23] Extended Mexican Tabletop Store Directory Expansion:** *As a Player, I want MeeplePrecios to aggregate offers from 50+ verified Mexican tabletop stores, so that I have 100% complete coverage of board game pricing and stock across Mexico.*
+* **[US-26] Automated Store Feed Ingestion & Merchant Admin Portal:** *As an Admin and Store Owner, I want an admin store settings portal on `/admin/stores` to manage store logos, flat shipping rates, free shipping thresholds, and feed URLs, view live ingestion data and mismatch statistics, and trigger real-time multi-route feed ingestion across all 51 stores, so that the platform displays 100% live real data with store brand logos.*
+
+### Epic C: Ingestion, Barcode Registry & Catalog Integrity (Developer / Admin Persona)
+* **[US-10] Multi-Format Feed Processing:** *As a Developer, I want feed ingestion to parse both Shopify JSON and Google Shopping XML feeds, so that all Mexican stores can be integrated without custom scrapers.*
+* **[US-11] EAN/GTIN Multi-Barcode Registry Table:** *As a Developer, I want a dedicated EAN/GTIN multi-barcode registry table (`public.game_barcodes`) linking barcodes to game editions and canonical IDs, so that feed ingestion achieves 100% deterministic matching without string ambiguities.*
+* **[US-12] Historical Merchant SKU Mapping Memory Table:** *As a Developer, I want a historical merchant SKU mapping memory table (`public.merchant_product_mappings`), so that manual merchant and admin re-mappings permanently persist across daily automated feed re-syncs.*
+* **[US-13] 4-Tier Waterfall Feed Matching Engine:** *As a Developer, I want a 4-tier waterfall matching engine (EAN Barcode -> SKU Memory -> Tokenized Fuzzy Match -> Manual Queue) with confidence scoring (>=0.92 auto-publish, 0.70-0.91 queue), so that product ingestion operates with 99.9% accuracy.*
+* **[US-14] Admin Staging and Moderation Queue UI:** *As an Admin, I want a staging queue UI on `/admin/queue` for medium-confidence feed items (confidence 0.70 to 0.91), so that I can review, approve, or re-map uncertain catalog matches across all stores.*
+* **[US-15] Independent Internal Game Catalog & XML Media Persistence:** *As a Developer, I want an internal master game catalog table (`public.catalog_games`) that extracts and persists game metadata, box art images, and media directly from store XML/JSON feeds independently of third-party BGG APIs, so that catalog integrity is self-contained and resilient.*
+* **[US-16] Automated Non-Game Feed Classifier:** *As a Developer, I want an automated XML/JSON feed classifier to identify and exclude non-game merchandise (sleeves, playmats, dice, TCG booster packs, deck boxes) during ingestion before matching, so that non-game noise never pollutes the comparison engine.*
+* **[US-17] Base Game & Expansion Entity Classification:** *As a Developer, I want XML feed items to be automatically classified as either base games or expansions and linked to parent game entities during ingestion, so that base games and expansion offers are cataloged cleanly.*
+* **[US-19] Multi-Tenant Store & Admin Queue Authorization (RLS):** *As a Developer, I want Supabase RLS policies and API access controls on the staging queue to restrict store owners to their own store's pending queue items while granting admins full cross-store queue moderation capabilities, so that store data privacy and administrative control are enforced.*
+* **[US-24] Multi-Route Shopify Feed Fallback Engine:** *As a Developer, I want automated feed ingestion to attempt secondary multi-route fallbacks (`/products.json` and `/collections/juegos-de-mesa/all.atom`) when primary `/collections/all.atom` requests return HTTP 403/404 or non-XML responses, so that catalog coverage increases automatically for protected stores.*
+
+### Epic D: Automated Catalog Auditing, Resilience & Admin Health Monitoring
+* **[US-20] Automated Catalog Broken Link & Redirect Audit Worker:** *As an Admin, I want an automated background audit route on `/api/cron/audit-urls` to periodically verify store product URLs, detect broken links or HTTP 404/500 errors, and flag or un-list inactive store offers, so that players never encounter dead links.*
+* **[US-21] Automated BGG Metadata Hydration Worker:** *As a Developer, I want a background sync route on `/api/cron/process-bgg-queue` to throttled-fetch missing BGG metadata, weight, player counts, and high-res cover images for internal catalog items, so that game pages stay enriched with complete specifications.*
+* **[US-22] Admin Catalog Health & Feed Diagnostics Dashboard:** *As an Admin, I want a comprehensive catalog health and feed sync diagnostics dashboard on `/admin/diagnostics` displaying feed error rates, total active offers, broken link counts, and manual feed re-sync triggers, so that platform stability and store feed integrity can be monitored in real time.*
+
+---
+
+# 7. Unified PostgreSQL Database Schema & Row-Level Security (RLS)
+
+### 7.1 Production DDL Script (`supabase/migrations/20260715000000_initial_schema.sql`)
 
 ```sql
--- Extensions Setup (Enables Fast Trigram Fuzzy Searching & Cryptographic UUIDs)
+-- Extensions Setup
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -264,15 +638,15 @@ CREATE TABLE IF NOT EXISTS public.stores (
   review_count INTEGER DEFAULT 50 CHECK (review_count >= 0),
   feed_url TEXT,
   feed_type TEXT CHECK (feed_type IN ('google_xml', 'shopify_json', 'shopify_atom')),
-  feed_status TEXT DEFAULT 'pending' CHECK (feed_status IN ('pending', 'success', 'failed')),
-  feed_last_processed_count INTEGER DEFAULT 0 CHECK (feed_last_processed_count >= 0),
-  feed_last_matched_count INTEGER DEFAULT 0 CHECK (feed_last_matched_count >= 0),
+  feed_status TEXT DEFAULT 'pending' CHECK (feed_status IN ('pending', 'success', 'error')),
+  feed_last_processed_count INTEGER DEFAULT 0,
+  feed_last_matched_count INTEGER DEFAULT 0,
   feed_last_synced_at TIMESTAMPTZ,
   promo_code TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Table 2: Shipping Rates (1-to-Many Normalized per Destination Market)
+-- Table 2: Shipping Rates
 CREATE TABLE IF NOT EXISTS public.shipping_rates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
@@ -283,7 +657,7 @@ CREATE TABLE IF NOT EXISTS public.shipping_rates (
   UNIQUE(store_id, destination_country)
 );
 
--- Table 3: Master Canonical Games Catalog (BGG-Independent Entity Store) [US-15]
+-- Table 3: Master Canonical Games Catalog
 CREATE TABLE IF NOT EXISTS public.catalog_games (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   slug TEXT NOT NULL UNIQUE,
@@ -307,7 +681,7 @@ CREATE TABLE IF NOT EXISTS public.catalog_games (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Table 4: Multi-Barcode GTIN/EAN Registry (Tier 1 Matcher) [US-11]
+-- Table 4: Multi-Barcode Registry (Tier 1)
 CREATE TABLE IF NOT EXISTS public.game_barcodes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   barcode TEXT NOT NULL UNIQUE,
@@ -317,7 +691,7 @@ CREATE TABLE IF NOT EXISTS public.game_barcodes (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Table 5: Merchant SKU Mapping Memory (Tier 2 Matcher) [US-12]
+-- Table 5: Merchant SKU Mapping Memory (Tier 2)
 CREATE TABLE IF NOT EXISTS public.merchant_product_mappings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
@@ -328,7 +702,7 @@ CREATE TABLE IF NOT EXISTS public.merchant_product_mappings (
   UNIQUE(store_id, merchant_sku)
 );
 
--- Table 6: Store Inventory & Comparison Offers
+-- Table 6: Store Offers & Inventory
 CREATE TABLE IF NOT EXISTS public.store_offers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
@@ -345,7 +719,25 @@ CREATE TABLE IF NOT EXISTS public.store_offers (
   UNIQUE(store_id, game_id, store_product_url)
 );
 
--- Table 7: Outbound Affiliate Click Analytics
+-- Table 7: Multi-Tenant Staging Queue
+CREATE TABLE IF NOT EXISTS public.feed_item_queue (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
+  sku TEXT,
+  barcode TEXT,
+  raw_title TEXT NOT NULL,
+  clean_title TEXT NOT NULL,
+  price NUMERIC(10,2) NOT NULL DEFAULT 0,
+  store_product_url TEXT NOT NULL,
+  image_url TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  match_confidence NUMERIC(3,2) DEFAULT 0.00,
+  suggested_candidates JSONB DEFAULT '[]'::jsonb,
+  resolved_game_id UUID REFERENCES public.catalog_games(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Table 8: Outbound Affiliate Click Analytics
 CREATE TABLE IF NOT EXISTS public.clicks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   offer_id UUID REFERENCES public.store_offers(id) ON DELETE SET NULL,
@@ -358,25 +750,7 @@ CREATE TABLE IF NOT EXISTS public.clicks (
   clicked_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Table 8: Multi-Candidate Staging Queue (Multi-Tenant Store & Admin Queue) [US-18, US-19]
-CREATE TABLE IF NOT EXISTS public.feed_item_queue (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  store_id UUID NOT NULL REFERENCES public.stores(id) ON DELETE CASCADE,
-  sku TEXT,
-  barcode TEXT,
-  raw_title TEXT NOT NULL,
-  clean_title TEXT NOT NULL,
-  price NUMERIC(10,2) NOT NULL DEFAULT 0,
-  store_product_url TEXT NOT NULL,
-  image_url TEXT,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
-  match_confidence NUMERIC(3,2) DEFAULT 0.00 CHECK (match_confidence >= 0.00 AND match_confidence <= 1.00),
-  suggested_candidates JSONB DEFAULT '[]'::jsonb, -- Array of [{ game_id, name, confidence_score, image_url }]
-  resolved_game_id UUID REFERENCES public.catalog_games(id) ON DELETE SET NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Table 9: Background BGG Metadata Hydration Queue [US-21]
+-- Table 9: Background BGG Metadata Hydration Queue
 CREATE TABLE IF NOT EXISTS public.bgg_sync_queue (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   game_id UUID NOT NULL REFERENCES public.catalog_games(id) ON DELETE CASCADE,
@@ -402,14 +776,11 @@ CREATE TABLE IF NOT EXISTS public.ingestion_jobs (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Performance Indexing Strategy
-CREATE INDEX IF NOT EXISTS idx_stores_country ON public.stores(country);
-CREATE INDEX IF NOT EXISTS idx_shipping_rates_store_id ON public.shipping_rates(store_id);
+-- Performance Indexes
 CREATE INDEX IF NOT EXISTS idx_catalog_games_slug ON public.catalog_games(slug);
 CREATE INDEX IF NOT EXISTS idx_catalog_games_bgg_id ON public.catalog_games(bgg_id);
 CREATE INDEX IF NOT EXISTS idx_catalog_games_title_trgm ON public.catalog_games USING GIN(title gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS idx_catalog_games_alternate_names ON public.catalog_games USING GIN(alternate_titles);
-CREATE INDEX IF NOT EXISTS idx_catalog_games_parent_id ON public.catalog_games(parent_game_id);
 CREATE INDEX IF NOT EXISTS idx_game_barcodes_barcode ON public.game_barcodes(barcode);
 CREATE INDEX IF NOT EXISTS idx_merchant_mappings_sku ON public.merchant_product_mappings(store_id, merchant_sku);
 CREATE INDEX IF NOT EXISTS idx_store_offers_lookup ON public.store_offers(game_id, is_active);
@@ -418,12 +789,8 @@ CREATE INDEX IF NOT EXISTS idx_feed_queue_lookup ON public.feed_item_queue(store
 CREATE INDEX IF NOT EXISTS idx_clicks_store_date ON public.clicks(store_id, clicked_at DESC);
 CREATE INDEX IF NOT EXISTS idx_clicks_game_id ON public.clicks(game_id);
 CREATE INDEX IF NOT EXISTS idx_ingestion_jobs_status ON public.ingestion_jobs(status, created_at);
-```
 
-### 5.2 Row level security (RLS) policies
-
-```sql
--- Enable RLS across all tables
+-- Enable RLS
 ALTER TABLE public.stores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.shipping_rates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.catalog_games ENABLE ROW LEVEL SECURITY;
@@ -441,168 +808,34 @@ CREATE POLICY "Public Read Shipping" ON public.shipping_rates FOR SELECT USING (
 CREATE POLICY "Public Read Catalog" ON public.catalog_games FOR SELECT USING (true);
 CREATE POLICY "Public Read Barcodes" ON public.game_barcodes FOR SELECT USING (true);
 CREATE POLICY "Public Read Offers" ON public.store_offers FOR SELECT USING (is_active = true);
-CREATE POLICY "Public Read Mappings" ON public.merchant_product_mappings FOR SELECT USING (true);
-CREATE POLICY "Public Read Sync Queue" ON public.bgg_sync_queue FOR SELECT USING (true);
-
--- Public Insert for Clicks
 CREATE POLICY "Public Click Insertion" ON public.clicks FOR INSERT WITH CHECK (true);
 
--- Policy 1: Store owners can only view & update their own store's pending queue items [US-19]
-CREATE POLICY store_owner_queue_isolation ON public.feed_item_queue
+-- Multi-Tenant Feed Queue Security
+CREATE POLICY "Store Owner Queue Isolation" ON public.feed_item_queue
   FOR ALL
-  USING (
-    store_id = (SELECT (auth.jwt() -> 'app_metadata' ->> 'store_id')::UUID)
-  );
+  USING (store_id = (SELECT (auth.jwt() -> 'app_metadata' ->> 'store_id')::UUID));
 
--- Policy 2: Admins can view & moderate all queues across all stores [US-19]
-CREATE POLICY admin_full_queue_access ON public.feed_item_queue
+CREATE POLICY "Admin Full Queue Access" ON public.feed_item_queue
   FOR ALL
-  USING (
-    (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
-  );
+  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 ```
 
 ---
 
-## 6. Complete REST API contract inventory 🔌
+### 7.2 3-Party Consensus Architectural Invariants ⚖️
 
-| Endpoint Path | Method | Auth Scope | Payload / Parameters | Success Response (200/201) |
-| :--- | :--- | :--- | :--- | :--- |
-| `/api/search` | `GET` | Public | `?q=query_string` | `{ games: [...], stores: [...] }` |
-| `/api/games/[slug]` | `GET` | Public | Path `slug` | `{ game: CatalogGame, offers: StoreOffer[] }` |
-| `/api/redirect` | `GET` | Public | `?offer_id=uuid&url=http...` | HTTP 302 Redirect to merchant URL with UTM tags (<100ms non-blocking) |
-| `/api/offers/verify` | `GET` / `POST` | Public / Edge | `?offer_id=uuid` | `{ verified: boolean, price: number, stock: number, updated: boolean }` |
-| `/api/merchant/onboard` | `POST` | Public / Merchant | `{ name, website_url, feed_url, flat_rate, free_shipping_threshold }` | `{ success: true, store_id: uuid }` |
-| `/api/merchant/mapping` | `GET` | Merchant | `?store_id=uuid` | `{ items: [ UnmatchedItem, ... ] }` |
-| `/api/merchant/mapping` | `POST` | Merchant | `{ store_id, merchant_sku, game_id }` | `{ success: true, mapped_game_id: ... }` |
-| `/api/merchant/shipping` | `POST` | Merchant | `{ store_id, flat_rate, free_shipping_threshold }` | `{ success: true }` |
-| `/api/merchant/featured` | `POST` | Merchant | `{ store_id, offer_id, is_featured }` | `{ success: true, is_featured: boolean }` |
-| `/api/admin/stores` | `GET` / `POST` | Admin | GET: none; POST: `{ store_id, name, logo_url, feed_url, ... }` | `{ stores: [...] }` or `{ success: true }` |
-| `/api/admin/feed-queue` | `GET` | Admin | None | `{ items: [ QueueItem, ... ] }` |
-| `/api/admin/feed-queue` | `POST` | Admin | `{ id, action: 'approve'/'remap'/'reject', game_id }` | `{ success: true, message: '...' }` |
-| `/api/admin/diagnostics` | `GET` | Admin | None | `{ feed_status: [...], broken_links_count: N, total_active_offers: M }` |
-| `/api/cron/sync-feeds` | `POST` | `CRON_SECRET` | `?batch_size=3` & `Bearer <CRON_SECRET>` | `{ success: true, enqueued_jobs: N, processed_stores: M }` |
-| `/api/cron/sync-worker` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <CRON_SECRET>` | `{ processed_job_id: uuid, items_matched: N }` |
-| `/api/cron/process-bgg-queue` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <CRON_SECRET>` | `{ processed: N, resolved: M }` |
-| `/api/cron/audit-urls` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <CRON_SECRET>` | `{ audited: N, broken_links: M, misattributions: K }` |
-
----
-
-## 7. The 4-tier waterfall ingestion & affiliate engines ⚙️
-
-### 7.1 Title sanitization algorithm (`cleanBoardGameTitle`)
-```ts
-export function cleanBoardGameTitle(rawTitle: string): string {
-  if (!rawTitle) return '';
-  let title = rawTitle.toLowerCase();
-
-  const noisePatterns = [
-    /juego de mesa/gi, /edición especial/gi, /edición en español/gi,
-    /edicion espanol/gi, /en español/gi, /ingles/gi, /inglés/gi,
-    /preventa/gi, /nuevo/gi, /original/gi, /devir/gi, /asmodee/gi
-  ];
-
-  for (const pattern of noisePatterns) {
-    title = title.replace(pattern, '');
-  }
-
-  title = title.replace(/[^\w\s\u00C0-\u024F]/gi, ' ');
-  return title.replace(/\s+/g, ' ').trim();
-}
-```
-
-### 7.2 Language detection algorithm (`detectLanguage`)
-```ts
-export function detectLanguage(title: string, description: string = ''): 'es' | 'en' | 'multi' {
-  const text = `${title} ${description}`.toLowerCase();
-  
-  if (/\b(multilingüe|multilenguaje|multi-language)\b/i.test(text)) return 'multi';
-  if (/\b(inglés|ingles|english|en)\b/i.test(text) && !/\b(español|espanol)\b/i.test(text)) return 'en';
-  return 'es'; // Default to Spanish for Mexican store feeds
-}
-```
-
-### 7.3 Composite similarity score math
-$$\text{Score} = (0.5 \times \text{JaroWinkler}) + (0.3 \times \text{TokenOverlap}) + (0.2 \times \text{Levenshtein})$$
-
-Exclusion keyword penalty: If title contains standalone word boundaries for `/\bfundas?\b/i`, `/\bprimer\b/i`, `/\bpuzzles?\b/i`, `/\bsleeves?\b/i`, `/\bexpansion\b/i` not present in catalog game title, apply `-0.35` penalty.
-
-### 7.4 Multi-format feed parsers (Shopify JSON & Google Atom XML)
-- **Shopify JSON Ingestion:** Fetches `/products.json?limit=250&page=N` up to 100 pages, extracting `title`, `vendor`, `variants` (`id`, `sku`, `barcode`, `price`, `available`), `images`.
-- **Google Atom XML Ingestion:** Parses `<item>` or `<entry>`, extracting `<title>`, `<link>`, `<g:gtin>`, `<g:price>`, `<g:availability>`.
-
-### 7.5 Outbound affiliate redirect engine (`/api/redirect`)
-When a user clicks **Ir a la tienda**:
-1. Extracts `offer_id`, `store_id`, `url`.
-2. Asynchronously logs an outbound click row to `public.clicks`.
-3. Appends UTM tracking query params (`?utm_source=meepleprecios&utm_medium=affiliate&utm_campaign=price_comparison`).
-4. Responds with HTTP `302 Found` redirecting the browser to the merchant's target product page.
-
-### 7.6 Verified store XML & JSON feed registry (Mexican stores 🇲🇽)
-
-| Store Name | Country | Atom / XML Feed Endpoint | Shopify JSON Feed Endpoint | Base Website | Validation Status |
-| :--- | :---: | :--- | :--- | :--- | :---: |
-| **Ficha y Dado** | 🇲🇽 MX | `https://fichaydado.com/collections/all.atom` | `https://fichaydado.com/products.json` | `https://fichaydado.com` | 🟢 Live Validated |
-| **Mundo Meeple Store** | 🇲🇽 MX | `https://mundomeeplestore.com/collections/all.atom` | `https://mundomeeplestore.com/products.json` | `https://mundomeeplestore.com` | 🟢 Live Validated |
-| **Roll Games** | 🇲🇽 MX | `https://rollgames.mx/collections/all.atom` | `https://rollgames.mx/products.json` | `https://rollgames.mx` | 🟢 Live Validated |
-| **Con T de Tlacuache** | 🇲🇽 MX | `https://tdetlacuache.com/collections/all.atom` | `https://tdetlacuache.com/products.json` | `https://tdetlacuache.com` | 🟢 Live Validated |
-| **Quantum Boardgames** | 🇲🇽 MX | `https://quantumboardgames.com/collections/all.atom` | `https://quantumboardgames.com/products.json` | `https://quantumboardgames.com` | 🟢 Live Validated |
-| **Alfa y Delta** | 🇲🇽 MX | `https://alfaydelta.com/collections/all.atom` | `https://alfaydelta.com/products.json` | `https://alfaydelta.com` | 🟢 Live Validated |
-| **Bundaba** | 🇲🇽 MX | `https://bundaba.com.mx/collections/all.atom` | `https://bundaba.com.mx/products.json` | `https://bundaba.com.mx` | 🟢 Live Validated |
-
-### 7.7 Direct collection-filtered XML feed strategy (Excluding accessories & expansions)
-
-To directly fetch feed items containing **only base games** without custom server-side parsing or noise from accessories, sleeves, or TCG cards:
-
-1. **Category-Specific Shopify Atom Feeds (`/collections/<handle>/all.atom`):**
-   Shopify automatically generates dedicated RSS/Atom XML feeds for individual collections. By targeting the base game collection handle instead of `all`:
-   - `https://<store-domain>/collections/juegos-de-mesa/all.atom` (Base Board Games only)
-   - `https://<store-domain>/collections/juegos-base/all.atom`
-   - *Result:* Items belonging exclusively to the targeted collection are returned in XML, excluding `/collections/accesorios`, `/collections/expansiones`, and `/collections/fundas`.
-
-2. **Category-Specific Shopify JSON Feeds (`/collections/<handle>/products.json`):**
-   - `https://<store-domain>/collections/juegos-de-mesa/products.json`
-
-3. **Google Shopping XML Feed Filtering (`g:google_product_category`):**
-   - For custom XML/Google Shopping feeds, filter items where `<g:google_product_category>` matches `Toys & Games > Games > Board Games` (Category ID `3781`) or where `<g:product_type>` contains `Juegos de Mesa > Base`.
-
-### 7.8 Automated non-game feed classifier (Sleeves, TCGs & accessories exclusion) [US-16]
-
-Before feed items enter the 4-tier matching engine, they pass through an automated non-game classifier (`isBoardGameFeedItem`):
-- **Exclusion Criteria:** If an item title, category path, or feed type matches non-game keywords (`fundas`, `sleeves`, `playmat`, `caja protectora`, `booster pack`, `sobre de mejora`, `dado`, `cargador`, `album`), it is flagged as `is_game = false` and discarded from offer indexing.
-- **Image Extraction & Local Persistence:** For valid game items, the parser extracts `<g:image_link>` or `images[0].src` from the store XML/JSON and persists it directly into `public.catalog_games.image_url` independently of third-party APIs.
-
-### 7.9 Base game vs. expansion entity classifier [US-17]
-
-The feed ingestion pipeline evaluates feed titles and tags to categorize valid game items:
-- **Base Game Classification (`item_type = 'boardgame'`):** Assigned when title contains standalone base game naming without expansion markers.
-- **Expansion Classification (`item_type = 'expansion'`):** Assigned when title contains expansion markers (`expansión`, `expansion`, `extension`, `añadido`, `pack de escenario`).
-- **Parent Game Linking:** Expansions are automatically linked to their parent base game entity in `public.catalog_games` via `parent_game_id`.
-
-### 7.10 Multi-candidate suggestion engine & store/admin queue authorization matrix [US-18, US-19]
-
-When a feed item's matching confidence is below auto-publish threshold ($\text{score} < 0.92$), it is routed to the staging queue (`public.feed_item_queue`):
-1. **Candidate Generator:** The engine computes similarity scores against the master games catalog (`public.catalog_games`) and attaches a JSONB array of up to 5 top candidate suggestions (`suggested_candidates: [{ game_id, name, confidence_score, image_url }]`).
-2. **Multi-Tenant Queue Authorization Matrix (RLS & Access Control):**
-   - **Store Owners (Merchants):** Can view and resolve **ONLY** their own store's pending queue items on `/merchant/dashboard` (`WHERE store_id = auth.jwt() -> store_id`).
-   - **Admins:** Can view, filter, and resolve **ALL** pending queue items across all stores on `/admin/queue` (`WHERE role = 'admin'`).
-3. **One-Click Binding Resolution:** Selecting a candidate suggestion binds the feed SKU to `public.merchant_product_mappings`, creates the active offer row in `public.store_offers`, and marks the queue item as `approved`.
-
-### 7.11 3-Party consensus architectural invariants ⚖️
-
-Through a rigorous 3-party adversarial examination (Systems Architect vs. Mexican Retail Merchant vs. Tabletop Gamer & UX Purist), the following 5 systemic invariants are codified into the architecture:
+Through a rigorous 3-party adversarial examination (Systems Architect vs. Mexican Tabletop Merchant vs. Tabletop Gamer & UX Purist), the following 5 systemic invariants are codified into the architecture:
 
 1. **Unified Autonomous Catalog Law (`catalog_games` UUID + SEO Slug):**
    - Primary key is ALWAYS `id UUID DEFAULT gen_random_uuid()`.
-   - BGG integer (`bgg_id`) is strictly a nullable external lookup key, NEVER a foreign key dependency or primary key.
+   - `bgg_id` is an optional lookup attribute, preventing foreign key failures on independent Mexican tabletop games.
    - User-facing routes use clean, canonical SEO slugs (`/game/[slug]`, e.g. `/game/catan`).
 2. **Serverless Cursor-Based Chunked Ingestion State Machine:**
    - Ingestion jobs are enqueued into `public.ingestion_jobs`.
-   - The master cron invokes `/api/cron/sync-feeds?batch_size=3`, which processes 3 stores per invocation ordered by `feed_last_synced_at ASC NULLS FIRST`.
-   - Eliminates monolithic 51-store synchronous execution timeouts on serverless runtimes.
+   - The master cron invokes `/api/cron/sync-feeds?batch_size=3`, which processes 3 stores per invocation ordered by `feed_last_synced_at ASC NULLS FIRST` to eliminate serverless execution timeouts.
 3. **Dynamic Stale Price Shield (Non-Blocking Freshness Check):**
-   - Outbound clicks (`/api/redirect`) remain blazing fast (<100ms) with zero synchronous blocking pings.
-   - On `/game/[slug]`, if an offer is older than 6 hours, an asynchronous client-side background call triggers `/api/offers/verify?offer_id=...` to re-verify price and stock against the store's endpoint without blocking UX.
+   - Outbound clicks (`/api/redirect`) remain sub-100ms with zero synchronous blocking pings.
+   - On `/game/[slug]`, if an offer is older than 6 hours, an asynchronous client-side background call triggers `/api/offers/verify?offer_id=...` to re-verify price and stock without blocking UX.
 4. **Localized Spanish Title & Alternate Name Trigram Resolution:**
    - GIN Trigram index (`idx_catalog_games_alternate_names`) on `catalog_games(alternate_titles)` enables sub-second fuzzy matching for translated titles (e.g. *Ticket to Ride* vs *Aventureros al Tren*).
    - Game identity (`game_id`) and edition language (`edition_language: 'es' | 'en' | 'multi'`) remain decoupled.
@@ -613,57 +846,285 @@ Through a rigorous 3-party adversarial examination (Systems Architect vs. Mexica
 
 ---
 
-## 8. Feed processing, database sequencing & testing gotchas ⚡
+# 8. The 4-Tier Waterfall Matching Engine & Classifiers
 
-### 8.1 Database write sequence integrity
-Inserting `store_offers` rows referencing parent `game_id`s before parent rows exist in `catalog_games` causes foreign key violations.
-- **Rule:** Always flush new parent game entries to `catalog_games` *before* inserting rows into `store_offers`.
+```mermaid
+flowchart TD
+    Raw[Raw Feed Item] --> FilterNonGame{Non-Game Filter<br/>isBoardGameFeedItem?}
+    FilterNonGame -- Discard --> DiscardNonGame[Discard Sleeves / Dice / TCG]
+    FilterNonGame -- Pass --> Tier1{Tier 1: Barcode<br/>GTIN / EAN-13 Match?}
+    Tier1 -- Match Found --> Pub1[Auto-Publish Tier 1<br/>Confidence: 1.00]
+    Tier1 -- No Match --> Tier2{Tier 2: SKU Memory<br/>Historical Mapping?}
+    Tier2 -- Match Found --> Pub2[Auto-Publish Tier 2<br/>Confidence: 1.00]
+    Tier2 -- No Match --> Tier3{Tier 3: Fuzzy Math<br/>Composite Score}
+    Tier3 -- "Score >= 0.92 & Type Match" --> Pub3[Auto-Publish Tier 3<br/>Confidence: >= 0.92]
+    Tier3 -- "0.70 <= Score < 0.92" --> StagingQueue[Tier 4: Staging Queue<br/>Top 5 Suggestions]
+    Tier3 -- "Score < 0.70" --> ManualAutocomplete[Tier 4: Staging Queue<br/>Manual Search Autocomplete]
+```
 
-### 8.2 Buffered batch upserts
-Executing individual SQL queries in large loops causes timeouts during feed syncs.
-- **Rule:** Buffer discovered games in memory (`newGamesToUpsert`) and execute bulk upserts in batches of up to 500 records.
+### 8.1 Implementation (`src/lib/engine/matching-engine.ts`)
 
-### 8.3 Disk cache fallback
-When remote crawls fail or return 0 items due to status 429 rate-limiting:
-- **Rule:** Load existing store offers from disk cache and upsert them to database to preserve comparison table continuity.
+```typescript
+export function cleanBoardGameTitle(rawTitle: string): string {
+  if (!rawTitle) return '';
+  let title = rawTitle.toLowerCase();
 
-### 8.4 BGG XMLAPI2 rate-limiting & pseudo-game resolution
-When resolving missing game metadata:
-- **Rule:** Throttle requests with `delayMs >= 1200` between consecutive XMLAPI2 fetches to avoid HTTP 429 rate limits. Enqueue missing metadata into `public.bgg_sync_queue`.
+  const noisePatterns = [
+    /\bjuego de mesa\b/gi, /\bjuego base\b/gi, /\bedición especial\b/gi,
+    /\bedición en español\b/gi, /\bedicion espanol\b/gi, /\ben español\b/gi,
+    /\bingles\b/gi, /\binglés\b/gi, /\bpreventa\b/gi, /\bnuevo\b/gi,
+    /\boriginal\b/gi, /\bdevir\b/gi, /\basmodee\b/gi, /\bboard game\b/gi
+  ];
+
+  for (const pattern of noisePatterns) {
+    title = title.replace(pattern, '');
+  }
+
+  // Preserve alphanumeric + Spanish characters (\u00C0-\u024F)
+  title = title.replace(/[^\w\s\u00C0-\u024F]/gi, ' ');
+  return title.replace(/\s+/g, ' ').trim();
+}
+
+export function isBoardGameFeedItem(title: string): boolean {
+  const t = title.toLowerCase();
+  const accessoryRegex = /\b(fundas?|sleeves?|inserto|dice|dados|monedas|playmats?|tapete|deck box|caja protectora|tokens?|sobres?|booster pack|cargador|álbum|album|binder)\b/i;
+  
+  // Guard: preserve games that genuinely contain 'dice' or 'cartas' in title
+  if (/\b(dice throne|roll for the galaxy|juego de cartas)\b/i.test(t)) {
+    return true;
+  }
+  return !accessoryRegex.test(t);
+}
+
+export function classifyFeedItemType(title: string): 'boardgame' | 'expansion' | 'accessory' | 'spinoff' {
+  const t = title.toLowerCase();
+  if (!isBoardGameFeedItem(title)) return 'accessory';
+  if (/\b(dobble|spot it!|junior)\b/i.test(t)) return 'spinoff';
+  if (/\b(expansión|expansion|ampliación|ampliacion|extension|extensión|pack de escenario)\b/i.test(t)) return 'expansion';
+  return 'boardgame';
+}
+
+export function calculateSimilarityScore(feedTitle: string, catalogTitle: string): number {
+  const cleanFeed = cleanBoardGameTitle(feedTitle);
+  const cleanCat = cleanBoardGameTitle(catalogTitle);
+
+  if (cleanFeed === cleanCat) return 1.0;
+  if (!cleanFeed || !cleanCat) return 0.0;
+
+  const jw = jaroWinklerSimilarity(cleanFeed, cleanCat);
+  const to = tokenOverlapRatio(cleanFeed, cleanCat);
+  const lev = 1 - (levenshteinDistance(cleanFeed, cleanCat) / Math.max(cleanFeed.length, cleanCat.length));
+
+  let score = (0.50 * jw) + (0.30 * to) + (0.20 * lev);
+
+  // Standalone Subtitle / Keyword Penalty
+  const penaltyRegex = /\b(duelo|viaje|rivales|junior|plus|legacy|big box|cartas|3d|aniversario)\b/i;
+  if (penaltyRegex.test(feedTitle) && !penaltyRegex.test(catalogTitle)) {
+    score -= 0.40;
+  }
+
+  // Token Imbalance Penalty
+  const feedTokens = cleanFeed.split(' ').filter(t => t.length > 2);
+  const catTokens = cleanCat.split(' ').filter(t => t.length > 2);
+  const unmapped = feedTokens.filter(t => !catTokens.includes(t));
+  if (unmapped.length >= 1 && catTokens.length <= 2) {
+    score -= 0.25;
+  }
+
+  return Math.max(0, Math.min(1.0, Number(score.toFixed(3))));
+}
+```
 
 ---
 
-## 9. UI design system and token specification 🎨
+# 9. Multi-Route Feed Ingestion Engine & 51 Mexican Stores Registry
 
-### 9.1 Color palette
-| Purpose | Color Name | Hex Code | Tailwind / CSS Class |
-| :--- | :--- | :--- | :--- |
-| Base / Background | Blanco roto | `#F5F0E9` | `bg-[#F5F0E9]` |
-| Dark UI / Headers | Carbón suave | `#3A3A3A` | `text-[#3A3A3A]` |
-| Primary Accent / CTAs | Malva suave | `#8367C7` | `bg-[#8367C7] text-white` |
-| Secondary Accent / Badges | Turquesa pastel | `#73D8D4` | `bg-[#73D8D4]/20 text-[#2B8C88]` |
-| Price Highlights | Coral deslavado | `#FF9E8A` | `bg-[#FF9E8A]/25 text-rose-950` |
+### 9.1 The 3-Tier Fallback Ingestion Ladder (`src/lib/engine/feed-parser.ts`)
+```typescript
+export async function fetchWithMultiRouteFallback(storeDomain: string, primaryFeedUrl: string) {
+  const candidateRoutes = [
+    `${storeDomain}/products.json?limit=250`,
+    `${storeDomain}/collections/juegos-de-mesa/all.atom`,
+    primaryFeedUrl,
+  ];
 
-### 9.2 Google sentence case governance
-All headings (`h1`, `h2`, `h3`), buttons, and table labels MUST strictly follow sentence case (for example, *Comparativa de ofertas por tienda*, *★ Tienda recomendada*, *Mejor precio actual*).
+  for (const route of candidateRoutes) {
+    try {
+      const res = await fetch(route, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+          'Accept': 'application/json, application/atom+xml, text/xml, */*',
+        },
+      });
 
-### 9.3 Tactile switch component standard (`role="switch"`)
-All boolean toggles (for example, Domestic Store Toggle `onlyDomestic`) MUST use accessible switch controls:
-```tsx
-<input 
-  type="checkbox" 
-  role="switch" 
-  aria-checked={isDomesticOnly} 
-  onChange={(e) => { e.stopPropagation(); setIsDomesticOnly(e.target.checked); }} 
-/>
+      if (!res.ok) continue;
+      const text = await res.text();
+      const items = text.startsWith('{')
+        ? parseShopifyJsonFeed(JSON.parse(text), storeDomain)
+        : parseGoogleXmlFeed(text);
+
+      if (items.length > 0) {
+        return { ok: true, usedRoute: route, items };
+      }
+    } catch {}
+  }
+  return { ok: false, usedRoute: primaryFeedUrl, items: [] };
+}
 ```
 
-### 9.4 Modern web standards architecture (Modern Web Guidance integration)
+### 9.2 Complete 51 Mexican Tabletop Stores Registry
 
-To minimize third-party JavaScript dependencies while maximizing Core Web Vitals (LCP, INP, CLS), MeeplePrecios strictly implements Baseline modern web standards:
+| # | Store Name | Slug | Website Domain | Primary Feed Route | Flat Shipping | Free Threshold |
+| :-: | :--- | :--- | :--- | :--- | :-: | :-: |
+| 1 | Ficha y Dado | `ficha-y-dado` | `fichaydado.com` | `https://fichaydado.com/collections/all.atom` | $110.00 | $1,399.00 |
+| 2 | Mundo Meeple Store | `mundo-meeple` | `mundomeeplestore.com` | `https://mundomeeplestore.com/collections/all.atom` | $120.00 | $1,499.00 |
+| 3 | Roll Games | `roll-games` | `rollgames.mx` | `https://rollgames.mx/collections/all.atom` | $99.00 | $1,299.00 |
+| 4 | Con T de Tlacuache | `con-t-de-tlacuache`| `tdetlacuache.com` | `https://tdetlacuache.com/collections/all.atom` | $115.00 | $1,500.00 |
+| 5 | Quantum Boardgames | `quantum-boardgames`| `quantumboardgames.com` | `https://quantumboardgames.com/collections/all.atom` | $130.00 | $1,600.00 |
+| 6 | Alfa y Delta | `alfa-y-delta` | `alfaydelta.com` | `https://alfaydelta.com/collections/all.atom` | $125.00 | $1,400.00 |
+| 7 | Bundaba | `bundaba` | `bundaba.com.mx` | `https://bundaba.com.mx/collections/all.atom` | $105.00 | $1,200.00 |
+| 8 | Geeky Stuff | `geeky-stuff` | `geekystuff.com.mx` | `https://geekystuff.com.mx/collections/all.atom` | $120.00 | $1,500.00 |
+| 9 | 2 Tomatoes MX | `2-tomatoes-mx` | `2tomatoesgames.mx` | `https://2tomatoesgames.mx/collections/all.atom` | $130.00 | $1,500.00 |
+| 10 | Amukiri | `amukiri` | `amukiritienda.com` | `https://amukiritienda.com/collections/all.atom` | $115.00 | $1,400.00 |
+| 11 | Avalon Store | `avalon-store` | `avalonstore.mx` | `https://avalonstore.mx/collections/all.atom` | $120.00 | $1,500.00 |
+| 12 | Catito Games | `catito-games` | `catitogames.com` | `https://catitogames.com/collections/all.atom` | $110.00 | $1,350.00 |
+| 13 | Demon Juegos | `demon-juegos` | `demonjuegos.com` | `https://demonjuegos.com/collections/all.atom` | $125.00 | $1,600.00 |
+| 14 | Día D Juegos | `dia-d-juegos` | `diadjuegos.com` | `https://diadjuegos.com/collections/all.atom` | $115.00 | $1,450.00 |
+| 15 | El Duende | `el-duende` | `elduende.com.mx` | `https://elduende.com.mx/collections/all.atom` | $120.00 | $1,500.00 |
+| 16 | El Meeple Dorado | `el-meeple-dorado` | `elmeepledorado.com` | `https://elmeepledorado.com/collections/all.atom` | $110.00 | $1,399.00 |
+| 17 | El Reino de los Juegos| `reino-juegos` | `elreinodelosjuegos.com` | `https://elreinodelosjuegos.com/collections/all.atom` | $130.00 | $1,550.00 |
+| 18 | Eximia Games | `eximia-games` | `eximiagames.com` | `https://eximiagames.com/collections/all.atom` | $120.00 | $1,400.00 |
+| 19 | GamesMart | `gamesmart` | `gamesmart.mx` | `https://gamesmart.mx/collections/all.atom` | $110.00 | $1,300.00 |
+| 20 | Geek Toys | `geek-toys` | `geektoys.com.mx` | `https://geektoys.com.mx/collections/all.atom` | $125.00 | $1,500.00 |
+| 21 | Hobbiton Games | `hobbiton-games` | `hobbiton.com.mx` | `https://hobbiton.com.mx/collections/all.atom` | $115.00 | $1,400.00 |
+| 22 | Jugando Ando | `jugando-ando` | `jugandoando.mx` | `https://jugandoando.mx/collections/all.atom` | $110.00 | $1,350.00 |
+| 23 | Juguetrón Tabletop | `juguetron-tabletop`| `juguetron.mx` | `https://juguetron.mx/collections/all.atom` | $140.00 | $1,800.00 |
+| 24 | Julio Cepeda Juegos | `julio-cepeda` | `juliocepeda.com` | `https://juliocepeda.com/collections/all.atom` | $135.00 | $1,700.00 |
+| 25 | La Bóveda del Meeple| `boveda-meeple` | `labovedadelmeeple.com` | `https://labovedadelmeeple.com/collections/all.atom` | $115.00 | $1,450.00 |
+| 26 | La Cabaña del Meeple| `cabana-meeple` | `lacabanadelmeeple.com` | `https://lacabanadelmeeple.com/collections/all.atom` | $120.00 | $1,500.00 |
+| 27 | La Carreta Boardgames| `carreta-boardgames`| `lacarretaboardgames.com`| `https://lacarretaboardgames.com/collections/all.atom`| $110.00 | $1,300.00 |
+| 28 | La Casa de la Educadora| `casa-educadora` | `educadora.com.mx` | `https://educadora.com.mx/collections/all.atom` | $125.00 | $1,600.00 |
+| 29 | La Fortaleza Games | `fortaleza-games` | `lafortalezagames.com` | `https://lafortalezagames.com/collections/all.atom` | $120.00 | $1,500.00 |
+| 30 | La Guarida de los Juegos| `guarida-juegos` | `laguaridadejuegos.com`| `https://laguaridadejuegos.com/collections/all.atom`| $115.00 | $1,400.00 |
+| 31 | La Madriguera Juegos| `madriguera-juegos`| `madriguerajuegos.com` | `https://madriguerajuegos.com/collections/all.atom` | $110.00 | $1,350.00 |
+| 32 | La Mazmorra | `la-mazmorra` | `lamazmorra.mx` | `https://lamazmorra.mx/collections/all.atom` | $120.00 | $1,500.00 |
+| 33 | Ludus Games | `ludus-games` | `ludusgames.mx` | `https://ludusgames.mx/collections/all.atom` | $125.00 | $1,450.00 |
+| 34 | Ludorama | `ludorama` | `ludorama.mx` | `https://ludorama.mx/collections/all.atom` | $115.00 | $1,400.00 |
+| 35 | Meeple City | `meeple-city` | `meeplecity.com.mx` | `https://meeplecity.com.mx/collections/all.atom` | $110.00 | $1,300.00 |
+| 36 | Meeple Planet | `meeple-planet` | `meepleplanet.mx` | `https://meepleplanet.mx/collections/all.atom` | $120.00 | $1,500.00 |
+| 37 | Meeplepolis | `meeplepolis` | `meeplepolis.com` | `https://meeplepolis.com/collections/all.atom` | $125.00 | $1,600.00 |
+| 38 | Mipilandia | `mipilandia` | `mipilandia.com.mx` | `https://mipilandia.com.mx/collections/all.atom` | $110.00 | $1,350.00 |
+| 39 | Neverland Games | `neverland-games` | `neverlandgames.mx` | `https://neverlandgames.mx/collections/all.atom` | $130.00 | $1,600.00 |
+| 40 | Ocelote Juegos | `ocelote-juegos` | `ocelotejuegos.com` | `https://ocelotejuegos.com/collections/all.atom` | $115.00 | $1,400.00 |
+| 41 | Otter Space | `otter-space` | `otterspace.com.mx` | `https://otterspace.com.mx/collections/all.atom` | $120.00 | $1,500.00 |
+| 42 | Pata de Meeple | `pata-de-meeple` | `patademeeple.com` | `https://patademeeple.com/collections/all.atom` | $110.00 | $1,350.00 |
+| 43 | Portal Games MX | `portal-games-mx` | `portalgames.mx` | `https://portalgames.mx/collections/all.atom` | $130.00 | $1,600.00 |
+| 44 | Reino de Dragones | `reino-de-dragones` | `reinodedragones.com` | `https://reinodedragones.com/collections/all.atom` | $125.00 | $1,500.00 |
+| 45 | Tablerazo | `tablerazo` | `tablerazo.com` | `https://tablerazo.com/collections/all.atom` | $115.00 | $1,400.00 |
+| 46 | Tablero Mágico | `tablero-magico` | `tableromagico.com.mx` | `https://tableromagico.com.mx/collections/all.atom` | $120.00 | $1,450.00 |
+| 47 | Tarjetas y Dados | `tarjetas-y-dados` | `tarjetasydados.com` | `https://tarjetasydados.com/collections/all.atom` | $110.00 | $1,300.00 |
+| 48 | Templo del Juego | `templo-del-juego` | `templodeljuego.mx` | `https://templodeljuego.mx/collections/all.atom` | $125.00 | $1,550.00 |
+| 49 | The Meeple Shop | `the-meeple-shop` | `themeepleshop.com` | `https://themeepleshop.com/collections/all.atom` | $120.00 | $1,500.00 |
+| 50 | Tolaria Games | `tolaria-games` | `tolariagames.com` | `https://tolariagames.com/collections/all.atom` | $130.00 | $1,600.00 |
+| 51 | Valquiria Games | `valquiria-games` | `valquiria.mx` | `https://valquiria.mx/collections/all.atom` | $115.00 | $1,400.00 |
 
-#### 9.4.1 Seamless page transitions (View Transitions API)
-When navigating from a game card on the homepage (`/`) or search results to `/game/[slug]`, the box art thumbnail morphs into the full-bleed hero banner using native `document.startViewTransition()`:
+---
+
+# 10. Complete REST API Contract Inventory
+
+| Route Path | Method | Scope | Query / Payload | Success Response (200/201) | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `/api/search` | `GET` | Public | `?q=catan&limit=20` | `{ games: CatalogGame[], total: number }` | Trigram predictive catalog search |
+| `/api/games/[slug]` | `GET` | Public | None | `{ game: CatalogGame, offers: CalculatedOffer[] }` | Game detail & 3-part price breakdown |
+| `/api/redirect` | `GET` | Public | `?offer_id=uuid&url=https...` | HTTP 302 Found (Destination with UTMs) | Logs click and redirects to merchant (<100ms non-blocking) |
+| `/api/offers/verify` | `GET` / `POST` | Public / Edge | `?offer_id=UUID` | `{ verified: boolean, price: number, stock: number, updated: boolean }` | Dynamic Stale Price Shield background verification |
+| `/api/merchant/onboard` | `POST` | Merchant | `{ name, website_url, feed_url, flat_rate, free_shipping_threshold }` | `{ success: true, store_id: UUID }` | Self-serve merchant onboarding |
+| `/api/merchant/queue` | `GET` | Merchant | `?store_id=UUID` | `{ items: QueueItem[] }` | Store-isolated pending queue items |
+| `/api/merchant/queue/resolve` | `POST` | Merchant | `{ queue_id, action: 'approve'\|'remap'\|'reject', game_id }` | `{ success: true }` | Maps SKU, persists memory, activates offer |
+| `/api/admin/stores` | `GET` | Admin | None | `{ stores: StoreWithDiagnostics[] }` | Admin store health & sync trigger |
+| `/api/admin/stores` | `POST` | Admin | `{ action: 'sync_all' \| 'sync_store', store_id }` | `{ processed: number, matched: number }` | Real-time multi-route feed ingestion trigger |
+| `/api/admin/feed-queue` | `GET` | Admin | `?status=pending&page=1` | `{ items: QueueItem[], total: number }` | Cross-store moderation staging queue |
+| `/api/admin/diagnostics` | `GET` | Admin | None | `{ error_rate: number, dead_links: number, total_offers: number }` | Platform health diagnostics metrics |
+| `/api/cron/sync-feeds` | `POST` | `CRON_SECRET` | `?batch_size=3` & `Bearer <SECRET>` | `{ success: true, enqueued_jobs: N, processed: number }` | Serverless chunked store feed synchronization |
+| `/api/cron/sync-worker` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <SECRET>` | `{ processed_job_id: UUID, items_matched: number }` | Processes pending chunked ingestion jobs |
+| `/api/cron/process-bgg-queue`| `POST` | `CRON_SECRET` | Header `Authorization: Bearer <SECRET>` | `{ hydrated: number, errors: number }` | Throttled background BGG enrichment worker |
+| `/api/cron/audit-urls` | `POST` | `CRON_SECRET` | Header `Authorization: Bearer <SECRET>` | `{ audited: number, quarantined: number }` | Periodic HTTP 404/500 dead link quarantine worker |
+
+---
+
+# 11. Frontend Design System, Cognitive UX & Sentence Case Governance
+
+## 11.1 Color Tokens & Visual Identity
+
+| Token Name | Hex Code | Tailwind Equivalent | Purpose |
+| :--- | :--- | :--- | :--- |
+| **Blanco roto** | `#F5F0E9` | `bg-[#F5F0E9]` | Global application background (warm paper texture) |
+| **Carbón suave** | `#3A3A3A` | `text-[#3A3A3A]` | Typography, headers, dark UI elements |
+| **Malva suave** | `#8367C7` | `bg-[#8367C7] text-white` | Primary action buttons, active navigation states |
+| **Turquesa pastel** | `#73D8D4` | `bg-[#73D8D4]/20 text-[#207572]` | Badges, stock indicators, secondary accents |
+| **Coral deslavado** | `#FF9E8A` | `bg-[#FF9E8A]/25 text-rose-950` | Best price highlights, special deal banners |
+
+## 11.2 Google Sentence Case Mandate
+All user-facing titles, card headers, table column headers, and action buttons MUST strictly use sentence case:
+- ✅ *Comparativa de ofertas por tienda*
+- ✅ *Mejor precio actual*
+- ✅ *Ir a la tienda*
+- ✅ *Solo tiendas nacionales*
+- ❌ *Comparativa De Ofertas Por Tienda*
+- ❌ *MEJOR PRECIO ACTUAL*
+
+## 11.3 Accessible Tactile Switch Standard (`src/components/TactileSwitch.tsx`)
+```tsx
+interface TactileSwitchProps {
+  id: string;
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+export function TactileSwitch({ id, label, checked, onChange }: TactileSwitchProps) {
+  return (
+    <label htmlFor={id} className="flex items-center gap-3 cursor-pointer select-none">
+      <input
+        id={id}
+        type="checkbox"
+        role="switch"
+        aria-checked={checked}
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="sr-only peer"
+      />
+      <div className="w-11 h-6 bg-stone-300 peer-checked:bg-[#8367C7] rounded-full transition-colors relative after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-transform peer-checked:after:translate-x-full shadow-inner" />
+      <span className="text-sm font-medium text-[#3A3A3A]">{label}</span>
+    </label>
+  );
+}
+```
+
+## 11.4 High-Contrast Edition Badges (`src/components/LanguageBadge.tsx`)
+```tsx
+export function LanguageBadge({ language }: { language: 'es' | 'en' | 'multi' }) {
+  const configs = {
+    es: { label: 'Español (ES)', classes: 'bg-amber-100 text-amber-900 border-amber-300' },
+    en: { label: 'Inglés (EN)', classes: 'bg-blue-100 text-blue-900 border-blue-300' },
+    multi: { label: 'Multilingüe (MULTI)', classes: 'bg-purple-100 text-purple-900 border-purple-300' }
+  };
+  const config = configs[language] || configs.es;
+
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${config.classes}`}>
+      {config.label}
+    </span>
+  );
+}
+```
+
+## 11.5 Modern Web Standards Architecture (Modern Web Guidance Integration)
+
+To deliver native performance without bloated third-party JavaScript dependencies, MeeplePrecios implements Baseline modern web standards:
+
+### 11.5.1 Fluid Page Transitions (View Transitions API)
+When navigating from a game card on the homepage (`/`) or search results to `/game/[slug]`, the box art thumbnail seamlessly morphs into the full-bleed hero banner using native `document.startViewTransition()`:
 ```css
 .game-thumbnail {
   view-transition-name: game-hero-art;
@@ -677,106 +1138,207 @@ When navigating from a game card on the homepage (`/`) or search results to `/ga
 }
 ```
 
-#### 9.4.2 LCP optimization & resource prioritization
+### 11.5.2 Sub-Second LCP & Resource Prioritization
 - The game detail page hero box art specifies `fetchpriority="high"`, AVIF/WebP automatic next-gen format negotiation, and `decoding="async"`.
 - Off-screen carousel thumbnails and merchant brand logos specify native `loading="lazy"`.
 
-#### 9.4.3 Native HTML overlays (Popover API & `<dialog>`)
+### 11.5.3 Native HTML Overlays (Popover API & `<dialog>`)
 - Merchant SKU mapping dialogs on `/merchant/dashboard` use native HTML `<dialog>` with `.showModal()`, eliminating external modal packages.
 - Filter dropdowns and promo code tooltips use the native HTML `popover` attribute (`popover="auto"`), getting automatic top-layer rendering, backdrop styling, and `Esc` key dismissal for free.
 
-#### 9.4.4 Responsive component layouts via CSS Container Queries
+### 11.5.4 Responsive Component Layouts via CSS Container Queries
 The 3-part price comparison offer card uses `@container (min-width: ...)` queries and `:has()` rather than viewport `@media` breakpoints:
 - In wide containers: expands into a 4-column comparative table row (Merchant, Edition Badge, Base + Shipping Math, Affiliate CTA).
 - In narrow containers (mobile drawer / compact sidebar): smoothly folds into a stacked mobile card.
 
-#### 9.4.5 Modern accessible form validation
+### 11.5.5 Modern Accessible Form Validation
 - Form fields on `/merchant/onboard` and `/merchant/shipping` use `:user-valid` and `:user-invalid` pseudo-classes to avoid premature validation errors before user input.
 - Numeric pricing inputs specify `inputmode="numeric"`.
 - Domestic shipping toggles implement `role="switch"` and `aria-checked`.
 
 ---
 
-## 10. Functional page views & acceptance criteria 🗺️
+# 12. Architectural Post-Mortem & Critical Engineering Lessons
 
-| Page View | Core Functionality | Functional Acceptance Criteria |
+## 12.1 The 9 In-Depth Architectural Critiques 🔍
+
+As an Engineering Lead, a successful rebuild requires ruthlessly dissecting past failures and architectural bottlenecks to design the best possible version.
+
+### 12.1.1 Critique 1: The BGG ID Integer Dependency Trap
+* **What went wrong previously:** The initial database schema used `bgg_id INTEGER PRIMARY KEY` for games and foreign keys. When Mexican stores stocked local independent games, Spanish-only localized games, accessories, or new releases not yet indexed by BoardGameGeek, the ingestion pipeline broke with foreign key violations. The previous fix was an ad-hoc hack: generating synthetic IDs (`bgg_id = 900000 + N`), followed by patching a second `internal_games` table with UUIDs. This caused architectural schizophrenia (some tables joined on `bgg_id`, others on UUID).
+* **The Best Version Resolution:** **A Unified Canonical Games Catalog (`catalog_games`).**
+  - Primary Key is always `id UUID DEFAULT gen_random_uuid()`.
+  - An SEO-friendly `slug TEXT UNIQUE NOT NULL` (e.g. `catan`, `wingspan`, `terraforming-mars`).
+  - `bgg_id INTEGER UNIQUE NULL` is an *optional external reference attribute*, indexed for fast lookups.
+  - BGG is strictly an asynchronous *enrichment provider*, never an operational bottleneck or database primary key.
+
+### 12.1.2 Critique 2: In-Memory Mock Repository vs. Production PostgreSQL
+* **What went wrong previously:** Portions of the codebase relied on an in-memory repository (`db.ts` with local JavaScript arrays) while other parts targeted Supabase PostgreSQL. This caused state desynchronization, lost mappings on server restarts, and non-scalable memory usage when parsing large feeds.
+* **The Best Version Resolution:** **Supabase PostgreSQL as the Single Source of Truth.**
+  - All operations run directly against PostgreSQL via Supabase client with strong TypeScript typing and connection pooling.
+  - For unit testing in Vitest, use lightweight in-memory SQL or deterministic mock client fixtures that mirror the exact PostgreSQL schema and RLS policies.
+
+### 12.1.3 Critique 3: Database Write Sequencing & Foreign Key Violations
+* **What went wrong previously:** Ingestion workers frequently attempted to insert child offers (`store_offers`) before parent games were persisted to the catalog, throwing foreign key constraint errors.
+* **The Best Version Resolution:** **Strict Two-Phase Transactional Flushing:**
+  1. *Phase 1 (Parent Entity Resolution):* Normalize incoming feed item titles. Check barcodes and SKU memory. If a new game must be created, insert it into `catalog_games` first and wait for the returned ID.
+  2. *Phase 2 (Child Offer Upsert):* Upsert child offers into `store_offers` referencing the guaranteed parent UUID.
+
+### 12.1.4 Critique 4: Batch Ingestion vs. Loop-Based N+1 Query Timeouts
+* **What went wrong previously:** Crawling 50 feeds with 1,000+ items each and executing single SQL queries per variant caused Supabase connection pool exhaustion, HTTP 504 Gateway Timeouts, and sluggish syncs.
+* **The Best Version Resolution:** **In-Memory Buffering & Chunked Bulk Upserts.**
+  - Parse and map feed items in memory chunks of 200–500 items.
+  - Use PostgreSQL `INSERT INTO ... ON CONFLICT (...) DO UPDATE` batch operations.
+
+### 12.1.5 Critique 5: Shopify Anti-Bot Protection & Cloudflare HTTP 403s
+* **What went wrong previously:** Automated scrapers directly requesting `https://<store>/collections/all.atom` frequently encountered HTTP 403 Forbidden or Cloudflare challenge pages.
+* **The Best Version Resolution:** **The 3-Tier Multi-Route Fallback Ladder.**
+  1. *Route 1 (Primary):* Public Shopify JSON API (`/products.json?limit=250&page=N`). It provides structured JSON, variant-level GTIN barcodes, and multiple image assets without Cloudflare XML blocking.
+  2. *Route 2 (Category XML):* `/collections/juegos-de-mesa/all.atom` (Category-filtered Atom XML, avoiding accessories and clothes).
+  3. *Route 3 (Global Atom XML):* `/collections/all.atom` with browser-like headers (`User-Agent: Mozilla/5.0...`).
+
+### 12.1.6 Critique 6: BGG XMLAPI2 Aggressive Rate-Limiting (HTTP 429)
+* **What went wrong previously:** Ingestion routines made inline XMLAPI2 calls to BGG during feed ingestion. BGG immediately blocked the server IP with HTTP 429.
+* **The Best Version Resolution:** **Asynchronous Throttled Sync Queue.**
+  - Feed ingestion NEVER makes real-time external BGG API calls.
+  - Missing metadata jobs are enqueued into `bgg_sync_queue`.
+  - A dedicated background worker (`/api/cron/process-bgg-queue`) processes the queue with a hard rate-limit delay of $\ge 1,200\text{ ms}$ per request and exponential backoff.
+
+### 12.1.7 Critique 7: TypeScript Pollution from Next.js Build Artifacts
+* **What went wrong previously:** Running custom build scripts that set temporary directories caused Next.js to append `.next-build/types/**/*.ts` to `tsconfig.json`. When deleted, IDEs threw dozens of orphaned type errors.
+* **The Best Version Resolution:** Clean, standard Next.js build lifecycle (`next build`), keeping `tsconfig.json` immutable.
+
+### 12.1.8 Critique 8: Multi-Repo & Microservice Fragmentation vs. Lean Monolith
+* **What went wrong previously:** Splitting frontends and backends across separate services creates serialization overhead, duplicate TypeScript contracts, and complex deployment coordination.
+* **The Best Version Resolution:** **The Lean Full-Stack TypeScript Monolith.** Next.js 15+ App Router with React Server Components (direct DB reads), Server Actions (form mutations), Route Handlers (cron workers/redirects), and Supabase PostgreSQL. Single language, single repository, zero API serialization boilerplate.
+
+### 12.1.9 Critique 9: Heavy JavaScript Bundle Bloat vs. Modern Baseline Web Standards
+* **What went wrong previously:** Pulling in heavy npm packages (Framer Motion for page morphs, external modal libraries, custom viewport JS listeners) inflated client bundles by over 300KB and degraded Core Web Vitals.
+* **The Best Version Resolution:** **Adhere Strictly to Modern Web Guidance & Baseline Standards.**
+  - Native **View Transitions API** (`view-transition-name: game-hero-art`) for cross-page box art morphing.
+  - Native HTML **`<dialog>` and `popover` API** for zero-dependency modals and filter dropdowns.
+  - CSS **Container Queries (`@container`) and `:has()`** for self-adaptive 3-part price comparison cards.
+  - Native **`fetchpriority="high"`**, AVIF/WebP, and Next.js Image for sub-second Largest Contentful Paint (LCP).
+  - Modern form pseudo-classes (`:user-valid`, `:user-invalid`) and accessible switches (`role="switch"`).
+
+---
+
+## 12.2 The 12 Known Failure Modes vs. Systematic Solutions
+
+Every design decision in this blueprint resolves a real failure mode from previous implementations:
+
+| Challenge / Failure Mode | Root Cause Identified | Systematic Ground-Up Solution |
 | :--- | :--- | :--- |
-| **Homepage** | Search & BGG Hotness Trends | Predictive search input + grid/carousel of trending games available in Mexican shops. |
-| **Game Detail** | Delivered Price Comparison | Full-width box art header, typographic stats, language badges, and 3-part price table ($\text{Base} + \text{Shipping} = \text{Total Cost}$). |
-| **Search Results** | Product Search Results | Paginated list of catalog games matching query. |
-| **Store Profile** | Merchant Store Profile | Store description, rating, flat shipping fee display, official website link, and store inventory list. |
-| **Login** | Persona Switcher | Authentication form with role-based access for Admin, Merchant, and Player. |
-| **Merchant Onboarding** | Store Registration | Registration form for store name, logo URL, XML/JSON feed URL, and flat domestic shipping rate in MXN. |
-| **Merchant Dashboard** | Self-Service Portal | Feed status diagnostic metrics, unmatched feed item binding portal, shipping rate configuration link, and click analytics. |
-| **Merchant Shipping** | Shipping Rate Matrix | Configuration matrix for domestic flat-rate shipping fee and free shipping threshold in MXN. |
-| **Merchant Diagnostics**| Feed Validation | Feed parser validator showing last sync time, item counts, and parsing errors. |
-| **Admin Dashboard** | Catalog & Merchant Management| Store verification list, BGG games catalog browser, and moderation queue link. |
-| **Admin Queue** | Staging & Moderation Queue | Interactive queue listing medium-confidence matches ($0.70 \dots 0.91$) with suggested game thumbnails, one-click approval, and live BGG autocomplete. |
+| **BGG ID Foreign Key Failures** | Schema used `bgg_id INTEGER PRIMARY KEY`. Games not yet on BGG crashed the database. | Unified `catalog_games` with `id UUID PRIMARY KEY`, unique slug, and an optional indexed `bgg_id`. |
+| **Data Loss on Restarts** | Code relied on in-memory JavaScript arrays (`db.ts`) instead of PostgreSQL. | PostgreSQL / Supabase as the single source of truth with Row-Level Security. |
+| **Ingestion Foreign Key Violations** | Attempted to insert child offers before parent game rows were committed. | Strict Two-Phase Transactional Flushing: parent catalog entities are always persisted before child offers. |
+| **Supabase Connection Timeouts** | Looping through 50 feeds and executing 1 SQL query per item caused connection exhaustion. | Buffered batch upserts: memory chunks of 200–500 records executed via `INSERT ... ON CONFLICT DO UPDATE`. |
+| **Shopify Cloudflare 403 Blocks** | Crawlers fetching `/collections/all.atom` hit bot protection and Cloudflare challenges. | 3-Tier Multi-Route Fallback: prioritize public `/products.json?limit=250` before Atom XML. |
+| **BGG HTTP 429 IP Bans** | Ingestion workers made inline BGG XMLAPI2 API calls during feed syncs. | Asynchronous `bgg_sync_queue` drained by a dedicated cron worker with $\ge 1,200\text{ ms}$ delay. |
+| **TypeScript Build Pollution** | Build scripts creating temporary build folders inserted `.next-build` paths into `tsconfig.json`. | Clean `next build` command preserving `tsconfig.json` immutability. |
+| **Serverless Ingestion Timeouts** | Monolithic 51-store sequential loop hits serverless limits (10-60s). | Serverless Chunking State Machine with `ingestion_jobs` and micro-batch triggers (`?batch_size=3`). |
+| **Flash Sale Stale Prices** | Periodic 12-24h sync leads to stale pricing and stockouts during Mexican sales (*Buen Fin*). | Dynamic Stale Price Shield: non-blocking client-side background freshness check (`/api/offers/verify`). |
+| **Localized Spanish Title Divergence** | Translated titles (*Ticket to Ride* vs *Aventureros al Tren*) yield 0 token overlap. | GIN Trigram index on `catalog_games(alternate_titles)` for sub-second multilingual matching. |
+| **Affiliate Integration Resistance in Mexico** | Independent Mexican board game stores lack formal affiliate tracking platforms. | Zero-Friction Merchant Model: clean UTM tags + direct coupon codes (`promo_code`) + sponsored toggles (`is_featured`). |
+
+---
+| **Dead Links / 404 Pages** | Stores delete out-of-stock products or change numeric handles. | Mandatory Product & URL Integrity Gate: automated HTTP checking and dead link quarantine. |
 
 ---
 
-## 11. Verification and quality assurance gate 🧪
-
-```bash
-# 1. Type Check & Lint
-npm run lint
-
-# 2. Production Build Check
-npm run build
-
-# 3. Unit & Integration Test Suite
-npm run test
-
-# 4. End-to-End Browser Test Suite
-npm run test:e2e
-
-# 5. DevTools for Agents Visual & Interactive Audit (chrome-devtools / browser_subagent)
-# Audit live browser endpoints on http://localhost:3001, capture screenshots, check console logs
-
-# 6. Master Verification Gate
-npm run verify
-```
-
----
-
-## 12. Ground-up execution roadmap (Sprint Sequence) 🚀
+# 13. 12-Sprint Ground-Up Implementation Roadmap
 
 ```mermaid
 timeline
-    title MeeplePrecios Ground-Up Development Timeline
-    section Phase 1: Core Foundation
-        Sprint 1 : Database Setup : Supabase RLS DDL : Seed Initial Games
-        Sprint 2 : Ingestion Engine : Language & Publisher Engine : Feed Parsers
-    section Phase 2: Integrity & UI
-        Sprint 3 : URL & Title Audit Worker : Auto-Healing Cron : API Route
-        Sprint 4 : Comparative UI : Predictive SearchBar : Store Comparison Table
-    section Phase 3: Commercial MVP
-        Sprint 5 : Merchant Dashboard : Self-Serve Onboarding : Affiliate Redirects
-        Sprint 6 : E2E Browser Suite : CI/CD Gate : Verification Meta-Command
-    section Phase 4: Enterprise Precision
-        Sprint 7 : Multi-Barcode Registry : Merchant SKU Memory Table : Barcode Engine
-        Sprint 8 : 4-Tier Matching Engine : Admin Staging Queue : Merchant Self-Mapping Portal
-    section Phase 5: Independent Ingestion & Multi-Tenant Moderation
-        Sprint 9 : Internal Games Catalog (US-15) : Non-Game Feed Classifier (US-16) : Base vs Expansion Classifier (US-17)
-        Sprint 10 : Candidate Suggestion Engine (US-18) : Multi-Tenant Store & Admin Queue RLS (US-19)
-    section Phase 6: Catalog Audit, Resilience & Health Diagnostics
-        Sprint 11 : Automated URL Audit Worker (US-20) : BGG Metadata Hydration Worker (US-21)
-        Sprint 12 : Admin Health & Diagnostics Dashboard (US-22)
+    title Ground-Up Implementation Roadmap
+    section Foundation & Database
+        Sprint 1 : Supabase PostgreSQL Schema : Migrations & RLS : Seed Initial Catalog
+        Sprint 2 : Multi-Route Feed Parser : Shopify JSON & Google XML : Barcode Engine
+    section Matching & Moderation
+        Sprint 3 : 4-Tier Matching Engine : Title Sanitizer : SKU Memory Store
+        Sprint 4 : Multi-Tenant Staging Queue : Admin Moderation : One-Click Resolution
+    section Player Experience
+        Sprint 5 : Homepage Discovery : Predictive Search : Trending Games Tabbed UI
+        Sprint 6 : Game Detail View : 3-Part Delivered Cost Table : Language Badges
+    section Merchant Ecosystem
+        Sprint 7 : Merchant Onboarding : Self-Service Portal : Shipping Matrix
+        Sprint 8 : Merchant Diagnostics : Outbound Affiliate Redirect : Clicks Log
+    section Resilience & Scale
+        Sprint 9 : URL Audit Worker : Broken Link Quarantine : Cron Routes
+        Sprint 10 : Throttled BGG Hydration Worker : Media Caching Engine
+    section Enterprise Quality
+        Sprint 11 : Admin Health Dashboard : Ingestion Trigger : Store Logos
+        Sprint 12 : Playwright E2E Suite : DevTools Visual Auditing : Master Gate
 ```
+
+### Sprint 1: Unified Database Setup & RLS DDL
+* **Goal:** Initialize PostgreSQL schema with UUID canonical catalog, multi-barcode tables, and RLS policies.
+* **Acceptance Criteria:** `catalog_games`, `stores`, `shipping_rates`, `game_barcodes`, `store_offers`, and `feed_item_queue` tables created with zero foreign key sequence errors.
+
+### Sprint 2: Multi-Route Feed Parser & Pre-Classifier
+* **Goal:** Implement Shopify JSON, Atom XML, and Google Shopping parsers with the 3-route fallback ladder.
+* **Acceptance Criteria:** Successfully parses product lists from live store endpoints and discards non-game accessories (sleeves, dice, playmats).
+
+### Sprint 3: The 4-Tier Waterfall Matching Engine
+* **Goal:** Implement barcode lookup, SKU memory, and tokenized fuzzy similarity scoring with title sanitization.
+* **Acceptance Criteria:** Test suite in `matching-engine.test.ts` passes with $\ge 99\%$ accuracy on canonical test cases (e.g. Catan base vs expansions, spin-offs like Dobble Catan).
+
+### Sprint 4: Multi-Tenant Staging Queue & Candidate Suggestion Engine
+* **Goal:** Route ambiguous items ($0.70 \dots 0.91$) to the queue with top 5 suggested candidates.
+* **Acceptance Criteria:** Merchants see only their own storefront items; admins see cross-store items. One-click resolution records SKU memory.
+
+### Sprint 5: Homepage & Predictive Search Bar
+* **Goal:** Build the player landing page with tabbed BGG Top 10 / Trending in Mexico and responsive predictive search.
+* **Acceptance Criteria:** Search queries return instant results filtered by Spanish and English availability. Google sentence case strictly applied.
+
+### Sprint 6: Game Detail Page & 3-Part Delivered Price Table
+* **Goal:** Implement `/game/[slug]` with box art header, typographic stats, language badges, and delivered price calculation.
+* **Acceptance Criteria:** Offers sorted strictly by delivered price ($\text{Base} + \text{Shipping}$). Domestic store toggle implements accessible `role="switch"`.
+
+### Sprint 7: Merchant Self-Service Onboarding & Shipping Matrix
+* **Goal:** Build `/merchant/onboard` and `/merchant/shipping`.
+* **Acceptance Criteria:** Store owners can configure flat shipping rates and free shipping thresholds in MXN.
+
+### Sprint 8: Outbound Affiliate Redirect Engine & Diagnostics
+* **Goal:** Build `/api/redirect` with UTM tracking and asynchronous click logging.
+* **Acceptance Criteria:** Clicking "Ir a la tienda" logs a click to `public.clicks` and redirects browser via HTTP 302.
+
+### Sprint 9: Automated URL Audit & Dead Link Quarantine Worker
+* **Goal:** Implement `/api/cron/audit-urls`.
+* **Acceptance Criteria:** Background worker pings offer URLs and automatically sets `is_active = false` on HTTP 404/500 responses.
+
+### Sprint 10: Asynchronous BGG Metadata Hydration Worker
+* **Goal:** Implement `/api/cron/process-bgg-queue`.
+* **Acceptance Criteria:** Throttled worker fetches missing player count, weight, and high-res cover art with a $\ge 1,200\text{ ms}$ inter-request delay.
+
+### Sprint 11: Admin Health Dashboard & Real Store Directory
+* **Goal:** Build `/admin/diagnostics` and `/admin/stores` with real store brand logos and manual re-sync buttons.
+* **Acceptance Criteria:** Displays live feed error rates, total active offers, and broken link statistics.
+
+### Sprint 12: Comprehensive QA, Playwright E2E & DevTools Audit
+* **Goal:** Run complete test suites and visual browser checks.
+* **Acceptance Criteria:** Vitest test suite 100% green, Playwright E2E passing, Chrome DevTools visual audit verified on `http://localhost:3001`, and `npm run verify` passing.
 
 ---
 
-## 13. Autonomous AI agent operating guide 🤖
+# 14. Master Verification Gate & Quality Assurance Playbook
 
-When executing tasks on this project, an autonomous AI agent MUST:
-1. **STRICT LEGACY FOLDER ISOLATION:** Never inspect, read, search (`grep`, `view_file`), copy, or peek into the `legacy/` directory under any circumstances. All implementation details MUST be derived exclusively from `MASTER_SPECIFICATION.md`.
-2. **WORKSPACE SKILLS COMPLIANCE:** Actively invoke and follow the 5 specialized skills in `.agents/skills/`:
-   - `backlog_auditor`: Use when planning backlogs or user stories (enforce Three-Point Compliance Filter).
-   - `github_issue_solve`: Use when starting an issue (create feature branch `feature/us-<num>-<title>` and write TDD plan).
-   - `ux_expert`: Use when designing UI components (enforce Google sentence case, brand tokens, and `role="switch"`).
-   - `github_issue_complete`: Use when completing features (run `npm run verify`, commit, open PR, merge into `main`).
-   - `document_sync`: Use after merging features to synchronize `HANDOFF.md`, `DESIGN.md`, `AGENTS.md`, and `MASTER_SPECIFICATION.md`.
-3. Create a dedicated feature branch matching the canonical user story (`git checkout -b feature/us-<num>-<title>`).
-4. Write tests first (TDD), implement minimal code to pass them, and enforce Google sentence case.
-5. Run full verification gates (`npm run verify`) before merging into `main`.
-6. Keep living documentation (`HANDOFF.md`, `DESIGN.md`, `AGENTS.md`, `MASTER_SPECIFICATION.md`) updated in real-time.
+## 14.1 Executing the Verification Gate
+Before committing or merging any work, run:
+```bash
+npm run verify
+```
+This executes:
+1. `npm run lint` (ESLint 9 + Next.js core web vitals).
+2. `npm run test` (Vitest unit and integration test suite across all 20 test files).
+3. `next build` (Next.js production compiler, type-checking all 27 static and dynamic routes).
+
+## 14.2 DevTools Visual Audit Checklist (`http://localhost:3001`)
+1. [ ] Dev server started via `npm run dev -p 3001`.
+2. [ ] Homepage loads with HTTP 200 and zero console errors.
+3. [ ] Predictive search input auto-suggests games and respects keyboard arrows.
+4. [ ] Tab switching between BGG Top 10 and Trending Mexico updates grid smoothly.
+5. [ ] Game detail page loads full-width header and displays 3-part price comparison.
+6. [ ] "Solo tiendas nacionales" tactile switch toggles offers cleanly with accessible `role="switch"`.
+7. [ ] Outbound click to merchant redirects with UTM parameters and logs to `public.clicks`.
+8. [ ] Merchant and Admin portals render with 100% sentence case headings and buttons.

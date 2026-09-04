@@ -10,8 +10,10 @@
     4. *Sprint 4 (Core Data Repository & Verified Seed Catalog):* `src/lib/db/db.ts` with offline fallback resilience and 18 live verified Mexican board game offers across 5 stores (*Bundaba, Roll Games, Ficha y Dado, Alfa y Delta, Quantum Boardgames*).
     5. *Sprint 5 (Homepage Discovery & Predictive Search):* Debounced predictive search bar (`SearchBar.tsx`), tabbed UI between **Más buscados en México** and **Top 10 BoardGameGeek** (`US-25`), View Transitions, and Google sentence case governance (`src/app/page.tsx`).
     6. *Sprint 6 (Game Detail View & 3-Part Delivered Cost Table):* `/game/[slug]` with box art header, typographic metadata chips, spin-off variant banners (`US-05`), accessible tactile switch (`role="switch"`), 3-part price comparison table (`PriceTable.tsx`), and outbound affiliate redirect engine (`/api/redirect`).
-- **Product & URL Integrity Gate:** 100% VERIFIED & GREEN.
-  - Every single store offer URL was tested with live HTTP GET requests in `src/__tests__/url-integrity.test.ts`. All 18 URLs returned HTTP 200 OK and matching product HTML titles.
+- **Master Documentation:** 100% SYNCHRONIZED & MONOLITHIC.
+  - [`MASTER_SPECIFICATION.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/MASTER_SPECIFICATION.md) (Now the all-in-one authoritative single source of truth, incorporating the entirety of the Ground-Up Rebuild Blueprint and the Complete Ground-Up Engineering Specification into one unified master document).
+  - [`DESIGN.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/DESIGN.md)
+  - [`README.md`](file:///Users/joseluiszapata/Documents/GitHub/elmeeple-stores/README.md)
 - **Chrome DevTools MCP Browser QA:** 100% VERIFIED & CLEAN.
   - Interactive browser testing executed on `http://localhost:3001` via CDP remote debugging.
   - Zero React hydration warnings, zero console errors, full-page screenshots captured (`homepage_qa.png`, `game_detail_qa.png`).
